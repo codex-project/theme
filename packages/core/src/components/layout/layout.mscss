@@ -1,0 +1,71 @@
+@import "../../styling/base";
+
+:root {
+    --layout-header-height : $layout-header-height;
+}
+
+.header {
+    line-height     : var(--layout-header-height);
+    display         : flex;
+    justify-content : space-around;
+}
+
+.header-logo {
+    height     : 32px;
+    background : rgba(255, 255, 255, .2);
+    margin     : 16px;
+    display    : inline-block;
+    float      : left;
+}
+
+.header-toggle {
+    font-size : 30px;
+    color     : white;
+    padding   : 17px;
+    height    : 100%;
+
+    &:hover {
+        cursor : pointer;
+    }
+}
+
+.header-menu {
+    line-height : var(--layout-header-height);
+}
+
+.header-menu-item {
+    height      : var(--layout-header-height) !important;
+    line-height : 50px;
+
+    &:hover {
+        background-color : cadetblue;
+    }
+
+    .icon-col { width : 50px }
+    .icon { font-size : 30px; margin : 18px auto 0}
+    .label-col { white-space : normal; width : calc(100% - 50px) }
+    .label { font-weight : bold; padding : 0; height : 50%}
+    .sublabel {font-size : 10px; height : 15px; line-height : 15px;}
+}
+
+
+.footer {
+
+}
+
+.sidebar {
+
+}
+
+:local(.sidebar-menu) {
+    height       : 100%;
+    border-right : none;
+
+    > :global(.ant-menu-submenu .ant-menu-item) {
+        padding-left : 60px !important;
+
+        :global(.ant-menu-submenu .ant-menu-item) {
+            padding-left : 120px !important;
+        }
+    }
+}

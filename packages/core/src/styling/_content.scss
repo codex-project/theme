@@ -1,0 +1,39 @@
+#content {
+    background : #ffffff;
+    padding    : 24px;
+    margin     : 0;
+    min-height : 280px;
+
+    h1 {
+        > a {color : inherit;}
+        border-bottom: 1px solid $border-color-base;
+    }
+
+    h2, h3, h4, h5, h6 {
+        > a {
+            color : inherit;
+            &:before {
+                content  : "#";
+                color    : $primary-color;
+                opacity  : .4;
+                position : absolute;
+            }
+        }
+    }
+    h2 a:before {
+        margin-left : -20px;
+        font-size   : 23px;
+    }
+    h3 a:before {
+        margin-left : -20px;
+        font-size   : 20px;
+    }
+    h4 a:before {
+        margin-left : -20px;
+        font-size   : 17px;
+    }
+    h5 a:before {
+        margin-left : -15px;
+        font-size   : 15px;
+    }
+}

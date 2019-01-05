@@ -1,0 +1,18 @@
+
+
+.wrapper {
+    margin : 0 auto;
+}
+
+.spin {
+    width  : 100%;
+    margin : 10px auto;
+    text-align : center;
+    padding    : 10px;
+}
+
+.text {
+    text-align : center;
+    padding    : 10px;
+    font-size  : 16px;
+}

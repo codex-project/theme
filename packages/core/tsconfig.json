@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "lib": [
+            "es7",
+            "esnext.asynciterable",
+            "dom"
+        ],
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "inlineSourceMap": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "jsx": "preserve",
+
+        "baseUrl": ".",
+        "paths": {
+        },
+        "typeRoots": [
+            "node_modules/@types",
+            "../../node_modules/@types"
+        ]
+    },
+    "include": [
+        "test",
+        "build",
+        "test.ts",
+        "gulpfile.ts",
+        "webpack.config.ts"
+    ],
+    "exclude": ["node_modules"]
+}

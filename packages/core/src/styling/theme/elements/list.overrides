@@ -1,0 +1,7 @@
+/*******************************
+    User Variable Overrides
+*******************************/
+
+.ui.list.icon-fixed-width .item .icon  {
+    width : 50px !important;
+}

@@ -1,0 +1,49 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "lib": [
+            "es7",
+            "esnext.asynciterable",
+            "dom"
+        ],
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "inlineSourceMap": true,
+        "esModuleInterop": true,
+        "jsx": "preserve",
+
+        "baseUrl": ".",
+        "paths": {
+            "*": ["*"],
+            "api/*": ["api/*"],
+            "classes/*": ["classes/*"],
+            "collections/*": ["collections/*"],
+            "components/*": ["components/*"],
+            "config/*": ["config/*"],
+            "pages/*": ["pages/*"],
+            "styling/*": ["styling/*"],
+            "menus": ["menus/index.ts"],
+            "menus/*": ["menus/*"],
+            "stores": ["stores/index.tsx"],
+            "stores/*": ["stores/*"],
+            "utils/*": ["utils/*"],
+            "decorators": ["decorators.tsx"],
+
+            "interfaces": ["interfaces.ts"],
+            "ioc": ["ioc.ts"]
+        },
+        "typeRoots": [
+            "../types",
+            "../node_modules/@types",
+            "../../../node_modules/@types"
+        ]
+    },
+    "include": [
+        "*",
+        "**/*",
+        "../types"
+    ]
+}

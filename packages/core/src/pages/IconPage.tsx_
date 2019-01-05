@@ -1,0 +1,154 @@
+import * as React from 'react';
+import { hot } from 'decorators';
+import { IconDefinition, library } from '@fortawesome/fontawesome-svg-core'
+import * as _solidIcons from '@fortawesome/free-solid-svg-icons'
+import * as _brandIcons from '@fortawesome/free-brands-svg-icons'
+import * as _regularIcons from '@fortawesome/free-regular-svg-icons'
+import { Icon } from 'components/icon';
+import { Card, Col, Input, Row, Switch } from 'antd';
+import { styled } from 'typestyled-components'
+import { ColProps } from 'antd/es/grid';
+import { CardProps } from 'antd/es/card';
+import { observer } from 'mobx-react';
+
+const log = require('debug')('pages:icon');
+
+const { fas, prefix: prefixFAS, ...__solidIcons }   = _solidIcons
+const { far, prefix: prefixFAR, ...__regularIcons } = _regularIcons
+const { fab, prefix: prefixFAB, ...__brandIcons }   = _brandIcons
+
+const solidIcons: IconDefinition[]   = [].concat(
+    Object.keys(__solidIcons).map(_icon => __solidIcons[ _icon ]),
+    Object.keys(__brandIcons).map(_icon => __brandIcons[ _icon ])
+)
+const regularIcons: IconDefinition[] = [].concat(
+    Object.keys(__regularIcons).map(_icon => __regularIcons[ _icon ]),
+    Object.keys(__brandIcons).map(_icon => __brandIcons[ _icon ])
+)
+
+log({ far, fab, solidIcons, regularIcons, _solidIcons, _regularIcons, _brandIcons })
+
+const Search                                    = Input.Search;
+const IconCol: React.ComponentClass<ColProps>   = styled.extend<ColProps>(Col as any, {
+    textAlign: 'center'
+})
+const IconCard: React.ComponentClass<CardProps> = styled.extend(Card as any, {
+    width    : '100%',
+    minHeight: 150
+})
+const IconCover                                 = styled.div({
+    width    : '100%',
+    textAlign: 'center',
+    padding  : '15px 0'
+})
+
+@hot(module)
+class IconColumn extends React.PureComponent<{ icon: IconDefinition }> {
+    selectText(node) {
+        if ( window.getSelection && document.createRange ) {
+            let selection = window.getSelection();
+            let range     = document.createRange();
+            range.selectNodeContents(node);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } else if ( document[ 'selection' ] && document.body[ 'createTextRange' ] ) {
+            let range = document.body[ 'createTextRange' ]();
+            range.moveToElementText(node);
+            range.select();
+        }
+    }
+
+    render() {
+        const { icon, children, ...props } = this.props
+        return (
+            <IconCol xs={4} sm={3} md={2}>
+                <IconCard cover={<IconCover><Icon icon={icon} size="3x"/></IconCover>} bodyStyle={{ padding: 10, fontSize: 12 }}>
+                    <Card.Meta description={<span onClick={e => this.selectText(e.currentTarget)}>{icon.iconName}</span>}/>
+                </IconCard>
+            </IconCol>
+        )
+    }
+}
+
+interface State {
+    searchValue: string,
+    icons: IconDefinition[]
+    iconsType: 'regular' | 'solid'
+}
+
+@hot(module)
+@observer
+export default class IconPage extends React.Component<any, State> {
+    static displayName = 'IconPage'
+
+    state: State = {
+        searchValue: null,
+        icons      : [],
+        iconsType  : 'regular'
+    }
+
+    componentDidMount() {
+        this.setState({ icons: regularIcons })
+        library.reset()
+        library.add(far)
+        library.add(fab)
+        library.add(fas)
+    }
+
+    protected getSearchFilter(searchValue: string) {
+        return (icon: IconDefinition) => {
+            let name: string = icon.iconName;
+            let search       = new RegExp(searchValue)
+            return search.test(name)
+        }
+    }
+
+    protected updateIcons() {
+        const { searchValue, iconsType } = this.state
+        if ( ! searchValue || searchValue.length < 2 ) return;
+        let icons = (iconsType === 'regular' ? regularIcons : solidIcons).filter(this.getSearchFilter(searchValue));
+        this.setState({ icons });
+    }
+
+    render() {
+        if ( ! this.state ) return null;
+        const { icons, iconsType } = this.state
+
+        return (
+            <div>
+                <h2>Icons</h2>
+                <div>
+                    <Row>
+                        <Col xs={{ span: 20, push: 2 }} md={{ span: 18, push: 2 }}>
+                            <Search
+                                enterButton={false}
+                                onChange={e => {
+                                    let searchValue = e.currentTarget.value
+                                    this.setState(
+                                        { searchValue },
+                                        () => setTimeout(h => this.updateIcons(), 0)
+                                    );
+                                }}
+                                style={{ width: '100%', margin: '15px 0' }}
+                            />
+                        </Col>
+                        <Col xs={{ span: 20, push: 2 }} md={{ span: 2 }} style={{ padding: '15px 5px' }}>
+                            <Switch
+                                checkedChildren="regular"
+                                unCheckedChildren="solid"
+                                size="default"
+                                checked={iconsType === 'regular'}
+                                onChange={checked => {
+                                    this.setState({ searchValue: null, iconsType: checked ? 'regular' : 'solid', icons: checked ? regularIcons : solidIcons });
+                                }}
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        {icons.map(icon => <IconColumn key={icon.prefix + '-' + icon.iconName} icon={icon}/>)}
+                    </Row>
+                </div>
+            </div>
+        );
+    }
+}

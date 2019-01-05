@@ -1,0 +1,96 @@
+@import "../../styling/base";
+
+
+$menu-prefix-cls: "#{$ant-prefix}-menu";
+
+.c-dmenu {
+    height: 100%;
+
+    &-border-left,
+    &-border-right {
+        border: 0 solid #e8e8e8;
+    }
+
+    &-border-left {
+        border-left-width: 1px
+    }
+
+    &-border-right {
+        border-right-width: 1px
+    }
+
+    .item {
+        &-divider {
+
+        }
+
+        &-header {
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.65) !important;
+            background-color: transparent !important;
+            cursor: default
+        }
+    }
+}
+
+.c-dmenu.ant-menu-horizontal {
+
+}
+
+.ant-menu.ant-menu-horizontal > .ant-menu-item-divider {
+    width: 1px;
+    height: unset;
+    line-height: unset;
+    top: 1px;
+    bottom: 1px;
+    float: left;
+    padding: 0;
+    position: relative;
+    display: block;
+    margin: 0;
+    opacity: 0.3;
+}
+
+
+.#{$menu-prefix-cls} {
+    &-item,
+    &-submenu-title {
+        .#{$fa-css-prefix} {
+            min-width: 14px;
+            transition: font-size .15s $ease-out, margin .3s $ease-in-out;
+
+            + span {
+                transition: opacity .3s $ease-in-out, width .3s $ease-in-out;
+                opacity: 1;
+            }
+        }
+    }
+
+
+    &-inline-collapsed {
+
+        > .#{$menu-prefix-cls}-item,
+        > .#{$menu-prefix-cls}-item-group > .#{$menu-prefix-cls}-item-group-list > .#{$menu-prefix-cls}-item,
+        > .#{$menu-prefix-cls}-submenu > .#{$menu-prefix-cls}-submenu-title {
+            .#{$fa-css-prefix} {
+                font-size: 16px;
+                line-height: $menu-item-height;
+                margin: 0;
+
+                + span {
+                    max-width: 0;
+                    display: inline-block;
+                    opacity: 0;
+                }
+            }
+        }
+
+        &-tooltip {
+            .#{$fa-css-prefix} {
+                display: none;
+            }
+        }
+    }
+
+
+}
