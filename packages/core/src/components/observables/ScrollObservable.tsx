@@ -1,11 +1,11 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { hot } from 'decorators';
+import { hot } from '../../decorators';
 import { observable, toJS } from 'mobx';
 import { findDOMNode, unmountComponentAtNode } from 'react-dom';
-import { getScrollPosition, getScrollTarget } from 'utils/scroll';
-import { listenOpts } from 'utils/event';
-import { isObject } from 'utils/general';
+import { getScrollPosition, getScrollTarget } from '../../utils/scroll';
+import { listenOpts } from '../../utils/event';
+import { isObject } from '../../utils/general';
 
 const log = require('debug')('components:ScrollObservable')
 

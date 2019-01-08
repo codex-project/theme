@@ -1,17 +1,17 @@
 import React from 'react';
-import { LayoutStore } from 'stores/store.layout';
-import { hot } from 'decorators';
+import { LayoutStore } from '../../stores/store.layout';
+import { hot } from '../../decorators';
 import { observer } from 'mobx-react';
 import { Layout as AntdLayout } from 'antd';
-import { StoreControl } from 'components/StoreControl';
-import { lazyInject } from 'ioc';
-import { LayoutHeader } from 'components/layout/LayoutHeader';
+import { StoreControl } from '../../components/StoreControl';
+import { lazyInject } from '../../ioc';
+import { LayoutHeader } from '../../components/layout/LayoutHeader';
 // noinspection ES6UnusedImports
 import styles from './layout.mscss';
 import './layout.mscss';
 import './index.scss';
-import { LayoutSide } from 'components/layout/LayoutSide';
-import { LayoutFooter } from 'components/layout/LayoutFooter';
+import { LayoutSide } from '../../components/layout/LayoutSide';
+import { LayoutFooter } from '../../components/layout/LayoutFooter';
 
 
 const { Sider, Header, Content, Footer } = AntdLayout;

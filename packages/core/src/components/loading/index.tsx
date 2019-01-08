@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Spin, SpinProps } from 'components/spin';
+import { Spin, SpinProps } from '../../components/spin';
 import { LoadingComponentProps } from 'react-loadable';
-import { hot } from 'decorators';
+import { hot } from '../../decorators';
 import { noop } from 'lodash';
 import './index.mscss';
 

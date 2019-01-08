@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { hot } from 'decorators';
-import { lazyInject } from 'ioc';
-import { Store } from 'stores';
+import { hot } from '../decorators';
+import { lazyInject } from '../ioc';
+import { Store } from '../stores';
 
 const log = require('debug')('pages:home');
 @hot(module)

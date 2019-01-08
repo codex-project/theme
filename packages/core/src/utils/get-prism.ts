@@ -18,12 +18,12 @@ let prismLoaded    = false;
 let prismIsLoading = false
 let prismPromise;
 
-declare const Prism:Prism
+// declare const Prism:Prism
 
 
 export async function getPrism(): Promise<null> {
-    await import(/* webpackChunkName: "prismjs" */'utils/prism');
-    await import(/* webpackChunkName: "prismjs" */'styling/prismjs.scss');
+    await import(/* webpackChunkName: "prismjs" */'../utils/prism');
+    await import(/* webpackChunkName: "prismjs" */'../styling/prismjs.scss');
     return null
 }
 

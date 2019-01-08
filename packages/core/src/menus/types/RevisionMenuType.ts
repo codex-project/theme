@@ -1,5 +1,5 @@
 import { MenuItem } from '@codex/api';
-import * as url from 'utils/url';
+import * as url from '../../utils/url';
 import { MenuType } from '../MenuType';
 
 export class RevisionMenuType extends MenuType {

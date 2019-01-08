@@ -1,8 +1,8 @@
 import { Redirect, RedirectProps, RouteComponentProps } from 'react-router';
-import { lazyInject } from 'ioc';
-import { Store } from 'stores';
+import { lazyInject } from '../../ioc';
+import { Store } from '../../stores';
 import React from 'react';
-import { Omit } from 'interfaces';
+import { Omit } from '../../interfaces';
 
 const log = require('debug')('components:forwardtodocument');
 

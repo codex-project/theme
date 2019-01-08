@@ -1,8 +1,8 @@
 // @ts-ignore
 import tsconfig from './src/tsconfig.json';
 import { uniq } from 'lodash';
-import { resolve,relative } from 'path';
-import { readFileSync } from 'fs';
+import { resolve, relative, dirname } from 'path';
+import { readFileSync, writeFileSync } from 'fs';
 import glob = require('glob');
 
 let paths = [];
@@ -34,7 +34,9 @@ function modify(filePath:string,content: string) {
         let exp = path.exp();
 
         let rel = relative(filePath, src())
-        if(rel === '..') rel = '.';
+        rel = rel.replace(/^\.\.$/,'.');
+        rel = rel.replace('../..', '..')
+
         content = content.replace(exp, '$1 from $2' + rel + '\/$3$4');
         return rel;
     });
@@ -42,11 +44,11 @@ function modify(filePath:string,content: string) {
     return content;
 }
 
-glob.sync(src('**/*.ts')).forEach(filePath => {
+glob.sync(src('**/*{.ts,.tsx}')).forEach(filePath => {
     const content  = readFileSync(filePath, 'utf8');
     const modified = modify(filePath,content);
     if ( content !== modified ) {
-        // writeFileSync(filePath, modified, 'utf8')
+        writeFileSync(filePath, modified, 'utf8')
     }
 });
 

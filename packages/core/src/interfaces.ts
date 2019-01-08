@@ -1,6 +1,6 @@
 import { RouteProps } from 'react-router-dom'
 import { Hooks, LanguageDefinition, Languages, Token, Util } from 'prismjs';
-import { DictionaryWrapper } from 'collections/DictionaryWrapper';
+import { DictionaryWrapper } from './collections/DictionaryWrapper';
 import { Options } from 'graphql-request/dist/src/types';
 import * as pathToRegexp from 'path-to-regexp';
 

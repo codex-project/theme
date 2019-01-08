@@ -1,4 +1,4 @@
-import { getColor, colorKeys } from 'utils/colors';
+import { getColor, colorKeys } from '../utils/colors';
 
 // const colorKeys = Object.keys(_colors);
 const log       = require('debug')('elements:ColorElement');

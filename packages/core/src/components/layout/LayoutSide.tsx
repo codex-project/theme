@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { lazyInject } from 'ioc';
-import { Store } from 'stores';
+import { lazyInject } from '../../ioc';
+import { Store } from '../../stores';
 import { observer } from 'mobx-react';
-import { hot } from 'decorators';
+import { hot } from '../../decorators';
 import { Layout } from 'antd';
 // noinspection ES6UnusedImports
 import styles from './layout.mscss';
 import './layout.mscss';
-import { DynamicMenu } from 'components/dynamic-menu';
+import { DynamicMenu } from '../dynamic-menu';
 
 const { Header, Footer, Sider, Content } = Layout;
 

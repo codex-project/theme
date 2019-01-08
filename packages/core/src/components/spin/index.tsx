@@ -1,7 +1,7 @@
 import { SpinProps as AntdSpinProps } from 'antd/es/spin';
 import { Spin as AntdSpin } from 'antd';
-// import { Icon, IconProps } from 'components/icon';
-import { hot } from 'decorators';
+// import { Icon, IconProps } from '../../components/icon';
+import { hot } from '../../decorators';
 import * as React from 'react';
 import './index.scss';
 

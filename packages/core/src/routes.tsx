@@ -1,8 +1,8 @@
 import React from 'react';
-import { componentLoader } from 'utils/componentLoader';
-import { Routes } from 'collections/Routes';
-import { ForwardToDocument } from 'components/documents';
-import * as url from 'utils/url';
+import { componentLoader } from './utils/componentLoader';
+import { Routes } from './collections/Routes';
+import { ForwardToDocument } from './components/documents';
+import * as url from './utils/url';
 
 const log    = require('debug')('config:routes');
 const routes = new Routes();
@@ -14,7 +14,7 @@ routes.addRoutes(
         path     : url.root('/about'),
         exact    : true,
         component: componentLoader(
-            () => import(/* webpackChunkName: "pages.about" */'pages/AboutPage'),
+            () => import(/* webpackChunkName: "pages.about" */'./pages/AboutPage'),
             (loaded, props) => <loaded.default {...props} />,
         ),
     },
@@ -22,7 +22,7 @@ routes.addRoutes(
         name     : 'home',
         path     : url.root(),
         exact    : true,
-        component: componentLoader(() => import(/* webpackChunkName: "pages.home" */'pages/HomePage')),
+        component: componentLoader(() => import(/* webpackChunkName: "pages.home" */'./pages/HomePage')),
     },
     {
         name : 'documentation',
@@ -44,7 +44,7 @@ routes.addRoutes(
         name     : 'documentation.document',
         path     : url.documentation(':project/:revision/:document+'),
         component: componentLoader(
-            () => import(/* webpackChunkName: "pages.document" */'pages/DocumentPage'),
+            () => import(/* webpackChunkName: "pages.document" */'./pages/DocumentPage'),
             (loaded, props) => {
                 // const {project,revision,document} = props.match.params
                 const Component = loaded.default;

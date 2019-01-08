@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { hot } from 'decorators';
+import { hot } from '../../decorators';
 import { observable } from 'mobx';
 import Platform from '../../utils/platform';
 import { listenOpts } from '../../utils/event';

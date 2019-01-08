@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { hot } from 'decorators';
-import { ResizeSize } from 'interfaces';
-import { listenOpts } from 'utils/event';
+import { hot } from '../../decorators';
+import { ResizeSize } from '../../interfaces';
+import { listenOpts } from '../../utils/event';
 
 const log = require('debug')('components:WindowResizeObservable')
 

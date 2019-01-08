@@ -1,9 +1,9 @@
-import { ArrayUtils } from 'collections/ArrayUtils';
+import { ArrayUtils } from '../collections/ArrayUtils';
 import * as React from 'react';
-import { lazyInject } from 'ioc';
-import { MenuManager } from 'menus/MenuManager';
+import { lazyInject } from '../ioc';
+import { MenuManager } from '../menus/MenuManager';
 import { api } from '@codex/api';
-import { menus } from 'utils/menus';
+import * as  menus  from '../utils/menus';
 
 export type IMenuItemItems<T> = string | string[] | T | T[]
 

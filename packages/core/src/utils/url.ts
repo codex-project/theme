@@ -1,4 +1,4 @@
-import { strEnsureLeft, strEnsureRight, strStripLeft } from 'utils/general';
+import { strEnsureLeft, strEnsureRight, strStripLeft } from '../utils/general';
 
     const make                 = (prefix: string, path: string) => strEnsureLeft(strEnsureRight(prefix, '/'), '/') + strStripLeft(path, '/');
     export const root          = (path: string = '') => make(BACKEND_DATA.codex.urls.root, path);

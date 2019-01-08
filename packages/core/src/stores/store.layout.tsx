@@ -1,13 +1,13 @@
 import { action, toJS } from 'mobx';
 import * as React from 'react';
 import { camelCase, set } from 'lodash';
-import { colors } from 'utils/colors';
-import { app } from 'ioc';
+import { colors } from '../utils/colors';
+import { app } from '../ioc';
 import { classes } from 'typestyle';
 import { api } from '@codex/api';
-import { createStoreProxy, IStoreProxy } from 'stores/proxy';
-import { margin, padding } from 'utils/box';
-import { MenuItems } from 'menus';
+import { createStoreProxy, IStoreProxy } from '../stores/proxy';
+import { margin, padding } from '../utils/box';
+import { MenuItems } from '../menus';
 import { injectable } from 'inversify';
 
 const log = require('debug')('store:layout');

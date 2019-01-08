@@ -10,7 +10,8 @@
         "dev:serve": "gulp dev:serve",
         "prod:build": "gulp prod:build",
         "prod:watch": "gulp prod:watch",
-        "prod:serve": "gulp prod:serve"
+        "prod:serve": "gulp prod:serve",
+        "serve:dev": "cd dev && browser-sync start -s localhost:3000 --ss ."
     },
     "dependencies": {
         "@codex/api": "^1.0.0",
@@ -80,6 +81,7 @@
         "copy-webpack-plugin": "^4.6.0",
         "@types/copy-webpack-plugin": "^4.4.2",
         "html-webpack-plugin": "^3.2.0",
-        "@types/html-webpack-plugin": "^3.2.0"
+        "@types/html-webpack-plugin": "^3.2.0",
+        "webpack-dashboard": "^2.0.0"
     }
 }

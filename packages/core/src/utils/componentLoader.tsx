@@ -1,4 +1,4 @@
-import { Loading } from 'components/loading';
+import { Loading } from '../components/loading';
 import Loadable from 'react-loadable';
 import * as React from 'react';
 

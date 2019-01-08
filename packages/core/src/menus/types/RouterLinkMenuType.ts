@@ -1,6 +1,6 @@
 import { MenuItem } from '@codex/api';
 import { MenuType } from '../MenuType';
-import { MenuItems } from 'menus';
+import { MenuItems } from '../../menus';
 
 export class RouterLinkMenuType extends MenuType {
     name = 'router-link';

@@ -1,5 +1,5 @@
 import { MenuItem } from '@codex/api';
-import * as url from 'utils/url';
+import * as url from '../../utils/url';
 import { MenuType } from '../MenuType';
 import { toJS } from 'mobx';
 

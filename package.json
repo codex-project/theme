@@ -11,6 +11,11 @@
             "packages/*",
             "apps/*"
         ],
+        "nohoist": [
+            "@codex/site/@codex/core",
+            "@codex/site/node-sass"
+
+        ],
         "nohoist2": [
             "**/ts-node",
             "**/ts-node/**",

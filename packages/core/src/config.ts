@@ -1,4 +1,4 @@
-import { IConfig } from 'interfaces';
+import { IConfig } from './interfaces';
 
 export const config:IConfig = {
     debug: false,

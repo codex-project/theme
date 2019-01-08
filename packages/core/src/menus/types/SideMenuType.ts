@@ -1,7 +1,7 @@
 import { MenuItem } from '@codex/api';
-import { MenuItems, MenuType } from 'menus';
-import { IStoreProxy } from 'stores/proxy';
-import { LayoutStoreSide } from 'stores/store.layout';
+import { MenuItems, MenuType } from '../../menus';
+import { IStoreProxy } from '../../stores/proxy';
+import { LayoutStoreSide } from '../../stores/store.layout';
 import { toJS } from 'mobx';
 
 const name = 'side-menu';

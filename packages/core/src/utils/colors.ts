@@ -1,4 +1,4 @@
-import { MaterialColors } from 'interfaces';
+import { MaterialColors } from '../interfaces';
 import { camelCase } from 'lodash';
 
 const _colors: Partial<MaterialColors> = {

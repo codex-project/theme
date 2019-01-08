@@ -1,16 +1,16 @@
-import { app } from 'ioc';
-import { Store } from 'stores';
+import { app } from '../ioc';
+import { Store } from '../stores';
 import { injectable } from 'inversify';
 import * as React from 'react';
 import { ClickParam } from 'antd/es/menu';
 import { api } from '@codex/api';
-import { ArrayUtils } from 'collections/ArrayUtils';
-import { Config } from 'classes/Config';
+import { ArrayUtils } from '../collections/ArrayUtils';
+import { Config } from '../classes/Config';
 import { MenuItems } from './MenuItems';
 import { toJS } from 'mobx';
-import * as url from 'utils/url';
-import { IStoreProxy } from 'stores/proxy';
-import { LayoutStoreSide } from 'stores/store.layout';
+import * as url from '../utils/url';
+import { IStoreProxy } from '../stores/proxy';
+import { LayoutStoreSide } from '../stores/store.layout';
 import { SyncBailHook, SyncWaterfallHook } from 'tapable';
 import { IMenuType, IMenuTypeConstructor } from './MenuType';
 

@@ -13,6 +13,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin-alt';
 import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import HtmlPlugin from 'html-webpack-plugin';
+// import DashboardPlugin from 'webpack-dashboard/plugin';
 import { BabelLoaderOptions, Chain, ForkTSCheckerOptions } from './build/chain';
 import AntdScssThemePlugin from './build/antd-scss-theme-plugin';
 
@@ -25,8 +26,10 @@ const chain             = new Chain({
 });
 const { isDev, isProd } = chain;
 
-chain.entry('site').add(chain.srcPath('loadApp.ts'));
-chain.entry('polyfills').add(chain.srcPath('loadPolyfills.ts'));
+// chain.entry('core').add('@codex/core/index.ts');
+chain.entry('core').add(rootPath('packages/core/src/index.ts'));
+chain.entry('site').add(chain.srcPath('entry.ts'));
+
 
 chain
     .target('web')
@@ -39,8 +42,14 @@ chain.output
     .filename('js/[name].js')
     .chunkFilename('js/chunk.[name].js')
     .publicPath('/')
-    .libraryTarget('umd');
+    .library([ 'codex', '[name]' ] as any)
+    .libraryTarget('global');
 
+chain.externals({
+    '@codex/core': {
+        root     : [ 'codex', 'core' ],
+    },
+});
 chain.resolve
     .symlinks(true)
     .extensions.merge([ '.js', '.vue', '.json', '.web.ts', '.ts', '.web.tsx', '.tsx', '.styl', '.less', '.scss', '.stylus', '.css', '.mjs', '.web.js', '.json', '.web.jsx', '.jsx' ]).end()
@@ -51,10 +60,12 @@ chain.resolve
     'lodash-es$'         : 'lodash',
     'lodash-es'          : 'lodash',
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
-    '@codex/core'        : '@codex/core/src',
-    '@codex/core/styling': '@codex/core/src/styling',
-    'heading'            : '@codex/core/src/styling/heading.less',
-    '../../theme.config$': '@codex/core/src/styling/theme.config',
+    '@codex/core$'        : rootPath('packages/core/src/index.ts'),
+    '@codex/core/styling': rootPath('packages/core/src/styling'), //'@codex/core/src/styling',
+    'heading'            : rootPath('packages/core/src/styling/heading.less'),
+    '../../theme.config$': rootPath('packages/core/src/styling/theme.config'),
+    // 'heading'            : '@codex/core/src/styling/heading.less',
+    // '../../theme.config$': '@codex/core/src/styling/theme.config',
 }).end();
 
 chain.resolveLoader
@@ -154,18 +165,18 @@ chain.node.merge({
 });
 
 chain.set('optimization', <webpack.Configuration['optimization']>{
-    namedModules:true,
-    namedChunks: true,
+    namedModules: true,
+    namedChunks : true,
     runtimeChunk: false,
-    splitChunks: {
-        chunks:'all',
-        name:true
-    }
-})
+    splitChunks : {
+        chunks: 'all',
+        name  : true,
+    },
+});
 chain.when(isProd, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
         ...chain.get('optimization'),
-        minimize:true,
+        minimize : true,
         minimizer: [
             new TerserPlugin(<TerserPlugin.TerserPluginOptions>{
                 terserOptions: {
@@ -187,8 +198,8 @@ chain.when(isProd, chain => {
                 cache        : true,
                 sourceMap    : false,
             }),
-        ]
-    })
+        ],
+    });
 });
 chain.plugin('write-file').use(WriteFilePlugin, [ { useHashIndex: false } ]);
 chain.plugin('clean').use(CleanWebpackPlugin, [
@@ -331,7 +342,8 @@ class Asdf {
                         width: process.stdout.columns,
                     });
                     ui.div(chalk.bold('Module'), chalk.bold('Stat'), chalk.bold('Gzip'));
-                    mods.forEach(mod => {
+                    mods.forEach((mod, i) => {
+                        if ( i > 10 ) return;
                         ui.div(mod.label.split('/').shift(), filesize(mod.statSize), filesize(mod.gzipSize));
                     });
                     console.log('\n' + ui.toString() + '\n');

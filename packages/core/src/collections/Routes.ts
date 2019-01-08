@@ -1,5 +1,5 @@
-import { IDefinedRoute, IRoute } from 'interfaces';
-import { lazyInject } from 'ioc';
+import { IDefinedRoute, IRoute } from '../interfaces';
+import { lazyInject } from '../ioc';
 import { History } from 'history';
 import { ArrayUtils } from './ArrayUtils';
 

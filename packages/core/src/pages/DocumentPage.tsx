@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { hot } from 'decorators';
+import { hot } from '../decorators';
 import { Api } from '@codex/api';
-import { lazyInject } from 'ioc';
-import { Document } from 'components/documents';
-import { Store } from 'stores';
+import { lazyInject } from '../ioc';
+import { Document } from '../components/documents';
+import { Store } from '../stores';
 import posed from 'react-pose';
 
 const log = require('debug')('pages:home');

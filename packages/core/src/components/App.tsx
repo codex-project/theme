@@ -10,8 +10,8 @@ import { Helmet } from 'react-helmet';
 import { ErrorBoundary } from './errors';
 import { RouterPages } from './router-pages';
 
-import 'styling/stylesheet.scss';
-import 'styling/semantic.less';
+// import '../styling/stylesheet.scss';
+import '../styling/semantic.less';
 // noinspection ES6UnusedImports
 import styles from './App.mscss'
 import './App.mscss'

@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
-import { Application } from 'classes/Application';
-import { app } from 'ioc';
+import { Application } from '../classes/Application';
+import { app } from '../ioc';
 import { MenuItem } from '@codex/api';
 import { MenuItems } from './MenuItems';
 

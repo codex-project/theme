@@ -1,12 +1,12 @@
 import { ContainerModule, decorate, injectable } from 'inversify';
 import { routes } from './routes';
-import { Store } from 'stores';
+import { Store } from './stores';
 import { Api } from '@codex/api';
-import { IConfig } from 'interfaces';
-import { HtmlComponents } from 'classes/HtmlComponents';
-import { MenuManager } from 'menus/MenuManager';
-import { Routes } from 'collections/Routes';
-import { LayoutStore } from 'stores/store.layout';
+import { IConfig } from './interfaces';
+import { HtmlComponents } from './classes/HtmlComponents';
+import { MenuManager } from './menus/MenuManager';
+import { Routes } from './collections/Routes';
+import { LayoutStore } from './stores/store.layout';
 import { toJS } from 'mobx';
 
 

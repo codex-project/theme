@@ -1,4 +1,4 @@
-import { BreakpointDictionary } from 'interfaces';
+import { BreakpointDictionary } from '../interfaces';
 
 export const breakpoints: BreakpointDictionary<number> = {
     xs : 480,

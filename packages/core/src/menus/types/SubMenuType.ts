@@ -1,5 +1,5 @@
 import { MenuItem } from '@codex/api';
-import { MenuItems, MenuType } from 'menus';
+import { MenuItems, MenuType } from '../../menus';
 
 const name = 'sub-menu';
 const log  = require('debug')('menus:types:' + name);

@@ -1,7 +1,7 @@
 import { MenuItem } from '@codex/api';
-import { MenuType } from 'menus';
+import { MenuType } from '../../menus';
 import { toJS } from 'mobx';
-import * as url from 'utils/url';
+import * as url from '../../utils/url';
 
 const name = 'projects';
 const log  = require('debug')('menus:types:' + name);

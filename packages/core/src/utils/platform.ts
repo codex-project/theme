@@ -3,7 +3,7 @@
 /* eslint-disable no-mixed-operators */
 
 
-import { IPlatform, PlatformIs } from 'interfaces';
+import { IPlatform, PlatformIs } from '../interfaces';
 
 export const isSSR = typeof window === 'undefined'
 

@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { lazyInject } from 'ioc';
-import { Store } from 'stores';
+import { lazyInject } from '../../ioc';
+import { Store } from '../../stores';
 import { observer } from 'mobx-react';
-import { hot } from 'decorators';
+import { hot } from '../../decorators';
 import { Layout, Menu as AntdMenu, Tooltip } from 'antd';
 import { NavLink } from 'react-router-dom';
 // noinspection ES6UnusedImports
 import styles from './layout.mscss';
 import './layout.mscss';
-import { getColor } from 'utils/colors';
-import { DynamicMenu } from 'components/dynamic-menu';
+import { getColor } from '../../utils/colors';
+import { DynamicMenu } from '../dynamic-menu';
 
 const { Header } = Layout;
 

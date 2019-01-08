@@ -12,7 +12,7 @@ import { Store } from '../stores';
 import { Routes } from '../collections/Routes';
 
 import { History } from 'history';
-import * as url from 'utils/url';
+import * as url from '../utils/url';
 import { MenuManager } from '../menus';
 
 const log = require('debug')('classes:Application');
