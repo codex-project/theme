@@ -1,8 +1,0 @@
-/*******************************
-     User Global Variables
-*******************************/
-
-@relativeBorderRadius: 0px;
-@absoluteBorderRadius: 0px;
-
-@defaultBorderRadius: @absoluteBorderRadius;

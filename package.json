@@ -2,27 +2,19 @@
     "private": true,
     "scripts": {
         "reinstall": "nps uninstall && yarn",
-        "site": "cd apps/site && yarn",
+        "app": "cd app && yarn",
         "api": "cd packages/api && yarn",
         "core": "cd packages/core && yarn"
     },
     "workspaces": {
         "packages": [
             "packages/*",
-            "apps/*"
+            "app"
         ],
-        "nohoist": [
+        "nohoist2": [
             "@codex/site/@codex/core",
             "@codex/site/node-sass"
 
-        ],
-        "nohoist2": [
-            "**/ts-node",
-            "**/ts-node/**",
-            "**/typescript",
-            "**/typescript/**",
-            "**/webpack-chain",
-            "**/webpack-chain/**"
         ]
     },
     "resolutions": {

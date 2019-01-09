@@ -1,0 +1,28 @@
+{
+    "extends": "../../tsconfig.webpack.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "*": ["*"],
+            "classes/*": ["classes/*"],
+            "collections/*": ["collections/*"],
+            "components/*": ["components/*"],
+            "config/*": ["config/*"],
+            "pages/*": ["pages/*"],
+            "styling/*": ["styling/*"],
+            "menus": ["menus/index.ts"],
+            "menus/*": ["menus/*"],
+            "stores": ["stores/index.tsx"],
+            "stores/*": ["stores/*"],
+            "utils/*": ["utils/*"],
+            "decorators": ["decorators.tsx"],
+
+            "interfaces": ["interfaces.ts"],
+            "ioc": ["ioc.ts"]
+        }
+    },
+    "include": [
+        "*",
+        "**/*"
+    ]
+}

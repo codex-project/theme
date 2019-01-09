@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="prod:build" type="NodeJSConfigurationType" application-parameters="prod:build" node-parameters="-r ts-node/register" path-to-js-file="../../node_modules/.bin/gulp" working-dir="$PROJECT_DIR$/apps/site">
+  <configuration default="false" name="prod:build" type="NodeJSConfigurationType" application-parameters="prod:build" node-parameters="-r ts-node/register" path-to-js-file="../../node_modules/.bin/gulp" working-dir="$PROJECT_DIR$/app">
     <method v="2" />
   </configuration>
 </component>
