@@ -8,9 +8,10 @@ import { Layout } from 'antd';
 import styles from './layout.mscss';
 import './layout.mscss';
 import { DynamicMenu } from '../dynamic-menu';
-import { observe } from 'mobx';
+import { observe, toJS } from 'mobx';
 import { LayoutStoreSide } from 'stores/store.layout';
 import { IStoreProxy } from 'stores/proxy';
+import { DynamicMenu2 } from 'components/dynamic-menu/DynamicMenu2';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -80,6 +81,7 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
             >
                 <DynamicMenu
                     styleName="sidebar-menu"
+                    // items={toJS(side._menu)}
                     items={side.menu}
                     subMenuCloseDelay={side.collapsed ? 0.2 : 1}
                     mode="inline"

@@ -1,21 +1,40 @@
+import React from 'react';
+
 import { action, observable, runInAction, toJS } from 'mobx';
-import * as React from 'react';
-import { get, has, set, snakeCase } from 'lodash';
+import { get, has, merge, set, snakeCase } from 'lodash';
 import { injectable, postConstruct } from 'inversify';
 import { LayoutStore } from './store.layout';
 import { lazyInject } from '../ioc';
+
 import { Api, api } from '@codex/api';
 import { Breadcrumb } from '../interfaces';
+import { HelmetProps } from 'react-helmet';
 
 const log = require('debug')('store');
+
+export interface HelmetStore extends Partial<HelmetProps> {
+    merge(data: Partial<HelmetProps>)
+
+    set<K extends keyof HelmetProps>(prop: K, value: HelmetProps[K])
+
+    has<K extends keyof HelmetProps>(prop: K)
+
+    get<K extends keyof HelmetProps>(prop: K, defaultValue?: HelmetProps[K])
+}
 
 @injectable()
 export class Store {
     @lazyInject('api') api: Api;
 
-    @lazyInject('store.layout')  layout: LayoutStore;
+    @lazyInject('store.layout') layout: LayoutStore;
     // public readonly document: DocumentStore;
 
+    @observable helmet: HelmetStore         = {
+        merge(helmet: Partial<HelmetProps>) {merge(this, helmet);},
+        set<K extends keyof HelmetProps>(prop: K, value: HelmetProps[K]) {set(this, prop, value);},
+        has<K extends keyof HelmetProps>(prop: K) {has(this, prop);},
+        get<K extends keyof HelmetProps>(prop: K, defaultValue?: HelmetProps[K]) {get(this, prop, defaultValue);},
+    };
     @observable codex: Partial<api.Codex>   = { ...BACKEND_DATA.codex };
     @observable config: Partial<api.Config> = { ...BACKEND_DATA.config };
 
@@ -32,6 +51,7 @@ export class Store {
         log('postConstruct', this);
         // this.layout.merge(toJS(this.codex.layout));
         log('postConstructed', this);
+
     }
 
     toJS() {

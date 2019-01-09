@@ -17,6 +17,34 @@ import AntdScssThemePlugin from './build/antd-scss-theme-plugin';
 import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from './build/AssetPathSubstitutionPlugin';
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
+import HappyPack from 'happypack';
+// chain.plugin('fork-ts-checker').use(ForkTsCheckerWebpackPlugin, [ <ForkTSCheckerOptions>{
+//     async               : false,
+//     checkSyntacticErrors: true,
+//     tsconfig            : tsconfig,
+//     compilerOptions     : {
+//         module           : 'esnext',
+//         moduleResolution : 'node',
+//         resolveJsonModule: true,
+//         isolatedModules  : true,
+//         noEmit           : true,
+//         jsx              : 'preserve',
+//     },
+//     reportFiles         : [
+//         'src/**',
+//         '!**/*.json',
+//         '!**/__tests__/**',
+//         '!**/?(*.)(spec|test).*',
+//         '!**/src/setupProxy.*',
+//         '!**/src/setupTests.*',
+//     ],
+//     watch               : chain.srcPath(),
+//     silent              : true,
+//     formatter           : require('react-dev-utils/typescriptFormatter'),
+// } ]);
+import * as threadLoader from 'thread-loader';
+
+const happyThreadPool = HappyPack.ThreadPool({ size: 4 });
 
 const cache             = true;
 const chain             = new Chain({
@@ -60,12 +88,12 @@ chain.externals({
 chain.resolve
     .symlinks(true)
     .extensions.merge([ '.js', '.vue', '.json', '.web.ts', '.ts', '.web.tsx', '.tsx', '.styl', '.less', '.scss', '.stylus', '.css', '.mjs', '.web.js', '.json', '.web.jsx', '.jsx' ]).end()
-    .mainFields.merge([ 'jsnext:main', 'module', 'browser', 'main' ]).end()
+    .mainFields.merge([ 'module', 'browser', 'main' ]).end() // 'jsnext:main',
     .mainFiles.merge([ 'index', 'index.ts', 'index.tsx' ]).end()
     .modules.merge([ 'node_modules', chain.srcPath('core') ]).end()
     .alias.merge({
     'lodash-es$'         : 'lodash',
-    'lodash-es'          : 'lodash',
+    'async$'             : 'neo-async',
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
     '@codex/phpdoc$'     : chain.srcPath('phpdoc/index.ts'),
     // '@codex/core$'       : chain.srcPath('core/index.ts'),
@@ -87,9 +115,14 @@ const babelImportPlugins = [
     [ 'import', { libraryName: 'lodash-es', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash-es' ],
 ];
 
+// const workerPoolTS = { workers: 4, poolTimeout: Infinity };
+// threadLoader.warmup(workerPoolTS, [ 'babel-loader', 'babel-preset-react-app', 'ts-loader' ]);
 chain.module.rule('ts')
     .test(/\.(ts|tsx)$/)
     .include.add(chain.srcPath()).end()
+    // .use('thread-loader')
+    // .loader('thread-loader')
+    // .options(workerPoolTS).end()
     .use('babel-loader')
     .loader('babel-loader')
     .options(<BabelLoaderOptions>{
@@ -98,6 +131,7 @@ chain.module.rule('ts')
             [ 'react-app' ],
         ],
         plugins: [
+            ...babelImportPlugins,
             'jsx-control-statements',
             [ 'react-css-modules', {
                 'context'               : chain.srcPath(),
@@ -113,26 +147,26 @@ chain.module.rule('ts')
                 'handleMissingStyleName': 'warn',
                 'generateScopedName'    : '[name]__[local]',
             } ],
-            ...babelImportPlugins,
         ].filter(Boolean),
     }).end()
     .use('ts-loader')
     .loader('ts-loader')
     .options(<Partial<TypescriptLoaderOptions>>{
-        transpileOnly  : true,
-        configFile     : tsconfig,
-        compilerOptions: { module: 'esnext' as any, target: 'es5' as any },
-
-        // getCustomTransformers: (program) => ({
-        //     before: [
-        //         // tsxControlStatements(program) as any,
-        //         tsImport([
-        //             { libraryName: 'antd', style: true, libraryDirectory: 'lib' },
-        //             { libraryName: 'lodash', libraryDirectory: '', camel2DashComponentName: false },
-        //             { libraryName: 'lodashe-es', libraryDirectory: '', camel2DashComponentName: false },
-        //         ]) as any,
-        //     ],
-        // }),
+        transpileOnly        : true,
+        configFile           : tsconfig,
+        compilerOptions      : { module: 'es2015' as any, target: 'es5' as any },
+        happyPackMode        : true,
+        getCustomTransformers: () => ({
+            before: [
+                tsImport([
+                    { libraryName: 'antd', style: true },
+                    { libraryName: 'semantic-ui-react', libraryDirectory: (importName) => Object.keys(require('./build/semantic-data').nameLocations).includes(importName) ? join('dist/es', require('./build/semantic-data').nameLocations[ importName ]) : 'dist/es' },
+                    { libraryName: 'neo-async', libraryDirectory: null, camel2DashComponentName: false },
+                    { libraryName: 'lodash', libraryDirectory: null, camel2DashComponentName: false },
+                    { libraryName: 'lodash-es', libraryDirectory: null, camel2DashComponentName: false },
+                ]) as any,
+            ],
+        }),
     } as any);
 
 chain.stats({
@@ -149,7 +183,7 @@ chain.module.rule('babel-loader')
         babelrc         : false,
         configFile      : false,
         presets         : [
-            [ 'react-app', { 'flow': false, 'typescript': true } ],
+            [ 'react-app' ],
         ],
         plugins         : [
             'jsx-control-statements',
@@ -292,14 +326,16 @@ chain.plugin('define').use(webpack.DefinePlugin, [ {
 chain.plugin('bar').use(BarPlugin, [ <BarOptions>{ profile: isDev, compiledIn: isDev } ]);
 chain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [ { options: {} } ]);
 chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptions>{
-    compilationSuccessInfo: isProd ? {} : { messages: [ 'Build success' ], notes: [] },
+    compilationSuccessInfo: { messages: [ 'Build success' ], notes: [] },
     onErrors              : function (severity, errors) { console.error(severity, errors); },
     clearConsole          : false,
     logLevel              : true,
+    additionalFormatters  : [],
+    additionalTransformers: [],
 } ]);
 chain.plugin('copy').use(CopyPlugin, [ [
-        isProd && { from: chain.srcPath('site/assets'), to: chain.outPath('vendor/site') },
-        isDev && { from: chain.srcPath('site/assets'), to: chain.outPath('vendor') },
+        isProd && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor/core') },
+        isDev && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor') },
 
     ].filter(Boolean) ],
 );
@@ -312,32 +348,13 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     TEST    : process.env.NODE_ENV === 'test',
     ENV     : dotenv.load({ path: resolve('.env') }).parsed,
 } ]);
-// chain.plugin('fork-ts-checker').use(ForkTsCheckerWebpackPlugin, [ <ForkTSCheckerOptions>{
-//     async               : false,
-//     checkSyntacticErrors: true,
-//     tsconfig            : tsconfig,
-//     compilerOptions     : {
-//         module           : 'esnext',
-//         moduleResolution : 'node',
-//         resolveJsonModule: true,
-//         isolatedModules  : true,
-//         noEmit           : true,
-//         jsx              : 'preserve',
-//     },
-//     reportFiles         : [
-//         'src/**',
-//         '!**/*.json',
-//         '!**/__tests__/**',
-//         '!**/?(*.)(spec|test).*',
-//         '!**/src/setupProxy.*',
-//         '!**/src/setupTests.*',
-//     ],
-//     watch               : chain.srcPath(),
-//     silent              : true,
-//     formatter           : require('react-dev-utils/typescriptFormatter'),
-// } ]);
-
 chain.onToConfig(config => {
+    // const workerPoolSass = {
+    //     workers           : require('os').cpus().length,
+    //     workerParallelJobs: 2,
+    //     poolTimeout       : Infinity,
+    // };
+    // threadLoader.warmup(workerPoolSass, [ 'sass-loader', 'postcss-loader', 'css-loader' ]);
 
     AntdScssThemePlugin.SCSS_THEME_PATH = chain.srcPath('core/styling/antd/theme.scss');
     // let antdScss                        = {loader:'sass-loader',options:{}};//AntdScssThemePlugin.themify('sass-loader');
@@ -371,14 +388,17 @@ chain.onToConfig(config => {
     }, {
         test   : /\.scss$/,
         exclude: [ /\.module\.scss$/, /\.mscss$/ ],
+        // use    : 'happypack/loader?id=scss',
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            // { loader: 'thread-loader', options: workerPoolSass },
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
             { loader: antdScss.loader, options: { ...antdScss.options, ...{} } },
         ],
     }, {
         test: /\.less$/,
+        // use : 'happypack/loader?id=less',
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev } },
@@ -387,6 +407,31 @@ chain.onToConfig(config => {
         ],
     } ]);
     config.plugins.push(new AntdScssThemePlugin(AntdScssThemePlugin.SCSS_THEME_PATH));
+
+    // config.plugins.push(
+    //     new HappyPack({
+    //         id        : 'scss',
+    //         threads: 2,
+    //         // threadPool: happyThreadPool,
+    //         loaders   : [
+    //             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+    //             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
+    //             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+    //             { loader: antdScss.loader, options: { ...antdScss.options, ...{} } },
+    //         ],
+    //     }),
+    //     new HappyPack({
+    //         id        : 'less',
+    //         threads: 2,
+    //         // threadPool: happyThreadPool,
+    //         loaders   : [
+    //             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+    //             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev } },
+    //             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+    //             { loader: antdLess.loader, options: { ...antdLess.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
+    //         ],
+    //     }),
+    // );
     return config;
 });
 

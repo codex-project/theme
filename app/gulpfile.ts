@@ -75,7 +75,7 @@ class Gulpfile {
             .headers({ 'Access-Control-Allow-Origin': '*' })
             .public(url + '/')
             .publicPath('/')
-            .set('before', app => app.use(require('morgan')(':method :url :status :res[content-length] - :response-time ms')));
+            // .set('before', app => app.use(require('morgan')(':method :url :status :res[content-length] - :response-time ms')));
 
         // chain.devServer
         //     .contentBase(contentBase)  //resolve(__dirname, '../../../public')

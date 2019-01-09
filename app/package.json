@@ -65,6 +65,7 @@
         "typestyled-components": "^1.0.0",
         "react-hammerjs": "^1.0.1",
         "hammerjs": "^2.0.8",
+        "memoize-one": "^5.0.0",
         "history": "^4.7.2"
     },
     "devDependencies": {
@@ -103,9 +104,12 @@
         "@types/react-hot-loader": "^4.1.0",
         "@types/node": "^10.12.18",
         "@types/lodash": "^4.14.119",
+        "@types/memoize-one": "^4.1.0",
         "@types/webpack": "^4.4.22",
         "@types/webpack-chain": "^4.0.1",
         "webpack-chain": "^5.0.1",
+        "happypack": "^5.0.1",
+        "thread-loader": "^2.1.1",
         "@types/babel-core": "^6.25.5",
         "@types/dotenv": "^6.1.0",
         "@types/debug": "^0.0.31",

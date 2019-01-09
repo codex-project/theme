@@ -10,11 +10,12 @@ import { Helmet } from 'react-helmet';
 import { ErrorBoundary } from './errors';
 import { RouterPages } from './router-pages';
 
-// import '../styling/stylesheet.scss';
-// import '../styling/semantic.less';
+import '../styling/semantic.less';
+import '../styling/stylesheet.scss';
+
 // noinspection ES6UnusedImports
-import styles from './App.mscss'
-import './App.mscss'
+// import styles from './App.mscss'
+// import './App.mscss'
 import { Layout } from './layout';
 
 const log = require('debug')('app');
