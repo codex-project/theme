@@ -99,7 +99,7 @@ export class Store {
 
     @action setDocument(document: api.Document | null) {
         this.document = document;
-        this.mergeLayout(document);
+        // this.mergeLayout(document);
         if ( document ) {
             // this.key     = document.key;
             // this.content = document.content;
@@ -108,12 +108,12 @@ export class Store {
 
     @action setProject(project: api.Project | null) {
         this.project = project;
-        this.mergeLayout(project);
+        // this.mergeLayout(project);
     }
 
     @action setRevision(revision: api.Revision | null) {
         this.revision = revision;
-        this.mergeLayout(revision);
+        // this.mergeLayout(revision);
     }
 
     async fetchDocument(project: string, revision: string, document: string) {
@@ -200,8 +200,12 @@ query Fetch($projectKey: ID!, $revisionKey: ID!, $documentKey: ID!) {
             if ( ! this.document || this.document.key !== documentKey ) {
                 this.setDocument(get(this.fetched, documentPath));
             }
+            this.mergeLayout(this.codex)
+            this.mergeLayout(this.project)
+            this.mergeLayout(this.revision)
+            this.mergeLayout(this.document)
+            // this.layout.compileMenus();
         });
 
-        this.layout.compileMenus();
     }
 }
