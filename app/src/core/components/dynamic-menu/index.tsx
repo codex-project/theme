@@ -1,3 +1,4 @@
+import './index.scss'
 import './DefaultMenuItemRenderer'
 import './HeaderMenuItemRenderer'
 

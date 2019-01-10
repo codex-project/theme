@@ -3,12 +3,11 @@ import { hot } from '../../decorators';
 import PropTypes from 'prop-types';
 import { Layout, Menu as AntdMenu } from 'antd';
 import { observer } from 'mobx-react';
-import { MenuItem } from '../../menus';
+import { MenuItem, MenuItems } from '../../menus';
 import { MenuProps as AntdMenuProps } from 'antd/es/menu';
 import { getColor } from '../../utils/colors';
 import { MenuItemIcon } from './MenuItemIcon';
 import { classes } from 'typestyle';
-import { MenuItems } from '../../menus';
 import { ClickParam } from 'antd/lib/menu';
 import { transaction } from 'mobx';
 
@@ -26,15 +25,12 @@ export interface DynamicMenuProps {
     fontSize?: number | string
     color?: string,
     renderer?: string
-    rendererMaxLevel?: number
     multiroot?: boolean
     selectFromRoutePath?: boolean
 }
 
 interface State {
-    items: MenuItems
     openKeys: string[]
-    idstring: string
 }
 
 export function MenuItemRenderer(name: string) {
@@ -44,7 +40,7 @@ export function MenuItemRenderer(name: string) {
     };
 }
 
-export type MenuItemRendererProps= DynamicMenuProps & {
+export type MenuItemRendererProps = DynamicMenuProps & {
     [ key: string ]: any
     item: MenuItem
 }
@@ -52,26 +48,24 @@ export type MenuItemRendererProps= DynamicMenuProps & {
 @hot(module)
 @observer
 export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProps, State> {
-    static displayName                                                            = 'DynamicMenu';
-    static defaultProps: Partial<DynamicMenuProps & AntdMenuProps>                = {
+    static displayName                                                        = 'DynamicMenu';
+    static defaultProps: Partial<DynamicMenuProps & AntdMenuProps>            = {
         iconStyle          : { paddingRight: 20 },
         fontSize           : 12,
-        renderer           : 'default',
         prefixCls          : 'c-dmenu',
         mode               : 'horizontal',
-        rendererMaxLevel   : 0,
         multiroot          : false,
         multiple           : false,
         selectFromRoutePath: true,
 
     };
     static renderers: Record<string, React.ComponentType<{ item: MenuItem }>> = {};
-    static contextTypes                                                           = {
+    static contextTypes                                                       = {
         siderCollapsed: PropTypes.bool,
         collapsedWidth: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]),
     };
     context: { siderCollapsed: boolean, collapsedWidth: number | string };
-
+    innerRef: AntdMenu                                                        = null;
 
     componentDidMount() {
         this.selectFromRoutePath();
@@ -90,7 +84,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
         }
     }
 
-    onOpenChange = (openKeys: string[]) => transaction(() =>{
+    onOpenChange = (openKeys: string[]) => transaction(() => {
         log('onOpenChange', openKeys);
         this.props.items.collapseAll().items(openKeys).expand();
     });
@@ -102,7 +96,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
         items.handleClick(item, param.domEvent);
         if ( item.selected ) {
             if ( this.props.multiple === false ) {
-                items.deselectAll().select(item)
+                items.deselectAll().select(item);
             }
         } else {
             this.selectFromRoutePath();
@@ -119,10 +113,6 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
     renderMenuItem(item: MenuItem, level?: number) {
         const { fontSize, iconStyle, color, mode, items } = this.props;
         const className                                   = `item-${item.type}`;
-
-        // if ( level === 0 && ! item.icon ) {
-        //     item.icon = 'caret-right';
-        // }
         switch ( item.type ) {
             case 'divider':
                 return (<Divider key={item.id} className={className}>{mode === 'horizontal' ? '&nbsp' : null}</Divider>);
@@ -140,10 +130,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
                     </SubMenu>
                 );
         }
-        let renderer = this.props.renderer;
-        if ( level > this.props.rendererMaxLevel ) {
-            renderer = 'default';
-        }
+        let renderer = this.props.renderer || item.renderer || 'default';
         if ( DynamicMenu.renderers[ renderer ] ) {
             const Component = DynamicMenu.renderers[ renderer ];
             let props       = { level, className, fontSize, iconStyle, color };
@@ -153,21 +140,17 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
     }
 
     render() {
-        const { children, className, multiple, multiroot, selectFromRoutePath, prefixCls, mode, fontSize, iconStyle, items, color, renderer, rendererMaxLevel, ...props } = this.props;
-
+        const { children, className, multiple, multiroot, selectFromRoutePath, prefixCls, mode, fontSize, iconStyle, items, color, renderer, ...props } = this.props;
         if ( typeof items.selected !== 'function' ) {
             return null;
         }
-
-        log('render');
-
-
         const menuClassName = classes(className, prefixCls,
             `${prefixCls}-${mode}`,
             `${prefixCls}-theme-${mode}`,
         );
         return (
             <AntdMenu
+                ref={ref => this.innerRef = ref}
                 mode={mode}
                 className={menuClassName}
                 subMenuCloseDelay={0.6}

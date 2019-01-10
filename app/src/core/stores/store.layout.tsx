@@ -1,4 +1,4 @@
-import { action, toJS } from 'mobx';
+import { action, toJS, transaction } from 'mobx';
 import * as React from 'react';
 import { camelCase, set } from 'lodash';
 import { colors } from '../utils/colors';
@@ -236,6 +236,15 @@ export class LayoutStore {
         set(this, prop, value);// prop         = prop.split('.').slice(1).join('.')
     }
 
+    compileMenus() {
+        transaction(() => {
+            this.header.menu.compile();
+            this.left.menu.compile();
+            this.right.menu.compile();
+            this.footer.menu.compile();
+        });
+        return this;
+    }
 }
 
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { action, observable, runInAction, toJS } from 'mobx';
+import { action, observable, runInAction, toJS, transaction } from 'mobx';
 import { get, has, merge, set, snakeCase } from 'lodash';
 import { injectable, postConstruct } from 'inversify';
 import { LayoutStore } from './store.layout';
@@ -73,6 +73,17 @@ export class Store {
     @action set(prop: string, value: any) {set(this, prop, value); }
 
     has(prop: string) {return has(this, prop);}
+
+    async diff(left:string=null,right:string=null){
+        let result = await this.api.query(`query Diff($left:String, $right:String) {
+    codex {
+        diff(left:$left,right:$right){    
+            attributes
+        }
+    }        
+}`)
+        result.codex.diff.attributes
+    }
 
 
     @observable fetching: boolean      = false;
@@ -176,7 +187,7 @@ query Fetch($projectKey: ID!, $revisionKey: ID!, $documentKey: ID!) {
             }
         }
 
-        runInAction(() => {
+        transaction(() => {
             if ( ! this.project || this.project.key !== projectKey ) {
                 this.setProject(get(this.fetched, projectPath));
                 this.revision = null;
@@ -191,5 +202,6 @@ query Fetch($projectKey: ID!, $revisionKey: ID!, $documentKey: ID!) {
             }
         });
 
+        this.layout.compileMenus();
     }
 }

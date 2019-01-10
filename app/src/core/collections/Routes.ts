@@ -2,10 +2,12 @@ import { IDefinedRoute, IRoute } from '../interfaces';
 import { lazyInject } from '../ioc';
 // import { History } from 'history';
 // import * as H from 'history';
+// @ts-ignore
+import H = require('history');
 import { ArrayUtils } from './ArrayUtils';
 
-import pathToRegexp, {compile,parse} from 'path-to-regexp';
-import { generatePath } from 'react-router';
+import pathToRegexp from 'path-to-regexp';
+import { generatePath, matchPath } from 'react-router';
 
 const log = require('debug')('collections:routes');
 
@@ -23,7 +25,7 @@ const addTestKeysToRoutes = (routes: IRoute[]): IDefinedRoute[] => routes.map((r
 });
 
 export class Routes<T extends IDefinedRoute = IDefinedRoute> extends Array<T> implements Array<T> {
-    @lazyInject('history') history: any;
+    @lazyInject('history') history: H.History;
 
     constructor(...items: T[]) {
         super();
@@ -44,6 +46,10 @@ export class Routes<T extends IDefinedRoute = IDefinedRoute> extends Array<T> im
     generatePath(pattern: string, params?: { [ paramName: string ]: string | number | boolean }) {
         return generatePath(pattern, params);
     }
+
+    matchPath<Params extends { [K in keyof Params]?: string }>(props) {return matchPath<Params>(this.history.location.pathname, props); }
+
+    getRoute(name: string) {return this.findBy('name', name);}
 
     findBy(key: string, value: any): T | undefined { return this.rfind(item => item[ key ] === value); }
 

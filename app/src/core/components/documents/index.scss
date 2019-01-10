@@ -49,7 +49,7 @@
     }
 
     h2 {
-        margin: 35px 0 0 -25px;
+        margin: 35px 0 0;
         padding: 5px 0 5px 25px;
         font-size: 25px;;
         position: relative;
@@ -57,7 +57,7 @@
     }
 
     h3 {
-        margin: 35px 0 0 -25px;
+        margin: 35px 0 0;
         padding: 5px 0 5px 25px;
         font-size: 20px;
         position: relative;
@@ -148,6 +148,7 @@
         padding-top: 5px;
         padding-bottom: 5px;
     }
+
     .c-toc {
 
         &-list {
@@ -193,18 +194,31 @@
         }
     }
 
+    h1.c-toc-header {
+        margin-top: -2px;
+        margin-left: -25px;
+    }
+
+    h2.c-toc-header {
+        margin-top: -2px;
+        margin-left: -25px;
+    }
+
     h3.c-toc-header {
         font-size: 26px;
         margin-top: -2px;
+        margin-left: -25px;
     }
 
     h4.c-toc-header {
         font-size: 21px;
         margin-top: -1px;
+        margin-left: -25px;
     }
 
     h5.c-toc-header {
         font-size: 16px;
         margin-top: -1px;
+        margin-left: -25px;
     }
 }

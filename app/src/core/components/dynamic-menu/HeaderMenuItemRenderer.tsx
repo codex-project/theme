@@ -26,7 +26,7 @@ export class HeaderMenuItemRenderer extends React.Component<MenuItemRendererProp
         const content                                      = (
             <Row type="flex" justify="start" key={getRandomId(6)}>
                 {icon ? <Col order={1} styleName="icon-col"> <MenuItemIcon styleName="icon" item={item} /> </Col> : null}
-                <Col order={2} styleName="icon-col">
+                <Col order={2} styleName="label-col">
                     <Row styleName="label">{label}</Row>
                     <Row styleName="sublabel">{sublabel}</Row>
                 </Col>

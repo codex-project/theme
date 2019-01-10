@@ -5,11 +5,10 @@ import { observer } from 'mobx-react';
 import { hot } from '../../decorators';
 import { Layout, Menu as AntdMenu, Tooltip } from 'antd';
 import { NavLink } from 'react-router-dom';
-// noinspection ES6UnusedImports
-import styles from './layout.mscss';
-import './layout.mscss';
 import { getColor } from '../../utils/colors';
 import { DynamicMenu } from '../dynamic-menu';
+import { classes } from 'typestyle';
+import { MenuItemIcon } from 'components/dynamic-menu/MenuItemIcon';
 
 const { Header } = Layout;
 
@@ -46,32 +45,34 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
             left : left.collapsed ? 'indent' : 'outdent',
             right: left.collapsed ? 'outdent' : 'indent',
         };
+        let className                              = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
         return (
-            <Header styleName="header" style={computedStyle} className={computedClass}>
-                <If condition={header.logo}>
-                    <div styleName="header-logo" style={{ width: left.width }}/>
-                </If>
+            <Header style={computedStyle} className={className('header', computedClass)}>
                 <If condition={header.show_left_toggle}>
                     <Tooltip placement="right" title={toggleTooltip.left}>
-                        <i className={'fa-' + toggleClassName.left}
-                           styleName="header-toggle"
+                        <i className={className('header-toggle', 'fa-' + toggleClassName.left)}
                            onClick={() => left.setCollapsed(! left.collapsed)}
                         />
                     </Tooltip>
                 </If>
+                <If condition={header.logo}>
+                    <div className={className('header-title')} style={{ width: left.width }}>
+                        {this.store.codex.display_name}
+                    </div>
+                </If>
+                <div style={{ flexGrow: 10 }}/>
                 <DynamicMenu
                     theme="dark"
                     mode="horizontal"
-                    styleName="header-menu"
+                    className={className('header-menu')}
                     color={header.color}
                     items={menu}
-                    renderer="header"
+                    overflowedIndicator={<span className={className('header-menu-overflowed-title')}><MenuItemIcon  item={{icon: 'bars'}} /></span>}
                 />
-                <div style={{ flexGrow: 10 }}/>
                 <AntdMenu
                     theme="dark"
                     mode="horizontal"
-                    styleName="header-menu"
+                    className={className('header-menu')}
                     style={{ backgroundColor: getColor(header.color) }}
                     selectedKeys={[]}
                 >
@@ -84,9 +85,9 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
                 </AntdMenu>
                 <If condition={header.show_right_toggle}>
                     <Tooltip placement="left" title={toggleTooltip.right}>
-                        <i className={'fa-' + toggleClassName.right}
-                           styleName="header-toggle"
-                           onClick={() => right.setCollapsed(! right.collapsed)}
+                        <i
+                            className={className('header-toggle', 'fa-' + toggleClassName.right)}
+                            onClick={() => right.setCollapsed(! right.collapsed)}
                         />
                     </Tooltip>
                 </If>

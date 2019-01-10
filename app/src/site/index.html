@@ -44,6 +44,8 @@
                 return codex.site.loadApp()
             })
             .then(function (site) {
+                codex.phpdoc.install(site.app);
+
                 site.app.register({
                     debug : true,
                     rootID: 'root',

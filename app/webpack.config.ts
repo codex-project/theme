@@ -1,4 +1,4 @@
-import { join, resolve } from 'path';
+import { join, relative, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as webpack from 'webpack';
@@ -18,6 +18,8 @@ import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from 
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import HappyPack from 'happypack';
+
+import sassImportResolve from '@csstools/sass-import-resolve';
 // chain.plugin('fork-ts-checker').use(ForkTsCheckerWebpackPlugin, [ <ForkTSCheckerOptions>{
 //     async               : false,
 //     checkSyntacticErrors: true,
@@ -42,7 +44,6 @@ import HappyPack from 'happypack';
 //     silent              : true,
 //     formatter           : require('react-dev-utils/typescriptFormatter'),
 // } ]);
-import * as threadLoader from 'thread-loader';
 
 const happyThreadPool = HappyPack.ThreadPool({ size: 4 });
 
@@ -81,9 +82,7 @@ chain.output
 
 chain.externals({
     '@codex/core'  : [ 'codex', 'core' ],
-    '@codex/phpdoc': {
-        root: [ 'codex', 'phpdoc' ],
-    },
+    '@codex/phpdoc': [ 'codex', 'phpdoc' ],
 });
 chain.resolve
     .symlinks(true)
@@ -95,7 +94,7 @@ chain.resolve
     'lodash-es$'         : 'lodash',
     'async$'             : 'neo-async',
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
-    '@codex/phpdoc$'     : chain.srcPath('phpdoc/index.ts'),
+    '@codex/phpdoc$'     : chain.srcPath('phpdoc'),
     // '@codex/core$'       : chain.srcPath('core/index.ts'),
     '@codex/core'        : chain.srcPath('core'),
     // '@codex/core/styling': rootPath('packages/core/src/styling'), //'@codex/core/src/styling',
@@ -114,15 +113,15 @@ const babelImportPlugins = [
     [ 'import', { libraryName: 'lodash', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash' ],
     [ 'import', { libraryName: 'lodash-es', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash-es' ],
 ];
-
+let nodeModulePaths      = require('module')._nodeModulePaths(process.cwd());
 // const workerPoolTS = { workers: 4, poolTimeout: Infinity };
 // threadLoader.warmup(workerPoolTS, [ 'babel-loader', 'babel-preset-react-app', 'ts-loader' ]);
 chain.module.rule('ts')
     .test(/\.(ts|tsx)$/)
     .include.add(chain.srcPath()).end()
-    // .use('thread-loader')
-    // .loader('thread-loader')
-    // .options(workerPoolTS).end()
+// .use('thread-loader')
+// .loader('thread-loader')
+// .options(workerPoolTS).end()
     .use('babel-loader')
     .loader('babel-loader')
     .options(<BabelLoaderOptions>{
@@ -140,7 +139,7 @@ chain.module.rule('ts')
                     '.mscss': {
                         'syntax' : 'postcss-scss',
                         'plugins': [
-                            'postcss-nested',
+                            'postcss-nested'
                         ],
                     },
                 },
@@ -194,7 +193,7 @@ chain.module.rule('babel-loader')
                     '.mscss': {
                         'syntax' : 'postcss-scss',
                         'plugins': [
-                            'postcss-nested',
+                            'postcss-nested'
                         ],
                     },
                 },

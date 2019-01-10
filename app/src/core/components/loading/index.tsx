@@ -25,12 +25,14 @@ export class Loading extends React.PureComponent<LoadingProps> {
             return <div className={className}>Error!</div>;
         } else if ( timedOut ) {
             return <div className={className}>Request timed out...</div>;
+        } else if (pastDelay && isLoading) {
+            return (
+                <div styleName="wrapper" className={className}>
+                    <Spin styleName="spin" {...spin || { iconStyle: { fontSize: '5em' } }} />
+                    <div styleName="text">Loading...</div>
+                </div>
+            );
         }
-        return (
-            <div styleName="wrapper" className={className}>
-                <Spin styleName="spin" {...spin || { iconStyle: { fontSize: '5em' } }} />
-                <div styleName="text">Loading...</div>
-            </div>
-        );
+        return null;
     }
 }

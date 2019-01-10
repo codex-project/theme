@@ -13,7 +13,7 @@ export class RevisionsMenuType extends MenuType {
     public pre(item: MenuItem): MenuItem {
         let store     = this.app.store;
         item.children = [
-            { type: 'header', label: 'revisions' },
+            { type: 'header', label: 'Revisions' },
             { type: 'divider' },
         ];
         let params    = {

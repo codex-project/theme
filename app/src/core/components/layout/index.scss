@@ -1,96 +1,127 @@
 @import "../../styling/base";
 
+$layout-prefix-cls: "c-layout";
 
-$menu-prefix-cls: "#{$ant-prefix}-menu";
+:root {
+    --layout-header-height: #{$layout-header-height};
+}
 
-.c-dmenu {
-    height: 100%;
+.#{$layout-prefix-cls} {
 
-    &-border-left,
-    &-border-right {
-        border: 0 solid #e8e8e8;
+    &-header {
+        line-height: var(--layout-header-height);
+        display: flex;
+        justify-content: space-around;
     }
 
-    &-border-left {
-        border-left-width: 1px
+    &-header-logo {
+        height: 32px;
+        background: rgba(255, 255, 255, .2);
+        margin: 16px;
+        display: inline-block;
+        float: left;
+        font-size: 25px;
+        line-height: 1rem;
+        padding: 8px;
     }
 
-    &-border-right {
-        border-right-width: 1px
-    }
+    &-header-toggle {
+        @include fa-icon;
+        font-size: 30px;
+        color: white;
+        padding: 17px;
+        height: 100%;
 
-    .item {
-        &-divider {
-
+        &:hover {
+            cursor: pointer;
         }
-
-        &-header {
-            font-weight: bold;
-            color: rgba(0, 0, 0, 0.65) !important;
-            background-color: transparent !important;
-            cursor: default
-        }
     }
-}
 
-.c-dmenu.ant-menu-horizontal {
+    &-header-title {
+        font-size: 25px;
+        line-height: 1rem;
+        padding: 8px;
+        height: 32px;
+        margin: 16px 25px 16px 0;
+        float: left;
+        display: inline-block;
+        color: #ff5722;
+    }
 
-}
+    &-header-menu {
+        line-height: var(--layout-header-height);
 
-.ant-menu.ant-menu-horizontal > .ant-menu-item-divider {
-    width: 1px;
-    height: unset;
-    line-height: unset;
-    top: 1px;
-    bottom: 1px;
-    float: left;
-    padding: 0;
-    position: relative;
-    display: block;
-    margin: 0;
-    opacity: 0.3;
-}
+        &-overflowed-title {
+            font-size: 30px;
+            margin: 18px auto 0;
 
-
-.#{$menu-prefix-cls} {
-    &-item,
-    &-submenu-title {
-        .#{$fa-css-prefix} {
-            min-width: 14px;
-            transition: font-size .15s $ease-out, margin .3s $ease-in-out;
-
-            + span {
-                transition: opacity .3s $ease-in-out, width .3s $ease-in-out;
-                opacity: 1;
+            > .fa {
+                font-size: 30px;
             }
         }
     }
 
+    &-header-menu-item {
+        height: var(--layout-header-height) !important;
+        line-height: 50px;
 
-    &-inline-collapsed {
+        &:hover {
+            background-color: cadetblue;
+        }
 
-        > .#{$menu-prefix-cls}-item,
-        > .#{$menu-prefix-cls}-item-group > .#{$menu-prefix-cls}-item-group-list > .#{$menu-prefix-cls}-item,
-        > .#{$menu-prefix-cls}-submenu > .#{$menu-prefix-cls}-submenu-title {
-            .#{$fa-css-prefix} {
-                font-size: 16px;
-                line-height: $menu-item-height;
-                margin: 0;
+        .icon-col {
+            width: 50px
+        }
 
-                + span {
-                    max-width: 0;
-                    display: inline-block;
-                    opacity: 0;
+        .icon {
+            font-size: 30px;
+            margin: 18px auto 0
+        }
+
+        .label-col {
+            white-space: normal;
+            width: calc(100% - 50px)
+        }
+
+        .label {
+            font-weight: bold;
+            padding: 0;
+            height: 50%
+        }
+
+        .sublabel {
+            font-size: 10px;
+            height: 15px;
+            line-height: 15px;
+        }
+    }
+
+    &-side {
+        min-height: 100%;
+    }
+
+    &-side-menu {
+        border-right: none;
+
+        > .ant-menu-submenu .ant-menu-item {
+            padding-left: 60px !important;
+
+            > .ant-menu-submenu .ant-menu-item {
+                padding-left: 120px !important;
+
+                > .ant-menu-submenu .ant-menu-item {
+                    padding-left: 180px !important;
+
+                    > .ant-menu-submenu .ant-menu-item {
+                        padding-left: 240px !important;
+                    }
                 }
             }
         }
-
-        &-tooltip {
-            .#{$fa-css-prefix} {
-                display: none;
-            }
-        }
     }
 
 
+    &-footer {
+
+    }
 }

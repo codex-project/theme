@@ -4,14 +4,11 @@ import { Store } from '../../stores';
 import { observer } from 'mobx-react';
 import { hot } from '../../decorators';
 import { Layout } from 'antd';
-// noinspection ES6UnusedImports
-import styles from './layout.mscss';
-import './layout.mscss';
 import { DynamicMenu } from '../dynamic-menu';
-import { observe, toJS } from 'mobx';
+import { observe } from 'mobx';
 import { LayoutStoreSide } from 'stores/store.layout';
 import { IStoreProxy } from 'stores/proxy';
-import { DynamicMenu2 } from 'components/dynamic-menu/DynamicMenu2';
+import { classes } from 'typestyle';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -19,7 +16,6 @@ const log = require('debug')('components:layout:sidebar');
 
 export interface LayoutSideProps {
     side: 'left' | 'right'
-
     onCollapse?: (collapsed: boolean) => void
 }
 
@@ -61,17 +57,15 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
     };
 
     render() {
-        // let { left, right, header, footer, content, middle } = this.store.layout;
-        // let { children }                                     = this.props
         let side = this.store.layout[ this.props.side ];
 
+        let className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
         return (
             <Sider
                 collapsible
-                styleName="sidebar"
                 breakpoint="xs"
                 style={side.computedStyle}
-                className={side.computedClass}
+                className={className('side', side.computedClass)}
                 width={side.width}
                 defaultCollapsed={true}
                 collapsed={side.collapsed}
@@ -80,8 +74,7 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                 onCollapse={this.onCollapse}
             >
                 <DynamicMenu
-                    styleName="sidebar-menu"
-                    // items={toJS(side._menu)}
+                    className={className('side-menu')}
                     items={side.menu}
                     subMenuCloseDelay={side.collapsed ? 0.2 : 1}
                     mode="inline"

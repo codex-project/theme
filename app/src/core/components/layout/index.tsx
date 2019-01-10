@@ -6,12 +6,9 @@ import { Layout as AntdLayout } from 'antd';
 import { StoreControl } from '../../components/StoreControl';
 import { lazyInject } from '../../ioc';
 import { LayoutHeader } from '../../components/layout/LayoutHeader';
-// noinspection ES6UnusedImports
-// import styles from './layout.mscss';
-import './layout.mscss';
-import './index.scss';
 import { LayoutSide } from '../../components/layout/LayoutSide';
 import { LayoutFooter } from '../../components/layout/LayoutFooter';
+import './index.scss';
 
 
 const { Sider, Header, Content, Footer } = AntdLayout;

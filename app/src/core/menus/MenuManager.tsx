@@ -6,13 +6,10 @@ import { ClickParam } from 'antd/es/menu';
 import { ArrayUtils } from '../collections/ArrayUtils';
 import { Config } from '../classes/Config';
 import { MenuItems } from './MenuItems';
-import { toJS } from 'mobx';
-import * as url from '../utils/url';
-import { IStoreProxy } from '../stores/proxy';
-import { LayoutStoreSide } from '../stores/store.layout';
 import { SyncBailHook, SyncWaterfallHook } from 'tapable';
 import { IMenuType, IMenuTypeConstructor } from './MenuType';
 import { MenuItem } from './MenuItem';
+import { toJS } from 'mobx';
 
 
 const log = require('debug')('classes:MenuManager');
@@ -54,8 +51,11 @@ export class MenuManager {
         items = this.defaults(items, parent);
         items = this.pre(items);
         items = this.post(items);
-
-        items = ArrayUtils.mapItems(items, (item, parent) => this.compile(item));
+        items = ArrayUtils.mapItems(items, (item, parent) => {
+            let { children, ...__raw } = toJS(item);
+            item.__raw                 = {...__raw};
+            return this.compile(item);
+        });
         return items;
     }
 
@@ -98,20 +98,22 @@ export class MenuManager {
 
     registerShortType(name: string, handler: MenuShortTypeHandler) { }
 
-    protected compile(item: MenuItem): MenuItem {
+    compile(item: MenuItem): MenuItem {
         let config = new Config();
-        config.merge({ ...item });
+        config.merge({ ...item.__raw });
 
         // circular reference workaround
         // let store = this.store;
-        config.set('store', () => app.store);
+        config.set('store',  app.store);
 
-        Object.keys(item).forEach(key => {
-            let value = config.get(key);
-            if ( item[ key ] !== value ) {
-                item[ key ] = value;
-            }
-        });
+        Object.keys(item)
+            .filter(key => [ '__raw', 'children' ].includes(key) === false)
+            .forEach(key => {
+                let value = config.get(key);
+                if ( item.__raw[ key ] !== value ) {
+                    item[ key ] = value;
+                }
+            });
 
         return item;
     }

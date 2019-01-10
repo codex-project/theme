@@ -74,6 +74,8 @@ export interface Query {
 
     document: Document;
 
+    diff: Diff;
+
     phpdoc?: Maybe<PhpdocQuery>;
 }
 
@@ -93,6 +95,8 @@ export interface Codex {
     documents: Document[];
 
     document: Document;
+
+    diff: Diff;
 
     display_name?: Maybe<string>;
 
@@ -284,6 +288,8 @@ export interface MenuItem {
 
     path?: Maybe<string>;
 
+    renderer?: Maybe<string>;
+
     expand?: Maybe<boolean>;
 
     selected?: Maybe<boolean>;
@@ -439,6 +445,10 @@ export interface GitConfig {
     paths?: Maybe<Assoc>;
 
     webhook?: Maybe<Assoc>;
+}
+
+export interface Diff {
+    attributes?: Maybe<Assoc>;
 }
 
 export interface CodexUrls {
@@ -731,6 +741,11 @@ export interface DocumentQueryArgs {
 
     documentKey?: Maybe<string>;
 }
+export interface DiffQueryArgs {
+    left?: Maybe<string>;
+
+    right?: Maybe<string>;
+}
 export interface PhpdocQueryArgs {
     projectKey?: Maybe<string>;
 
@@ -765,6 +780,11 @@ export interface DocumentCodexArgs {
     revisionKey?: Maybe<string>;
 
     documentKey?: Maybe<string>;
+}
+export interface DiffCodexArgs {
+    left?: Maybe<string>;
+
+    right?: Maybe<string>;
 }
 export interface RevisionsProjectArgs {
     query?: Maybe<QueryConstraints>;

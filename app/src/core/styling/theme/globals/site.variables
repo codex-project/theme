@@ -12,11 +12,11 @@
 @fontName          : "Open Sans";
 @fontSmoothing     : antialiased;
 
-@headerFont        : @font-family; //@fontName, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+@headerFont        : @font-family-header; //@fontName, 'Helvetica Neue', Arial, Helvetica, sans-serif;
 @pageFont          : @font-family; //@fontName, 'Helvetica Neue', Arial, Helvetica, sans-serif;
 
 @googleFontName    : @fontName;
-@importGoogleFonts : true;
+@importGoogleFonts : false;
 @googleFontSizes   : '400,700,400italic,700italic';
 @googleSubset      : 'latin';
 

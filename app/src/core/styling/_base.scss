@@ -1,6 +1,8 @@
 @import "~bootstrap/scss/functions";
 
 
+@import "variables";
+
 //@formatter:off
 $enable-caret:              true ;
 $enable-rounded:            false;
@@ -21,7 +23,6 @@ $fa-font-path:        "../assets/fonts/FontAwesome";
 @import "antd/theme";
 @import "antd/mixins";
 
-@import "variables";
 
 @import "~foundation-sites/scss/foundation";
 

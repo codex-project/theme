@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { hot, WithRouter, WithRouterProps } from '../decorators';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Router } from 'react-router-dom';
 import { Store } from '../stores';
 import { observer } from 'mobx-react';
 import { Routes } from '../collections/Routes';
@@ -44,14 +44,17 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
 
     context: { router: BrowserRouter };
 
-    constructor(props: {} & WithRouterProps, context: { router: BrowserRouter }) {
+    constructor(props: {} & WithRouterProps, context: { router: Router }) {
         super(props, context);
-        if ( ! app.isBound(BrowserRouter) ) {
-            app.bind(BrowserRouter, 'router').toConstantValue(context.router);
+        if ( ! app.isBound('router') ) {
+            app.bind( 'router').toConstantValue(context.router);
         }
         if ( ! app.isBound('history') ) {
             app.bind('history').toConstantValue(props.history);
         }
+        props.history.listen((location, action) => {
+            log('location', action, location)
+        })
     }
 
     render() {
@@ -71,39 +74,4 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
         );
     }
 
-
-    render2() {
-        // let routes = app.get<Routes>('routes')
-        return (
-            <Layout>
-                <Helmet
-                    defaultTitle={this.store.codex.display_name}
-                    titleTemplate={this.store.codex.display_name + ' - %s'}
-                />
-                <ErrorBoundary>
-                    {/*<LayoutHeader/>*/}
-                </ErrorBoundary>
-
-                <Layout>
-
-                    <ErrorBoundary>
-                        {/*<LayoutSidebar/>*/}
-                    </ErrorBoundary>
-
-                    <ErrorBoundary>
-                        {/*<LayoutContent>*/}
-                        <ErrorBoundary>
-                            <RouterPages routes={this.routes}/>
-                        </ErrorBoundary>
-                        {/*</LayoutContent>*/}
-                    </ErrorBoundary>
-
-                </Layout>
-
-                <ErrorBoundary>
-                    {/*<LayoutFooter/>*/}
-                </ErrorBoundary>
-            </Layout>
-        );
-    }
 }

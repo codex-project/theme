@@ -1,9 +1,20 @@
 //@formatter:off
-$font-family-no-number       : "Open Sans", Arial, sans-serif;
+$font-family-sans-serif:                        "Open Sans", Arial, sans-serif;
+$font-family-monospace:                         "Hasklig", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+$font-family-header:                            'Raleway', "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif ;
+
+$color-codex:                                                           #ed6626 !default;
+$color-codex-alt:                                                       #54b7e8 !default; //#e7461a
+$color-codex-grey:                                                      #56565f !default;
+$color-codex-grey-alt:                                                  #3a3a3f !default;
+
+
+
+
+
+$font-family-no-number       : $font-family-sans-serif;
 $font-family                 : $font-family-no-number;
-$code-family                 : "Hasklig", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-
+$code-family                 : $font-family-monospace;
 
 $layout-header-padding       : 0;
 $menu-collapsed-width        : 50px;
@@ -16,7 +27,8 @@ $menu-item-height: 30px;
 
 $layout-header-background       : #4D5C69;
 $layout-footer-background       : $layout-header-background;
-//$primary-color               : #FF5722;
+$primary-color                  : $color-codex;
+
 //$layout-header-background    : #4d5c69;
 //$layout-footer-background    : #4d5c69;
 //$layout-sider-background     : #f8f2f2;

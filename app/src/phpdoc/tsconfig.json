@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "lib": [
+            "es7",
+            "esnext.asynciterable",
+            "dom"
+        ],
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "inlineSourceMap": true,
+        "esModuleInterop": true,
+        "jsx": "preserve",
+
+        "baseUrl": ".",
+        "paths": {
+            "@codex/core": ["../core"]
+        }
+    },
+    "include": [
+        "*"
+    ]
+}

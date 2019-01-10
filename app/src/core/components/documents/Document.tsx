@@ -4,8 +4,6 @@ import { Card } from 'antd';
 import { app, lazyInject } from '../../ioc';
 import { renderLoading } from '../loading';
 import PropTypes from 'prop-types';
-
-import './index.scss';
 import { Api } from '@codex/api';
 import { observer } from 'mobx-react';
 import { getPrism } from '../../utils/get-prism';
@@ -14,6 +12,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { Store } from '../../stores';
 import Helmet from 'react-helmet';
 import { toJS } from 'mobx';
+
+
+import './index.scss';
 
 const { Meta } = Card;
 
@@ -52,7 +53,7 @@ export class Document extends React.Component<DocumentProps, State> {
 
     getChildContext() {
         return {
-            router    : app.get<BrowserRouter>(BrowserRouter),
+            router    : app.get<BrowserRouter>('router'),
             document  : toJS(this.store.document),
             attributes: toJS(this.store.document),
         };

@@ -76,7 +76,7 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     }
 
     deselect(items?: IMenuItemItems<T>) {
-        transaction(() => this.getItems(items).forEach(item => item.selected = false))
+        transaction(() => this.getItems(items).forEach(item => item.selected = false));
         return this;
     }
 
@@ -90,6 +90,11 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
             item = this.item(item);
         }
         return this.manager.handleMenuItemClick(item, e, this);
+    }
+
+    compile(items?: IMenuItemItems<T>) {
+        ArrayUtils.each(this.getItems(items), item => this.manager.compile(item));
+        return this;
     }
 
     getItems(items: IMenuItemItems<T> = this): MenuItems<T> {
@@ -133,9 +138,9 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     }
 
     selectActiveFromRoute(expandParents: boolean = false, collapseOthers: boolean = false) {
-        transaction(() => {
-            let active = this.findActiveFromRoute();
-            if ( active ) {
+        let active = this.findActiveFromRoute();
+        if ( active ) {
+            transaction(() => {
                 if ( expandParents && collapseOthers ) {
                     this.collapseAll();
                 }
@@ -143,7 +148,8 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
                 if ( expandParents ) {
                     this.expandParentsForSelected();
                 }
-            }
-        });
+            });
+        }
+
     }
 }

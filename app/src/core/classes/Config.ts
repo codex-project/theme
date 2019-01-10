@@ -81,7 +81,7 @@ export class Config implements ConfigInterface {
     protected defaults: Object;
     protected data: Object;
     protected allDelimiters: IDelimitersCollection;
-    protected static propStringTmplRe: RegExp = /^<%=\s*([a-z0-9_$]+(?:\.[a-z0-9_$]+)*)\s*%>$/i;
+    public static readonly propStringTmplRe: RegExp = /^<%=\s*([a-z0-9_$]+(?:\.[a-z0-9_$]+)*)\s*%>$/i;
 
     constructor(obj?: Object) {
         this.allDelimiters = {};

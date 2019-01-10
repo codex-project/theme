@@ -45,6 +45,7 @@ export class Application extends Container {
 
     get routes(): Routes { return this.get('routes'); }
 
+
     get history(): History { return this.get('history'); }
 
     get config(): IConfig { return this.get('config');}
