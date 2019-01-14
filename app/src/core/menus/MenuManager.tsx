@@ -39,8 +39,10 @@ export class MenuManager {
         items = this.pre(items);
         items = this.post(items);
         items = ArrayUtils.mapItems(items, (item, parent) => {
-            let { children, ...__raw } = toJS(item);
-            item.__raw                 = { ...__raw };
+            if ( item.__raw === undefined ) {
+                let { children, ...__raw } = toJS(item);
+                item.__raw                 = { ...__raw };
+            }
             return this.compile(item);
         });
         return items;

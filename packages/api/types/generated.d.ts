@@ -68,7 +68,7 @@ export interface Codex {
 export interface Project {
     revisions: Revision[];
     revision: Revision;
-    changed?: Maybe<(Maybe<string>)[]>;
+    inherits?: Maybe<(Maybe<string>)[]>;
     changes?: Maybe<Assoc>;
     key: string;
     display_name?: Maybe<string>;
@@ -91,7 +91,7 @@ export interface Revision {
     documents: Document[];
     document: Document;
     project: Project;
-    changed?: Maybe<(Maybe<string>)[]>;
+    inherits?: Maybe<(Maybe<string>)[]>;
     changes?: Maybe<Assoc>;
     key: string;
     meta?: Maybe<Meta>;
@@ -104,7 +104,7 @@ export interface Revision {
 }
 export interface Document {
     revision: Revision;
-    changed?: Maybe<(Maybe<string>)[]>;
+    inherits?: Maybe<(Maybe<string>)[]>;
     changes?: Maybe<Assoc>;
     key: string;
     path?: Maybe<string>;

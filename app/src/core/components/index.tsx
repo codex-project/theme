@@ -8,3 +8,4 @@ export * from './router-pages';
 export * from './spin';
 export * from './App';
 export * from './OffCanvas';
+export * from './Responsive';

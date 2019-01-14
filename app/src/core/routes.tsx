@@ -46,30 +46,31 @@ routes.addRoutes(
         name  : 'documentation.document',
         path  : url.documentation(':project/:revision/:document+'),
         exact : true,
-        loadComponent: async () => (await import(/* webpackChunkName: "pages.document" */'./pages/DocumentPage')).default,
-        onActivate: async props => {
-            const { project, revision, document } = props.match.params;
-            try {
-                await app.store.fetchDocument(project, revision, document);
-                // log('documentation.document loader.document', { project, revision, document });
-                console.groupCollapsed('documentation.document loader.document', {project,revision,document});
-                console.trace('documentation.document loader.document', {project,revision,document});
-                console.groupEnd();
-                return {
-                    error   : false,
-                    document: app.store.document,
-                };
-            } catch ( error ) {
-                log('ERROR documentation.document loader.document', error, { project, revision, document });
-                return { error };
-            }
-        },
-        render: (props, Component, data) => {
-            if(data && data.error){
-                return <ErrorPage error={data.error}/>
-            }
-        },
-        render2: routeProps => React.createElement(componentLoader(
+        // loadComponent: async () => (await import(/* webpackChunkName: "pages.document" */'./pages/DocumentPage')).default,
+        // onActivate: async props => {
+        //     const { project, revision, document } = props.match.params;
+        //     try {
+        //         await app.store.fetchDocument(project, revision, document);
+        //         // log('documentation.document loader.document', { project, revision, document });
+        //         console.groupCollapsed('documentation.document loader.document', {project,revision,document});
+        //         console.trace('documentation.document loader.document', {project,revision,document});
+        //         console.groupEnd();
+        //         return {
+        //             error   : false,
+        //             document: app.store.document,
+        //         };
+        //     } catch ( error ) {
+        //         log('ERROR documentation.document loader.document', error, { project, revision, document });
+        //         return { error };
+        //     }
+        // },
+        // render: (props, Component, data) => {
+        //     if(data && data.error){
+        //         return <ErrorPage error={data.error}/>
+        //     }
+        //     return <Component document={data.document} />
+        // },
+        render: routeProps => React.createElement(componentLoader(
             {
                 Component: async () => (await import(/* webpackChunkName: "pages.document" */'./pages/DocumentPage')).default,
                 document : async () => {

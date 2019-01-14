@@ -118,7 +118,7 @@ export interface Project {
 
     revision: Revision;
 
-    changed?: Maybe<(Maybe<string>)[]>;
+    inherits?: Maybe<(Maybe<string>)[]>;
 
     changes?: Maybe<Assoc>;
 
@@ -162,7 +162,7 @@ export interface Revision {
 
     project: Project;
 
-    changed?: Maybe<(Maybe<string>)[]>;
+    inherits?: Maybe<(Maybe<string>)[]>;
 
     changes?: Maybe<Assoc>;
 
@@ -186,7 +186,7 @@ export interface Revision {
 export interface Document {
     revision: Revision;
 
-    changed?: Maybe<(Maybe<string>)[]>;
+    inherits?: Maybe<(Maybe<string>)[]>;
 
     changes?: Maybe<Assoc>;
 

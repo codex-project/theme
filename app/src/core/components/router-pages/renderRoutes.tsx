@@ -5,6 +5,8 @@ import { SwitchProps } from 'react-router';
 import { merge } from 'lodash';
 import { componentLoader } from 'utils/componentLoader';
 
+const log = require('debug')('renderRoutes');
+
 export interface RenderRouteOptions {
     extraProps?: any
     switchProps?: SwitchProps
@@ -30,8 +32,10 @@ export function renderRoutes(routes?: IRoute[], options: RenderRouteOptions = {}
                         path={route.path}
                         exact={route.exact}
                         strict={route.strict}
-                        component={routeProps => {
-                            let Component = componentLoader(
+                        {...route as any}
+                        render3={routeProps => {
+                            log('render', route.name, routeProps.location.pathname, {route,routeProps})
+                            return React.createElement(componentLoader(
                                 {
                                     Component: async () => route.loadComponent ? await route.loadComponent(routeProps) : route.component ? route.component : null,
                                     data     : async () => route.onActivate ? await route.onActivate(routeProps) : null,
@@ -47,9 +51,9 @@ export function renderRoutes(routes?: IRoute[], options: RenderRouteOptions = {}
                                     return <Component {...props} {...data} />;
                                 },
                                 { delay: 1000 },
-                            );
-                            return React.createElement(Component, routeProps);
+                            ))
                         }}
+
                     />
                 ))}
             </Switch>

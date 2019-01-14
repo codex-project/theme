@@ -1,11 +1,17 @@
 import { injectable, lazyInject } from 'ioc';
 
-import { merge } from 'lodash';
-import { Api, api, ApiResponse } from '@codex/api';
+import { merge, uniq } from 'lodash';
+import { Api, api, FetchResult } from '@codex/api';
 import { SyncHook } from 'tapable';
 import { Fetched } from 'stores/Fetched';
 
 const log = require('debug')('BuildQuery');
+
+function isMergable(target) {
+    if ( Array.isArray(target) ) return true;
+    if ( typeof target === 'object' ) return true;
+    return false;
+}
 
 export type BuildQueryReturn = {
     codex: api.Codex,
@@ -23,7 +29,7 @@ export class QueryBuilder {
     public readonly hooks = {
         get        : new SyncHook<this>([ 'builder' ]),
         queryFields: new SyncHook<string[], this>([ 'queryFields', 'builder' ]),
-        queryResult: new SyncHook<ApiResponse, this>([ 'queryResult', 'builder' ]),
+        queryResult: new SyncHook<FetchResult, this>([ 'queryResult', 'builder' ]),
         returns    : new SyncHook<BuildQueryReturn, this>([ 'returns', 'builder' ]),
     };
 
@@ -67,9 +73,9 @@ export class QueryBuilder {
 
     public withChanges(): this {
         this.addCodexField('changes')
-            .addProjectField('changes')
-            .addRevisionField('changes')
-            .addDocumentField('changes');
+            .addProjectFields('changes', 'inherits')
+            .addRevisionFields('changes', 'inherits')
+            .addDocumentFields('changes', 'inherits');
         return this;
     }
 
@@ -144,7 +150,13 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
             }
 
             if ( data.project ) {
-                let project = this.fetched.getProject(this.projectKey);
+                let project  = this.fetched.getProject(this.projectKey);
+                let inherits = {};
+                uniq([].concat(project.inherits || []).concat(data.project.inherits || []))
+                    .filter(inheritKey => this.fetched.hasCodexField(inheritKey))
+                    .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getCodex()[ inheritKey ]);
+                project = merge({}, project, inherits);
+
                 if ( data.project.changes ) {
                     merge(project, data.project.changes);
                 }
@@ -153,6 +165,12 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
 
             if ( data.revision ) {
                 let revision = this.fetched.getRevision(this.projectKey, this.revisionKey);
+                let inherits = {};
+                uniq([].concat(revision.inherits || []).concat(data.revision.inherits || []))
+                    .filter(inheritKey => this.fetched.hasProjectField(this.projectKey, inheritKey))
+                    .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getProject(this.projectKey)[ inheritKey ]);
+                revision = merge({}, revision, inherits);
+
                 if ( data.revision.changes ) {
                     merge(revision, data.revision.changes);
                 }
@@ -161,6 +179,12 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
 
             if ( data.document ) {
                 let document = this.fetched.getDocument(this.projectKey, this.revisionKey, this.documentKey);
+                let inherits = {};
+                uniq([].concat(document.inherits || []).concat(data.document.inherits || []))
+                    .filter(inheritKey => this.fetched.hasRevisionField(this.projectKey, this.revisionKey, inheritKey))
+                    .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getRevision(this.projectKey, this.revisionKey)[ inheritKey ]);
+                document = merge({}, document, inherits);
+
                 if ( data.document.changes ) {
                     merge(document, data.document.changes);
                 }

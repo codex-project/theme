@@ -184,12 +184,12 @@
         }
 
         &-header-link {
-            color: rgba($anchor-color, 0.5);
+            color: rgba($link-color, 0.5);
             float: left;
             margin-right: 4px;
 
             &:hover {
-                color: $anchor-color;
+                color: $link-hover-color;
             }
         }
     }

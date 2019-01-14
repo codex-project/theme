@@ -1,3 +1,4 @@
+import { Query } from './generated';
 export declare type Variables = {
     [key: string]: any;
 };
@@ -16,6 +17,11 @@ export interface ApiOptions {
     referrerPolicy?: RequestInit['referrerPolicy'];
     integrity?: RequestInit['integrity'];
 }
+export declare type GraphQLResponse = {
+    data?: Query;
+    errors?: GraphQLError[];
+};
+export declare type GraphQLBatchedResponse = Array<GraphQLResponse>;
 export interface GraphQLError {
     message: string;
     locations: {
@@ -23,13 +29,6 @@ export interface GraphQLError {
         column: number;
     }[];
     path: string[];
-}
-export interface GraphQLResponse<T> {
-    data?: T;
-    errors?: GraphQLError[];
-    extensions?: any;
-    status: number;
-    [key: string]: any;
 }
 export interface GraphQLRequestContext {
     query: string;

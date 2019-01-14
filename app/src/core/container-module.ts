@@ -9,11 +9,15 @@ import { Routes } from './collections/Routes';
 import { LayoutStore } from './stores/store.layout';
 import { toJS } from 'mobx';
 import { Fetched } from 'stores/Fetched';
+import { CssVariables } from 'classes/CssVariables';
+import { Breakpoints } from 'utils/breakpoints';
 
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     decorate(injectable(), Api);
 
+    bind<Breakpoints>('breakpoints').to(Breakpoints).inSingletonScope();
+    bind<CssVariables>('cssvars').to(CssVariables).inSingletonScope();
     bind<Fetched>('fetched').to(Fetched).inSingletonScope();
     bind<Routes>('routes').toConstantValue(routes);
     bind<Store>('store').to(Store).inSingletonScope();

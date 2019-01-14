@@ -173,12 +173,14 @@ export class Store {
         return this.project;
     }
 
-    @observable fetching = false;
+    fetching = false;
 
-    @action setFetching(fetching) { this.fetching = fetching;}
+    // @action setFetching(fetching) { this.fetching = fetching;}
 
     async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
-        let query = new QueryBuilder(projectKey, revisionKey, documentKey);
+        // if ( this.fetching ) return;
+        // this.fetching = true;
+        let query     = new QueryBuilder(projectKey, revisionKey, documentKey);
         query.withChanges()
             .addProjectFields('key', 'display_name', 'description')
             .addRevisionFields('key')
@@ -188,28 +190,37 @@ export class Store {
         let result = await query.get();
 
         transaction(() => {
+            let layout = this.codex;
             if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
                 this.setProject(null);
                 this.setRevision(null);
                 this.setDocument(null);
                 this.setProject(result.project);
-                this.mergeLayout(this.codex);
-                this.mergeLayout(result.project);
+                // this.mergeLayout(this.codex);
+                // this.mergeLayout(result.project)
+                layout = result.project;
             }
             if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
                 this.setRevision(null);
                 this.setDocument(null);
                 this.setRevision(result.revision);
-                this.mergeLayout(result.revision);
+                // this.mergeLayout(result.revision);
+                layout = result.revision;
             }
             if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
                 this.setDocument(null);
                 this.setDocument(result.document);
-                this.mergeLayout(result.document);
+                // this.mergeLayout(result.document);
+                layout = result.document;
+            }
+            if ( layout ) {
+                this.mergeLayout(layout);
             }
         });
 
         this.hooks.fetched.call(result);
+        // this.fetching = false;
+        return result;
     }
 
     // async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {

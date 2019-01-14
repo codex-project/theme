@@ -14,6 +14,8 @@ import { Routes } from '../collections/Routes';
 import { History } from 'history';
 import * as url from '../utils/url';
 import { MenuManager } from '../menus';
+import { CssVariables } from 'classes/CssVariables';
+import { Breakpoints } from 'utils/breakpoints';
 
 const log = require('debug')('classes:Application');
 
@@ -35,6 +37,11 @@ export class Application extends Container {
         booted    : new SyncHook<this>([ 'application' ]),
     };
 
+
+    get cssvars(): CssVariables { return this.get('cssvars');}
+
+    get breakpoints(): Breakpoints { return this.get('breakpoints');}
+
     get menus(): MenuManager { return this.get('menumanager');}
 
     get events(): Dispatcher { return this.get('events'); }
@@ -44,7 +51,6 @@ export class Application extends Container {
     get store(): Store { return this.get('store'); }
 
     get routes(): Routes { return this.get('routes'); }
-
 
     get history(): History { return this.get('history'); }
 

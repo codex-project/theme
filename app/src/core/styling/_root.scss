@@ -8,7 +8,7 @@
         --#{$color}: #{$value};
     }
 
-    @each $bp, $value in $grid-breakpoints {
+    @each $bp, $value in $breakpoints {
         --breakpoint-#{$bp}: #{$value};
     }
 

@@ -24,6 +24,13 @@ export * from './stores';
 export * from './decorators';
 
 export * from './utils/componentLoader';
+export * from './utils/colors';
+export * from './utils/general';
+export * from './utils/get-prism';
+export * from './utils/scroll';
+export * from './utils/scrollTo';
+export * from './utils/storage';
+export * from './utils/storage';
 
 
 
