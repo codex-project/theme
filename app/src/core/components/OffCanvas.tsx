@@ -1,6 +1,5 @@
 import * as React from 'react';
-//@ts-ignore TS2307
-import { hot } from '../decorators';
+import { hot } from 'decorators';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import Hammer, { HammerDirection } from 'react-hammerjs';
@@ -8,8 +7,6 @@ import { Motion, spring } from 'react-motion';
 import { isString } from 'lodash';
 
 const log = require('debug')('off-canvas');
-
-const Centered = (props) => <div {...props} />;
 
 export enum Direction { LEFT = 2, RIGHT = 4, UP = 8, DOWN = 16}
 
@@ -239,5 +236,3 @@ export class OffCanvas extends React.Component<OffCanvasProps, OffCanvasState> {
         );
     }
 }
-
-export default hot(module)(OffCanvas);

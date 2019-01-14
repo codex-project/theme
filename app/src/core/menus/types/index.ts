@@ -1,3 +1,4 @@
+export * from './CustomMenuType';
 export * from './DocumentMenuType';
 export * from './ProjectMenuType';
 export * from './ProjectsMenuType';

@@ -1,4 +1,4 @@
-import { join, relative, resolve } from 'path';
+import { join, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as webpack from 'webpack';
@@ -11,41 +11,11 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import HtmlPlugin from 'html-webpack-plugin';
-// import DashboardPlugin from 'webpack-dashboard/plugin';
 import { BabelLoaderOptions, Chain } from './build/chain';
 import AntdScssThemePlugin from './build/antd-scss-theme-plugin';
 import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from './build/AssetPathSubstitutionPlugin';
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
-import HappyPack from 'happypack';
-
-import sassImportResolve from '@csstools/sass-import-resolve';
-// chain.plugin('fork-ts-checker').use(ForkTsCheckerWebpackPlugin, [ <ForkTSCheckerOptions>{
-//     async               : false,
-//     checkSyntacticErrors: true,
-//     tsconfig            : tsconfig,
-//     compilerOptions     : {
-//         module           : 'esnext',
-//         moduleResolution : 'node',
-//         resolveJsonModule: true,
-//         isolatedModules  : true,
-//         noEmit           : true,
-//         jsx              : 'preserve',
-//     },
-//     reportFiles         : [
-//         'src/**',
-//         '!**/*.json',
-//         '!**/__tests__/**',
-//         '!**/?(*.)(spec|test).*',
-//         '!**/src/setupProxy.*',
-//         '!**/src/setupTests.*',
-//     ],
-//     watch               : chain.srcPath(),
-//     silent              : true,
-//     formatter           : require('react-dev-utils/typescriptFormatter'),
-// } ]);
-
-const happyThreadPool = HappyPack.ThreadPool({ size: 4 });
 
 const cache             = true;
 const chain             = new Chain({
@@ -56,6 +26,7 @@ const chain             = new Chain({
 const { isDev, isProd } = chain;
 const _assetPath        = isDev ? 'vendor' : 'vendor/codex_[entrypoint]';
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
+const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
 
 chain.entry('core').add(chain.srcPath('core/index.ts'));
@@ -94,10 +65,8 @@ chain.resolve
     'lodash-es$'         : 'lodash',
     'async$'             : 'neo-async',
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
-    '@codex/phpdoc$'     : chain.srcPath('phpdoc'),
-    // '@codex/core$'       : chain.srcPath('core/index.ts'),
+    '@codex/phpdoc'      : chain.srcPath('phpdoc'),
     '@codex/core'        : chain.srcPath('core'),
-    // '@codex/core/styling': rootPath('packages/core/src/styling'), //'@codex/core/src/styling',
     'heading'            : chain.srcPath('core/styling/heading.less'),
     '../../theme.config$': chain.srcPath('core/styling/theme.config'),
 }).end();
@@ -108,20 +77,20 @@ chain.resolveLoader
 
 chain.module.set('strictExportPresence', true);
 
+if ( isDev ) {
+    chain.resolve.alias.set('@codex/api', rootPath('packages/api/src'));
+    chain.module.rule('ts').include.add(rootPath('packages/api/src'));
+}
+
 const babelImportPlugins = [
     [ 'import', { libraryName: 'antd', style: true }, 'import-antd' ],
     [ 'import', { libraryName: 'lodash', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash' ],
     [ 'import', { libraryName: 'lodash-es', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash-es' ],
 ];
 let nodeModulePaths      = require('module')._nodeModulePaths(process.cwd());
-// const workerPoolTS = { workers: 4, poolTimeout: Infinity };
-// threadLoader.warmup(workerPoolTS, [ 'babel-loader', 'babel-preset-react-app', 'ts-loader' ]);
 chain.module.rule('ts')
     .test(/\.(ts|tsx)$/)
     .include.add(chain.srcPath()).end()
-// .use('thread-loader')
-// .loader('thread-loader')
-// .options(workerPoolTS).end()
     .use('babel-loader')
     .loader('babel-loader')
     .options(<BabelLoaderOptions>{
@@ -139,7 +108,7 @@ chain.module.rule('ts')
                     '.mscss': {
                         'syntax' : 'postcss-scss',
                         'plugins': [
-                            'postcss-nested'
+                            'postcss-nested',
                         ],
                     },
                 },
@@ -193,7 +162,7 @@ chain.module.rule('babel-loader')
                     '.mscss': {
                         'syntax' : 'postcss-scss',
                         'plugins': [
-                            'postcss-nested'
+                            'postcss-nested',
                         ],
                     },
                 },
@@ -348,18 +317,9 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     ENV     : dotenv.load({ path: resolve('.env') }).parsed,
 } ]);
 chain.onToConfig(config => {
-    // const workerPoolSass = {
-    //     workers           : require('os').cpus().length,
-    //     workerParallelJobs: 2,
-    //     poolTimeout       : Infinity,
-    // };
-    // threadLoader.warmup(workerPoolSass, [ 'sass-loader', 'postcss-loader', 'css-loader' ]);
-
     AntdScssThemePlugin.SCSS_THEME_PATH = chain.srcPath('core/styling/antd/theme.scss');
-    // let antdScss                        = {loader:'sass-loader',options:{}};//AntdScssThemePlugin.themify('sass-loader');
-    // let antdLess                        = {loader:'less-loader',options:{}};//AntdScssThemePlugin.themify('less-loader');
-    let antdScss = AntdScssThemePlugin.themify('sass-loader');
-    let antdLess = AntdScssThemePlugin.themify('less-loader');
+    let antdScss                        = AntdScssThemePlugin.themify('sass-loader');
+    let antdLess                        = AntdScssThemePlugin.themify('less-loader');
     config.module.rules.push(...[ {
         test: /\.module.css$/,
         // include: chain.srcPath(),
@@ -387,17 +347,14 @@ chain.onToConfig(config => {
     }, {
         test   : /\.scss$/,
         exclude: [ /\.module\.scss$/, /\.mscss$/ ],
-        // use    : 'happypack/loader?id=scss',
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            // { loader: 'thread-loader', options: workerPoolSass },
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
             { loader: antdScss.loader, options: { ...antdScss.options, ...{} } },
         ],
     }, {
         test: /\.less$/,
-        // use : 'happypack/loader?id=less',
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev } },
@@ -406,31 +363,6 @@ chain.onToConfig(config => {
         ],
     } ]);
     config.plugins.push(new AntdScssThemePlugin(AntdScssThemePlugin.SCSS_THEME_PATH));
-
-    // config.plugins.push(
-    //     new HappyPack({
-    //         id        : 'scss',
-    //         threads: 2,
-    //         // threadPool: happyThreadPool,
-    //         loaders   : [
-    //             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-    //             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
-    //             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-    //             { loader: antdScss.loader, options: { ...antdScss.options, ...{} } },
-    //         ],
-    //     }),
-    //     new HappyPack({
-    //         id        : 'less',
-    //         threads: 2,
-    //         // threadPool: happyThreadPool,
-    //         loaders   : [
-    //             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-    //             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev } },
-    //             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-    //             { loader: antdLess.loader, options: { ...antdLess.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
-    //         ],
-    //     }),
-    // );
     return config;
 });
 
@@ -458,9 +390,6 @@ export function addAnalyzerPlugins(chain: Chain, when: boolean = true) {
         openAnalyzer  : false,
         reportFilename: 'bundle-analyzer.html',
     } ]));
-
-    // chain.when(when, chain => chain.plugin('bundle-visualizer').use(VisualizerPlugin, [ { filename: 'bundle-visualizer.html' } ]));
-
 
     class Asdf {
         apply(compiler: webpack.Compiler) {

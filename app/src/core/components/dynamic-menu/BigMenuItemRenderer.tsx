@@ -4,8 +4,8 @@ import { MenuItemRenderer, MenuItemRendererProps } from './DynamicMenu';
 import { Col, Menu as AntdMenu, Row } from 'antd';
 import { getRandomId } from '../../utils/general';
 // noinspection ES6UnusedImports
-import styles from './HeaderMenuItemRenderer.mscss';
-import './HeaderMenuItemRenderer.mscss';
+import styles from './BigMenuItemRenderer.mscss';
+import './BigMenuItemRenderer.mscss';
 import { MenuItemIcon } from './MenuItemIcon';
 import { NavLink } from 'react-router-dom';
 
@@ -15,9 +15,9 @@ const log = require('debug')('components:HeaderMenuItemRenderer');
 
 
 @hot(module,true)
-@MenuItemRenderer('header')
-export class HeaderMenuItemRenderer extends React.Component<MenuItemRendererProps> {
-    static displayName = 'HeaderMenuItemRenderer';
+@MenuItemRenderer('big')
+export class BigMenuItemRenderer extends React.Component<MenuItemRendererProps> {
+    static displayName = 'BigMenuItemRenderer';
 
     render() {
         if ( ! this.props.item ) return null;
@@ -33,7 +33,7 @@ export class HeaderMenuItemRenderer extends React.Component<MenuItemRendererProp
             </Row>
         );
         return (
-            <Item key={item.id} {...props} styleName="header-menu-item" >
+            <Item key={item.id} {...props} styleName="big-menu-item" >
                 {
                     item.type === 'link' ?
                     <a href={item.href} target={item.target} key={getRandomId(6)}>{content}</a> :

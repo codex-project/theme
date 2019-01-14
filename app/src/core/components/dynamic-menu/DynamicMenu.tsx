@@ -35,6 +35,7 @@ interface State {
 
 export function MenuItemRenderer(name: string) {
     return (TargetComponent) => {
+        TargetComponent               = observer(TargetComponent);
         DynamicMenu.renderers[ name ] = TargetComponent;
         return TargetComponent;
     };

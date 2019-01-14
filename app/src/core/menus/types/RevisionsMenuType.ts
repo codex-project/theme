@@ -2,6 +2,7 @@ import { MenuItem } from '../MenuItem';
 import * as url from '../../utils/url';
 import { MenuType } from '../MenuType';
 import { toJS } from 'mobx';
+import { SideMenuType } from 'menus/types/SideMenuType';
 
 export class RevisionsMenuType extends MenuType {
     name = 'revisions';
@@ -27,12 +28,22 @@ export class RevisionsMenuType extends MenuType {
 
         toJS(project.revisions).forEach(revision => {
             item.children.push({
-                type : 'router-link',
-                to   : { pathname: url.documentation(`${project.key}/${revision.key}/${revision.default_document}`) },
-                label: revision.key,
+                type    : 'router-link',
+                icon    : 'fa-code-fork',
+                to      : { pathname: url.documentation(`${project.key}/${revision.key}/${revision.default_document}`) },
+                label   : revision.key,
+                selected: store.project && store.project.key === project.key && store.revision && store.revision.key === revision.key,
             });
         });
         item.children = this.app.menus.apply(item.children, item);
         return item;
+    }
+    public boot() {
+        this.app.menus.getType<SideMenuType>('side-menu').hooks.child.tap('RevisionsMenuType', (child, ctx) => {
+            if ( this.test(ctx.parent) ) {
+                child.custom = () => ctx.close()
+            }
+            return child;
+        });
     }
 }

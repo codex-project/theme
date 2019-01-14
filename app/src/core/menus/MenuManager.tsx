@@ -1,8 +1,6 @@
 import { app } from '../ioc';
-import { Store } from '../stores';
 import { injectable } from 'inversify';
 import * as React from 'react';
-import { ClickParam } from 'antd/es/menu';
 import { ArrayUtils } from '../collections/ArrayUtils';
 import { Config } from '../classes/Config';
 import { MenuItems } from './MenuItems';
@@ -11,16 +9,10 @@ import { IMenuType, IMenuTypeConstructor } from './MenuType';
 import { MenuItem } from './MenuItem';
 import { toJS } from 'mobx';
 
-
 const log = require('debug')('classes:MenuManager');
-export type MenuShortTypeHandler = (this: MenuManager, item: MenuItem, store: Store) => MenuItem
-export type MenuHandler = (this: MenuManager, item: MenuItem, event: ClickParam, store: Store, items: MenuItems) => void
-export type MenuCompiler = (this: MenuManager, item: MenuItem, store: Store) => void
 
 @injectable()
 export class MenuManager {
-    // @lazyInject('store') store: Store;
-
     public readonly hooks = {
         defaults: new SyncWaterfallHook<MenuItem, MenuItem | undefined>([ 'item', 'parent' ]),
         pre     : new SyncWaterfallHook<MenuItem>([ 'item' ]),
@@ -29,11 +21,6 @@ export class MenuManager {
     };
 
     public readonly types = new Map<string, IMenuType>();
-
-    constructor() {
-        // installer(this);
-    }
-
 
     callDefaults(item: MenuItem, parent?: MenuItem): MenuItem { return this.hooks.defaults.call(item, parent); }
 
@@ -53,7 +40,7 @@ export class MenuManager {
         items = this.post(items);
         items = ArrayUtils.mapItems(items, (item, parent) => {
             let { children, ...__raw } = toJS(item);
-            item.__raw                 = {...__raw};
+            item.__raw                 = { ...__raw };
             return this.compile(item);
         });
         return items;
@@ -64,39 +51,34 @@ export class MenuManager {
         this.types.set(type.name, type);
         this.hooks.pre.tap(type.name, item => {
             if ( type.test(item) ) {
-                return type.pre(item);
+                item = type.hooks.pre.call(type.pre(item));
             }
             return item;
         });
         this.hooks.post.tap(type.name, item => {
             if ( type.test(item) ) {
-                return type.post(item);
+                item = type.hooks.post.call(type.post(item));
             }
             return item;
         });
         this.hooks.handle.tap(type.name, (item, event, items) => {
             if ( type.test(item) ) {
                 log('handle', type.name, { item, event, items });
-                return type.handle(item, event, items);
+                type.hooks.handle.call(item, event, items);
+                let handled = type.handle(item, event, items);
+                type.hooks.handled.call(item, event, items);
+                return handled;
             }
         });
+
         return this;
     }
 
-    createMenu(items: MenuItem[]) {
-        const menu = MenuItems.from(items);
-        return menu;
-    }
+    public getType<T extends IMenuType>(name: string): T {return this.types.get(name) as T; }
 
     protected getTypes(item: MenuItem): IMenuType[] {
         return Array.from(this.types.values()).filter((type, name) => type.test(item));
     }
-
-    registerCompiler(type: string, handler: MenuCompiler) { }
-
-    registerHandler(type: string, handler: MenuHandler) { }
-
-    registerShortType(name: string, handler: MenuShortTypeHandler) { }
 
     compile(item: MenuItem): MenuItem {
         let config = new Config();
@@ -104,7 +86,7 @@ export class MenuManager {
 
         // circular reference workaround
         // let store = this.store;
-        config.set('store',  app.store);
+        config.set('store', app.store);
 
         Object.keys(item)
             .filter(key => [ '__raw', 'children' ].includes(key) === false)
@@ -121,14 +103,5 @@ export class MenuManager {
     public handleMenuItemClick(item: MenuItem, event: React.MouseEvent<any>, items: MenuItems) {
         this.compile(item);
         this.hooks.handle.call(item, event, items);
-
-        // if ( false === this.handlers.has(item.type) ) {
-        //     console.warn(`MenuManager::handleMenuItemClick. Could not find handler [${item.type}], `);
-        //     return;
-        // }
-        // let handler = this.handlers.get(item.type);
-        // // this.applyCompilers(item);
-        // log('handleMenuItemClick', { item, event, handler });
-        // handler.apply(this, [ item, event, this.store, items, this ]);
     }
 }

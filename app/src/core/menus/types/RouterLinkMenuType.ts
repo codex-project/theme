@@ -9,7 +9,16 @@ export class RouterLinkMenuType extends MenuType {
         return item.type === 'router-link';
     }
 
-    public handle(item: MenuItem, event, items:MenuItems) {
+    public pre(item: MenuItem) {
+        if ( ! item.to && item.path ) {
+            item.to = {
+                pathname: item.path,
+            };
+        }
+        return item;
+    }
+
+    public handle(item: MenuItem, event, items: MenuItems) {
         if ( item.to.replace ) {
             this.app.history.replace(item.to);
         }

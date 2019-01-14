@@ -8,20 +8,13 @@ import { MenuManager } from './menus/MenuManager';
 import { Routes } from './collections/Routes';
 import { LayoutStore } from './stores/store.layout';
 import { toJS } from 'mobx';
+import { Fetched } from 'stores/Fetched';
 
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-
-    // function bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, alias?: string): interfaces.BindingToSyntax<T> {
-    //     let binding = _bind<T>(serviceIdentifier);
-    //     if ( alias ) {
-    //         _bind(alias).toDynamicValue(ctx => ctx.container.get(serviceIdentifier)).inSingletonScope();
-    //     }
-    //     return binding;
-    // }
-
     decorate(injectable(), Api);
 
+    bind<Fetched>('fetched').to(Fetched).inSingletonScope();
     bind<Routes>('routes').toConstantValue(routes);
     bind<Store>('store').to(Store).inSingletonScope();
     bind<LayoutStore>('store.layout').to(LayoutStore).inSingletonScope().onActivation((ctx, layout) => {
@@ -34,7 +27,7 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
     });
     bind<Api>('api').to(Api).inSingletonScope().onActivation((ctx, api) => {
         const c = ctx.container.get<IConfig>('config');
-        return api.setUrl(c.api.url).setOptions(c.api.options);
+        return api.configure(c.api);
     });
     bind<MenuManager>('menumanager').to(MenuManager).inSingletonScope();
 });

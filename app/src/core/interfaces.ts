@@ -1,23 +1,19 @@
-import { RouteProps } from 'react-router-dom'
+import { RouteComponentProps, RouteProps } from 'react-router-dom';
 import { Hooks, LanguageDefinition, Languages, Token, Util } from 'prismjs';
 import { DictionaryWrapper } from './collections/DictionaryWrapper';
-import { Options } from 'graphql-request/dist/src/types';
 import * as pathToRegexp from 'path-to-regexp';
-
+import { ApiOptions } from '@codex/api';
+import  React from 'react';
 
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
 
 
-export interface ApiConfig {
-    url?: string
-    options?: Options
-}
-
 export interface IConfig {
     rootID?: string
-    api?: ApiConfig
-    debug?:boolean
+    api?: ApiOptions
+    debug?: boolean
+    cache?: boolean
 }
 
 export type Config = DictionaryWrapper<IConfig>
@@ -39,15 +35,29 @@ declare global {
     }
 }
 
-export interface IRoute extends RouteProps {
+export interface IRoute  {
     name: string
     meta?: any
+    children?: IRoute[]
+    location?: RouteProps['location']
+    component?: RouteProps['component']
+    // render?: RouteProps['render']
+    render?: (props:RouteComponentProps<any> & {[key:string]:any}, Component:React.ComponentType<any>, data?:any) => React.ReactNode | undefined
+    path?: RouteProps['path']
+    exact?: RouteProps['exact']
+    sensitive?: RouteProps['sensitive']
+    strict?: RouteProps['strict']
+
+    onActivate?: (props: RouteComponentProps<any>) => Promise<any>
+    loadComponent?: (props: RouteComponentProps<any>) => Promise<React.ComponentType<any>>
 }
+
 export interface IDefinedRoute extends IRoute {
-    test?:RegExp
-    keys?:pathToRegexp.Key[]
-    routes?:IDefinedRoute[]
+    test?: RegExp
+    keys?: pathToRegexp.Key[]
+    routes?: IDefinedRoute[]
 }
+
 export interface ResizeSize {
     height: number
     width: number

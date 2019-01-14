@@ -1,6 +1,6 @@
 import './index.scss'
 import './DefaultMenuItemRenderer'
-import './HeaderMenuItemRenderer'
+import './BigMenuItemRenderer'
 
 export * from './DynamicMenu';
 

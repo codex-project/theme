@@ -40,6 +40,11 @@ app.use(app => {
 
         Object.keys(menuTypes).forEach(key => app.menus.registerType(menuTypes[ key ]));
     });
+    app.hooks.boot.tap('CORE', (app) => {
+        app.menus.types.forEach(type => {
+            type.boot();
+        })
+    })
 });
 
 customElements.define(ColorElement.TAG, ColorElement);

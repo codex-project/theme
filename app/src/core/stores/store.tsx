@@ -1,14 +1,17 @@
 import React from 'react';
 
-import { action, observable, runInAction, toJS, transaction } from 'mobx';
-import { get, has, merge, set, snakeCase } from 'lodash';
+import { action, computed, observable, toJS, transaction } from 'mobx';
+import { get, has, merge, set } from 'lodash';
 import { injectable, postConstruct } from 'inversify';
 import { LayoutStore } from './store.layout';
-import { lazyInject } from '../ioc';
+import { app, lazyInject } from '../ioc';
 
 import { Api, api } from '@codex/api';
 import { Breadcrumb } from '../interfaces';
 import { HelmetProps } from 'react-helmet';
+import { BuildQueryReturn, QueryBuilder } from 'stores/QueryBuilder';
+import { Fetched } from 'stores/Fetched';
+import { SyncHook, SyncWaterfallHook } from 'tapable';
 
 const log = require('debug')('store');
 
@@ -22,23 +25,36 @@ export interface HelmetStore extends Partial<HelmetProps> {
     get<K extends keyof HelmetProps>(prop: K, defaultValue?: HelmetProps[K])
 }
 
+export interface ProjectPart {
+    key: string
+    default_revision: string
+    revisions: RevisionPart[]
+}
+
+export interface RevisionPart {
+    key: string
+    default_document: string
+}
+
 @injectable()
 export class Store {
+    public readonly hooks = {
+        fetch  : new SyncWaterfallHook<QueryBuilder>([ 'builder' ]),
+        fetched: new SyncHook<BuildQueryReturn>([ 'result' ]),
+    };
+
     @lazyInject('api') api: Api;
-
+    @lazyInject('fetched') fetched: Fetched;
     @lazyInject('store.layout') layout: LayoutStore;
-    // public readonly document: DocumentStore;
 
+    @observable config: Partial<api.Config> = { ...BACKEND_DATA.config };
     @observable helmet: HelmetStore         = {
         merge(helmet: Partial<HelmetProps>) {merge(this, helmet);},
         set<K extends keyof HelmetProps>(prop: K, value: HelmetProps[K]) {set(this, prop, value);},
         has<K extends keyof HelmetProps>(prop: K) {has(this, prop);},
         get<K extends keyof HelmetProps>(prop: K, defaultValue?: HelmetProps[K]) {get(this, prop, defaultValue);},
     };
-    @observable codex: Partial<api.Codex>   = { ...BACKEND_DATA.codex };
-    @observable config: Partial<api.Config> = { ...BACKEND_DATA.config };
-
-    @observable breadcumbs = {
+    @observable breadcumbs                  = {
         items: [] as Breadcrumb[],
         set(items: Breadcrumb[]) {this.items = items;},
         add(...items: Breadcrumb[]) {this.items.push(...items);},
@@ -46,47 +62,69 @@ export class Store {
         clear() {this.set([]);},
     };
 
+    @computed get codex(): Partial<api.Codex> { return this.fetched.fetched.codex; }
+
     @postConstruct()
     protected postConstruct() {
+        if ( app.config.cache ) {
+            this.fetched.hooks.setted.tap('CORE', () => {
+                this.fetched.saveToStorage();
+            });
+            this.fetched.loadFromStorage();
+        }
+        this.fetched.setCodex(BACKEND_DATA.codex);
         log('postConstruct', this);
-        // this.layout.merge(toJS(this.codex.layout));
-        log('postConstructed', this);
-
     }
 
-    toJS() {
-        const { codex, config, fetching, project, revision, document, layout } = this;
-        return toJS({ codex, config, fetching, project, revision, document, layout: layout.toJS() });
-    }
-
-    hasProject(key: string) {return ! ! this.getProject(key); }
-
-    getProject(key: string) {return this.codex.projects.find(p => p.key === key); }
-
-    hasRevision(projectKey: string, revisionKey: string) { return ! ! this.getRevision(projectKey, revisionKey);}
-
-    getRevision(projectKey: string, revisionKey: string) {
-        if ( ! this.hasProject(projectKey) ) return undefined;
-        return this.getProject(projectKey).revisions.find(r => r.key === revisionKey);
+    toJS(path?: string) {
+        if ( path ) {
+            return toJS(get(this, path));
+        }
+        const { codex, config, project, revision, document, layout } = this;
+        return toJS({ codex, config, project, revision, document, layout: layout.toJS() });
     }
 
     @action set(prop: string, value: any) {set(this, prop, value); }
 
     has(prop: string) {return has(this, prop);}
 
-    async diff(left:string=null,right:string=null){
-        let result = await this.api.query(`query Diff($left:String, $right:String) {
-    codex {
-        diff(left:$left,right:$right){    
-            attributes
-        }
-    }        
-}`)
-        result.codex.diff.attributes
+    hasProject(key: string): boolean {return ! ! this.getProject(key); }
+
+    getProject(key: string): ProjectPart {return this.codex.projects.find(p => p.key === key) as any; }
+
+    hasRevision(projectKey: string, revisionKey: string): boolean { return ! ! this.getRevision(projectKey, revisionKey);}
+
+    getRevision(projectKey: string, revisionKey: string): RevisionPart {
+        if ( ! this.hasProject(projectKey) ) return undefined;
+        return this.getProject(projectKey).revisions.find(r => r.key === revisionKey) as any;
     }
 
+    getDocumentParams(projectKey?: string, revisionKey?: string, documentKey?: string) {
+        projectKey = projectKey || this.codex.default_project;
+        if ( ! this.hasProject(projectKey) ) {
+            projectKey = this.codex.default_project;
+            // log(`Project [${projectKey}] not found`);
+            throw new Error(`Project [${projectKey}] not found`);
+        }
+        let project = this.getProject(projectKey);
 
-    @observable fetching: boolean      = false;
+        revisionKey = revisionKey || project.default_revision;
+        if ( ! this.hasRevision(projectKey, revisionKey) ) {
+            revisionKey = project.default_revision;
+            // log(`Revision [${revisionKey}] for project [${projectKey}] not found`);
+            throw new Error(`Revision [${revisionKey}] for project [${projectKey}] not found`);
+        }
+        let revision = this.getRevision(projectKey, revisionKey);
+
+        documentKey = documentKey || revision.default_document;
+
+        return {
+            project : projectKey,
+            revision: revisionKey,
+            document: documentKey,
+        };
+    }
+
     @observable project: api.Project   = null;
     @observable revision: api.Revision = null;
     @observable document: api.Document = null;
@@ -95,117 +133,94 @@ export class Store {
         if ( mergable.layout ) {
             this.layout.merge(mergable.layout);
         }
+        return this;
     }
 
     @action setDocument(document: api.Document | null) {
         this.document = document;
-        // this.mergeLayout(document);
-        if ( document ) {
-            // this.key     = document.key;
-            // this.content = document.content;
-        }
+        return this;
     }
 
     @action setProject(project: api.Project | null) {
         this.project = project;
-        // this.mergeLayout(project);
+        return this;
     }
 
     @action setRevision(revision: api.Revision | null) {
         this.revision = revision;
-        // this.mergeLayout(revision);
+        return this;
     }
 
-    async fetchDocument(project: string, revision: string, document: string) {
-        runInAction(() => {
-            this.fetching = true;
-            // this.content  = null;
-        });
-        await this.fetch(project, revision, document);
-        runInAction(() => {
-            this.fetching = false;
-        });
+    async fetchDocument(projectKey: string, revisionKey: string, documentKey: string) {
+        if (
+            (projectKey && this.project && this.project.key === projectKey)
+            && (revisionKey && this.revision && this.revision.key === revisionKey)
+            && (documentKey && this.document && this.document.key === documentKey)
+        ) {
+            return this.document;
+        }
+        await this.fetch(projectKey, revisionKey, documentKey);
+        return this.document;
     }
 
-    fetched: any = {};
+    async fetchRevision(projectKey: string, revisionKey: string) {
+        await this.fetch(projectKey, revisionKey);
+        return this.revision;
+    }
 
-    protected async fetch(projectKey: string, revisionKey: string, documentKey: string) {
-        let query        = [];
-        let projectPath  = `projects.${snakeCase(projectKey)}`;
-        let revisionPath = `revisions.${snakeCase(projectKey)}.${snakeCase(revisionKey)}`;
-        let documentPath = `documents.${snakeCase(projectKey)}.${snakeCase(revisionKey)}.${snakeCase(documentKey)}`;
-        let hasProject   = has(this.fetched, projectPath);
-        let hasRevision  = has(this.fetched, revisionPath);
-        let hasDocument  = has(this.fetched, documentPath);
+    async fetchProject(projectKey: string) {
+        await this.fetch(projectKey);
+        return this.project;
+    }
 
-        if ( ! hasProject ) {
-            query.push(`
-project(key: $projectKey){
-    key
-    display_name
-    description
-    changes
-}`);
-        }
-        if ( ! hasRevision ) {
-            query.push(`
-revision(projectKey: $projectKey, revisionKey: $revisionKey){
-    key
-    changes
-}`);
-        }
-        if ( ! hasDocument ) {
-            query.push(`
-document(projectKey: $projectKey, revisionKey: $revisionKey, documentKey: $documentKey){
-    key
-    changes
-    content
-}`);
-        }
+    @observable fetching = false;
 
-        if ( query.length > 0 ) {
-            let result = await this.api.query(`
-query Fetch($projectKey: ID!, $revisionKey: ID!, $documentKey: ID!) {
-    ${query.join('\n')}
-}        
-        `, { projectKey, revisionKey, documentKey });
+    @action setFetching(fetching) { this.fetching = fetching;}
 
-            if ( ! hasProject ) {
-                set(this.fetched, projectPath, result.project.changes);
-                set(this.fetched, projectPath + '.key', result.project.key);
-                set(this.fetched, projectPath + '.display_name', result.project.display_name);
-                set(this.fetched, projectPath + '.description', result.project.description);
-            }
-            if ( ! hasRevision ) {
-                set(this.fetched, revisionPath, result.revision.changes);
-                set(this.fetched, revisionPath + '.key', result.revision.key);
-            }
-            if ( ! hasDocument ) {
-                set(this.fetched, documentPath, result.document.changes);
-                set(this.fetched, documentPath + '.key', result.document.key);
-                set(this.fetched, documentPath + '.content', result.document.content);
-            }
-        }
+    async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
+        let query = new QueryBuilder(projectKey, revisionKey, documentKey);
+        query.withChanges()
+            .addProjectFields('key', 'display_name', 'description')
+            .addRevisionFields('key')
+            .addDocumentFields('key', 'content');
+
+        query      = this.hooks.fetch.call(query);
+        let result = await query.get();
 
         transaction(() => {
-            if ( ! this.project || this.project.key !== projectKey ) {
-                this.setProject(get(this.fetched, projectPath));
-                this.revision = null;
-                this.document = null;
+            if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
+                this.setProject(null);
+                this.setRevision(null);
+                this.setDocument(null);
+                this.setProject(result.project);
+                this.mergeLayout(this.codex);
+                this.mergeLayout(result.project);
             }
-            if ( ! this.revision || this.revision.key !== revisionKey ) {
-                this.setRevision(get(this.fetched, revisionPath));
-                this.document = null;
+            if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
+                this.setRevision(null);
+                this.setDocument(null);
+                this.setRevision(result.revision);
+                this.mergeLayout(result.revision);
             }
-            if ( ! this.document || this.document.key !== documentKey ) {
-                this.setDocument(get(this.fetched, documentPath));
+            if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
+                this.setDocument(null);
+                this.setDocument(result.document);
+                this.mergeLayout(result.document);
             }
-            this.mergeLayout(this.codex)
-            this.mergeLayout(this.project)
-            this.mergeLayout(this.revision)
-            this.mergeLayout(this.document)
-            // this.layout.compileMenus();
         });
 
+        this.hooks.fetched.call(result);
     }
+
+    // async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
+    //     let fetchingKey = [ projectKey, revisionKey, documentKey ].filter(Boolean).join('.');
+    //     if ( has(this.fetching, fetchingKey) ) {
+    //         return get(this.fetching, fetchingKey);
+    //     }
+    //     let fetch = this._fetch(projectKey, revisionKey, documentKey);
+    //     set(this.fetching, fetchingKey, fetch);
+    //     let fetched = await fetch;
+    //     unset(this.fetching, fetchingKey);
+    //     return fetched;
+    // }
 }

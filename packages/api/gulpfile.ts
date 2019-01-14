@@ -2,8 +2,7 @@ import { mixin } from '@radic/build-tools';
 import { gulp, Gulpclass, GulpEnvMixin, GulpInteractiveMixin, Task } from '@radic/build-tools-gulp';
 
 import { generate } from 'graphql-code-generator';
-import { createProject, reporter } from 'gulp-typescript';
-import pump from 'pump';
+import { createProject } from 'gulp-typescript';
 import { resolve } from 'path';
 import merge2 from 'merge2';
 
@@ -41,7 +40,7 @@ export class Gulpfile {
         return generate({
             schema   : 'http://codex.local/api',
             generates: {
-                [ process.cwd() + '/src/types.ts' ]: {
+                [ process.cwd() + '/src/generated.ts' ]: {
                     plugins: [
                         'typescript-common',
                         'typescript-client',
@@ -67,7 +66,7 @@ export class Gulpfile {
 
     buildProject(name: 'es' | 'lib') {
         let result = gulp
-            .src('src/**/*.ts', { base: resolve(__dirname,'src') })
+            .src('src/**/*.ts', { base: resolve(__dirname, 'src') })
             .pipe(projects[ name ]());
 
         return merge2(

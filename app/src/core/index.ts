@@ -5,6 +5,7 @@ import './init';
 import './utils/zepto';
 
 import { app, lazyInject } from './ioc';
+import * as url from './utils/url';
 
 export * from './interfaces';
 
@@ -22,7 +23,11 @@ export * from './menus';
 export * from './stores';
 export * from './decorators';
 
-export { app, lazyInject };
+export * from './utils/componentLoader';
+
+
+
+export { app, lazyInject, url };
 
 if ( module.hot ) {
     module.hot.accept('./components/App', () => {

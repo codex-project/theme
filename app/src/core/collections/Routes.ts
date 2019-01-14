@@ -1,7 +1,5 @@
 import { IDefinedRoute, IRoute } from '../interfaces';
 import { lazyInject } from '../ioc';
-// import { History } from 'history';
-// import * as H from 'history';
 // @ts-ignore
 import H = require('history');
 import { ArrayUtils } from './ArrayUtils';
@@ -17,7 +15,7 @@ const addTestKeysToRoutes = (routes: IRoute[]): IDefinedRoute[] => routes.map((r
         route.test = pathToRegexp(route.path, route.keys);
         // route.compiled = compile(route.path.toString())
         // route.parsed = parse(route.path.toString())
-        if ( route.routes ) route.routes = addTestKeysToRoutes(route.routes);
+        if ( route.children ) route.routes = addTestKeysToRoutes(route.children);
     } catch ( e ) {
         console.warn('setRoutes', e);
     }

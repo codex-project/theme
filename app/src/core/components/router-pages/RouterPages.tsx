@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { hot, WithRouter, WithRouterProps } from '../../decorators';
 import { IRoute } from '../../interfaces';
-import { Route, Switch } from 'react-router-dom';
-import posed, { PoseGroup } from 'react-pose'
+import posed, { PoseGroup } from 'react-pose';
+import { renderRoutes } from 'components/router-pages/renderRoutes';
 
 export interface PosedRouterPagesProps extends WithRouterProps {
     routes: IRoute[]
@@ -11,10 +11,19 @@ export interface PosedRouterPagesProps extends WithRouterProps {
 const RoutesContainer = posed.div({
     enter: {
         opacity       : 1,
-        delay         : 300,
-        beforeChildren: true
+        delay         : 500,
+        beforeChildren: true,
+        height        : '100%',
+        position      : 'relative',
     },
-    exit : { opacity: 0 }
+    exit : {
+        opacity       : 0,
+        transition    : { duration: 500 },
+        delay         : 500,
+        beforeChildren: true,
+        height        : '100%',
+        position      : 'relative',
+    },
 });
 
 // https://popmotion.io/pose/learn/route-transitions-react-router/
@@ -22,17 +31,22 @@ const RoutesContainer = posed.div({
 @hot(module)
 @WithRouter()
 export class RouterPages extends React.PureComponent<PosedRouterPagesProps> {
-    static displayName = 'RouterPages'
+    static displayName = 'RouterPages';
 
     render() {
         window[ 'routerpages' ]    = this;
-        const { location, routes } = this.props
+        const { location, routes } = this.props;
         return (
-            <PoseGroup>
+            <PoseGroup animateOnMount={true}>
                 <RoutesContainer key={location.key || location.pathname}>
-                    <Switch location={location}>
-                        {routes.map((route, i) => <Route key={i} {...route} />)}
-                    </Switch>
+                    {renderRoutes(routes, { switchProps: { location } })}
+
+                    {/*<Switch location={location}>
+                        {routes.map((route, i) => {
+                            let {...props} = route;
+                            return <Route key={i} {...props} />;
+                        })}
+                    </Switch>*/}
                 </RoutesContainer>
             </PoseGroup>
         );

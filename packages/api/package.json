@@ -12,8 +12,8 @@
         "reinstall": "rm -rf node_modules/ yarn.lock && yarn install",
         "clean": "rm -rf ./dist ./es ./lib",
         "gulp": "gulp",
-        "build": "npm-run-all clean \"gulp build\"",
-        "watch": "npm-run-all clean \"gulp watch\"",
+        "build": "npm-run-all clean \"gulp graphql\" \"gulp build\"",
+        "watch": "npm-run-all clean \"gulp graphql\" \"gulp watch\"",
         "graphql": "gulp graphql"
     },
     "dependencies": {

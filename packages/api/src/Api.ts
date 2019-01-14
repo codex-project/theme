@@ -1,39 +1,103 @@
 // noinspection ES6UnusedImports
-import { ClientError, GraphQLClient, rawRequest, request } from 'graphql-request'
-import { Options, Variables } from 'graphql-request/dist/src/types';
+import { ApiHeaders, ApiOptions, GraphQLBatchedResponse, GraphQLError, GraphQLRequestContext, GraphQLResponse, Variables } from './types';
 import { merge } from 'lodash';
-import { Query } from './types';
 import { SyncHook } from 'tapable';
+import { ContentResponse } from './ContentResponse';
+import { BatchResult, FetchResult } from './results';
+import { ApiError } from './ApiError';
 
-export class Api extends GraphQLClient {
 
-    public readonly hooks: {
-        query: SyncHook<{ query: string, variables: Variables }>
-        queryResult: SyncHook<any>
-    } = {
-        query      : new SyncHook<{ query: string, variables: Variables }>([ 'request' ]),
-        queryResult: new SyncHook<any>([ 'result' ])
-    }
+export class Api {
+    public readonly hooks         = {
+        query           : new SyncHook<GraphQLRequestContext>([ 'request' ]),
+        queryResult     : new SyncHook<FetchResult>([ 'result' ]),
+        queryBatch      : new SyncHook<GraphQLRequestContext[]>([ 'requests' ]),
+        queryBatchResult: new SyncHook<BatchResult>([ 'result' ]),
+    };
+    protected options: ApiOptions = {
+        url    : '/graphql',
+        headers: { 'Content-Type': 'application/json' },
+        method : 'POST',
+    };
 
-    constructor() {
-        super('', {});
-    }
+    constructor() { }
 
-    setUrl(url: string) {
-        this[ 'url' ] = url;
+    configure(options: Partial<ApiOptions>, _merge = true) {
+        if ( _merge ) {
+            merge(this.options, options);
+        } else {
+            this.options = options;
+        }
         return this;
     }
 
-    setOptions(options: Options) {
-        merge(this[ 'options' ], options);
-        return this;
-    }
-
-    query(query: string, variables: Variables = {}) {
+    async query(query: string, variables: Variables = {}, options: Partial<ApiOptions> = {}) {
         let request = { query, variables };
-        this.hooks.query.call(request)
-        let result = this.request<Query>(request.query, request.variables);
+        this.hooks.query.call(request);
+        let result = await this.fetch({ query, variables }, options);
         this.hooks.queryResult.call(result);
         return result;
     }
+
+    async queryBatch(requests: GraphQLRequestContext[], options: Partial<ApiOptions> = {}) {
+        this.hooks.queryBatch.call(requests);
+        let result = await this.batch(requests, options);
+        this.hooks.queryBatchResult.call(result);
+        return result;
+    }
+
+    protected async fetch(request: GraphQLRequestContext, options: Partial<ApiOptions> = {}) {
+        const response = await this.request<GraphQLResponse>(makeBody(request), options);
+        const result   = new FetchResult(response);
+        if ( result.ok && ! result.hasErrors() && result.data ) {
+            return result;
+        }
+
+        throw new ApiError(result, request);
+    }
+
+
+    protected async batch(requests: GraphQLRequestContext[], options: Partial<ApiOptions> = {}) {
+        const response            = await this.request<GraphQLBatchedResponse>(makeBody(requests), options);
+        const result: BatchResult = new BatchResult(response);
+        if ( result.ok && ! result.hasErrors() && result.data ) {
+            return result;
+        }
+
+        throw new ApiError(result, requests);
+    }
+
+    setHeader(key: string, value: string): this {
+        const { headers } = this.options;
+
+        if ( headers ) {
+            headers[ key ] = value;
+        } else {
+            this.options.headers = { [ key ]: value };
+        }
+        return this;
+    }
+
+    protected async getContent<T>(response: Response): Promise<T> {
+        const contentType = response.headers.get('Content-Type');
+        if ( contentType && contentType.startsWith('application/json') ) {
+            return response.json();
+        }
+        return response.text() as any;
+    }
+
+    protected async request<T>(body: string, options: Partial<ApiOptions> = {}): Promise<ContentResponse<T>> {
+        options              = merge({}, this.options, options);
+        let { url, ...rest } = options;
+        let response         = await fetch(url, { body, ...rest });
+        let content          = await this.getContent<T>(response);
+
+        return new ContentResponse(response, content);
+    }
+
+}
+
+
+function makeBody(request: GraphQLRequestContext | GraphQLRequestContext[]): string {
+    return JSON.stringify(request);
 }

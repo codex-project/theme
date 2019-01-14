@@ -3,12 +3,22 @@ import { MenuItems, MenuType } from '../../menus';
 import { IStoreProxy } from '../../stores/proxy';
 import { LayoutStoreSide } from '../../stores/store.layout';
 import { toJS } from 'mobx';
+import { SyncWaterfallHook } from 'tapable';
 
 const name = 'side-menu';
 const log  = require('debug')('menus:types:' + name);
 
+export interface SideMenuTypeChildHookContext {
+    parent: MenuItem
+    side: IStoreProxy<LayoutStoreSide>
+    close: Function
+}
+
 export class SideMenuType extends MenuType {
-    name = name;
+    name                  = name;
+    public readonly hooks = MenuType.makeHooks({
+        child: new SyncWaterfallHook<MenuItem, SideMenuTypeChildHookContext>([ 'child', 'context' ]),
+    });
 
     public test(item: MenuItem): boolean {
         return item.type === name;
@@ -18,6 +28,12 @@ export class SideMenuType extends MenuType {
         log('handle', { item, event });
         let side: IStoreProxy<LayoutStoreSide> = this.app.store.layout[ item.side ];
         let { show }                           = side;
+
+        const close = () => {
+            side.meta.sideMenuParentItem = undefined;
+            side.collapsed               = true;
+            item.selected                = false;
+        };
 
         // side is closed, open it
         if ( show === false ) {
@@ -32,15 +48,14 @@ export class SideMenuType extends MenuType {
             side.meta.sideMenuParentItem = item.id;
             side.menu                    = (toJS(item.children) as any).map(child => {
                 child.parent = undefined;
+                child        = this.hooks.child.call(child, { close, parent: item, side });
                 return child;
             });
             item.selected                = true;
             side.collapsed               = false;
         } else {
-            side.meta.sideMenuParentItem = undefined;
-            side.collapsed               = true;
-            item.selected                = false;
+            close();
         }
-        // }
     }
+
 }
