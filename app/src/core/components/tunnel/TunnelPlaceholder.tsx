@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { Component, Fragment } from 'react'
+import React, { Component, Fragment, PureComponent } from 'react';
 import { hot } from 'decorators';
 
 export interface TunnelPlaceholderProps {
@@ -7,12 +7,14 @@ export interface TunnelPlaceholderProps {
     component?:React.ComponentType<any>
     id:string
     multiple?:boolean
+    delay?:number
 }
 
 @hot(module)
-export class TunnelPlaceholder extends Component<TunnelPlaceholderProps> {
-    static defaultProps = {
+export class TunnelPlaceholder extends PureComponent<TunnelPlaceholderProps> {
+    static defaultProps:Partial<TunnelPlaceholderProps> = {
         component: Fragment,
+        delay: 1
     }
 
     static contextTypes = {
@@ -32,7 +34,7 @@ export class TunnelPlaceholder extends Component<TunnelPlaceholderProps> {
     }
 
     handlePropsChange = () => {
-        this.forceUpdate()
+        setTimeout(() => this.forceUpdate(), this.props.delay)
     }
 
     render() {

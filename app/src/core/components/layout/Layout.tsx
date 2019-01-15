@@ -13,6 +13,7 @@ import { LayoutFooter } from 'components/layout/LayoutFooter';
 import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
 import { Toolbar } from 'components/toolbar/Toolbar';
 import posed from 'react-pose';
+import Helmet from 'pages/DocumentPage';
 
 
 const { Sider, Header, Content, Footer } = AntdLayout;
@@ -82,6 +83,9 @@ export class Layout extends React.Component<LayProps> {
                                         paddingRight   : content.computedStyle.marginRight,
                                     }}
                                 />
+                                <Toolbar.Item side="left">
+                                    <LayoutBreadcrumbs/>
+                                </Toolbar.Item>
                             </ToolbarContainer>
                             <AntdLayout>
                                 <Content style={content.computedStyle} className={content.computedClass}>

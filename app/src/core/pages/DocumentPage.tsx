@@ -49,9 +49,6 @@ export default class DocumentPage extends React.Component<DocumentPageProps> {
                 <Helmet>
                     <title>{document.title || document.key}</title>
                 </Helmet>
-                <Toolbar.Item side="left">
-                    <LayoutBreadcrumbs/>
-                </Toolbar.Item>
                 {content}
             </div>
         );

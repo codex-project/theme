@@ -53,11 +53,11 @@ export class Toolbar extends React.Component<ToolbarProps> {
                 gutter={24}
             >
                 <Column>
-                    <TunnelPlaceholder id="toolbar-left" multiple/>
+                    <TunnelPlaceholder id="toolbar-left" delay={1500} multiple/>
                 </Column>
                 <Spacer/>
                 <Column>
-                    <TunnelPlaceholder id="toolbar-right" multiple/>
+                    <TunnelPlaceholder id="toolbar-right" delay={1500} multiple/>
                 </Column>
             </Row>
         );

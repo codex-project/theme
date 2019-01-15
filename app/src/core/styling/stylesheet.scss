@@ -29,3 +29,19 @@ pre,code {
 .superduper {
     @include button-variant-primary($blue-3, $red-7);
 }
+
+$breakpoints: (
+    null:0,
+    medium:0,
+    xs: $screen-xs,
+    sm: $screen-sm,
+    md: $screen-md,
+    lg: $screen-lg,
+    xl: $screen-xl,
+    xxl: $screen-xxl,
+);
+
+
+@import "~foundation-sites/scss/global";
+@import "~foundation-sites/scss/components/table";
+@include foundation-table()
