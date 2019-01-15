@@ -1,7 +1,7 @@
 import { join, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import  webpack from 'webpack';
+import webpack from 'webpack';
 import FriendlyErrorsPlugin, { Options as FriendlyErrorsOptions } from 'friendly-errors-webpack-plugin';
 import BarPlugin, { Options as BarOptions } from 'webpackbar';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
@@ -16,6 +16,7 @@ import AntdScssThemePlugin from './build/antd-scss-theme-plugin';
 import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from './build/AssetPathSubstitutionPlugin';
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
+import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
 
 const cache             = true;
 const chain             = new Chain({
@@ -338,7 +339,7 @@ chain.onToConfig(config => {
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: false, modules: true, localIdentName: '[name]__[local]' } },
             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            { loader: antdScss.loader, options: { ...antdScss.options, ...{} } },
+            { loader: antdScss.loader, options: { ...antdScss.options, functions: { [ colorPaletteFunctionSignature ]: colorPaletteFunction } } },
         ],
     }, {
         test   : /\.scss$/,
@@ -347,7 +348,7 @@ chain.onToConfig(config => {
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            { loader: antdScss.loader, options: { ...antdScss.options, ...{} } },
+            { loader: antdScss.loader, options: { ...antdScss.options, functions: { [ colorPaletteFunctionSignature ]: colorPaletteFunction } } },
         ],
     }, {
         test: /\.less$/,

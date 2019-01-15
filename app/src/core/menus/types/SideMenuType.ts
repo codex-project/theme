@@ -44,7 +44,7 @@ export class SideMenuType extends MenuType {
             // item.selected                = true;
         } //else {
         if ( side.meta.sideMenuParentItem !== item.id ) {
-            transaction(() => {
+            // transaction(() => {
                 items.items(side.meta.sideMenuParentItem).deselect();
                 side.meta.sideMenuParentItem = item.id;
                 side.menu                    = (item.children as any).map(child => {
@@ -54,8 +54,8 @@ export class SideMenuType extends MenuType {
                 });
                 item.selected                = true;
                 side.collapsed               = false;
-            });
-            setTimeout(() => side.menu.compile(), 500);
+            // });
+            // setTimeout(() => side.menu.compile(), 500);
         } else {
             close();
         }

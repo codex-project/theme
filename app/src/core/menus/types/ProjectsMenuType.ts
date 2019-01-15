@@ -2,6 +2,7 @@ import { MenuItem } from '../MenuItem';
 import { MenuItems, MenuType } from '../../menus';
 import * as url from '../../utils/url';
 import { SideMenuType } from './SideMenuType';
+import { toJS } from 'mobx';
 
 const name = 'projects';
 const log  = require('debug')('menus:types:' + name);
@@ -19,7 +20,7 @@ export class ProjectsMenuType extends MenuType {
             { type: 'header', label: 'Projects' },
             { type: 'divider' },
         ];
-        store.codex.projects.forEach(project => {
+        toJS(store.codex.projects).forEach(project => {
             let default_document = store.getRevision(project.key, project.default_revision).default_document;
             let child: MenuItem  = {
                 type    : 'router-link',

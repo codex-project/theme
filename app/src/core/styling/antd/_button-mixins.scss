@@ -1,0 +1,233 @@
+@mixin button-size($height, $padding, $font-size, $border-radius) {
+    padding: $padding;
+    font-size: $font-size;
+    border-radius: $border-radius;
+    height: $height;
+}
+
+@mixin button-color($color, $background, $border) {
+    color: $color;
+    background-color: $background;
+    border-color: $border;
+    // a inside Button which only work in Chrome
+    // http://stackoverflow.com/a/17253457
+    > a:only-child {
+        color: currentColor;
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: transparent;
+        }
+    }
+}
+
+
+@mixin button-disabled() {
+    &-disabled,
+    &.disabled,
+    &[disabled] {
+        &,
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            @include button-color($btn-disable-color, $btn-disable-bg, $btn-disable-border);
+            text-shadow: none;
+            box-shadow: none;
+        }
+    }
+}
+
+//noinspection CssInvalidFunction
+@mixin button-variant-primary($color, $background) {
+    @include button-color($color, $background, $background);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+
+    &:hover,
+    &:focus {
+        @include button-color($color, colorPalette($background, 5), colorPalette($background, 5));
+    }
+
+    &:active,
+    &.active {
+        @include button-color($color, colorPalette($background, 7), colorPalette($background, 7));
+    }
+
+    @include button-disabled();
+}
+
+//noinspection CssInvalidFunction
+@mixin button-variant-other($color, $background, $border) {
+    @include button-color($color, $background, $border);
+
+    &:hover,
+    &:focus {
+        @include button-color(colorPalette($btn-primary-bg, 5), $background, colorPalette($btn-primary-bg, 5));
+    }
+    &:active,
+    &.active {
+        @include button-color(colorPalette($btn-primary-bg, 7), $background, colorPalette($btn-primary-bg, 7));
+    }
+    @include button-disabled();
+}
+
+
+//noinspection CssInvalidFunction
+@mixin button-variant-danger($color, $background, $border) {
+    @include button-color($color, $background, $border);
+
+
+    &:active,
+    &.active {
+        @include button-color(colorPalette($btn-primary-bg, 7), $background, colorPalette($btn-primary-bg, 7));
+    }
+    @include button-disabled();
+
+
+    &:hover {
+        @include button-color($btn-primary-color, colorPalette($color, 5), colorPalette($color, 5));
+    }
+    &:focus {
+        @include button-color(colorPalette($color, 5), $component-background, colorPalette($color, 5));
+    }
+    &:active,
+    &.active {
+        @include button-color($btn-primary-color, colorPalette($color, 7), colorPalette($color, 7));
+    }
+    @include button-disabled();
+}
+//noinspection CssInvalidFunction
+@mixin button-variant-ghost($color){
+    @include button-color($color, transparent, $color);
+    text-shadow: none;
+    &:hover,
+    &:focus {
+        @include button-color(colorPalette($color, 5), transparent, colorPalette($color, 5));
+    }
+    &:active,
+    &.active {
+        @include button-color(colorPalette($color, 7), transparent, colorPalette($color, 7));
+    }
+    @include button-disabled();
+}
+
+@mixin button-group-base($btnClassName) {
+    position: relative;
+    display: inline-block;
+    > .#{$btnClassName},
+    > span > .#{$btnClassName} {
+        position: relative;
+
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            z-index: 2;
+        }
+
+        &:disabled {
+            z-index: 0;
+        }
+    }
+    // size
+    &-lg > .#{$btnClassName},
+    &-lg > span > .#{$btnClassName} {
+        @include button-size($btn-height-lg, $btn-padding-lg, $btn-font-size-lg, 0);
+        line-height: $btn-height-lg - 2px;
+    }
+    &-sm > .#{$btnClassName},
+    &-sm > span > .#{$btnClassName} {
+        @include button-size($btn-height-sm, $btn-padding-sm, $font-size-base, 0);
+        line-height: $btn-height-sm - 2px;
+
+        > .#{$iconfont-css-prefix} {
+            font-size: $font-size-base;
+        }
+    }
+}
+
+// Base styles of buttons
+// --------------------------------------------------
+@mixin btn() {
+    display: inline-block;
+    font-weight: $btn-font-weight;
+    text-align: center;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: $border-width-base $border-style-base transparent;
+    white-space: nowrap;
+    @include button-size($btn-height-base, $btn-padding-base, $font-size-base, $btn-border-radius-base);
+    user-select: none;
+    transition: all 0.3s $ease-in-out;
+    position: relative;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+    > .#{$iconfont-css-prefix} {
+        line-height: 1;
+    }
+    &,
+    &:active,
+    &:focus {
+        outline: 0;
+    }
+    &:not([disabled]):hover {
+        text-decoration: none;
+    }
+    &:not([disabled]):active {
+        outline: 0;
+        box-shadow: none;
+    }
+    &.disabled,
+    &[disabled] {
+        cursor: not-allowed;
+
+        > * {
+            pointer-events: none;
+        }
+    }
+    &-lg {
+        @include button-size($btn-height-lg, $btn-padding-lg, $btn-font-size-lg, $btn-border-radius-base);
+    }
+    &-sm {
+        @include button-size($btn-height-sm, $btn-padding-sm, $btn-font-size-sm, $btn-border-radius-sm);
+    }
+}
+
+// primary button style
+@mixin btn-primary() {
+    @include button-variant-primary($btn-primary-color, $btn-primary-bg);
+}
+
+// default button style
+@mixin btn-default() {
+    @include button-variant-other($btn-default-color, $btn-default-bg, $btn-default-border);
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+        background: $btn-default-bg;
+        text-decoration: none;
+    }
+}
+
+// ghost button style
+@mixin btn-ghost() {
+    @include button-variant-other($btn-ghost-color, $btn-ghost-bg, $btn-ghost-border);
+}
+
+// dashed button style
+@mixin btn-dashed() {
+    @include button-variant-other($btn-default-color, $btn-default-bg, $btn-default-border);
+    border-style: dashed;
+}
+
+// danger button style
+@mixin btn-danger() {
+    @include button-variant-danger($btn-danger-color, $btn-danger-bg, $btn-danger-border);
+}

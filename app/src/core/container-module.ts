@@ -11,6 +11,8 @@ import { toJS } from 'mobx';
 import { Fetched } from 'stores/Fetched';
 import { CssVariables } from 'classes/CssVariables';
 import { Breakpoints } from 'utils/breakpoints';
+import { CodeHighlight } from 'components/code-highlight';
+import { TOCHeader, TOCList, TOCListItem } from 'components/toc';
 
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -26,7 +28,12 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
         return layout;
     });
     bind<HtmlComponents>('components').to(HtmlComponents).inSingletonScope().onActivation((ctx, components) => {
-        components.registerMap({});
+        components.registerMap({
+            // 'c-code-highlight': CodeHighlight,
+            // 'c-toc-list'      : TOCList,
+            // 'c-toc-list-item' : TOCListItem,
+            // 'c-toc-header'    : TOCHeader,
+        });
         return components;
     });
     bind<Api>('api').to(Api).inSingletonScope().onActivation((ctx, api) => {

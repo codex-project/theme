@@ -15,6 +15,8 @@ app.load(containerModule);
 
 app.use(app => {
     app.hooks.registered.tap('CORE', (app) => {
+
+
         app.menus.hooks.defaults.tap('CORE', (item, parent?) => {
             if ( item.id === undefined ) {
                 item.id = getRandomId(20);

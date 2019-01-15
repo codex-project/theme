@@ -1,0 +1,44 @@
+@import "../../styling/base";
+
+$toolbar-prefix: "c-toolbar";
+
+.#{$toolbar-prefix} {
+    background-color: $component-background;
+
+    &-column {
+
+    }
+}
+
+//noinspection CssInvalidFunction
+@mixin button-variant-toolbar($color, $hover-background:rgba($black, 0.05)) {
+    @include button-color($color, transparent, $color);
+    text-shadow: none;
+    &:hover {
+        @include button-color(colorPalette($color, 7), $hover-background, colorPalette($color, 5));
+    }
+    &:focus,
+    &:active {
+        color: inherit;
+        background-color: inherit;
+        border-color: inherit;
+    }
+
+    @include button-disabled();
+}
+
+.ant-btn-toolbar {
+    @include button-variant-toolbar(#7a8990);
+}
+
+.ant-btn-codex {
+    @include button-variant-toolbar($color-codex);
+}
+
+.ant-btn-codex-alt {
+    @include button-variant-toolbar($color-codex-alt);
+}
+
+.ant-btn.ant-btn-borderless {
+    border: none;
+}

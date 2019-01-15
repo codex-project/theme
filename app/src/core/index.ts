@@ -33,7 +33,6 @@ export * from './utils/storage';
 // export * from './utils/storage';
 
 
-
 export { app, lazyInject, url };
 
 if ( module.hot ) {
@@ -41,3 +40,15 @@ if ( module.hot ) {
         import('./components/App').then(component => app.render(component.App));
     });
 }
+
+let postMessage = window.postMessage;
+
+window.postMessage = function (...args) {
+    // debugger;
+    try {
+        postMessage(...args);
+    } catch(error){
+        debugger;
+        throw error;
+    }
+};

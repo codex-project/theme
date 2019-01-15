@@ -1,4 +1,4 @@
-import { action, toJS, transaction } from 'mobx';
+import { action, observable, toJS, transaction } from 'mobx';
 import * as React from 'react';
 import { camelCase, set } from 'lodash';
 import { colors } from '../utils/colors';

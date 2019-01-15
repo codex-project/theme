@@ -56,15 +56,13 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
         this.props.onCollapse(collapsed);
     };
 
-    siderRef = React.createRef() as any
-    menuRef:DynamicMenu = React.createRef() as any
+
     render() {
         let side = this.store.layout[ this.props.side ];
 
         let className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
         return (
             <Sider
-                ref={this.siderRef as any}
                 collapsible
                 breakpoint="xs"
                 style={side.computedStyle}
@@ -77,7 +75,6 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                 onCollapse={this.onCollapse}
             >
                 <DynamicMenu
-                    ref={this.menuRef  as any}
                     className={className('side-menu')}
                     items={side.menu}
                     subMenuCloseDelay={side.collapsed ? 0.2 : 1}

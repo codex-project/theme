@@ -50,7 +50,7 @@ export class HtmlComponents {
                 props.className = props.class;
                 delete props.class;
             }
-            log('hasTransform', node.name, { props, node, Component })
+            // log('hasTransform', node.name, { props, node, Component })
 
             return <Component {...props}>{processNodes(node.children, this.transformFn)}</Component>
         }

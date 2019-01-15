@@ -33,14 +33,6 @@ interface State {
     openKeys: string[]
 }
 
-export function MenuItemRenderer(name: string) {
-    return (TargetComponent) => {
-        TargetComponent               = observer(TargetComponent);
-        DynamicMenu.renderers[ name ] = TargetComponent;
-        return TargetComponent;
-    };
-}
-
 export type MenuItemRendererProps = DynamicMenuProps & {
     [ key: string ]: any
     item: MenuItem
@@ -64,7 +56,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
         collapsedWidth: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]),
     };
     context: { siderCollapsed: boolean, collapsedWidth: number | string };
-    innerRef: AntdMenu                                                        = null;
+
 
     componentDidMount() {
         this.selectFromRoutePath();
@@ -111,18 +103,19 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
 
     renderMenuItem(item: MenuItem, level?: number) {
         const { color, mode, items } = this.props;
-        const className                                   = `item-${item.type}`;
+        const className              = `item-${item.type}`;
+
         switch ( item.type ) {
             case 'divider':
                 return (<Divider key={item.id} className={className}>{mode === 'horizontal' ? '&nbsp' : null}</Divider>);
             case 'header':
-                return (<Item key={item.id} className={className}><MenuItemIcon item={item} /><span>{item.label}</span></Item>);
+                return (<Item key={item.id} className={className}><MenuItemIcon item={item}/><span>{item.label}</span></Item>);
             case 'sub-menu':
                 return (
                     <SubMenu
                         className={className}
                         key={item.id}
-                        title={<Fragment><MenuItemIcon item={item} /><span>{item.label}</span></Fragment>}
+                        title={<Fragment><MenuItemIcon item={item}/><span>{item.label}</span></Fragment>}
                         onTitleClick={this.onTitleClick}
                     >
                         {item.children.map(child => this.renderMenuItem(child, level + 1))}
@@ -132,7 +125,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
         let renderer = this.props.renderer || item.renderer || 'default';
         if ( DynamicMenu.renderers[ renderer ] ) {
             const Component = DynamicMenu.renderers[ renderer ];
-            let props       = { level, className,  color };
+            let props       = { level, className, color };
             return <Component key={item.id} item={item} {...props || {}} />;
         }
         return null;
@@ -149,11 +142,10 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
         );
         return (
             <AntdMenu
-                ref={ref => this.innerRef = ref}
                 mode={mode}
                 className={menuClassName}
                 subMenuCloseDelay={0.6}
-                style={{  backgroundColor: getColor(color) }}
+                style={{ backgroundColor: getColor(color) }}
                 selectedKeys={items.selected().ids()}
                 openKeys={items.expanded().ids()}
                 onClick={this.onClick}
@@ -161,8 +153,17 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
                 multiple={multiple}
                 {...props}
             >
-                {items.map(item => this.renderMenuItem(item, 0))}
+                <Item key={'s'}>Hai</Item>
             </AntdMenu>
         );
     }
+}
+
+
+export function MenuItemRenderer(name: string) {
+    return (TargetComponent) => {
+        // TargetComponent               = observer(TargetComponent);
+        DynamicMenu.renderers[ name ] = TargetComponent;
+        return TargetComponent;
+    };
 }

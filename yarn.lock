@@ -2026,6 +2026,13 @@
   dependencies:
     "@types/express" "*"
 
+"@types/node-sass@^3.10.32":
+  version "3.10.32"
+  resolved "https://registry.npmjs.org/@types/node-sass/-/node-sass-3.10.32.tgz#b296cce7144ffab77b84090caad4f1e4bbea8e09"
+  integrity sha1-spbM5xRP+rd7hAkMqtTx5Lvqjgk=
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*", "@types/node@^10.0.5", "@types/node@^10.12.18", "@types/node@^10.12.9":
   version "10.12.18"
   resolved "https://registry.npmjs.org/@types/node/-/node-10.12.18.tgz#1d3ca764718915584fcd9f6344621b7672665c67"
@@ -12086,7 +12093,7 @@ node-releases@^1.0.0-alpha.11, node-releases@^1.1.3:
   dependencies:
     semver "^5.3.0"
 
-"node-sass@^3.1.2, ^4.0.0":
+"node-sass@^3.1.2, ^4.0.0", node-sass@^4.11.0:
   version "4.11.0"
   resolved "https://registry.npmjs.org/node-sass/-/node-sass-4.11.0.tgz#183faec398e9cbe93ba43362e2768ca988a6369a"
   integrity sha512-bHUdHTphgQJZaF1LASx0kAviPH7sGlcyNhWade4eVIpFp6tsn7SV8xNMTbsQFpEV9VXpnwTTnNYlfsZXgGgmkA==
@@ -12958,13 +12965,6 @@ path-parse@^1.0.5, path-parse@^1.0.6:
   version "1.0.6"
   resolved "https://registry.npmjs.org/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
   integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
-
-path-parser@4.2.0:
-  version "4.2.0"
-  resolved "https://registry.npmjs.org/path-parser/-/path-parser-4.2.0.tgz#2fbb3df2d49659a9a4cac88be7d8d5f4666814fb"
-  integrity sha512-MPPZiWTTp2I72VXmGQQfsn2ohrbd9QTbZSLYNS+HXsnQ37VbiLR/szO2R7DHaZA1V1scYxuxgyQerj+6kMTXtA==
-  dependencies:
-    search-params "2.1.3"
 
 path-root-regex@^0.1.0:
   version "0.1.2"
@@ -14394,7 +14394,7 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-prop-types@15.x, prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@~15.6.2:
+prop-types@15.x, prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   integrity sha512-3pboPvLiWD7dkI3qf3KbUe6hKFKa52w+AE0VCqECtf+QHAKgOL37tTaNCnuX1nAAQ4ZhyP+kYVKf8rLmJ/feDQ==
@@ -15195,22 +15195,6 @@ react-router-transition@^1.2.1:
     prop-types "^15.5.10"
     react-motion "^0.5.0"
     react-router-dom "^4.1.1"
-
-react-router5-hocs@^7.0.1:
-  version "7.0.2"
-  resolved "https://registry.npmjs.org/react-router5-hocs/-/react-router5-hocs-7.0.2.tgz#1b4d954b379ef026964f740ebd0cede5786621bd"
-  integrity sha512-vtkSPqLXWiMrqNKMvmZeDg5+lf7pfiMXDu/9nZiFJf/Z+fxGnErYx6evHU8x4ZgC0HMooZGtvfhLxKUaUxnG/g==
-  dependencies:
-    prop-types "~15.6.2"
-    router5-transition-path "^7.0.0"
-
-react-router5@^7.0.1:
-  version "7.0.2"
-  resolved "https://registry.npmjs.org/react-router5/-/react-router5-7.0.2.tgz#da1c52faab25e747391dd09b6364161da7e68ad2"
-  integrity sha512-0Kkz9CBnhDMMDu+vuiO6afJCjT1KW4tvLO95bA0jzR6uumRAKyUk3UDR04O5jVFooHu1eDlDcorwjt5kov2UFg==
-  dependencies:
-    prop-types "~15.6.2"
-    router5-transition-path "^7.0.0"
 
 react-router@^4.3.1:
   version "4.3.1"
@@ -16020,45 +16004,6 @@ rmc-feedback@^2.0.0:
     babel-runtime "6.x"
     classnames "^2.2.5"
 
-route-node@3.4.2:
-  version "3.4.2"
-  resolved "https://registry.npmjs.org/route-node/-/route-node-3.4.2.tgz#6481fd5949c34a785bfbb9c3bcdae4d8333bbd46"
-  integrity sha512-MDIllr+xwmzSKQh49Ls1g66LIH9JisXh15WXyu4hAYW95mrTSRWr7bqc23hcrjZpehTmSNOb64ZiHBgsHUArog==
-  dependencies:
-    path-parser "4.2.0"
-    search-params "2.1.3"
-
-router5-helpers@^7.0.1:
-  version "7.0.0"
-  resolved "https://registry.npmjs.org/router5-helpers/-/router5-helpers-7.0.0.tgz#4c4ec55603051edfbf59abc1c6ddbbb5ad141718"
-  integrity sha512-01xmQYrsvuT939vjGV1qW5uqQTjbhS09REnwQUVx889Z2N4Bq1YzZPVNuzrTESIQahlald7gfjNKKV5rUpGJfQ==
-
-router5-plugin-browser@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.npmjs.org/router5-plugin-browser/-/router5-plugin-browser-7.0.1.tgz#2c59cf6299f9edf25e83d0629eece589cf0b1985"
-  integrity sha512-3zKCyQlr4OKBOK8/9usJ8kcTMmqkSw8cYGt2T0+A2ktU5rAkDoLeZ7xJBjlcpJmEcT7lDx2K18gc6Epq6Zd6Ng==
-
-router5-plugin-listeners@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.npmjs.org/router5-plugin-listeners/-/router5-plugin-listeners-7.0.1.tgz#10d24f2ccb2a79faf711bccf5cdf79f7073584b5"
-  integrity sha512-yHJd0jqT7urQvNaobaAkvo0t1pIHy86hOfBTlGqQo7XmFHjPgBuoFk6PhkSj6+1V1OdRhXtzio8Br/x8yuuglg==
-  dependencies:
-    router5-transition-path "^7.0.0"
-
-router5-transition-path@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.npmjs.org/router5-transition-path/-/router5-transition-path-7.0.0.tgz#de95233c63757a37afd76e2e99cfb12896f16fd2"
-  integrity sha512-hZoRaEIc/Cx7RZhv9AV8PX3H0zlhG19Bjio4tMfCnYBVstJqd1wfJY/KQWfxtIzj2Lr0M9xICKgjAp+KRxQYbA==
-
-router5@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.npmjs.org/router5/-/router5-7.0.1.tgz#5590e7eee04625278d502d496dde0bc55d1758c3"
-  integrity sha512-FaAUSm/+0g3m3j+R4mmx5Hns0YHiWK4Oi0eIAt1KgoMQ9NWcJBVw04RAfHEpoa9m39cswVYG83ovh/QjCTbicA==
-  dependencies:
-    route-node "3.4.2"
-    router5-transition-path "^7.0.0"
-    symbol-observable "1.2.0"
-
 rsvp@^3.3.3:
   version "3.6.2"
   resolved "https://registry.npmjs.org/rsvp/-/rsvp-3.6.2.tgz#2e96491599a96cde1b515d5674a8f7a91452926a"
@@ -16198,11 +16143,6 @@ scss-tokenizer@^0.2.3:
   dependencies:
     js-base64 "^2.1.8"
     source-map "^0.4.2"
-
-search-params@2.1.3:
-  version "2.1.3"
-  resolved "https://registry.npmjs.org/search-params/-/search-params-2.1.3.tgz#90b98964eaf3d0edef0f73e6e8307d1480020413"
-  integrity sha512-hHxU9ZGWpZ/lrFBIHndSnQae2in7ra+m+tBSoeAahSWDDgOgpZqs4bfaTZpljgNgAgTbjiQoJtZW6FKSsfEcDA==
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -17208,7 +17148,7 @@ swap-case@^1.1.0:
     lower-case "^1.1.1"
     upper-case "^1.1.1"
 
-symbol-observable@1.2.0, symbol-observable@^1.0.2, symbol-observable@^1.1.0:
+symbol-observable@^1.0.2, symbol-observable@^1.1.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
   integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==

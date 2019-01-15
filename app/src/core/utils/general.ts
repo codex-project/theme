@@ -13,7 +13,11 @@ import { isNumber } from 'lodash';
 export function warn(message: string) {
     console.warn('[codex][core] ' + message)
 }
-
+export function uniqueId() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1)
+}
 export function getRandomId(length) {
     if ( isNumber(length) ) {
         length = 15;

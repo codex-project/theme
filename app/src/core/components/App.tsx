@@ -12,11 +12,11 @@ import { RouterPages } from './router-pages';
 
 import '../styling/semantic.less';
 import '../styling/stylesheet.scss';
-
-// noinspection ES6UnusedImports
 // import styles from './App.mscss'
 // import './App.mscss'
+// noinspection ES6UnusedImports
 import { Layout } from './layout';
+import { TunnelProvider } from 'components/tunnel';
 
 const log = require('debug')('app');
 
@@ -47,30 +47,31 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
     constructor(props: {} & WithRouterProps, context: { router: Router }) {
         super(props, context);
         if ( ! app.isBound('router') ) {
-            app.bind( 'router').toConstantValue(context.router);
+            app.bind('router').toConstantValue(context.router);
         }
         if ( ! app.isBound('history') ) {
             app.bind('history').toConstantValue(props.history);
         }
         props.history.listen((location, action) => {
-            log('location', action, location)
-        })
+            log('location', action, location);
+        });
     }
 
     render() {
         return (
-
             <ErrorBoundary>
-                <Layout>
-                    <Helmet
-                        defaultTitle={this.store.codex.display_name}
-                        titleTemplate={this.store.codex.display_name + ' - %s'}
-                        {...this.store.helmet}
-                    />
-                    <ErrorBoundary>
-                        <RouterPages routes={this.routes}/>
-                    </ErrorBoundary>
-                </Layout>
+                {/*<TunnelProvider>*/}
+                    <Layout>
+                        <Helmet
+                            defaultTitle={this.store.codex.display_name}
+                            titleTemplate={this.store.codex.display_name + ' - %s'}
+                            //{...this.store.helmet}
+                        />
+                        <ErrorBoundary>
+                            <RouterPages routes={this.routes}/>
+                        </ErrorBoundary>
+                    </Layout>
+                {/*</TunnelProvider>*/}
             </ErrorBoundary>
         );
     }

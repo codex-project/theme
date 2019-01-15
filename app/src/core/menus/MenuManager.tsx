@@ -51,24 +51,24 @@ export class MenuManager {
     registerType(Type: IMenuTypeConstructor) {
         const type = app.resolve<IMenuType>(Type);
         this.types.set(type.name, type);
-        this.hooks.pre.tap(type.name, item => transaction(() => {
+        this.hooks.pre.tap(type.name, item => {
             if ( type.test(item) ) {
-                item = type.hooks.pre.call(type.pre(item));
+                item = type.pre(item); //type.hooks.pre.call(type.pre(item));
             }
             return item;
-        }));
-        this.hooks.post.tap(type.name, item => transaction(() => {
+        });
+        this.hooks.post.tap(type.name, item => {
             if ( type.test(item) ) {
-                item = type.hooks.post.call(type.post(item));
+                item = type.post(item); //type.hooks.post.call(type.post(item));
             }
             return item;
-        }));
+        });
         this.hooks.handle.tap(type.name, (item, event, items) => {
             if ( type.test(item) ) {
                 log('handle', type.name, { item, event, items });
-                type.hooks.handle.call(item, event, items);
+                // type.hooks.handle.call(item, event, items);
                 let handled = type.handle(item, event, items);
-                type.hooks.handled.call(item, event, items);
+                // type.hooks.handled.call(item, event, items);
                 return handled;
             }
         });

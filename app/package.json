@@ -113,6 +113,8 @@
         "@types/babel-core": "^6.25.5",
         "@types/dotenv": "^6.1.0",
         "@types/debug": "^0.0.31",
+        "@types/node-sass": "^3.10.32",
+        "node-sass": "^4.11.0",
         "ts-import-plugin": "^1.5.5",
         "ts-css-modules-transformer": "^0.1.0",
         "nps": "^5.9.3",

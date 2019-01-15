@@ -146,49 +146,49 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
                 if ( data.codex.changes ) {
                     merge(codex, data.codex.changes);
                 }
-                this.fetched.setCodex(merge({}, codex, data.codex));
+                this.fetched.setCodex(merge( codex, data.codex));
             }
 
             if ( data.project ) {
                 let project  = this.fetched.getProject(this.projectKey);
                 let inherits = {};
-                uniq([].concat(project.inherits || []).concat(data.project.inherits || []))
-                    .filter(inheritKey => this.fetched.hasCodexField(inheritKey))
-                    .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getCodex()[ inheritKey ]);
-                project = merge({}, project, inherits);
+                // uniq([].concat(project.inherits || []).concat(data.project.inherits || []))
+                //     .filter(inheritKey => this.fetched.hasCodexField(inheritKey))
+                //     .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getCodex()[ inheritKey ]);
+                // project = merge({}, project, inherits);
 
                 if ( data.project.changes ) {
                     merge(project, data.project.changes);
                 }
-                this.fetched.setProject(this.projectKey, merge({}, project, data.project));
+                this.fetched.setProject(this.projectKey, merge( project, data.project));
             }
 
             if ( data.revision ) {
                 let revision = this.fetched.getRevision(this.projectKey, this.revisionKey);
                 let inherits = {};
-                uniq([].concat(revision.inherits || []).concat(data.revision.inherits || []))
-                    .filter(inheritKey => this.fetched.hasProjectField(this.projectKey, inheritKey))
-                    .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getProject(this.projectKey)[ inheritKey ]);
-                revision = merge({}, revision, inherits);
+                // uniq([].concat(revision.inherits || []).concat(data.revision.inherits || []))
+                //     .filter(inheritKey => this.fetched.hasProjectField(this.projectKey, inheritKey))
+                //     .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getProject(this.projectKey)[ inheritKey ]);
+                // revision = merge({}, revision, inherits);
 
                 if ( data.revision.changes ) {
                     merge(revision, data.revision.changes);
                 }
-                this.fetched.setRevision(this.projectKey, this.revisionKey, merge({}, revision, data.revision));
+                this.fetched.setRevision(this.projectKey, this.revisionKey, merge( revision, data.revision));
             }
 
             if ( data.document ) {
                 let document = this.fetched.getDocument(this.projectKey, this.revisionKey, this.documentKey);
                 let inherits = {};
-                uniq([].concat(document.inherits || []).concat(data.document.inherits || []))
-                    .filter(inheritKey => this.fetched.hasRevisionField(this.projectKey, this.revisionKey, inheritKey))
-                    .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getRevision(this.projectKey, this.revisionKey)[ inheritKey ]);
-                document = merge({}, document, inherits);
+                // uniq([].concat(document.inherits || []).concat(data.document.inherits || []))
+                //     .filter(inheritKey => this.fetched.hasRevisionField(this.projectKey, this.revisionKey, inheritKey))
+                //     .forEach(inheritKey => inherits[ inheritKey ] = this.fetched.getRevision(this.projectKey, this.revisionKey)[ inheritKey ]);
+                // document = merge({}, document, inherits);
 
                 if ( data.document.changes ) {
                     merge(document, data.document.changes);
                 }
-                this.fetched.setDocument(this.projectKey, this.revisionKey, this.documentKey, merge({}, document, data.document));
+                this.fetched.setDocument(this.projectKey, this.revisionKey, this.documentKey, merge( document, data.document));
             }
         }
 

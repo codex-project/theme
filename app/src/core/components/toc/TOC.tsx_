@@ -1,0 +1,80 @@
+import React, { Component } from 'react';
+import { observer } from 'mobx-react';
+import PropTypes from 'prop-types'
+import { Hot, ScrollPosition } from 'codex_core';
+import { Anchor } from 'antd';
+import { debounce } from 'lodash-decorators';
+import DocumentContent from '../DocumentContent';
+import classNames from 'classnames';
+
+const log = require('debug')('components:TOC')
+
+export interface TOCProps {
+    affix?: boolean
+    container?: HTMLElement | Window
+    className?: string
+    slideOut?: boolean
+}
+
+/**
+ * TOC component
+ */
+@Hot(module)
+@observer
+export default class TOC extends Component<TOCProps> {
+    anchor: Anchor;
+
+    static displayName: string             = 'TOC'
+    static defaultProps: Partial<TOCProps> = {
+        container: window
+    }
+    static contextTypes                    = {
+        content: PropTypes.object.isRequired
+    }
+
+    context: { content: DocumentContent }
+
+    state = { mouseOver: false }
+
+    @debounce(100, { leading: true, trailing: true })
+    handleScroll(pos: ScrollPosition) {
+        if ( this.anchor ) {
+            log('handleScroll', { pos, anchor: this.anchor })
+            this.anchor.handleScroll()
+            this.anchor.updateInk();
+        }
+    }
+
+    render() {
+        if ( ! this.state ) return null;
+        let { children, affix, container, className, slideOut } = this.props;
+
+
+        return (
+            <div
+                className={classNames(
+                    className,
+                    'c-toc',
+                    {
+                        'c-toc-slideout': slideOut,
+                        'c-toc-expand'  : slideOut && this.state.mouseOver
+
+                    })}
+                onMouseEnter={e => this.setState({ mouseOver: true })}
+                onMouseLeave={e => this.setState({ mouseOver: false })}
+            >
+                <Anchor
+                    affix={false}
+                    // offsetTop={63}
+                    className="c-toc-anchor"
+                    getContainer={() => container}
+                    showInkInFixed={true}
+                    // ref={ref => this.anchor = ref}
+                >
+                    {children}
+                </Anchor>
+            </div>
+        )
+    }
+
+}

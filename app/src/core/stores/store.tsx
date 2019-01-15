@@ -137,6 +137,7 @@ export class Store {
     }
 
     @action setDocument(document: api.Document | null) {
+        log('setDocument')
         this.document = document;
         return this;
     }
@@ -181,49 +182,59 @@ export class Store {
     // @action setFetching(fetching) { this.fetching = fetching;}
 
     async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
-        // if ( this.fetching ) return;
-        // this.fetching = true;
+        if ( this.fetching ) return;
+        this.fetching = true;
         let query     = new QueryBuilder(projectKey, revisionKey, documentKey);
         query.withChanges()
             .addProjectFields('key', 'display_name', 'description')
             .addRevisionFields('key')
             .addDocumentFields('key', 'content');
 
-        query      = this.hooks.fetch.call(query);
-        let result = await query.get();
+        // query      = this.hooks.fetch.call(query);
 
-        transaction(() => {
-            let layout = this.codex;
+        return new Promise((res,rej)=>transaction(async () => {
+            let result = await query.get();
+            let layout;
             if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
-                this.setProject(null);
-                this.setRevision(null);
-                this.setDocument(null);
-                this.setProject(result.project);
+                this.project = null;
+                this.revision= null;
+                this.document = null;
+                this.project = result.project;
+                // this.setProject(null);
+                // this.setRevision(null);
+                // this.setDocument(null);
+                // this.setProject(result.project);
                 // this.mergeLayout(this.codex);
                 // this.mergeLayout(result.project)
                 layout = result.project;
             }
             if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
-                this.setRevision(null);
-                this.setDocument(null);
-                this.setRevision(result.revision);
+                // this.setRevision(null);
+                // this.setDocument(null);
+                // this.setRevision(result.revision);
                 // this.mergeLayout(result.revision);
+                this.revision= null;
+                this.document = null;
+                this.revision = result.revision;
                 layout = result.revision;
             }
             if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
-                this.setDocument(null);
-                this.setDocument(result.document);
+                // this.setDocument(null);
+                // this.setDocument(result.document);
                 // this.mergeLayout(result.document);
+                this.document = null;
+                this.document = result.document;
                 layout = result.document;
             }
             if ( layout ) {
                 this.mergeLayout(layout);
             }
-        });
+            this.fetching = false;
+            res(result);
+        }));
 
-        this.hooks.fetched.call(result);
-        // this.fetching = false;
-        return result;
+        // this.hooks.fetched.call(result);
+        // return result;
     }
 
     // async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
