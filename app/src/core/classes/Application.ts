@@ -16,6 +16,7 @@ import * as url from '../utils/url';
 import { MenuManager } from '../menus';
 import { CssVariables } from 'classes/CssVariables';
 import { Breakpoints } from 'utils/breakpoints';
+import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
 
 const log = require('debug')('classes:Application');
 
@@ -37,6 +38,11 @@ export class Application extends Container {
         booted    : new SyncHook<this>([ 'application' ]),
     };
 
+    get localStorage(): LocalStorage {return this.get('storage.local');}
+
+    get sessionStorage(): SessionStorage {return this.get('storage.session');}
+
+    get cookieStorage(): CookieStorage {return this.get('storage.cookies');}
 
     get cssvars(): CssVariables { return this.get('cssvars');}
 

@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { hot } from 'decorators';
-import { classes } from 'typestyle';
-import { Button } from 'antd';
-import { observable } from 'mobx';
+import { Popover } from 'antd';
+import { action, observable } from 'mobx';
+import { Toolbar } from 'components/toolbar/Toolbar';
+import { Button } from 'components/toolbar/Button';
 
+import './toc.scss';
 
-
-const log = require('debug')('components:TOC')
+const log = require('debug')('components:TOC');
 
 export interface TOCProps {
     className?: string
     style?: React.CSSProperties
 }
+
 export type TOCComponent = React.ComponentType<TOCProps>
 
 
@@ -22,17 +24,36 @@ export type TOCComponent = React.ComponentType<TOCProps>
 @hot(module)
 @observer
 export class TOC extends Component<TOCProps> {
-    static displayName: string                 = 'TOC'
-    static defaultProps: Partial<TOCProps> = {}
+    static displayName: string             = 'TOC';
+    static defaultProps: Partial<TOCProps> = {};
 
-    @observable show:boolean=false
+    @observable tocPopoverVisible = false;
+
+    @action toggleTocPopover(tocPopoverVisible?: boolean) {this.tocPopoverVisible = tocPopoverVisible !== undefined ? tocPopoverVisible : ! this.tocPopoverVisible;}
+
 
     render() {
-        const {className,style,children} = this.props;
+        const { className, style, children } = this.props;
 
         return (
-            <Button htmlType="button" icon="plus">Table of Contents</Button>
-        )
+            <Toolbar.Item side="right">
+                <Button.Group>
+                    <Popover
+                        title="Table of Contents"
+                        trigger="hover"
+                        visible={this.tocPopoverVisible}
+                        onVisibleChange={visible => this.toggleTocPopover(visible)}
+                        content={<div className="c-toc">{children}</div>}
+                        autoAdjustOverflow
+                        placement={'bottomLeft'}
+                        style={{ minWidth: 100, maxWidth: 150 }}
+                    >
+                        <Button borderless type="toolbar" icon="list-alt" title="Show the Table of Contents">Table of Contents</Button>
+                    </Popover>
+
+                </Button.Group>
+            </Toolbar.Item>
+        );
     }
 
 }

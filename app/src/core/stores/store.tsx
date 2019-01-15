@@ -28,6 +28,8 @@ export interface HelmetStore extends Partial<HelmetProps> {
 export interface ProjectPart {
     key: string
     default_revision: string
+    display_name
+    description
     revisions: RevisionPart[]
 }
 
@@ -178,8 +180,6 @@ export class Store {
 
     fetching = false;
 
-    // @action setFetching(fetching) { this.fetching = fetching;}
-
     async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
         if ( this.fetching ) return;
         this.fetching = true;
@@ -193,7 +193,6 @@ export class Store {
 
         let result = await query.get();
 
-
         transaction( () => {
             let layout;
             if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
@@ -201,28 +200,15 @@ export class Store {
                 this.revision= null;
                 this.document = null;
                 this.project = result.project;
-                // this.setProject(null);
-                // this.setRevision(null);
-                // this.setDocument(null);
-                // this.setProject(result.project);
-                // this.mergeLayout(this.codex);
-                // this.mergeLayout(result.project)
                 layout = result.project;
             }
             if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
-                // this.setRevision(null);
-                // this.setDocument(null);
-                // this.setRevision(result.revision);
-                // this.mergeLayout(result.revision);
                 this.revision= null;
                 this.document = null;
                 this.revision = result.revision;
                 layout = result.revision;
             }
             if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
-                // this.setDocument(null);
-                // this.setDocument(result.document);
-                // this.mergeLayout(result.document);
                 this.document = null;
                 this.document = result.document;
                 layout = result.document;
@@ -237,15 +223,4 @@ export class Store {
         return result;
     }
 
-    // async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
-    //     let fetchingKey = [ projectKey, revisionKey, documentKey ].filter(Boolean).join('.');
-    //     if ( has(this.fetching, fetchingKey) ) {
-    //         return get(this.fetching, fetchingKey);
-    //     }
-    //     let fetch = this._fetch(projectKey, revisionKey, documentKey);
-    //     set(this.fetching, fetchingKey, fetch);
-    //     let fetched = await fetch;
-    //     unset(this.fetching, fetchingKey);
-    //     return fetched;
-    // }
 }

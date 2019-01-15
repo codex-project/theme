@@ -9,6 +9,8 @@ import { observe } from 'mobx';
 import { LayoutStoreSide } from 'stores/store.layout';
 import { IStoreProxy } from 'stores/proxy';
 import { classes } from 'typestyle';
+import { CookieStorage } from 'utils/storage';
+import { parseBool } from 'utils/general';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -34,7 +36,12 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
 
 
     public componentDidMount(): void {
+        if ( CookieStorage.has(`layout.${this.props.side}.collapsed`) ) {
+            this.side.setCollapsed(parseBool(CookieStorage.get(`layout.${this.props.side}.collapsed`)));
+        }
         observe(this.side, 'collapsed', (change) => {
+            log('observe collapsed');
+            CookieStorage.set(`layout.${this.props.side}.collapsed`, change.newValue);
             if ( change.newValue === true ) {
                 this.side.menu.collapseAll();
             }

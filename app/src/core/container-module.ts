@@ -12,27 +12,52 @@ import { Fetched } from 'stores/Fetched';
 import { CssVariables } from 'classes/CssVariables';
 import { Breakpoints } from 'utils/breakpoints';
 import { CodeHighlight } from 'components/code-highlight';
-import { TOCHeader, TOCList, TOCListItem } from 'components/toc';
+import { TOC, TOCHeader, TOCList, TOCListItem } from 'components/toc';
+import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
+import { CLink } from 'components/link';
+import { Trigger } from 'components/Trigger';
+import { Link } from 'react-router-dom';
+import { Col, Modal, Popover, Row, Tooltip } from 'antd';
+import { Icon } from 'components/Icon';
+import { Button } from 'components/toolbar/Button';
 
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     decorate(injectable(), Api);
 
+    bind<LocalStorage>('storage.local').to(LocalStorage).inSingletonScope();
+    bind<SessionStorage>('storage.session').to(SessionStorage).inSingletonScope();
+    bind<CookieStorage>('storage.cookie').to(CookieStorage).inSingletonScope();
+    bind<Fetched>('fetched').to(Fetched).inSingletonScope();
+
     bind<Breakpoints>('breakpoints').to(Breakpoints).inSingletonScope();
     bind<CssVariables>('cssvars').to(CssVariables).inSingletonScope();
-    bind<Fetched>('fetched').to(Fetched).inSingletonScope();
+
     bind<Routes>('routes').toConstantValue(routes);
     bind<Store>('store').to(Store).inSingletonScope();
+
     bind<LayoutStore>('store.layout').to(LayoutStore).inSingletonScope().onActivation((ctx, layout) => {
         layout.merge(toJS(ctx.container.get<Store>('store').codex.layout));
         return layout;
     });
     bind<HtmlComponents>('components').to(HtmlComponents).inSingletonScope().onActivation((ctx, components) => {
         components.registerMap({
-            // 'c-code-highlight': CodeHighlight,
-            // 'c-toc-list'      : TOCList,
-            // 'c-toc-list-item' : TOCListItem,
-            // 'c-toc-header'    : TOCHeader,
+            'c-code-highlight': CodeHighlight,
+            'c-toc'           : TOC,
+            'c-toc-list'      : TOCList,
+            'c-toc-list-item' : TOCListItem,
+            'c-toc-header'    : TOCHeader,
+            'c-link'          : CLink,
+
+            'link'   : Link,
+            'trigger': Trigger,
+            'modal'  : Modal,
+            'icon'   : Icon as any,
+            'col'    : Col,
+            'row'    : Row,
+            'button' : Button,
+            'tooltip': Tooltip,
+            'popover': Popover,
         });
         return components;
     });

@@ -43,7 +43,7 @@ export class TOCListItem extends Component<TOCListItemProps> {
                 <a href={strEnsureLeft(href, '#')} onClick={this.onClick}>
                     <span className="title">{title}</span>
                 </a>
-                {children ? <ul className="sub-menu">{children}</ul> : null}
+                {children || null}
             </li>
         );
     }

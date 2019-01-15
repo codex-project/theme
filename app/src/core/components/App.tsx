@@ -9,14 +9,11 @@ import { app, lazyInject } from '../ioc';
 import { Helmet } from 'react-helmet';
 import { ErrorBoundary } from './errors';
 import { RouterPages } from './router-pages';
+import { Layout } from './layout';
+import { TunnelProvider } from 'components/tunnel';
 
 import '../styling/semantic.less';
 import '../styling/stylesheet.scss';
-// import styles from './App.mscss'
-// import './App.mscss'
-// noinspection ES6UnusedImports
-import { Layout } from './layout';
-import { TunnelProvider } from 'components/tunnel';
 
 const log = require('debug')('app');
 
@@ -60,7 +57,7 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
     render() {
         return (
             <ErrorBoundary>
-                {/*<TunnelProvider>*/}
+                <TunnelProvider>
                     <Layout>
                         <Helmet
                             defaultTitle={this.store.codex.display_name}
@@ -71,7 +68,7 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
                             <RouterPages routes={this.routes}/>
                         </ErrorBoundary>
                     </Layout>
-                {/*</TunnelProvider>*/}
+                </TunnelProvider>
             </ErrorBoundary>
         );
     }

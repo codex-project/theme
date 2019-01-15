@@ -44,8 +44,33 @@ export class Routes<T extends IDefinedRoute = IDefinedRoute> extends Array<T> im
     generatePath(pattern: string, params?: { [ paramName: string ]: string | number | boolean }) {
         return generatePath(pattern, params);
     }
+    getRouteParams(route: IDefinedRoute, to: string): Record<string, string> {
+        let params: Record<string, string> = {}
+        let values                         = route.test.exec(to);
+        values.shift(); // first item is the full path, remove it from array
+        values.map((value, index) => {
+            let name       = route.keys[ index ].name
+            params[ name ] = value
+        })
+        return params;
+    }
 
-    matchPath<Params extends { [K in keyof Params]?: string }>(props) {return matchPath<Params>(this.history.location.pathname, props); }
+    public getRoutesByPath(path: string) {
+        const flat: IDefinedRoute[] = []
+        const traverse              = (routes: IDefinedRoute[]) => {
+            routes.forEach(route => {
+                flat.push(route);
+                if ( route.routes && route.routes.length > 0 ) {
+                    traverse(route.routes);
+                }
+            })
+        }
+        traverse(this);
+        return flat.filter(route => route.test.test(path))
+    }
+    matchPath<Params extends { [K in keyof Params]?: string }>(path, props) {return matchPath<Params>(path, props); }
+
+    match<Params extends { [K in keyof Params]?: string }>(props) {return this.matchPath<Params>(this.history.location.pathname, props); }
 
     getRoute(name: string) {return this.findBy('name', name);}
 

@@ -10,3 +10,8 @@ export * from './App';
 export * from './OffCanvas';
 export * from './Responsive';
 export * from './Icon';
+export * from './link';
+export * from './Centered';
+export * from './Scrollbar';
+export * from './Trigger';
+export * from './tunnel';

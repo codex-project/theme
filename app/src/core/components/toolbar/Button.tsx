@@ -1,7 +1,7 @@
 import React from 'react';
 import { hot } from 'decorators';
 
-import './index.scss';
+import './toolbar.scss';
 import { Button as AntdButton } from 'antd';
 import { Icon } from 'components/Icon';
 import { ButtonType as AntdButtonType } from 'antd/lib/button';
@@ -26,8 +26,8 @@ export class Button extends React.Component<ButtonProps> {
     static Group: typeof AntdButton.Group = AntdButton.Group;
 
     render() {
-        let { borderless, icon, children, ...props } = this.props;
-        let classNames                               = [];
+        let { borderless, icon, children,className, ...props } = this.props;
+        let classNames                               = [className];
         if ( borderless ) classNames.push('ant-btn-borderless');
 
         return (

@@ -10,24 +10,24 @@ var class2type = {};
 });
 
 function type(obj) {
-    return obj === null ? String(obj) : class2type[ toString.call(obj) ] || 'object'
+    return obj === null ? String(obj) : class2type[ toString.call(obj) ] || 'object';
 }
 
 function isPlainObject(obj) {
     if ( ! obj || type(obj) !== 'object' ) {
-        return false
+        return false;
     }
 
     if ( obj.constructor &&
         ! hasOwn.call(obj, 'constructor') &&
         ! hasOwn.call(obj.constructor.prototype, 'isPrototypeOf') ) {
-        return false
+        return false;
     }
 
     var key;
     for ( key in obj ) {}
 
-    return key === undefined || hasOwn.call(obj, key)
+    return key === undefined || hasOwn.call(obj, key);
 }
 
 function extend(...args) {
@@ -62,45 +62,43 @@ function extend(...args) {
                 copy = options[ name ];
 
                 if ( target === copy ) {
-                    continue
+                    continue;
                 }
 
                 if ( deep && copy && (isPlainObject(copy) || (copyIsArray = type(copy) === 'array')) ) {
                     if ( copyIsArray ) {
                         copyIsArray = false;
                         clone       = src && type(src) === 'array' ? src : [];
-                    }
-                    else {
+                    } else {
                         clone = src && isPlainObject(src) ? src : {};
                     }
 
                     target[ name ] = extend(deep, clone, copy);
-                }
-                else if ( copy !== undefined ) {
+                } else if ( copy !== undefined ) {
                     target[ name ] = copy;
                 }
             }
         }
     }
 
-    return target
+    return target;
 }
 
 function encode(string) {
-    return encodeURIComponent(string)
+    return encodeURIComponent(string);
 }
 
 function decode(string) {
-    return decodeURIComponent(string)
+    return decodeURIComponent(string);
 }
 
 function stringifyCookieValue(value) {
-    return encode(value === Object(value) ? JSON.stringify(value) : '' + value)
+    return encode(value === Object(value) ? JSON.stringify(value) : '' + value);
 }
 
 function read(string) {
     if ( string === '' ) {
-        return string
+        return string;
     }
 
     if ( string.indexOf('"') === 0 ) {
@@ -115,14 +113,13 @@ function read(string) {
 
     try {
         string = JSON.parse(string);
-    }
-    catch ( e ) {}
+    } catch ( e ) {}
 
-    return string
+    return string;
 }
 
-function set$1(key, val, opts?: { expires?: number | Date, path?: string, domain?: string, secure?: boolean }) {
-    if ( opts === void 0 ) opts = {};
+function set$1(key, val, opts: { expires?: number | Date, path?: string, domain?: string, secure?: boolean } = {}) {
+    opts = { path: '/', ...opts };
 
     var time = opts.expires;
 
@@ -136,7 +133,7 @@ function set$1(key, val, opts?: { expires?: number | Date, path?: string, domain
         time ? '; expires=' + (time as Date).toUTCString() : '', // use expires attribute, max-age is not supported by IE
         opts.path ? '; path=' + opts.path : '',
         opts.domain ? '; domain=' + opts.domain : '',
-        opts.secure ? '; secure' : ''
+        opts.secure ? '; secure' : '',
     ].join('');
 }
 
@@ -157,24 +154,23 @@ function get(key?) {
 
         if ( ! key ) {
             result[ name ] = cookie;
-        }
-        else if ( key === name ) {
+        } else if ( key === name ) {
             result = read(cookie);
-            break
+            break;
         }
     }
 
-    return result
+    return result;
 }
 
 function remove(key, options) {
     set$1(key, '', extend(true, {}, options, {
-        expires: - 1
+        expires: - 1,
     }));
 }
 
 function has(key) {
-    return get(key) !== undefined
+    return get(key) !== undefined;
 }
 
 export interface ICookieStorage {
@@ -190,40 +186,40 @@ export interface ICookieStorage {
 
 }
 
-export var CookieStorage:ICookieStorage = {
+export var CookieStorage: ICookieStorage = {
     get   : get,
     set   : set$1,
     has   : has,
     remove: remove,
-    all   : function () { return get(); }
+    all   : function () { return get(); },
 };
 
 function encode$1(value) {
     if ( Object.prototype.toString.call(value) === '[object Date]' ) {
-        return '__q_date|' + value.toUTCString()
+        return '__q_date|' + value.toUTCString();
     }
     if ( Object.prototype.toString.call(value) === '[object RegExp]' ) {
-        return '__q_expr|' + value.source
+        return '__q_expr|' + value.source;
     }
     if ( typeof value === 'number' ) {
-        return '__q_numb|' + value
+        return '__q_numb|' + value;
     }
     if ( typeof value === 'boolean' ) {
-        return '__q_bool|' + (value ? '1' : '0')
+        return '__q_bool|' + (value ? '1' : '0');
     }
     if ( typeof value === 'string' ) {
-        return '__q_strn|' + value
+        return '__q_strn|' + value;
     }
     if ( typeof value === 'function' ) {
-        return '__q_strn|' + value.toString()
+        return '__q_strn|' + value.toString();
     }
     if ( value === Object(value) ) {
-        return '__q_objt|' + JSON.stringify(value)
+        return '__q_objt|' + JSON.stringify(value);
     }
 
     // hmm, we don't know what to do with it,
     // so just return it as is
-    return value
+    return value;
 }
 
 function decode$1(value) {
@@ -232,7 +228,7 @@ function decode$1(value) {
     length = value.length;
     if ( length < 10 ) {
         // then it wasn't encoded by us
-        return value
+        return value;
     }
 
     type   = value.substr(0, 8);
@@ -240,43 +236,43 @@ function decode$1(value) {
 
     switch ( type ) {
         case '__q_date':
-            return new Date(source)
+            return new Date(source);
 
         case '__q_expr':
-            return new RegExp(source)
+            return new RegExp(source);
 
         case '__q_numb':
-            return Number(source)
+            return Number(source);
 
         case '__q_bool':
-            return Boolean(source === '1')
+            return Boolean(source === '1');
 
         case '__q_strn':
-            return '' + source
+            return '' + source;
 
         case '__q_objt':
-            return JSON.parse(source)
+            return JSON.parse(source);
 
         default:
             // hmm, we reached here, we don't know the type,
             // then it means it wasn't encoded by us, so just
             // return whatever value it is
-            return value
+            return value;
     }
 }
 
 function generateFunctions(fn) {
     return {
         local  : fn('local'),
-        session: fn('session')
-    }
+        session: fn('session'),
+    };
 }
 
 var hasStorageItem     = generateFunctions(
-    function (type) { return function (key) { return window[ type + 'Storage' ].getItem(key) !== null; }; }
+    function (type) { return function (key) { return window[ type + 'Storage' ].getItem(key) !== null; }; },
 );
 var getStorageLength   = generateFunctions(
-    function (type) { return function () { return window[ type + 'Storage' ].length; }; }
+    function (type) { return function () { return window[ type + 'Storage' ].length; }; },
 );
 var getStorageItem     = generateFunctions(function (type) {
     var
@@ -285,10 +281,10 @@ var getStorageItem     = generateFunctions(function (type) {
 
     return function (key) {
         if ( hasFn(key) ) {
-            return decode$1(storage.getItem(key))
+            return decode$1(storage.getItem(key));
         }
-        return null
-    }
+        return null;
+    };
 });
 var getStorageAtIndex  = generateFunctions(function (type) {
     var
@@ -298,9 +294,9 @@ var getStorageAtIndex  = generateFunctions(function (type) {
 
     return function (index) {
         if ( index < lengthFn() ) {
-            return getItemFn(storage.key(index))
+            return getItemFn(storage.key(index));
         }
-    }
+    };
 });
 var getAllStorageItems = generateFunctions(function (type) {
     var
@@ -319,24 +315,24 @@ var getAllStorageItems = generateFunctions(function (type) {
             result[ key ] = getItemFn(key);
         }
 
-        return result
-    }
+        return result;
+    };
 });
 var setStorageItem     = generateFunctions(function (type) {
     var storage = window[ type + 'Storage' ];
-    return function (key, value) { storage.setItem(key, encode$1(value)); }
+    return function (key, value) { storage.setItem(key, encode$1(value)); };
 });
 var removeStorageItem  = generateFunctions(function (type) {
     var storage = window[ type + 'Storage' ];
-    return function (key) { storage.removeItem(key); }
+    return function (key) { storage.removeItem(key); };
 });
 var clearStorage       = generateFunctions(function (type) {
     var storage = window[ type + 'Storage' ];
-    return function () { storage.clear(); }
+    return function () { storage.clear(); };
 });
 var storageIsEmpty     = generateFunctions(function (type) {
     var getLengthFn = getStorageLength[ type ];
-    return function () { return getLengthFn() === 0; }
+    return function () { return getLengthFn() === 0; };
 });
 
 export var LocalStorage = {
@@ -345,12 +341,12 @@ export var LocalStorage = {
         length: getStorageLength.local,
         item  : getStorageItem.local,
         index : getStorageAtIndex.local,
-        all   : getAllStorageItems.local
+        all   : getAllStorageItems.local,
     },
     set    : setStorageItem.local,
     remove : removeStorageItem.local,
     clear  : clearStorage.local,
-    isEmpty: storageIsEmpty.local
+    isEmpty: storageIsEmpty.local,
 };
 
 export var SessionStorage = { // eslint-disable-line one-var
@@ -359,10 +355,10 @@ export var SessionStorage = { // eslint-disable-line one-var
         length: getStorageLength.session,
         item  : getStorageItem.session,
         index : getStorageAtIndex.session,
-        all   : getAllStorageItems.session
+        all   : getAllStorageItems.session,
     },
     set    : setStorageItem.session,
     remove : removeStorageItem.session,
     clear  : clearStorage.session,
-    isEmpty: storageIsEmpty.session
+    isEmpty: storageIsEmpty.session,
 };

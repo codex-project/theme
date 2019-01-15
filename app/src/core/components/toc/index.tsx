@@ -1,27 +1,40 @@
 import React from 'react';
 import { componentLoader } from 'utils/componentLoader';
-import { TOCList as TOCListClass } from './TOCList';
-import { TOCListItem as TOCListItemClass } from './TOCListItem';
-import { TOCHeader as TOCHeaderClass } from './TOCHeader';
 
 
-export const TOCList = componentLoader<typeof TOCListClass>(
-    async () => (await import('./TOCList')).TOCList,
-    (TOCList, props: any) => <TOCList {...props} />,
+export const TOC = componentLoader(
+    {
+        Component: async () => (await import(/* webpackChunkName: "toc" */'./TOC')).TOC,
+        style    : async () => await import(/* webpackChunkName: "toc" */'./toc.scss'),
+    },
+    ({ Component }, props: any) => <Component {...props} />,
     { delay: 1000 },
 );
 
-
-export const TOCListItem = componentLoader<typeof TOCListItemClass>(
-    async () => (await import('./TOCListItem')).TOCListItem,
-    (TOCListItem, props: any) => <TOCListItem {...props} />,
+export const TOCList = componentLoader(
+    {
+        Component: async () => (await import(/* webpackChunkName: "toc" */'./TOCList')).TOCList,
+        style    : async () => await import(/* webpackChunkName: "toc" */'./toc.scss'),
+    },
+    ({ Component }, props: any) => <Component {...props} />,
     { delay: 1000 },
 );
 
+export const TOCListItem = componentLoader(
+    {
+        Component: async () => (await import(/* webpackChunkName: "toc" */'./TOCListItem')).TOCListItem,
+        style    : async () => await import(/* webpackChunkName: "toc" */'./toc.scss'),
+    },
+    ({ Component }, props: any) => <Component {...props} />,
+    { delay: 1000 },
+);
 
-export const TOCHeader = componentLoader<typeof TOCHeaderClass>(
-    async () => (await import('./TOCHeader')).TOCHeader,
-    (TOCHeader, props: any) => <TOCHeader {...props} />,
+export const TOCHeader = componentLoader(
+    {
+        Component: async () => (await import(/* webpackChunkName: "toc" */'./TOCHeader')).TOCHeader,
+        style    : async () => await import(/* webpackChunkName: "toc" */'./toc.scss'),
+    },
+    ({ Component }, props: any) => <Component {...props} />,
     { delay: 1000 },
 );
 

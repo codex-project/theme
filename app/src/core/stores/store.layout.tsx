@@ -1,4 +1,4 @@
-import { action, observable, toJS, transaction } from 'mobx';
+import { action, toJS, transaction } from 'mobx';
 import * as React from 'react';
 import { camelCase, set } from 'lodash';
 import { colors } from '../utils/colors';
@@ -9,6 +9,8 @@ import { createStoreProxy, IStoreProxy } from '../stores/proxy';
 import { margin, padding } from '../utils/box';
 import { MenuItems } from '../menus';
 import { injectable } from 'inversify';
+import { CookieStorage } from 'utils/storage';
+import { parseBool } from 'utils/general';
 
 const log = require('debug')('store:layout');
 
@@ -201,6 +203,9 @@ export class LayoutStore {
                 return style;
             },
         });
+
+        // CookieStorage.has('layout.left.collapsed') && this.left.setCollapsed(parseBool(CookieStorage.get('layout.left.collapsed')));
+        // CookieStorage.has('layout.right.collapsed') && this.right.setCollapsed(parseBool(CookieStorage.get('layout.right.collapsed')));
     }
 
     toJS() {

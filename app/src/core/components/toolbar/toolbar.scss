@@ -2,11 +2,30 @@
 
 $toolbar-prefix: "c-toolbar";
 
+$toolbar-height-base: $btn-height-base;
+$toolbar-height-sm: $btn-height-sm;
+$toolbar-height-lg: $btn-height-lg;
+
+@mixin toolbar-size($height) {
+    height: $height;
+    max-height: $height;
+}
+
 .#{$toolbar-prefix} {
     background-color: $component-background;
 
     &-column {
 
+    }
+
+    @include toolbar-size($toolbar-height-base);
+
+    &-sm {
+        @include toolbar-size($toolbar-height-sm);
+    }
+
+    &-lg {
+        @include toolbar-size($toolbar-height-lg);
     }
 }
 

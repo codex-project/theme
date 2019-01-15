@@ -2,31 +2,21 @@ import * as React from 'react';
 import { hot } from '../decorators';
 import { Api } from '@codex/api';
 import { app, lazyInject } from '../ioc';
-import { Document } from '../components/documents';
 import { Store } from '../stores';
-import posed from 'react-pose';
 import { HtmlComponents } from 'classes/HtmlComponents';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
+import { Toolbar } from 'components/toolbar/Toolbar';
+import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
 
 const log = require('debug')('pages:home');
 
 export interface DocumentPageProps extends React.HTMLAttributes<HTMLDivElement> {
     document: any
 }
-
-
-const Container = posed.div({
-    enter: { staggerChildren: 50 },
-});
-
-const P = posed(Document)({
-    enter: { x: 0, opacity: 1 },
-    exit : { x: 50, opacity: 0 },
-});
 
 @hot(module)
 @observer
@@ -59,6 +49,9 @@ export default class DocumentPage extends React.Component<DocumentPageProps> {
                 <Helmet>
                     <title>{document.title || document.key}</title>
                 </Helmet>
+                <Toolbar.Item side="left">
+                    <LayoutBreadcrumbs/>
+                </Toolbar.Item>
                 {content}
             </div>
         );

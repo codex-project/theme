@@ -1,4 +1,4 @@
-@import "../../styling/base";
+@import "base";
 
 #document {
     > header.heading {
@@ -138,87 +138,4 @@
         }
     }
 
-    header + .c-toc-list {
-        padding-top: 0;
-    }
-
-    > .c-toc-list {
-        margin: 0;
-        padding: 0;
-        padding-top: 5px;
-        padding-bottom: 5px;
-    }
-
-    .c-toc {
-
-        &-list {
-            list-style: none;
-            font-size: 1rem;
-            font-weight: bold;
-            line-height: 1.5;
-            padding-top: 0px;
-            padding-bottom: 0px;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        &-list-item {
-            &:before {
-                content: "# ";
-                margin-right: .25em;
-                opacity: .3;
-            }
-
-            a {
-                text-decoration: none;
-            }
-        }
-
-        &-header {
-            color: inherit;
-            margin-bottom: 15px;
-            padding-left: 0;
-        }
-
-        &-header-link {
-            color: rgba($link-color, 0.5);
-            float: left;
-            margin-right: 4px;
-
-            &:hover {
-                color: $link-hover-color;
-            }
-        }
-    }
-
-    h1.c-toc-header {
-        margin-top: -2px;
-        margin-left: -25px;
-    }
-
-    h2.c-toc-header {
-        margin-top: -2px;
-        margin-left: -25px;
-    }
-
-    h3.c-toc-header {
-        font-size: 26px;
-        margin-top: -2px;
-        margin-left: -25px;
-    }
-
-    h4.c-toc-header {
-        font-size: 21px;
-        margin-top: -1px;
-        margin-left: -25px;
-    }
-
-    h5.c-toc-header {
-        font-size: 16px;
-        margin-top: -1px;
-        margin-left: -25px;
-    }
 }
