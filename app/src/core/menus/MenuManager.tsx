@@ -7,7 +7,7 @@ import { MenuItems } from './MenuItems';
 import { SyncBailHook, SyncWaterfallHook } from 'tapable';
 import { IMenuType, IMenuTypeConstructor } from './MenuType';
 import { MenuItem } from './MenuItem';
-import { toJS } from 'mobx';
+import { toJS, transaction } from 'mobx';
 
 const log = require('debug')('classes:MenuManager');
 
@@ -51,18 +51,18 @@ export class MenuManager {
     registerType(Type: IMenuTypeConstructor) {
         const type = app.resolve<IMenuType>(Type);
         this.types.set(type.name, type);
-        this.hooks.pre.tap(type.name, item => {
+        this.hooks.pre.tap(type.name, item => transaction(() => {
             if ( type.test(item) ) {
                 item = type.hooks.pre.call(type.pre(item));
             }
             return item;
-        });
-        this.hooks.post.tap(type.name, item => {
+        }));
+        this.hooks.post.tap(type.name, item => transaction(() => {
             if ( type.test(item) ) {
                 item = type.hooks.post.call(type.post(item));
             }
             return item;
-        });
+        }));
         this.hooks.handle.tap(type.name, (item, event, items) => {
             if ( type.test(item) ) {
                 log('handle', type.name, { item, event, items });

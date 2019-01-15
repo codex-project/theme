@@ -90,18 +90,21 @@ export class StoreControl extends React.Component<StoreControlProps> {
                             Object
                                 .keys(item)
                                 .filter(key => ! [ 'children', 'label' ].includes(key))
-                                .map(key => (
-                                    <TreeNode
-                                        key={item.id + '_' + key}
-                                        style={{ padding: 0 }}
-                                        title={
-                                            <span style={styles.title}>
+                                .filter(key => item[key] !== undefined)
+                                .map(key => {
+                                    return (
+                                        <TreeNode
+                                            key={item.id + '_' + key}
+                                            style={{ padding: 0 }}
+                                            title={
+                                                <span style={styles.title}>
                                             <span style={styles.key}>{key}</span>
                                             <span style={styles.value}>{item[ key ].toString()}</span>
                                             </span>
-                                        }
-                                    />
-                                ))
+                                            }
+                                        />
+                                    );
+                                })
                         }
 
                         {item.children && item.children.length > 0 ? <TreeNode key={item.id + '_children'} title="children">{item.children.map(child => renderTreeNode(child))}</TreeNode> : null}

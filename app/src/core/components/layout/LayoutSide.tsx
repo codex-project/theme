@@ -84,6 +84,7 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                     mode="inline"
                     inlineCollapsed={side.collapsed}
                     inlineIndent={15}
+                    color={side.color}
                 />
             </Sider>
 

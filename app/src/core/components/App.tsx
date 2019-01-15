@@ -63,9 +63,9 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
             <ErrorBoundary>
                 <Layout>
                     <Helmet
-                        style={this.store.helmet.style}
                         defaultTitle={this.store.codex.display_name}
                         titleTemplate={this.store.codex.display_name + ' - %s'}
+                        {...this.store.helmet}
                     />
                     <ErrorBoundary>
                         <RouterPages routes={this.routes}/>

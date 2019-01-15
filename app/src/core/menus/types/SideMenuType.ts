@@ -2,7 +2,7 @@ import { MenuItem } from '../MenuItem';
 import { MenuItems, MenuType } from '../../menus';
 import { IStoreProxy } from '../../stores/proxy';
 import { LayoutStoreSide } from '../../stores/store.layout';
-import { toJS } from 'mobx';
+import { transaction } from 'mobx';
 import { SyncWaterfallHook } from 'tapable';
 
 const name = 'side-menu';
@@ -44,15 +44,18 @@ export class SideMenuType extends MenuType {
             // item.selected                = true;
         } //else {
         if ( side.meta.sideMenuParentItem !== item.id ) {
-            items.items(side.meta.sideMenuParentItem).deselect();
-            side.meta.sideMenuParentItem = item.id;
-            side.menu                    = (toJS(item.children) as any).map(child => {
-                child.parent = undefined;
-                child        = this.hooks.child.call(child, { close, parent: item, side });
-                return child;
+            transaction(() => {
+                items.items(side.meta.sideMenuParentItem).deselect();
+                side.meta.sideMenuParentItem = item.id;
+                side.menu                    = (item.children as any).map(child => {
+                    child.parent = undefined;
+                    child        = this.hooks.child.call(child, { close, parent: item, side });
+                    return child;
+                });
+                item.selected                = true;
+                side.collapsed               = false;
             });
-            item.selected                = true;
-            side.collapsed               = false;
+            setTimeout(() => side.menu.compile(), 500);
         } else {
             close();
         }

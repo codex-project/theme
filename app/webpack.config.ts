@@ -1,7 +1,7 @@
 import { join, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import * as webpack from 'webpack';
+import  webpack from 'webpack';
 import FriendlyErrorsPlugin, { Options as FriendlyErrorsOptions } from 'friendly-errors-webpack-plugin';
 import BarPlugin, { Options as BarOptions } from 'webpackbar';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
@@ -65,9 +65,6 @@ chain.resolve
     'lodash-es$'         : 'lodash',
     'async$'             : 'neo-async',
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
-    // 'antd/lib/style/core/iconfont.less': chain.srcPath('core/styling/antd/iconfont.less'),
-    // 'iconfont'                         : chain.srcPath('core/styling/antd/iconfont'),
-    // 'iconfont.less$'                   : chain.srcPath('core/styling/antd/iconfont.less'),
     '@codex/phpdoc'      : chain.srcPath('phpdoc'),
     '@codex/core'        : chain.srcPath('core'),
     'heading'            : chain.srcPath('core/styling/heading.less'),
@@ -81,17 +78,14 @@ chain.resolveLoader
 
 chain.module.set('strictExportPresence', true);
 
-if ( isDev ) {
-    chain.resolve.alias.set('@codex/api', rootPath('packages/api/src'));
-    chain.module.rule('ts').include.add(rootPath('packages/api/src'));
-}
+chain.resolve.alias.set('@codex/api', rootPath('packages/api/src'));
+chain.module.rule('ts').include.add(rootPath('packages/api/src'));
 
 const babelImportPlugins = [
     [ 'import', { libraryName: 'antd', style: true }, 'import-antd' ],
     [ 'import', { libraryName: 'lodash', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash' ],
     [ 'import', { libraryName: 'lodash-es', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash-es' ],
 ];
-let nodeModulePaths      = require('module')._nodeModulePaths(process.cwd());
 chain.module.rule('ts')
     .test(/\.(ts|tsx)$/)
     .include.add(chain.srcPath()).end()
@@ -107,7 +101,6 @@ chain.module.rule('ts')
             'jsx-control-statements',
             [ 'react-css-modules', {
                 'context'               : chain.srcPath(),
-                // 'webpackHotModuleReloading': isDev,
                 'filetypes'             : {
                     '.mscss': {
                         'syntax' : 'postcss-scss',
@@ -161,7 +154,6 @@ chain.module.rule('babel-loader')
             'jsx-control-statements',
             [ 'react-css-modules', {
                 'context'               : chain.srcPath(),
-                // 'webpackHotModuleReloading': isDev,
                 'filetypes'             : {
                     '.mscss': {
                         'syntax' : 'postcss-scss',
@@ -223,6 +215,7 @@ function addAssetsLoaderForEntry(chain: Chain, entrypoint: string, path: string)
 }
 
 addAssetsLoaderForEntry(chain, 'core', chain.srcPath('core'));
+addAssetsLoaderForEntry(chain, 'phpdoc', chain.srcPath('phpdoc'));
 addAssetsLoaderForEntry(chain, 'site', chain.srcPath('site'));
 
 
@@ -306,7 +299,7 @@ chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptio
     additionalTransformers: [],
 } ]);
 chain.plugin('copy').use(CopyPlugin, [ [
-        isProd && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor/core') },
+        isProd && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor/codex_core') },
         isDev && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor') },
 
     ].filter(Boolean) ],
@@ -326,7 +319,6 @@ chain.onToConfig(config => {
     let antdLess                        = AntdScssThemePlugin.themify('less-loader');
     config.module.rules.push(...[ {
         test: /\.module.css$/,
-        // include: chain.srcPath(),
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'css-loader', options: { importLoaders: 1, sourceMap: isDev, modules: true, localIdentName: '[name]__[local]' } },
@@ -370,7 +362,12 @@ chain.onToConfig(config => {
     return config;
 });
 
-chain.performance.hints(false).maxAssetSize(999999999).assetFilter(as => false);
+chain.performance
+    .hints(false)
+    .maxEntrypointSize(999999999)
+    .maxAssetSize(999999999)
+    .assetFilter(as => false);
+
 
 export function addHMR(chain: Chain, reactHotLoader: boolean = true) {
     chain.plugin('hmr').use(webpack.HotModuleReplacementPlugin, [ {} ]);
@@ -394,81 +391,6 @@ export function addAnalyzerPlugins(chain: Chain, when: boolean = true) {
         openAnalyzer  : false,
         reportFilename: 'bundle-analyzer.html',
     } ]));
-
-    class Asdf {
-        apply(compiler: webpack.Compiler) {
-            let a          = compiler;
-            const analyzer = require('webpack-bundle-analyzer/lib/analyzer.js');
-            compiler.hooks.done.intercept({
-                register: (tapInfo) => {
-                    if ( tapInfo.name !== 'webpack-bundle-analyzer' ) return tapInfo;
-                    console.log(tapInfo.name, a.name);
-                    let fn     = tapInfo.fn;
-                    tapInfo.fn = (stats) => {
-                        let chartData    = analyzer.getViewerData(stats.toJson(), null, {
-                            openBrowser   : false,
-                            reportFilename: 'report.html',
-                            analyzerMode  : 'static',
-                            bundleDir     : null,
-                            logger        : console,
-                            defaultSizes  : 'gzip',
-                            excludeAssets : null,
-                        });
-                        const findModule = (path: string) => typeof path === 'string' && path.length > 0 && stats.compilation.modules.find(module => module.resource && path.endsWith(module.resource));
-                        const traverse   = (groups: any[], cb: Function, parent?: any) => groups.forEach(group => {
-                            if ( group.groups ) {
-                                traverse(group.groups, cb, group);
-                            }
-                            cb(group, parent);
-                        });
-                        traverse(chartData, (group, parent?) => {
-                            let mod: any = findModule(group.path);
-                            if ( mod ) {
-                                group.module = mod;
-                                if ( ! group.gzipSize ) {
-                                    try {
-                                        let src        = Array.from<any>(mod[ '_cachedSources' ].values()).map((item: any) => item[ 'source' ][ 'source' ]()).join('');
-                                        group.gzipSize = require('gzip-size').sync(src);
-                                        if ( parent && (parent.gzipSize === undefined || parent.gzipSize === 0) ) {
-                                            parent.gzipSize = 0;
-                                        }
-                                        if ( parent ) {
-                                            parent.gzipSize += group.gzipSize;
-                                        }
-                                    } catch ( e ) {}
-                                }
-                            }
-                        }, null);
-                        let mods                = [];
-                        const getRootGzipGroups = (groups: any[]) => groups.forEach(group => {
-                            if ( group.gzipSize ) {
-                                mods.push(group);
-                            } else if ( group.groups && group.groups.length > 0 ) {
-                                getRootGzipGroups(group.groups);
-                            }
-                        });
-                        getRootGzipGroups(chartData);
-                        mods           = mods.sort((a, b) => a.gzipSize > b.gzipSize ? - 1 : 1);
-                        const filesize = require('filesize');
-                        const chalk    = require('chalk').default;
-                        const ui       = require('cliui')({
-                            width: process.stdout.columns,
-                        });
-                        ui.div(chalk.bold('Module'), chalk.bold('Stat'), chalk.bold('Gzip'));
-                        mods.forEach((mod, i) => {
-                            if ( i > 10 ) return;
-                            ui.div(mod.label.split('/').shift(), filesize(mod.statSize), filesize(mod.gzipSize));
-                        });
-                        console.log('\n' + ui.toString() + '\n');
-                        fn(stats);
-                    };
-                    return tapInfo;
-                },
-            });
-        }
-    }
-
-    // chain.plugin('analyzer-checker').use(Asdf, [ {} ]);
 }
 
 const config = chain.toConfig();

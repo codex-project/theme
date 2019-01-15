@@ -1,5 +1,5 @@
 import { MenuItem } from '../MenuItem';
-import { MenuType } from '../../menus';
+import { MenuItems, MenuType } from '../../menus';
 import * as url from '../../utils/url';
 import { SideMenuType } from './SideMenuType';
 
@@ -27,9 +27,10 @@ export class ProjectsMenuType extends MenuType {
                 icon    : 'book',
                 label   : project.display_name,
                 sublabel: project.description,
-                selected: store.project && store.project.key === project.key,
+                selected: `<%= store.project && store.project.key === "${project.key}" %>` as any,
                 renderer: 'big',
             };
+
             item.children.push(child);
         });
         item.children = menus.apply(item.children, item);
@@ -39,7 +40,7 @@ export class ProjectsMenuType extends MenuType {
     public boot() {
         this.app.menus.getType<SideMenuType>('side-menu').hooks.child.tap('ProjectsMenuType', (child, ctx) => {
             if ( this.test(ctx.parent) ) {
-                child.custom = () => ctx.close()
+                child.custom = () => ctx.close();
             }
             return child;
         });

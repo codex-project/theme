@@ -222,13 +222,25 @@ export interface Meta {
 
     license?: Maybe<string>;
 
-    stylesheets?: Maybe<Assoc>;
+    defaultTitle?: Maybe<string>;
 
-    javascripts?: Maybe<Assoc>;
+    title?: Maybe<string>;
 
-    styles?: Maybe<Assoc>;
+    titleTemplate?: Maybe<string>;
 
-    scripts?: Maybe<Assoc>;
+    titleAttributes?: Maybe<Assoc>;
+
+    htmlAttributes?: Maybe<Assoc>;
+
+    bodyAttributes?: Maybe<Assoc>;
+
+    link?: Maybe<(Maybe<Assoc>)[]>;
+
+    meta?: Maybe<(Maybe<Assoc>)[]>;
+
+    script?: Maybe<(Maybe<string>)[]>;
+
+    style?: Maybe<(Maybe<string>)[]>;
 }
 
 export interface Layout {

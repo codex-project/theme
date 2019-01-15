@@ -123,10 +123,16 @@ export interface Meta {
     icon?: Maybe<string>;
     color?: Maybe<string>;
     license?: Maybe<string>;
-    stylesheets?: Maybe<Assoc>;
-    javascripts?: Maybe<Assoc>;
-    styles?: Maybe<Assoc>;
-    scripts?: Maybe<Assoc>;
+    defaultTitle?: Maybe<string>;
+    title?: Maybe<string>;
+    titleTemplate?: Maybe<string>;
+    titleAttributes?: Maybe<Assoc>;
+    htmlAttributes?: Maybe<Assoc>;
+    bodyAttributes?: Maybe<Assoc>;
+    link?: Maybe<(Maybe<Assoc>)[]>;
+    meta?: Maybe<(Maybe<Assoc>)[]>;
+    script?: Maybe<(Maybe<string>)[]>;
+    style?: Maybe<(Maybe<string>)[]>;
 }
 export interface Layout {
     container?: Maybe<LayoutContainer>;

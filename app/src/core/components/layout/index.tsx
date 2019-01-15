@@ -3,7 +3,6 @@ import { LayoutStore } from '../../stores/store.layout';
 import { hot } from '../../decorators';
 import { observer } from 'mobx-react';
 import { Breadcrumb, Dropdown, Layout as AntdLayout, Menu } from 'antd';
-import { StoreControl } from '../../components/StoreControl';
 import { lazyInject } from '../../ioc';
 import { LayoutHeader } from '../../components/layout/LayoutHeader';
 import { LayoutSide } from '../../components/layout/LayoutSide';
@@ -166,60 +165,60 @@ export class Layout extends React.Component<LayProps, LayoutState> {
                     <LayoutSide ref={this.ref.right} side='right'/>
                 </If>
 
-
-                {this.renderStoreController()}
             </AntdLayout>
         );
     }
 
-    renderStoreController() {
-        return (
-            <StoreControl store={this.layout} stores={{
-                'container': {
-                    stretch: 'boolean',
-                },
-                'header'   : {
-                    show  : 'boolean',
-                    height: 'number',
-                    fixed : 'boolean',
-                    color : 'color.name',
-                    logo  : 'boolean',
-                    menu  : 'menu',
-                },
-                'left'     : {
-                    show          : 'boolean',
-                    width         : 'number',
-                    collapsedWidth: 'number',
-                    collapsed     : 'boolean',
-                    outside       : 'boolean',
-                    color         : 'color.name',
-                    menu          : 'menu',
-                },
-                'right'    : {
-                    show          : 'boolean',
-                    width         : 'number',
-                    collapsedWidth: 'number',
-                    collapsed     : 'boolean',
-                    outside       : 'boolean',
-                    color         : 'color.name',
-                },
-                'middle'   : {
-                    padding: 'string',
-                    margin : 'string',
-                    color  : 'color.name',
-                },
-                'content'  : {
-                    padding: 'string',
-                    margin : 'string',
-                    color  : 'color.name',
-                },
-                'footer'   : {
-                    show  : 'boolean',
-                    height: 'number',
-                    fixed : 'boolean',
-                    color : 'color.name',
-                },
-            }}/>
-        );
-    }
+    // renderStoreController() {
+    //     return (
+    //         <StoreControl store={this.layout} stores={{
+    //             'container': {
+    //                 stretch: 'boolean',
+    //             },
+    //             'header'   : {
+    //                 show             : 'boolean',
+    //                 height           : 'number',
+    //                 fixed            : 'boolean',
+    //                 color            : 'color.name',
+    //                 logo             : 'boolean',
+    //                 show_left_toggle : 'boolean',
+    //                 show_right_toggle: 'boolean',
+    //                 menu             : 'menu',
+    //             },
+    //             'left'     : {
+    //                 show          : 'boolean',
+    //                 width         : 'number',
+    //                 collapsedWidth: 'number',
+    //                 collapsed     : 'boolean',
+    //                 outside       : 'boolean',
+    //                 color         : 'color.name',
+    //                 menu          : 'menu',
+    //             },
+    //             'right'    : {
+    //                 show          : 'boolean',
+    //                 width         : 'number',
+    //                 collapsedWidth: 'number',
+    //                 collapsed     : 'boolean',
+    //                 outside       : 'boolean',
+    //                 color         : 'color.name',
+    //             },
+    //             'middle'   : {
+    //                 padding: 'string',
+    //                 margin : 'string',
+    //                 color  : 'color.name',
+    //             },
+    //             'content'  : {
+    //                 padding: 'string',
+    //                 margin : 'string',
+    //                 color  : 'color.name',
+    //             },
+    //             'footer'   : {
+    //                 show  : 'boolean',
+    //                 height: 'number',
+    //                 fixed : 'boolean',
+    //                 color : 'color.name',
+    //             },
+    //         }}/>
+    //     );
+    // }
 }

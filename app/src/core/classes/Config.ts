@@ -109,15 +109,14 @@ export class Config implements ConfigInterface {
     public raw(prop?: any): any {
         if ( prop ) {
             return objectGet(this.data, Config.getPropString(prop));
-        }
-        else {
+        } else {
             return this.data;
         }
     }
 
     public get<T extends any>(prop?: any, defaultReturnValue: any = undefined): T {
         if ( ! prop || prop.toString().length === 0 ) {
-            return this.process(this.raw())
+            return this.process(this.raw());
         }
         return this.has(prop) ? this.process(this.raw(prop)) : defaultReturnValue;
     }
@@ -134,8 +133,7 @@ export class Config implements ConfigInterface {
     public merge(...args: any[]): ConfigInterface {
         if ( args.length === 1 ) {
             this.data = merge(this.data, args[ 0 ]);
-        }
-        else {
+        } else {
             var prop: string = args[ 0 ];
             this.set(prop, merge(this.raw(prop), args[ 1 ]));
         }
@@ -163,23 +161,29 @@ export class Config implements ConfigInterface {
                 }
             }
             // Process the string as a template.
-            return self.processTemplate(value, { data: self.data });
+            let res: any = self.processTemplate(value, { data: self.data });
+            if ( res === 'true' || res === 'false' ) {
+                res = res === 'true';
+            } else if ( res === 'null'){
+                res = null
+            }
+            return res;
         });
     }
 
     private addDelimiters(name, opener, closer) {
         var delimiters: IDelimiter = this.allDelimiters[ name ] = {};
         // Used by grunt.
-        delimiters.opener = opener;
-        delimiters.closer = closer;
+        delimiters.opener          = opener;
+        delimiters.closer          = closer;
         // Generate RegExp patterns dynamically.
-        var a             = delimiters.opener.replace(/(.)/g, '\\$1');
-        var b             = '([\\s\\S]+?)' + delimiters.closer.replace(/(.)/g, '\\$1');
+        var a                      = delimiters.opener.replace(/(.)/g, '\\$1');
+        var b                      = '([\\s\\S]+?)' + delimiters.closer.replace(/(.)/g, '\\$1');
         // Used by Lo-Dash.
-        delimiters.lodash = {
+        delimiters.lodash          = {
             evaluate   : new RegExp(a + b, 'g'),
             interpolate: new RegExp(a + '=' + b, 'g'),
-            escape     : new RegExp(a + '-' + b, 'g')
+            escape     : new RegExp(a + '-' + b, 'g'),
         };
     }
 
@@ -215,10 +219,9 @@ export class Config implements ConfigInterface {
                 }
                 last = tmpl;
             }
-        }
-        catch ( e ) {
-            log('warning: config process template fail: ' + e.message,e);
-            return ''
+        } catch ( e ) {
+            // log('warning: config process template fail: ' + e.message, e);
+            return '';
         }
 
         // Normalize linefeeds and return.

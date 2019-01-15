@@ -160,6 +160,9 @@ export class Store {
             return this.document;
         }
         await this.fetch(projectKey, revisionKey, documentKey);
+        if(this.document.meta){
+            this.helmet.merge(this.document.meta);
+        }
         return this.document;
     }
 

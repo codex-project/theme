@@ -3,6 +3,9 @@ import { gulp, Gulpclass, GulpEnvMixin, Task } from '@radic/build-tools-gulp';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import { Chain } from './build/chain';
+import { relative } from 'path';
+import { getFileSizeInfo } from '@radic/build-tools/dist/utils';
+import { readFileSync } from 'fs';
 
 const chalk = require('chalk').default;
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
@@ -44,7 +47,13 @@ class Gulpfile {
         const { chain, addAnalyzerPlugins } = require('./webpack.config');
         addAnalyzerPlugins(chain);
         await this.build(chain);
-        reportFileSizes(chain.outPath('js/*.js'));
+    }
+
+    @Task('prod:report')
+    async prodReport() {
+        this.prod();
+        const { chain, addAnalyzerPlugins } = require('./webpack.config');
+        reportFileSizes(...[ chain.outPath('**/*.js'), chain.outPath('**/*.css') ]);
     }
 
     @Task('prod:watch')
@@ -74,8 +83,8 @@ class Gulpfile {
             .port(port)
             .headers({ 'Access-Control-Allow-Origin': '*' })
             .public(url + '/')
-            .publicPath('/')
-            // .set('before', app => app.use(require('morgan')(':method :url :status :res[content-length] - :response-time ms')));
+            .publicPath('/');
+        // .set('before', app => app.use(require('morgan')(':method :url :status :res[content-length] - :response-time ms')));
 
         // chain.devServer
         //     .contentBase(contentBase)  //resolve(__dirname, '../../../public')
@@ -123,7 +132,18 @@ class Gulpfile {
     }
 }
 
-function reportFileSizes(globs) {
+function reportFileSizes(...globs: string[]) {
+
+    const gzipsize = require('gzip-size');
+    const filesize = require('filesize');
+    let files: Array<{
+        name: string;
+        path: string;
+        size: string;
+        sizeInfo: utils.FileSizeInfo;
+        relativePath: string
+        gzipSize: string;
+    }>             = [];
 
     function customReporter(file: {
         name: string;
@@ -132,13 +152,30 @@ function reportFileSizes(globs) {
         gzipSize: string;
     }): void {
 
-        const ui = require('cliui')({ width: process.stdout.columns });
-        ui.div(file.name, file.size, file.gzipSize);
-        console.log(ui.toString());
+        (file as any).sizeInfo     = getFileSizeInfo(file.path);
+        (file as any).relativePath = relative(__dirname, file.path).replace(/^.*\/vendor\//m, '');
+        files.push(file as any);
     }
 
-    const ui = require('cliui')({ width: process.stdout.columns });
-    ui.div(chalk.bold('Name'), chalk.bold('Size'), chalk.bold('Gzip'));
-    console.log(ui.toString());
     utils.reportFileSizes(globs, { customReporter });
+
+
+    let ui = require('cliui')({ width: process.stdout.columns });
+    ui.div(chalk.bold('Name'), chalk.bold('Size'), chalk.bold('Gzip'));
+
+    let totalSize     = 0;
+    let totalGzipSize = 0;
+    files
+        .sort((a, b) => {
+            return a.sizeInfo.stats.size < b.sizeInfo.stats.size ? 1 : - 1;
+        })
+        .forEach(file => {
+            totalSize += file.sizeInfo.stats.size;
+            totalGzipSize += gzipsize.sync(readFileSync(file.path, 'utf8'));
+            ui.div(file.relativePath, file.size, file.gzipSize);
+        });
+
+    ui.div(chalk.bold('---'), chalk.bold('---'), chalk.bold('---'));
+    ui.div(chalk.bold('TOTAL:'), filesize(totalSize), filesize(totalGzipSize));
+    console.log(ui.toString() + '\n');
 }
