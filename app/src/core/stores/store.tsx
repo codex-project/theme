@@ -39,7 +39,7 @@ export interface RevisionPart {
 @injectable()
 export class Store {
     public readonly hooks = {
-        fetch  : new SyncWaterfallHook<QueryBuilder>([ 'builder' ]),
+        fetch  : new SyncHook<QueryBuilder>([ 'builder' ]),
         fetched: new SyncHook<BuildQueryReturn>([ 'result' ]),
     };
 

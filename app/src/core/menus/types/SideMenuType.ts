@@ -3,7 +3,7 @@ import { MenuItems, MenuType } from '../../menus';
 import { IStoreProxy } from '../../stores/proxy';
 import { LayoutStoreSide } from '../../stores/store.layout';
 import { transaction } from 'mobx';
-import { SyncWaterfallHook } from 'tapable';
+import { SyncHook, SyncWaterfallHook } from 'tapable';
 
 const name = 'side-menu';
 const log  = require('debug')('menus:types:' + name);
@@ -17,7 +17,7 @@ export interface SideMenuTypeChildHookContext {
 export class SideMenuType extends MenuType {
     name                  = name;
     public readonly hooks = MenuType.makeHooks({
-        child: new SyncWaterfallHook<MenuItem, SideMenuTypeChildHookContext>([ 'child', 'context' ]),
+        child: new SyncHook<MenuItem, SideMenuTypeChildHookContext>([ 'child', 'context' ]),
     });
 
     public test(item: MenuItem): boolean {
@@ -49,7 +49,7 @@ export class SideMenuType extends MenuType {
                 side.meta.sideMenuParentItem = item.id;
                 side.menu                    = (item.children as any).map(child => {
                     child.parent = undefined;
-                    child        = this.hooks.child.call(child, { close, parent: item, side });
+                    this.hooks.child.call(child, { close, parent: item, side });
                     return child;
                 });
                 item.selected                = true;

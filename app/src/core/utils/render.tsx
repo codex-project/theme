@@ -1,16 +1,12 @@
 import * as ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import React from 'react';
-import { Provider } from 'mobx-react';
-import { app } from '../ioc';
 
 
 export const render = (elid, Component, cb?: () => void) => {
     const inner = (
         <BrowserRouter>
-            <Provider store={app.get('store')}>
-                <Component/>
-            </Provider>
+            <Component/>
         </BrowserRouter>
     );
     if ( DEV ) {

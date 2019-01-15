@@ -11,10 +11,6 @@ export type IMenuItemItems<T> = string | string[] | T | T[]
 
 export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> implements Array<T> {
     @lazyInject('menumanager') manager: MenuManager;
-    public readonly hooks = {
-        click  : new SyncHook<T, React.MouseEvent>([ 'item', 'event' ]),
-        clicked: new SyncHook<T, React.MouseEvent>([ 'item', 'event' ]),
-    };
 
     constructor(...items: T[]) {
         super(...items);
@@ -94,9 +90,7 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
         if ( typeof item === 'string' ) {
             item = this.item(item);
         }
-        this.hooks.click.call(item, e);
         let clicked = this.manager.handleMenuItemClick(item, e, this);
-        this.hooks.clicked.call(item, e);
         return clicked;
     }
 

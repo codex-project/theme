@@ -3,7 +3,7 @@ import { Application } from '../classes/Application';
 import { app } from '../ioc';
 import { MenuItem } from '@codex/api';
 import { MenuItems } from './MenuItems';
-import { Hook, SyncBailHook, SyncWaterfallHook } from 'tapable';
+import { Hook, SyncBailHook, SyncHook, SyncWaterfallHook } from 'tapable';
 
 export type MenuTypeHooks<T> = {
     pre: SyncWaterfallHook<MenuItem>,
@@ -18,10 +18,10 @@ export abstract class MenuType implements IMenuType {
 
     public static makeHooks<T extends Record<string, any>>(hooks?: T): MenuTypeHooks<T>{
         hooks         = hooks || {} as any;
-        hooks.pre     = new SyncWaterfallHook<MenuItem>([ 'item' ]);
-        hooks.post    = new SyncWaterfallHook<MenuItem>([ 'item' ]);
-        hooks.handle  = new SyncBailHook<MenuItem, any, MenuItems>([ 'item', 'event', 'items' ]);
-        hooks.handled = new SyncBailHook<MenuItem, any, MenuItems>([ 'item', 'event', 'items' ]);
+        hooks.pre     = new SyncHook<MenuItem>([ 'item' ]);
+        hooks.post    = new SyncHook<MenuItem>([ 'item' ]);
+        hooks.handle  = new SyncHook<MenuItem, any, MenuItems>([ 'item', 'event', 'items' ]);
+        hooks.handled = new SyncHook<MenuItem, any, MenuItems>([ 'item', 'event', 'items' ]);
         return hooks as any;
     };
 

@@ -40,11 +40,11 @@ export class RevisionsMenuType extends MenuType {
     }
 
     public boot() {
-        this.app.menus.getType<SideMenuType>('side-menu').hooks.child.tap('RevisionsMenuType', (child, ctx) => {
-            if ( this.test(ctx.parent) ) {
-                child.custom = () => ctx.close();
-            }
-            return child;
-        });
+        // this.app.menus.getType<SideMenuType>('side-menu').hooks.child.tap('RevisionsMenuType', (child, ctx) => {
+        //     if ( this.test(ctx.parent) ) {
+        //         child.custom = () => ctx.close();
+        //     }
+        //     return child;
+        // });
     }
 }

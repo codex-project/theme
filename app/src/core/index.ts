@@ -41,14 +41,14 @@ if ( module.hot ) {
     });
 }
 
-let postMessage = window.postMessage;
-
-window.postMessage = function (...args) {
-    // debugger;
-    try {
-        postMessage(...args);
-    } catch(error){
-        debugger;
-        throw error;
-    }
-};
+// let postMessage = window.postMessage;
+//
+// window.postMessage = function (...args) {
+//     // debugger;
+//     try {
+//         postMessage(...args);
+//     } catch(error){
+//         debugger;
+//         throw error;
+//     }
+// };

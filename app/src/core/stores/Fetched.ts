@@ -2,7 +2,7 @@
 import { get, has, merge, set, snakeCase } from 'lodash';
 import { api } from '@codex/api';
 import { LocalStorage } from 'utils/storage';
-import { SyncHook, SyncWaterfallHook } from 'tapable';
+import { SyncHook } from 'tapable';
 import { injectable } from 'ioc';
 
 const STORAGE_KEY: string = 'codex.fetched';
@@ -19,10 +19,10 @@ export class Fetched {
     public static readonly STORAGE_KEY: string = STORAGE_KEY;
 
     public readonly hooks = {
-        set               : new SyncWaterfallHook<any, string, this>([ 'value', 'path', 'fetched' ]),
+        set               : new SyncHook<any, string, this>([ 'value', 'path', 'fetched' ]),
         setted            : new SyncHook<any, string, this>([ 'value', 'path', 'fetched' ]),
-        get               : new SyncWaterfallHook<any, string, this>([ 'value', 'path', 'fetched' ]),
-        loadFromStorage   : new SyncWaterfallHook<any, this>([ 'value', 'fetched' ]),
+        get               : new SyncHook<any, string, this>([ 'value', 'path', 'fetched' ]),
+        loadFromStorage   : new SyncHook<any, this>([ 'value', 'fetched' ]),
         loadedFromStorage : new SyncHook<this>([ 'fetched' ]),
         saveToStorage     : new SyncHook<this>([ 'fetched' ]),
         savedToStorage    : new SyncHook<this>([ 'fetched' ]),
@@ -40,12 +40,12 @@ export class Fetched {
 
     public get(path: string, defaultValue: any = {}) {
         let value = get(this.fetched, path, defaultValue);
-        value     = this.hooks.get.call(value, path, this);
+        this.hooks.get.call(value, path, this);
         return value;
     }
 
     public set(path: string, value: any) {
-        value = this.hooks.set.call(value, path, this);
+        this.hooks.set.call(value, path, this);
         set(this.fetched, path, value);
         this.hooks.setted.call(value, path, this);
         return this;
@@ -64,7 +64,7 @@ export class Fetched {
         if ( this.existInStorage() ) {
             value = LocalStorage.get.item(Fetched.STORAGE_KEY);
         }
-        value        = this.hooks.loadFromStorage.call(value);
+        this.hooks.loadFromStorage.call(value);
         this.fetched = value;
         this.hooks.loadedFromStorage.call(this);
         return this;

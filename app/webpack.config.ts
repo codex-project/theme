@@ -68,6 +68,7 @@ chain.resolve
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
     '@codex/phpdoc'      : chain.srcPath('phpdoc'),
     '@codex/core'        : chain.srcPath('core'),
+    'tapable'            : chain.srcPath('tapable/lib'),
     'heading'            : chain.srcPath('core/styling/heading.less'),
     '../../theme.config$': chain.srcPath('core/styling/theme.config'),
     './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
