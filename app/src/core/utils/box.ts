@@ -10,7 +10,12 @@ export function padding(value: string | number) {
     return _padding.apply(_padding, args);
 }
 
-export function margin(value: string | number) {
+export function margin(value: string | number): {
+    marginTop: string
+    marginRight: string
+    marginBottom: string
+    marginLeft: string
+} {
     let args: any[] = value as any;
     if ( typeof value === 'string' ) {
         args = value.split(' ');

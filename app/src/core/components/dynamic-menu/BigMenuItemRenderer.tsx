@@ -21,7 +21,7 @@ export class BigMenuItemRenderer extends React.Component<MenuItemRendererProps> 
 
     render() {
         if ( ! this.props.item ) return null;
-        let { item, fontSize, iconStyle, color,items,rendererMaxLevel,renderer, ...props } = this.props;
+        let { item, color,items,renderer, ...props } = this.props;
         const { icon, sublabel, label }                    = item;
         const content                                      = (
             <Row type="flex" justify="start" key={getRandomId(6)}>

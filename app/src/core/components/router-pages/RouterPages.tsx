@@ -13,16 +13,16 @@ const RoutesContainer = posed.div({
         opacity       : 1,
         delay         : 500,
         beforeChildren: true,
-        height        : '100%',
-        position      : 'relative',
+        // height        : '100%',
+        // position      : 'relative',
     },
     exit : {
         opacity       : 0,
         transition    : { duration: 500 },
         delay         : 500,
-        beforeChildren: true,
-        height        : '100%',
-        position      : 'relative',
+        // beforeChildren: true,
+        // height        : '100%',
+        // position      : 'relative',
     },
 });
 

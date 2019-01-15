@@ -18,3 +18,16 @@
     padding: 0;
     list-style: none;
 }
+
+
+
+@mixin Monospace($important:true) {
+    @if($important) {
+        font-family: $font-family-monospace !important;
+        text-rendering: optimizeLegibility !important;;
+    } @else {
+        font-family: $font-family-monospace;
+        text-rendering: optimizeLegibility;
+    }
+    @content
+}

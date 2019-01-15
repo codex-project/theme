@@ -9,3 +9,4 @@ export * from './spin';
 export * from './App';
 export * from './OffCanvas';
 export * from './Responsive';
+export * from './Icon';

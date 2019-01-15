@@ -1,4 +1,7 @@
 //@formatter:off
+$iconfont-css-prefix:           fa;
+
+
 $font-family-sans-serif:                        "Open Sans", Arial, sans-serif;
 $font-family-monospace:                         "Hasklig", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 $font-family-header:                            'Raleway', "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif ;
@@ -29,7 +32,21 @@ $layout-header-background       : #4D5C69;
 $layout-footer-background       : $layout-header-background;
 $primary-color                  : $color-codex;
 
+
 //$layout-header-background    : #4d5c69;
 //$layout-footer-background    : #4d5c69;
 //$layout-sider-background     : #f8f2f2;
 //$menu-bg                     : #fefefe;
+
+
+
+$text-color             : fade(#000, 65%);
+$text-color-secondary   : fade(#000, 45%);
+$breadcrumb-link-color:        $text-color-secondary;
+$breadcrumb-last-item-color:   $breadcrumb-link-color;
+
+$padding-lg    : 24px; // containers
+$padding-md    : 16px; // small containers and buttons
+$padding-sm    : 12px; // Form controls and items
+$padding-xs    : 8px;  // small items
+$breadcrumb-separator-margin:  0 $padding-sm 0 $padding-xs;

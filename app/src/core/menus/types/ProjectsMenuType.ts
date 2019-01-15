@@ -24,7 +24,7 @@ export class ProjectsMenuType extends MenuType {
             let child: MenuItem  = {
                 type    : 'router-link',
                 to      : { pathname: url.documentation(`${project.key}/${project.default_revision}/${default_document}`) },
-                icon    : 'fa-folder',
+                icon    : 'book',
                 label   : project.display_name,
                 sublabel: project.description,
                 selected: store.project && store.project.key === project.key,

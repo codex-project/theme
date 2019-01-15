@@ -65,10 +65,14 @@ chain.resolve
     'lodash-es$'         : 'lodash',
     'async$'             : 'neo-async',
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
+    // 'antd/lib/style/core/iconfont.less': chain.srcPath('core/styling/antd/iconfont.less'),
+    // 'iconfont'                         : chain.srcPath('core/styling/antd/iconfont'),
+    // 'iconfont.less$'                   : chain.srcPath('core/styling/antd/iconfont.less'),
     '@codex/phpdoc'      : chain.srcPath('phpdoc'),
     '@codex/core'        : chain.srcPath('core'),
     'heading'            : chain.srcPath('core/styling/heading.less'),
     '../../theme.config$': chain.srcPath('core/styling/theme.config'),
+    './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
 }).end();
 
 chain.resolveLoader

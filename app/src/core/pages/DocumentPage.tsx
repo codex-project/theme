@@ -14,7 +14,7 @@ import Helmet from 'react-helmet';
 
 const log = require('debug')('pages:home');
 
-export interface DocumentPageProps {
+export interface DocumentPageProps extends React.HTMLAttributes<HTMLDivElement> {
     document: any
 }
 
@@ -52,10 +52,10 @@ export default class DocumentPage extends React.Component<DocumentPageProps> {
     }
 
     render() {
-        const {  document } = this.props;
-        const content                         = this.hc.parse(document.content);
+        const { children, document, ...props } = this.props;
+        const content                          = this.hc.parse(document.content);
         return (
-            <div id="document">
+            <div id="document" {...props}>
                 <Helmet>
                     <title>{document.title || document.key}</title>
                 </Helmet>

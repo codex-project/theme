@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { hot } from '../../decorators';
 import PropTypes from 'prop-types';
 import { Layout, Menu as AntdMenu } from 'antd';
@@ -21,8 +21,8 @@ export type MenuSelectBehaviourType = 'single' | 'multi'
 
 export interface DynamicMenuProps {
     items: MenuItems
-    iconStyle?: React.CSSProperties
-    fontSize?: number | string
+    // iconStyle?: React.CSSProperties
+    // fontSize?: number | string
     color?: string,
     renderer?: string
     multiroot?: boolean
@@ -51,8 +51,6 @@ export type MenuItemRendererProps = DynamicMenuProps & {
 export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProps, State> {
     static displayName                                                        = 'DynamicMenu';
     static defaultProps: Partial<DynamicMenuProps & AntdMenuProps>            = {
-        iconStyle          : { paddingRight: 20 },
-        fontSize           : 12,
         prefixCls          : 'c-dmenu',
         mode               : 'horizontal',
         multiroot          : false,
@@ -112,19 +110,19 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
     });
 
     renderMenuItem(item: MenuItem, level?: number) {
-        const { fontSize, iconStyle, color, mode, items } = this.props;
+        const { color, mode, items } = this.props;
         const className                                   = `item-${item.type}`;
         switch ( item.type ) {
             case 'divider':
                 return (<Divider key={item.id} className={className}>{mode === 'horizontal' ? '&nbsp' : null}</Divider>);
             case 'header':
-                return (<Item key={item.id} className={className}><MenuItemIcon item={item} iconStyle={iconStyle} fontSize={fontSize}/>{item.label}</Item>);
+                return (<Item key={item.id} className={className}><MenuItemIcon item={item} /><span>{item.label}</span></Item>);
             case 'sub-menu':
                 return (
                     <SubMenu
                         className={className}
                         key={item.id}
-                        title={<span style={{ fontSize, paddingRight: iconStyle.paddingRight }}><MenuItemIcon item={item} iconStyle={iconStyle} fontSize={fontSize}/> {item.label}</span>}
+                        title={<Fragment><MenuItemIcon item={item} /><span>{item.label}</span></Fragment>}
                         onTitleClick={this.onTitleClick}
                     >
                         {item.children.map(child => this.renderMenuItem(child, level + 1))}
@@ -134,14 +132,14 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
         let renderer = this.props.renderer || item.renderer || 'default';
         if ( DynamicMenu.renderers[ renderer ] ) {
             const Component = DynamicMenu.renderers[ renderer ];
-            let props       = { level, className, fontSize, iconStyle, color };
+            let props       = { level, className,  color };
             return <Component key={item.id} item={item} {...props || {}} />;
         }
         return null;
     }
 
     render() {
-        const { children, className, multiple, multiroot, selectFromRoutePath, prefixCls, mode, fontSize, iconStyle, items, color, renderer, ...props } = this.props;
+        const { children, className, multiple, multiroot, selectFromRoutePath, prefixCls, mode, items, color, renderer, ...props } = this.props;
         if ( typeof items.selected !== 'function' ) {
             return null;
         }
@@ -155,7 +153,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
                 mode={mode}
                 className={menuClassName}
                 subMenuCloseDelay={0.6}
-                style={{ fontSize, backgroundColor: getColor(color) }}
+                style={{  backgroundColor: getColor(color) }}
                 selectedKeys={items.selected().ids()}
                 openKeys={items.expanded().ids()}
                 onClick={this.onClick}

@@ -2,6 +2,7 @@
 
 $menu-prefix-cls: "#{$ant-prefix}-menu";
 
+
 .c-dmenu {
     height: 100%;
 
@@ -36,60 +37,28 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
 
 }
 
-.ant-menu.ant-menu-horizontal > .ant-menu-item-divider {
-    width: 1px;
-    height: unset;
-    line-height: unset;
-    top: 1px;
-    bottom: 1px;
-    float: left;
-    padding: 0;
-    position: relative;
-    display: block;
-    margin: 0;
-    opacity: 0.3;
-}
-
-
 .#{$menu-prefix-cls} {
-    &-item,
-    &-submenu-title {
-        .#{$fa-css-prefix} {
-            min-width: 14px;
-            transition: font-size .15s $ease-out, margin .3s $ease-in-out;
+    &.ant-menu-horizontal > .ant-menu-item-divider {
+        width: 1px;
+        height: unset;
+        line-height: unset;
+        top: 1px;
+        bottom: 1px;
+        float: left;
+        padding: 0;
+        position: relative;
+        display: block;
+        margin: 0;
+        opacity: 0.3;
+    }
 
-            + span {
-                transition: opacity .3s $ease-in-out, width .3s $ease-in-out;
-                opacity: 1;
+    &-submenu {
+        &-vertical,
+        &-vertical-left,
+        &-vertical-right {
+            > .#{$menu-prefix-cls}-submenu-title {
+                padding-right: 40px !important;
             }
         }
     }
-
-
-    &-inline-collapsed {
-
-        > .#{$menu-prefix-cls}-item,
-        > .#{$menu-prefix-cls}-item-group > .#{$menu-prefix-cls}-item-group-list > .#{$menu-prefix-cls}-item,
-        > .#{$menu-prefix-cls}-submenu > .#{$menu-prefix-cls}-submenu-title {
-            .#{$fa-css-prefix} {
-                font-size: 16px;
-                line-height: $menu-item-height;
-                margin: 0;
-
-                + span {
-                    max-width: 0;
-                    display: inline-block;
-                    opacity: 0;
-                }
-            }
-        }
-
-        &-tooltip {
-            .#{$fa-css-prefix} {
-                display: none;
-            }
-        }
-    }
-
-
 }

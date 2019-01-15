@@ -1,20 +1,20 @@
 import { IDefinedRoute, IRoute } from '../interfaces';
 import { lazyInject } from '../ioc';
-// @ts-ignore
-import H = require('history');
 import { ArrayUtils } from './ArrayUtils';
 
 import pathToRegexp from 'path-to-regexp';
 import { generatePath, matchPath } from 'react-router';
+// @ts-ignore
+import H = require('history');
 
 const log = require('debug')('collections:routes');
 
 const addTestKeysToRoutes = (routes: IRoute[]): IDefinedRoute[] => routes.map((route: IDefinedRoute) => {
     try {
-        route.keys = [];
-        route.test = pathToRegexp(route.path, route.keys);
-        // route.compiled = compile(route.path.toString())
-        // route.parsed = parse(route.path.toString())
+        route.keys   = [];
+        route.test   = pathToRegexp(route.path, route.keys);
+        route.toPath = pathToRegexp.compile(route.path.toString());
+        // route.parsed = pathToRegexp.parse(route.path.toString())
         if ( route.children ) route.routes = addTestKeysToRoutes(route.children);
     } catch ( e ) {
         console.warn('setRoutes', e);
