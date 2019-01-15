@@ -137,7 +137,6 @@ export class Store {
     }
 
     @action setDocument(document: api.Document | null) {
-        log('setDocument')
         this.document = document;
         return this;
     }
@@ -161,7 +160,7 @@ export class Store {
             return this.document;
         }
         await this.fetch(projectKey, revisionKey, documentKey);
-        if(this.document.meta){
+        if(this.document && this.document.meta){
             this.helmet.merge(this.document.meta);
         }
         return this.document;
@@ -192,8 +191,10 @@ export class Store {
 
         // query      = this.hooks.fetch.call(query);
 
-        return new Promise((res,rej)=>transaction(async () => {
-            let result = await query.get();
+        let result = await query.get();
+
+
+        transaction( () => {
             let layout;
             if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
                 this.project = null;
@@ -229,12 +230,11 @@ export class Store {
             if ( layout ) {
                 this.mergeLayout(layout);
             }
-            this.fetching = false;
-            res(result);
-        }));
+        });
 
+        this.fetching = false;
         // this.hooks.fetched.call(result);
-        // return result;
+        return result;
     }
 
     // async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {

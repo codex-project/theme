@@ -153,7 +153,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProp
                 multiple={multiple}
                 {...props}
             >
-                <Item key={'s'}>Hai</Item>
+                {items.map(item => this.renderMenuItem(item, 0))}
             </AntdMenu>
         );
     }

@@ -10,6 +10,8 @@ import { Store } from 'stores';
 import { Routes } from 'collections/Routes';
 import { LayoutHeader } from 'components/layout/LayoutHeader';
 import { LayoutFooter } from 'components/layout/LayoutFooter';
+import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
+import { Toolbar } from 'components/toolbar/Toolbar';
 
 
 const { Sider, Header, Content, Footer } = AntdLayout;
@@ -29,33 +31,16 @@ export interface LayProps {
 export class Layout extends React.Component<LayProps, LayoutState> {
     static displayName                     = 'Layout';
     static defaultProps: Partial<LayProps> = { left: null, right: null, header: null, footer: null, content: null };
-    // static Header: typeof LayoutHeader           = LayoutHeader;
-    // static Footer: typeof LayoutFooter           = LayoutFooter;
-    // static Side: typeof LayoutSide               = LayoutSide;
-    // static Breadcrumbs: typeof LayoutBreadcrumbs = LayoutBreadcrumbs;
+    static Header: typeof LayoutHeader           = LayoutHeader;
+    static Footer: typeof LayoutFooter           = LayoutFooter;
+    static Side: typeof LayoutSide               = LayoutSide;
+    static Breadcrumbs: typeof LayoutBreadcrumbs = LayoutBreadcrumbs;
 
     @lazyInject('store.layout') layout: LayoutStore;
     @lazyInject('store') store: Store;
     @lazyInject('routes') routes: Routes;
 
-    public componentDidMount(): void {
-        this.store.fetchDocument('codex','master','index')
-    }
-
     render() {
-        window[ 'layout' ]                                                = this;
-        const { children, ...props }                                      = this.props;
-        const { container} = this.layout; //, header, left, middle, content, right, footer
-        if(!this.store.document)return <div>loading</div>;
-        return (
-            <AntdLayout style={container.computedStyle}>
-
-                <LayoutSide side='left' />
-            </AntdLayout>
-        )
-    }
-
-    render2() {
         window[ 'layout' ]                                                = this;
         const { children, ...props }                                      = this.props;
         const { container, header, left, middle, content, right, footer } = this.layout;
@@ -74,14 +59,13 @@ export class Layout extends React.Component<LayProps, LayoutState> {
                         </If>
 
                         <Content style={{ minHeight: '100%' }}>
-                            {/*<Toolbar
-                                ref={this.toolbarRef as any}
+                            <Toolbar
                                 style={{
                                     backgroundColor: content.computedStyle.backgroundColor,
                                     paddingLeft    : content.computedStyle.marginLeft,
                                     paddingRight   : content.computedStyle.marginRight,
                                 }}
-                            />*/}
+                            />
                             <AntdLayout>
                                 <Content style={content.computedStyle} className={content.computedClass}>
                                     {children || props.content || null}
@@ -89,7 +73,7 @@ export class Layout extends React.Component<LayProps, LayoutState> {
                             </AntdLayout>
                         </Content>
                         <If condition={right.show && ! right.outside}>
-                            <LayoutSide side='right'/>
+                            <LayoutSide side='right'>{props.right}</LayoutSide>
                         </If>
                     </AntdLayout>
                     <If condition={footer.show}>
@@ -97,7 +81,7 @@ export class Layout extends React.Component<LayProps, LayoutState> {
                     </If>
                 </AntdLayout>
                 <If condition={right.show && right.outside}>
-                    <LayoutSide side='right'/>
+                    <LayoutSide side='right'>{props.right}</LayoutSide>
                 </If>
 
             </AntdLayout>
