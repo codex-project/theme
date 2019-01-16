@@ -3,8 +3,8 @@ import { observer } from 'mobx-react';
 import { hot } from 'decorators';
 import { Popover } from 'antd';
 import { action, observable } from 'mobx';
-import { Toolbar } from 'components/toolbar/Toolbar';
-import { Button } from 'components/toolbar/Button';
+import { Toolbar } from 'components/toolbar';
+import { Button } from 'components/button';
 
 import './toc.scss';
 
@@ -44,7 +44,7 @@ export class TOC extends Component<TOCProps> {
                         mouseEnterDelay={0}
                         align={{
                             points: [ 'tr', 'br' ],
-                            offset: [ -10, 10 ],
+                            offset: [ - 10, 10 ],
                         }}
                         visible={this.tocPopoverVisible}
                         onVisibleChange={visible => this.toggleTocPopover(visible)}

@@ -6,11 +6,11 @@ import { Api } from '@codex/api';
 import { hot } from 'decorators';
 import { IDefinedRoute } from 'interfaces';
 import { PopoverAction } from 'components/link/PopoverAction';
-import { Scrollbar } from 'components/Scrollbar';
+import { Scrollbar } from 'components/scrollbar';
 import { Link } from 'react-router-dom';
 import { Routes } from 'collections/Routes';
 import { ProjectPart, Store } from 'stores';
-import { Icon } from 'components/Icon';
+import { Icon } from 'components/icon';
 import { clink } from 'stores/CLinkStore';
 
 
@@ -55,14 +55,14 @@ project(projectKey: "${project}"){
                         <Scrollbar style={{ width: '100%' }} autoHeight={true} autoHeightMax={250}>
                             <List
                                 size="small"
-                                dataSource={Object.keys(project.revisions)}
+                                dataSource={Object.values(project.revisions)}
                                 renderItem={revision => (
                                     <List.Item style={{ padding: 5 }}>
                                         <List.Item.Meta
                                             avatar={<Icon name="code-fork" style={{ fontSize: 25, marginLeft: 10 }}/>}
-                                            title={<Link to={this.routes.getRoute('documentation.revision').toPath({ project: project.key, revision: revision })} style={{ display: 'block' }}>{revision}</Link>}
+                                            title={<Link to={this.routes.getRoute('documentation.revision').toPath({ project: project.key, revision: revision.key })} style={{ display: 'block' }}>{revision.key}</Link>}
                                         />
-                                        {revision === project.default_revision ? <Icon name="dot-circle-o" title="Default Revision" style={{ fontSize: 15, margin: 5 }}/> : null}
+                                        {revision.key === project.default_revision ? <Icon name="dot-circle-o" title="Default Revision" style={{ fontSize: 15, margin: 5 }}/> : null}
                                     </List.Item>
                                 )}
                             />

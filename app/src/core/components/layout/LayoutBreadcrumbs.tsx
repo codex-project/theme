@@ -1,19 +1,16 @@
 import React from 'react';
-import { LayoutStore } from '../../stores/store.layout';
-import { hot } from '../../decorators';
+import { hot } from 'decorators';
 import { observer } from 'mobx-react';
-import { Breadcrumb, Dropdown, Layout as AntdLayout, Menu } from 'antd';
-import { lazyInject } from '../../ioc';
-import './index.scss';
+import { Breadcrumb, Dropdown, Menu } from 'antd';
+import { lazyInject } from 'ioc';
 import { Link } from 'react-router-dom';
 import { Store } from 'stores';
-import { Icon } from 'components/Icon';
+import { Icon } from 'components/icon';
 import { Routes } from 'collections/Routes';
 import { classes } from 'typestyle';
 
 
-const { Sider, Header, Content, Footer } = AntdLayout;
-
+import './index.scss';
 
 export interface LayoutBreadcrumbsProps {
     className?: string
@@ -25,16 +22,14 @@ export interface LayoutBreadcrumbsProps {
 export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
     static displayName                                   = 'LayoutBreadcrumbs';
     static defaultProps: Partial<LayoutBreadcrumbsProps> = {};
-    @lazyInject('store.layout') layout: LayoutStore;
     @lazyInject('store') store: Store;
     @lazyInject('routes') routes: Routes;
 
     render() {
-        const { style, className, ...props }                              = this.props;
-        const { container, header, left, middle, content, right, footer } = this.layout;
-        const { codex, project, revision, document }                      = this.store;
-        let iconStyle                                                     = { marginRight: 5 };
-        let classNames                                                    = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
+        const { style, className, ...props }         = this.props;
+        const { codex, project, revision, document } = this.store;
+        let iconStyle                                = { marginRight: 5 };
+        let classNames                               = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
         return (
             <Breadcrumb
                 className={classNames('breadcrumb', className)}

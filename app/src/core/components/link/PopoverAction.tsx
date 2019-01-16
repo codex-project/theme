@@ -2,7 +2,7 @@ import React from 'react';
 import { style } from 'typestyle';
 import Loadable from 'react-loadable';
 import { Popover } from 'antd';
-import { Centered } from 'components/Centered';
+import { Centered } from 'components/centered';
 import { Loading } from 'components/loading';
 
 export interface PopoverActionProps<T> {

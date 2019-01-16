@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { lazyInject } from '../../ioc';
-import { Store } from '../../stores';
+import { lazyInject } from 'ioc';
+import { Store } from 'stores';
 import { observer } from 'mobx-react';
-import { hot } from '../../decorators';
+import { hot } from 'decorators';
 import { Layout, Menu as AntdMenu, Tooltip } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { getColor } from '../../utils/colors';
+import { getColor } from 'utils/colors';
 import { DynamicMenu } from '../dynamic-menu';
 import { classes } from 'typestyle';
 import { MenuItemIcon } from 'components/dynamic-menu/MenuItemIcon';
+import { Icon } from 'components/icon';
+import { FontAwesomeIcon } from 'interfaces';
 
 const { Header } = Layout;
 
@@ -25,10 +27,10 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
     static defaultProps: Partial<LayoutHeaderProps> = {};
 
     render() {
-        let { children }                           = this.props;
-        let { left, middle, header, right }        = this.store.layout;
-        let { computedStyle, computedClass, menu } = header;
-        const devLinks                             = [
+        let { children }                                     = this.props;
+        let { left, middle, header, right }                  = this.store.layout;
+        let { computedStyle, computedClass, menu }           = header;
+        const devLinks                                       = [
             '/',
             '/about',
             '/documentation',
@@ -37,22 +39,20 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
             '/documentation/codex/master/index',
             '/documentation/codex/master/getting-started/installation',
         ];
-        let toggleTooltip                          = {
+        let toggleTooltip                                    = {
             left : `Click to ${left.collapsed ? 'open' : 'close'} the left menu`,
             right: `Click to ${right.collapsed ? 'open' : 'close'} the right menu`,
         };
-        let toggleClassName                        = {
+        let toggleClassName: Record<string, FontAwesomeIcon> = {
             left : left.collapsed ? 'indent' : 'outdent',
             right: left.collapsed ? 'outdent' : 'indent',
         };
-        let className                              = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
+        let className                                        = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
         return (
             <Header style={computedStyle} className={className('header', computedClass)}>
                 <If condition={header.show_left_toggle}>
                     <Tooltip placement="right" title={toggleTooltip.left}>
-                        <i className={className('header-toggle', 'fa-' + toggleClassName.left)}
-                           onClick={() => left.setCollapsed(! left.collapsed)}
-                        />
+                        <Icon name={toggleClassName.left} className={className('header-toggle')} onClick={() => left.setCollapsed(! left.collapsed)}/>
                     </Tooltip>
                 </If>
                 <If condition={header.logo}>
@@ -67,7 +67,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
                     className={className('header-menu')}
                     color={header.color}
                     items={menu}
-                    overflowedIndicator={<span className={className('header-menu-overflowed-title')}><MenuItemIcon  item={{icon: 'bars'}} /></span>}
+                    overflowedIndicator={<span className={className('header-menu-overflowed-title')}><MenuItemIcon item={{ icon: 'bars' }}/></span>}
                 />
                 <AntdMenu
                     theme="dark"
@@ -85,10 +85,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
                 </AntdMenu>
                 <If condition={header.show_right_toggle}>
                     <Tooltip placement="left" title={toggleTooltip.right}>
-                        <i
-                            className={className('header-toggle', 'fa-' + toggleClassName.right)}
-                            onClick={() => right.setCollapsed(! right.collapsed)}
-                        />
+                        <Icon name={toggleClassName.right} className={className('header-toggle')} onClick={() => right.setCollapsed(! right.collapsed)}/>
                     </Tooltip>
                 </If>
             </Header>

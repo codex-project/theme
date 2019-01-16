@@ -1,12 +1,12 @@
 import { ContainerModule, decorate, injectable } from 'inversify';
-import { routes } from './routes';
-import { Store } from './stores';
+import { routes } from 'routes';
+import { Store } from 'stores';
 import { Api } from '@codex/api';
-import { IConfig } from './interfaces';
-import { HtmlComponents } from './classes/HtmlComponents';
-import { MenuManager } from './menus/MenuManager';
-import { Routes } from './collections/Routes';
-import { LayoutStore } from './stores/store.layout';
+import { IConfig } from 'interfaces';
+import { HtmlComponents } from 'classes/HtmlComponents';
+import { MenuManager } from 'menus/MenuManager';
+import { Routes } from 'collections/Routes';
+import { LayoutStore } from 'stores/store.layout';
 import { toJS } from 'mobx';
 import { Fetched } from 'stores/Fetched';
 import { CssVariables } from 'classes/CssVariables';
@@ -15,11 +15,11 @@ import { CodeHighlight } from 'components/code-highlight';
 import { TOC, TOCHeader, TOCList, TOCListItem } from 'components/toc';
 import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
 import { CLink } from 'components/link';
-import { Trigger } from 'components/Trigger';
+import { Trigger } from 'components/trigger';
 import { Link } from 'react-router-dom';
 import { Col, Modal, Popover, Row, Tooltip } from 'antd';
-import { Icon } from 'components/Icon';
-import { Button } from 'components/toolbar/Button';
+import { Icon } from 'components/icon';
+import { Button } from 'components/button';
 import { ApiLocalStorageCache } from 'classes/ApiLocalStorageCache';
 
 

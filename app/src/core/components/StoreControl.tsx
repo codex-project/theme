@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { app } from '../ioc';
-import { hot } from '../decorators';
+import { app } from 'ioc';
+import { hot } from 'decorators';
 import { observer } from 'mobx-react';
-import { OffCanvas, Position, PositionHelper } from '../components/OffCanvas';
+import { OffCanvas, Position, PositionHelper } from 'components/off-canvas';
 import { Checkbox, Collapse, Form, Input, InputNumber, Select, Tree } from 'antd';
 import { get } from 'lodash';
 import { observable } from 'mobx';
-import { _colors } from '../utils/colors';
+import { _colors } from 'utils/colors';
 
 const log      = require('debug')('components:store-control');
 const FormItem = Form.Item;
@@ -90,7 +90,7 @@ export class StoreControl extends React.Component<StoreControlProps> {
                             Object
                                 .keys(item)
                                 .filter(key => ! [ 'children', 'label' ].includes(key))
-                                .filter(key => item[key] !== undefined)
+                                .filter(key => item[ key ] !== undefined)
                                 .map(key => {
                                     return (
                                         <TreeNode

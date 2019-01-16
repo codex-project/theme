@@ -5,7 +5,7 @@ import { IDefinedRoute } from 'interfaces';
 import { hot } from 'decorators';
 import { app, lazyInject } from 'ioc';
 import { Api, api } from '@codex/api';
-import { Scrollbar } from 'components/Scrollbar';
+import { Scrollbar } from 'components/scrollbar';
 import { PopoverAction } from 'components/link/PopoverAction';
 import { clink } from 'stores/CLinkStore';
 

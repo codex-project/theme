@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
-import { lazyInject } from '../../ioc';
-import { Store } from '../../stores';
+import { lazyInject } from 'ioc';
+import { Store } from 'stores';
 import { observer } from 'mobx-react';
-import { hot } from '../../decorators';
-import { Affix, Layout } from 'antd';
+import { hot } from 'decorators';
+import {  Layout } from 'antd';
 import { DynamicMenu } from '../dynamic-menu';
 import { observe } from 'mobx';
 import { LayoutStoreSide } from 'stores/store.layout';
@@ -11,10 +11,9 @@ import { IStoreProxy } from 'stores/proxy';
 import { classes } from 'typestyle';
 import { CookieStorage } from 'utils/storage';
 import { parseBool } from 'utils/general';
-import { AffixProps } from 'antd/lib/affix';
 import { getColor } from 'utils/colors';
-import { Icon } from 'components/Icon';
-import { color } from 'csx';
+import { Icon } from 'components/icon';
+import { Affix } from 'components/affix';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -25,7 +24,6 @@ export interface LayoutSideProps {
     onCollapse?: (collapsed: boolean) => void
 }
 
-const ToggableAffix = ({ enabled, children, ...props }: AffixProps & { children?: any, enabled?: boolean }) => enabled ? <Affix {...props} children={children}/> : <Fragment>{children}</Fragment>;
 
 @hot(module)
 @observer
@@ -55,21 +53,6 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
         this.setState({ collapsedBeforeResponsive: this.side.collapsed });
     }
 
-    onCollapse = (collapsed, type?) => {
-        log('onCollapse', this.props.side, { type, collapsed, collapsedBeforeResponsive: this.state.collapsedBeforeResponsive });
-        if ( this.side.collapsed === collapsed ) {
-            return;
-        }
-        if ( type === 'responsive' ) {
-            if ( collapsed !== this.state.collapsedBeforeResponsive ) {
-                return;
-            }
-        }
-        this.side.setCollapsed(collapsed);
-        this.props.onCollapse(collapsed);
-    };
-
-
     render() {
         let side = this.store.layout[ this.props.side ];
 
@@ -93,9 +76,8 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                 collapsed={side.collapsed}
                 collapsedWidth={side.collapsedWidth}
                 trigger={null}
-                onCollapse={this.onCollapse}
             >
-                <ToggableAffix enabled={side.fixed} style={{ height: '100%', backgroundColor: getColor(side.color) }}>
+                <Affix enabled={side.fixed} style={{ height: '100%', backgroundColor: getColor(side.color) }}>
                     {/*{siderToggle}*/}
                     <DynamicMenu
                         className={className('side-menu')}
@@ -106,7 +88,7 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                         inlineIndent={15}
                         color={side.color}
                     />
-                </ToggableAffix>
+                </Affix>
             </Sider>
 
         );

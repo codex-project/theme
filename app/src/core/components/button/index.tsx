@@ -1,13 +1,16 @@
 import React from 'react';
 import { hot } from 'decorators';
 
-import './toolbar.scss';
 import { Button as AntdButton } from 'antd';
-import { Icon } from 'components/Icon';
+import { Icon } from 'components/icon';
 import { ButtonType as AntdButtonType } from 'antd/lib/button';
 import { FontAwesomeIcon, Omit } from 'interfaces';
 import { NativeButtonProps } from 'antd/lib/button/button';
 import { classes } from 'typestyle';
+
+
+import './index.scss';
+
 
 export type ButtonType = AntdButtonType|'codex' | 'codex-alt' |'toolbar';
 

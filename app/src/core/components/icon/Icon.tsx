@@ -1,6 +1,6 @@
 import React from 'react';
-import { hot } from '../decorators';
-import { strEnsureLeft } from '../utils/general';
+import { hot } from 'decorators';
+import { strEnsureLeft } from 'utils/general';
 import { classes } from 'typestyle';
 import { FontAwesomeIcon } from 'interfaces';
 

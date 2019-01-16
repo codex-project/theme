@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { hot } from 'decorators';
 import { classes, style, types } from 'typestyle'
-import {ResizeObservable} from './observables/ResizeObservable';
-import {WindowResizeObservable} from './observables/WindowResizeObservable';
+import {ResizeObservable} from '../observables/ResizeObservable';
+import {WindowResizeObservable} from '../observables/WindowResizeObservable';
 import { findDOMNode } from 'react-dom';
 
 const log = require('debug')('components:Centered')

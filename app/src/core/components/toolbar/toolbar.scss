@@ -1,4 +1,5 @@
 @import "../../styling/base";
+@import "../button/index";
 
 $toolbar-prefix: "c-toolbar";
 
@@ -46,6 +47,7 @@ $toolbar-height-lg: $btn-height-lg;
     @include button-disabled();
 }
 
+
 .ant-btn-toolbar {
     @include button-variant-toolbar(#7a8990);
 }
@@ -56,8 +58,4 @@ $toolbar-height-lg: $btn-height-lg;
 
 .ant-btn-codex-alt {
     @include button-variant-toolbar($color-codex-alt);
-}
-
-.ant-btn.ant-btn-borderless {
-    border: none;
 }

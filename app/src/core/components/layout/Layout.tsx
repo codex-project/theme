@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
-import { LayoutStore } from '../../stores/store.layout';
-import { hot } from '../../decorators';
+import React from 'react';
+import { LayoutStore } from 'stores/store.layout';
+import { hot } from 'decorators';
 import { observer } from 'mobx-react';
-import { Affix, BackTop, Layout as AntdLayout } from 'antd';
-import { lazyInject } from '../../ioc';
-import { LayoutSide } from '../../components/layout/LayoutSide';
+import { BackTop, Layout as AntdLayout } from 'antd';
+import { lazyInject } from 'ioc';
+import { LayoutSide } from 'components/layout/LayoutSide';
 import './index.scss';
 import { Store } from 'stores';
 import { Routes } from 'collections/Routes';
@@ -13,7 +13,7 @@ import { LayoutFooter } from 'components/layout/LayoutFooter';
 import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
 import { Toolbar } from 'components/toolbar/Toolbar';
 import posed from 'react-pose';
-import { AffixProps } from 'antd/lib/affix';
+import { Affix } from 'components/affix';
 
 
 const { Sider, Header, Content, Footer } = AntdLayout;
@@ -39,8 +39,6 @@ export interface LayProps {
     footer?: React.ReactNode
     content?: React.ReactNode
 }
-
-const ToggableAffix = ({ enabled, children, ...props }: AffixProps & { children?: any, enabled?: boolean }) => enabled ? <Affix {...props} children={children}/> : <Fragment>{children}</Fragment>;
 
 @hot(module)
 @observer
@@ -77,7 +75,7 @@ export class Layout extends React.Component<LayProps> {
                         </If>
 
                         <Content style={{ minHeight: '100%' }}>
-                            <ToggableAffix enabled={true}>
+                            <Affix enabled={true}>
                                 <ToolbarContainer>
                                     <Toolbar
                                         style={{
@@ -90,7 +88,8 @@ export class Layout extends React.Component<LayProps> {
                                         <LayoutBreadcrumbs/>
                                     </Toolbar.Item>
                                 </ToolbarContainer>
-                            </ToggableAffix>
+                            </Affix>
+
                             <AntdLayout>
                                 <Content style={content.computedStyle} className={content.computedClass}>
                                     {children || props.content || null}
@@ -112,9 +111,7 @@ export class Layout extends React.Component<LayProps> {
                     <LayoutSide side='right'>{props.right}</LayoutSide>
                 </If>
 
-                <BackTop>
-
-                </BackTop>
+                <BackTop />
             </AntdLayout>
         );
     }
