@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 import { Col, Modal, Popover, Row, Tooltip } from 'antd';
 import { Icon } from 'components/Icon';
 import { Button } from 'components/toolbar/Button';
+import { ApiLocalStorageCache } from 'classes/ApiLocalStorageCache';
 
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -63,7 +64,12 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
     });
     bind<Api>('api').to(Api).inSingletonScope().onActivation((ctx, api) => {
         const c = ctx.container.get<IConfig>('config');
-        return api.configure(c.api);
+        api.configure(c.api);
+        if ( c.cache ) {
+            const cache = new ApiLocalStorageCache();
+            cache.apply(api);
+        }
+        return api;
     });
     bind<MenuManager>('menumanager').to(MenuManager).inSingletonScope();
 });

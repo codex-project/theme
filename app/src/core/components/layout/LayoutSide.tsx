@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { lazyInject } from '../../ioc';
 import { Store } from '../../stores';
 import { observer } from 'mobx-react';
 import { hot } from '../../decorators';
-import { Layout } from 'antd';
+import { Affix, Layout } from 'antd';
 import { DynamicMenu } from '../dynamic-menu';
 import { observe } from 'mobx';
 import { LayoutStoreSide } from 'stores/store.layout';
@@ -11,6 +11,10 @@ import { IStoreProxy } from 'stores/proxy';
 import { classes } from 'typestyle';
 import { CookieStorage } from 'utils/storage';
 import { parseBool } from 'utils/general';
+import { AffixProps } from 'antd/lib/affix';
+import { getColor } from 'utils/colors';
+import { Icon } from 'components/Icon';
+import { color } from 'csx';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -20,6 +24,8 @@ export interface LayoutSideProps {
     side: 'left' | 'right'
     onCollapse?: (collapsed: boolean) => void
 }
+
+const ToggableAffix = ({ enabled, children, ...props }: AffixProps & { children?: any, enabled?: boolean }) => enabled ? <Affix {...props} children={children}/> : <Fragment>{children}</Fragment>;
 
 @hot(module)
 @observer
@@ -68,6 +74,14 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
         let side = this.store.layout[ this.props.side ];
 
         let className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
+
+        const siderToggle = <Icon
+            name={side.collapsed ? 'chevron-right' : 'chevron-left'}
+            className={className('side-toggle')}
+            style={{ width: side.collapsed ? side.collapsedWidth : side.width }}
+            onClick={() => side.setCollapsed(! side.collapsed)}
+        />;
+
         return (
             <Sider
                 collapsible
@@ -81,15 +95,18 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                 trigger={null}
                 onCollapse={this.onCollapse}
             >
-                <DynamicMenu
-                    className={className('side-menu')}
-                    items={side.menu}
-                    subMenuCloseDelay={side.collapsed ? 0.2 : 1}
-                    mode="inline"
-                    inlineCollapsed={side.collapsed}
-                    inlineIndent={15}
-                    color={side.color}
-                />
+                <ToggableAffix enabled={side.fixed} style={{ height: '100%', backgroundColor: getColor(side.color) }}>
+                    {/*{siderToggle}*/}
+                    <DynamicMenu
+                        className={className('side-menu')}
+                        items={side.menu}
+                        subMenuCloseDelay={side.collapsed ? 0.2 : 1}
+                        mode="inline"
+                        inlineCollapsed={side.collapsed}
+                        inlineIndent={15}
+                        color={side.color}
+                    />
+                </ToggableAffix>
             </Sider>
 
         );

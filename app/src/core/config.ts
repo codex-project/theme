@@ -5,6 +5,6 @@ export const config:IConfig = {
     cache: false,
     rootID: 'root',
     api: {
-        url: '/graphql'
+        url: '/api'
     }
 }

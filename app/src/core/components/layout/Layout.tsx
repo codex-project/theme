@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { LayoutStore } from '../../stores/store.layout';
 import { hot } from '../../decorators';
 import { observer } from 'mobx-react';
-import { BackTop, Layout as AntdLayout } from 'antd';
+import { Affix, BackTop, Layout as AntdLayout } from 'antd';
 import { lazyInject } from '../../ioc';
 import { LayoutSide } from '../../components/layout/LayoutSide';
 import './index.scss';
@@ -13,7 +13,7 @@ import { LayoutFooter } from 'components/layout/LayoutFooter';
 import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
 import { Toolbar } from 'components/toolbar/Toolbar';
 import posed from 'react-pose';
-import Helmet from 'pages/DocumentPage';
+import { AffixProps } from 'antd/lib/affix';
 
 
 const { Sider, Header, Content, Footer } = AntdLayout;
@@ -39,6 +39,8 @@ export interface LayProps {
     footer?: React.ReactNode
     content?: React.ReactNode
 }
+
+const ToggableAffix = ({ enabled, children, ...props }: AffixProps & { children?: any, enabled?: boolean }) => enabled ? <Affix {...props} children={children}/> : <Fragment>{children}</Fragment>;
 
 @hot(module)
 @observer
@@ -75,18 +77,20 @@ export class Layout extends React.Component<LayProps> {
                         </If>
 
                         <Content style={{ minHeight: '100%' }}>
-                            <ToolbarContainer>
-                                <Toolbar
-                                    style={{
-                                        backgroundColor: content.computedStyle.backgroundColor,
-                                        paddingLeft    : content.computedStyle.marginLeft,
-                                        paddingRight   : content.computedStyle.marginRight,
-                                    }}
-                                />
-                                <Toolbar.Item side="left">
-                                    <LayoutBreadcrumbs/>
-                                </Toolbar.Item>
-                            </ToolbarContainer>
+                            <ToggableAffix enabled={true}>
+                                <ToolbarContainer>
+                                    <Toolbar
+                                        style={{
+                                            backgroundColor: content.computedStyle.backgroundColor,
+                                            paddingLeft    : content.computedStyle.marginLeft,
+                                            paddingRight   : content.computedStyle.marginRight,
+                                        }}
+                                    />
+                                    <Toolbar.Item side="left">
+                                        <LayoutBreadcrumbs/>
+                                    </Toolbar.Item>
+                                </ToolbarContainer>
+                            </ToggableAffix>
                             <AntdLayout>
                                 <Content style={content.computedStyle} className={content.computedClass}>
                                     {children || props.content || null}

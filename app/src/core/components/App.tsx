@@ -14,6 +14,7 @@ import { TunnelProvider } from 'components/tunnel';
 
 import '../styling/semantic.less';
 import '../styling/stylesheet.scss';
+import { StoreControl } from 'components/StoreControl';
 
 const log = require('debug')('app');
 
@@ -62,15 +63,70 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
                         <Helmet
                             defaultTitle={this.store.codex.display_name}
                             titleTemplate={this.store.codex.display_name + ' - %s'}
-                            //{...this.store.helmet}
+                            {...this.store.helmet}
                         />
                         <ErrorBoundary>
                             <RouterPages routes={this.routes}/>
                         </ErrorBoundary>
+                        {this.renderStoreController()}
                     </Layout>
                 </TunnelProvider>
             </ErrorBoundary>
         );
     }
 
+    renderStoreController() {
+        return (
+            <StoreControl store={this.store.layout} stores={{
+                'container': {
+                    stretch: 'boolean',
+                },
+                'header'   : {
+                    show             : 'boolean',
+                    height           : 'number',
+                    fixed            : 'boolean',
+                    color            : 'color.name',
+                    logo             : 'boolean',
+                    show_left_toggle : 'boolean',
+                    show_right_toggle: 'boolean',
+                    menu             : 'menu',
+                },
+                'left'     : {
+                    show          : 'boolean',
+                    width         : 'number',
+                    fixed            : 'boolean',
+                    collapsedWidth: 'number',
+                    collapsed     : 'boolean',
+                    outside       : 'boolean',
+                    color         : 'color.name',
+                    menu          : 'menu',
+                },
+                'right'    : {
+                    show          : 'boolean',
+                    width         : 'number',
+                    fixed            : 'boolean',
+                    collapsedWidth: 'number',
+                    collapsed     : 'boolean',
+                    outside       : 'boolean',
+                    color         : 'color.name',
+                },
+                'middle'   : {
+                    padding: 'string',
+                    margin : 'string',
+                    color  : 'color.name',
+                },
+                'content'  : {
+                    padding: 'string',
+                    margin : 'string',
+                    color  : 'color.name',
+                },
+                'footer'   : {
+                    show  : 'boolean',
+                    height: 'number',
+                    fixed : 'boolean',
+                    color : 'color.name',
+                },
+            }}/>
+        );
+    }
 }

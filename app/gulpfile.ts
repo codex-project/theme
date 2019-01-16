@@ -83,8 +83,8 @@ class Gulpfile {
             .port(port)
             .headers({ 'Access-Control-Allow-Origin': '*' })
             .public(url + '/')
-            .publicPath('/');
-        // .set('before', app => app.use(require('morgan')(':method :url :status :res[content-length] - :response-time ms')));
+            .publicPath('/')
+            .set('before', app => app.use(require('morgan')(':method :url :status :res[content-length] - :response-time ms')));
 
         // chain.devServer
         //     .contentBase(contentBase)  //resolve(__dirname, '../../../public')
@@ -95,7 +95,23 @@ class Gulpfile {
 
         console.log('Starting dev-server @ ', url);
 
-        const config = chain.toConfig();
+        const config           = chain.toConfig();
+        config.devServer.proxy = {
+            '/api': {
+                target             : 'http://codex.local',
+                secure             : false,
+                changeOrigin       : true,
+                cookieDomainRewrite: 'localhost',
+                onProxyReq         : proxyReq => {
+                    // Browers may send Origin headers even with same-origin
+                    // requests. To prevent CORS issues, we have to change
+                    // the Origin to match the target URL.
+                    if ( proxyReq.getHeader('origin') ) {
+                        proxyReq.setHeader('origin', 'http://codex.local');
+                    }
+                },
+            },
+        };
         WebpackDevServer.addDevServerEntrypoints(config, config.devServer);
         const compiler = webpack(config);
         const server   = new WebpackDevServer(compiler, config.devServer);

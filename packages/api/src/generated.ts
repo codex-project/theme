@@ -362,6 +362,8 @@ export interface LayoutLeft {
 
     collapsedWidth?: Maybe<number>;
 
+    fixed?: Maybe<boolean>;
+
     menu?: Maybe<(Maybe<MenuItem>)[]>;
 }
 
@@ -381,6 +383,8 @@ export interface LayoutRight {
     width?: Maybe<number>;
 
     collapsedWidth?: Maybe<number>;
+
+    fixed?: Maybe<boolean>;
 
     menu?: Maybe<(Maybe<MenuItem>)[]>;
 }

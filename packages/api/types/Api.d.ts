@@ -1,13 +1,13 @@
 import { ApiOptions, GraphQLRequestContext, Variables } from './types';
-import { SyncHook } from 'tapable';
+import { SyncHook, SyncWaterfallHook } from 'tapable';
 import { ContentResponse } from './ContentResponse';
 import { BatchResult, FetchResult } from './results';
 export declare class Api {
     readonly hooks: {
         query: SyncHook<GraphQLRequestContext, any, any>;
-        queryResult: SyncHook<FetchResult, any, any>;
+        queryResult: SyncWaterfallHook<FetchResult, any, any>;
         queryBatch: SyncHook<GraphQLRequestContext[], any, any>;
-        queryBatchResult: SyncHook<BatchResult, any, any>;
+        queryBatchResult: SyncWaterfallHook<BatchResult, any, any>;
     };
     protected options: ApiOptions;
     constructor();

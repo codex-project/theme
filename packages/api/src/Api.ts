@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import { ApiHeaders, ApiOptions, GraphQLBatchedResponse, GraphQLError, GraphQLRequestContext, GraphQLResponse, Variables } from './types';
 import { merge } from 'lodash';
-import { SyncHook } from 'tapable';
+import { SyncHook, SyncWaterfallHook } from 'tapable';
 import { ContentResponse } from './ContentResponse';
 import { BatchResult, FetchResult } from './results';
 import { ApiError } from './ApiError';
@@ -10,9 +10,9 @@ import { ApiError } from './ApiError';
 export class Api {
     public readonly hooks         = {
         query           : new SyncHook<GraphQLRequestContext>([ 'request' ]),
-        queryResult     : new SyncHook<FetchResult>([ 'result' ]),
+        queryResult     : new SyncWaterfallHook<FetchResult>([ 'result' ]),
         queryBatch      : new SyncHook<GraphQLRequestContext[]>([ 'requests' ]),
-        queryBatchResult: new SyncHook<BatchResult>([ 'result' ]),
+        queryBatchResult: new SyncWaterfallHook<BatchResult>([ 'result' ]),
     };
     protected options: ApiOptions = {
         url    : '/graphql',
@@ -35,21 +35,21 @@ export class Api {
         let request = { query, variables };
         this.hooks.query.call(request);
         let result = await this.fetch({ query, variables }, options);
-        this.hooks.queryResult.call(result);
+        result     = this.hooks.queryResult.call(result);
         return result;
     }
 
     async queryBatch(requests: GraphQLRequestContext[], options: Partial<ApiOptions> = {}) {
         this.hooks.queryBatch.call(requests);
         let result = await this.batch(requests, options);
-        this.hooks.queryBatchResult.call(result);
+        result     = this.hooks.queryBatchResult.call(result);
         return result;
     }
 
     protected async fetch(request: GraphQLRequestContext, options: Partial<ApiOptions> = {}) {
         const response = await this.request<GraphQLResponse>(makeBody(request), options);
-        const result   = new FetchResult(response);
-        if ( result.ok && ! result.hasErrors() && result.data ) {
+        const result   = new FetchResult(response, request);
+        if ( result.status >= 200 && result.status < 400 && ! result.hasErrors() ) {
             return result;
         }
 
@@ -59,8 +59,8 @@ export class Api {
 
     protected async batch(requests: GraphQLRequestContext[], options: Partial<ApiOptions> = {}) {
         const response            = await this.request<GraphQLBatchedResponse>(makeBody(requests), options);
-        const result: BatchResult = new BatchResult(response);
-        if ( result.ok && ! result.hasErrors() && result.data ) {
+        const result: BatchResult = new BatchResult(response, requests);
+        if ( result.status >= 200 && result.status < 400 && ! result.hasErrors() ) {
             return result;
         }
 

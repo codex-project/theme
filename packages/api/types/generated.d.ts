@@ -199,6 +199,7 @@ export interface LayoutLeft {
     outside?: Maybe<boolean>;
     width?: Maybe<number>;
     collapsedWidth?: Maybe<number>;
+    fixed?: Maybe<boolean>;
     menu?: Maybe<(Maybe<MenuItem>)[]>;
 }
 export interface LayoutRight {
@@ -210,6 +211,7 @@ export interface LayoutRight {
     outside?: Maybe<boolean>;
     width?: Maybe<number>;
     collapsedWidth?: Maybe<number>;
+    fixed?: Maybe<boolean>;
     menu?: Maybe<(Maybe<MenuItem>)[]>;
 }
 export interface LayoutMiddle {

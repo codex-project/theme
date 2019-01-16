@@ -1,4 +1,4 @@
-import { GraphQLBatchedResponse, GraphQLError, GraphQLResponse } from './types';
+import { GraphQLBatchedResponse, GraphQLError, GraphQLRequestContext, GraphQLResponse } from './types';
 import { Query } from './generated';
 import { ContentResponse } from './ContentResponse';
 
@@ -6,7 +6,7 @@ export class Result<DATA, CONTENT> {
     errors: GraphQLError[] = [];
     data: DATA;
 
-    constructor(public response: ContentResponse<CONTENT>) {}
+    constructor(public response: ContentResponse<CONTENT>, public request: GraphQLRequestContext | GraphQLRequestContext[]) {}
 
     get ok(): boolean { return this.response.ok; }
 
@@ -18,8 +18,8 @@ export class Result<DATA, CONTENT> {
 }
 
 export class FetchResult extends Result<Partial<Query>, GraphQLResponse> {
-    constructor(response: ContentResponse<GraphQLResponse>) {
-        super(response);
+    constructor(response: ContentResponse<GraphQLResponse>, request: GraphQLRequestContext) {
+        super(response, request);
         this.data = response.content.data || {};
         if ( response.content.errors && response.content.errors.length > 0 ) {
             this.errors.push(...response.content.errors);
@@ -28,8 +28,8 @@ export class FetchResult extends Result<Partial<Query>, GraphQLResponse> {
 }
 
 export class BatchResult extends Result<GraphQLBatchedResponse, GraphQLBatchedResponse> {
-    constructor(response: ContentResponse<GraphQLBatchedResponse>) {
-        super(response);
+    constructor(response: ContentResponse<GraphQLBatchedResponse>, request: GraphQLRequestContext[]) {
+        super(response, request);
         this.data = response.content || [];
         this.data.forEach(result => {
             if ( result.errors && result.errors.length > 0 ) {

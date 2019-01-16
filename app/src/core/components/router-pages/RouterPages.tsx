@@ -59,7 +59,7 @@ export class RouterPages extends React.PureComponent<PosedRouterPagesProps> {
                     ref={this.ref}
                     key={location.key || location.pathname}
                     onPoseComplete={(pose: CurrentPose) => {
-                        log('onPoseComplete', pose, this.ref);
+                        // log('onPoseComplete', pose, this.ref);
                         // if ( pose === 'enter' && this.ref && this.ref.current ) {
                         // this.prevHeight = this.ref.current.getBoundingClientRect().height;
                         // }
@@ -72,7 +72,7 @@ export class RouterPages extends React.PureComponent<PosedRouterPagesProps> {
                             // } else if ( this.ref && this.ref.current && this.prevHeight) {
                             //     this.ref.current.style.minHeight = this.prevHeight + 'px';
                             // }
-                            log('onValueChange', v, this.ref);
+                            // log('onValueChange', v, this.ref);
                         },
                     }}
                 >

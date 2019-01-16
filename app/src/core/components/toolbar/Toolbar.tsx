@@ -50,7 +50,6 @@ export class Toolbar extends React.Component<ToolbarProps> {
                 type="flex"
                 className={classes(prefixCls, classNames(size !== 'default' ? size === 'small' ? 'sm' : 'lg' : null), className)}
                 style={style}
-                gutter={24}
             >
                 <Column>
                     <TunnelPlaceholder id="toolbar-left" delay={1500} multiple/>

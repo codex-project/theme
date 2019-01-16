@@ -58,11 +58,13 @@ export class LayoutStore {
             collapsed     : false,
             outside       : false,
             color         : null,
+            fixed:false,
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
             setShow(show: boolean) {this.show = show;},
             setCollapsed(collapsed: boolean) {this.collapsed = collapsed;},
+            setFixed(fixed: boolean) {this.fixed = fixed;},
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -87,11 +89,13 @@ export class LayoutStore {
             collapsed     : false,
             outside       : false,
             color         : null,
+            fixed:false,
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
             setShow(show: boolean) {this.show = show;},
             setCollapsed(collapsed: boolean) {this.collapsed = collapsed;},
+            setFixed(fixed: boolean) {this.fixed = fixed;},
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -294,7 +298,7 @@ export interface LayoutFixedData {
 export type LayoutStoreContainer = LayoutStorePart<api.LayoutContainer> & {
     stretch: boolean
 }
-export type LayoutStoreSide = LayoutStorePart<api.LayoutLeft | api.LayoutRight> & LayoutMenuData & LayoutShowData & LayoutCollapseData & LayoutColorData & {
+export type LayoutStoreSide = LayoutStorePart<api.LayoutLeft | api.LayoutRight> & LayoutMenuData & LayoutFixedData & LayoutShowData & LayoutCollapseData & LayoutColorData & {
     outside: boolean
     width: number
 }

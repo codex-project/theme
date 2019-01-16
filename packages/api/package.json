@@ -21,7 +21,8 @@
         "lodash": "^4.17.11",
         "tapable": "^1.1.1",
         "graphql": "^14.0.2",
-        "graphql-request": "^1.8.2"
+        "graphql-request": "^1.8.2",
+        "axios": "^0.18.0"
     },
     "devDependencies": {
         "@radic/build-tools": "^1.1.0",

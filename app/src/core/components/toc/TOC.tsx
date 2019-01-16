@@ -41,6 +41,11 @@ export class TOC extends Component<TOCProps> {
                     <Popover
                         title="Table of Contents"
                         trigger="hover"
+                        mouseEnterDelay={0}
+                        align={{
+                            points: [ 'tr', 'br' ],
+                            offset: [ -10, 10 ],
+                        }}
                         visible={this.tocPopoverVisible}
                         onVisibleChange={visible => this.toggleTocPopover(visible)}
                         content={<div className="c-toc">{children}</div>}
@@ -48,7 +53,7 @@ export class TOC extends Component<TOCProps> {
                         placement={'bottomLeft'}
                         style={{ minWidth: 100, maxWidth: 150 }}
                     >
-                        <Button borderless type="toolbar" icon="list-alt" title="Show the Table of Contents">Table of Contents</Button>
+                        <Button borderless type="toolbar" icon="list-alt">Table of Contents</Button>
                     </Popover>
 
                 </Button.Group>
