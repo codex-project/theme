@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { hot } from 'decorators';
-import { Popover } from 'antd';
-import { action, observable } from 'mobx';
+import { Drawer, Popover } from 'antd';
 import { Toolbar } from 'components/toolbar';
 import { Button } from 'components/button';
 
@@ -13,6 +12,7 @@ const log = require('debug')('components:TOC');
 export interface TOCProps {
     className?: string
     style?: React.CSSProperties
+    type?: 'popover' | 'drawer'
 }
 
 export type TOCComponent = React.ComponentType<TOCProps>
@@ -25,39 +25,59 @@ export type TOCComponent = React.ComponentType<TOCProps>
 @observer
 export class TOC extends Component<TOCProps> {
     static displayName: string             = 'TOC';
-    static defaultProps: Partial<TOCProps> = {};
+    static defaultProps: Partial<TOCProps> = {
+        type: 'drawer',
+    };
 
-    @observable tocPopoverVisible = false;
+    state = { visible: false };
 
-    @action toggleTocPopover(tocPopoverVisible?: boolean) {this.tocPopoverVisible = tocPopoverVisible !== undefined ? tocPopoverVisible : ! this.tocPopoverVisible;}
-
+    setVisible = (visible: boolean = true) => {this.setState({ visible }); };
+    showDrawer = () => { this.setVisible(true);};
+    hideDrawer = () => { this.setVisible(false);};
 
     render() {
-        const { className, style, children } = this.props;
+        window[ 'toc' ]                            = this;
+        const { className, style, children, type } = this.props;
 
         return (
-            <Toolbar.Item side="right">
-                <Button.Group>
-                    <Popover
-                        title="Table of Contents"
-                        trigger="hover"
-                        mouseEnterDelay={0}
-                        align={{
-                            points: [ 'tr', 'br' ],
-                            offset: [ - 10, 10 ],
-                        }}
-                        visible={this.tocPopoverVisible}
-                        onVisibleChange={visible => this.toggleTocPopover(visible)}
-                        content={<div className="c-toc">{children}</div>}
-                        autoAdjustOverflow
-                        placement={'bottomLeft'}
-                        style={{ minWidth: 100, maxWidth: 150 }}
+            <Fragment>
+                <Toolbar.Item side="right">
+                    <Button.Group>
+                        <If condition={type === 'popover'}>
+                            <Popover
+                                title="Table of Contents"
+                                trigger="hover"
+                                mouseEnterDelay={0}
+                                align={{
+                                    points: [ 'tr', 'br' ],
+                                    offset: [ - 10, 10 ],
+                                }}
+                                visible={this.state.visible}
+                                onVisibleChange={this.setVisible}
+                                content={<div className="c-toc">{children}</div>}
+                                autoAdjustOverflow
+                                placement={'bottomLeft'}
+                                style={{ minWidth: 100, maxWidth: 150 }}
+                            >
+                                <Button borderless type="toolbar" icon="list-alt">Table of Contents</Button>
+                            </Popover>
+                        </If>
+                        <If condition={type === 'drawer'}>
+                            <Button borderless type="toolbar" icon="list-alt" onClick={this.showDrawer}>Table of Contents</Button>
+                        </If>
+                    </Button.Group>
+                </Toolbar.Item>
+                <If condition={type === 'drawer'}>
+                    <Drawer
+                        closable={true}
+                        visible={this.state.visible}
+                        onClose={this.hideDrawer}
+                        duration="0.1s"
                     >
-                        <Button borderless type="toolbar" icon="list-alt">Table of Contents</Button>
-                    </Popover>
-
-                </Button.Group>
-            </Toolbar.Item>
+                        <div className="c-toc" onClick={this.hideDrawer}>{children}</div>
+                    </Drawer>
+                </If>
+            </Fragment>
         );
     }
 

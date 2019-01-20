@@ -31,7 +31,7 @@ export class TOCListItem extends Component<TOCListItemProps> {
 
     onClick = e => {
         e.preventDefault();
-        e.stopPropagation();
+        // e.stopPropagation();
         scrollTo(strEnsureLeft(this.props.href, '#'));
     };
 

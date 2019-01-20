@@ -14,6 +14,7 @@ import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
 import { Toolbar } from 'components/toolbar/Toolbar';
 import posed from 'react-pose';
 import { Affix } from 'components/affix';
+import { TunnelPlaceholder } from 'components/tunnel';
 
 
 const { Sider, Header, Content, Footer } = AntdLayout;
@@ -60,6 +61,8 @@ export class Layout extends React.Component<LayProps> {
         const { container, header, left, middle, content, right, footer } = this.layout;
         return (
             <AntdLayout style={container.computedStyle}>
+                <TunnelPlaceholder id="layout-top" delay={0} multiple/>
+
                 <If condition={left.show && left.outside}>
                     <LayoutSide side='left'>{props.left}</LayoutSide>
                 </If>
@@ -111,7 +114,9 @@ export class Layout extends React.Component<LayProps> {
                     <LayoutSide side='right'>{props.right}</LayoutSide>
                 </If>
 
-                <BackTop />
+                <BackTop/>
+
+                <TunnelPlaceholder id="layout-bottom" delay={0} multiple/>
             </AntdLayout>
         );
     }

@@ -20,6 +20,16 @@ declare module 'antd/lib/menu' {
         renderMenuItem?: any
     }
 }
+
+declare module 'antd/lib/drawer' {
+    interface DrawerProps {
+        duration?:string
+        ease?:string
+        onChange?:Function
+        onMaskClick?:Function
+        onHandleClick?:Function
+    }
+}
 // noinspection ES6UnusedImports
 import api from '@codex/api';
 import { LocationDescriptorObject } from 'history';

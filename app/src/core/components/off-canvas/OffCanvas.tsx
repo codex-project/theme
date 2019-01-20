@@ -131,6 +131,8 @@ export class OffCanvas extends React.Component<OffCanvasProps, OffCanvasState> {
 
     open() { this.setValue(this.size); }
 
+    toggle() { this.value >= this.size ? this.close() : this.open(); }
+
     @action setValue = (value: number) => this.value = value;
 
     makeStyles(value: Pixels): Styles {

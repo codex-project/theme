@@ -2,7 +2,6 @@
 /// <reference types="react" />
 /// <reference types="react-dom" />
 /// <reference types="hammerjs" />
-///<reference path="../../../node_modules/resize-observer-polyfill/src/index.d.ts"/>
 
 
 

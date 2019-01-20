@@ -1,6 +1,10 @@
 ///<reference path="./globals.d.ts"/>
 ///<reference path="./modules.d.ts"/>
 import 'reflect-metadata';
+
+import './styling/semantic.less';
+import './styling/stylesheet.scss';
+
 import './init';
 import './utils/zepto';
 
@@ -17,12 +21,12 @@ export * from './collections/DictionaryWrapper';
 export * from './collections/ArrayUtils';
 export * from './collections/ObservableDictionaryWrapper';
 export * from './collections/Routes';
-//
+
 export * from './components';
 export * from './menus';
 export * from './stores';
 export * from './decorators';
-//
+
 export * from './utils/componentLoader';
 export * from './utils/colors';
 export * from './utils/general';
@@ -30,7 +34,6 @@ export * from './utils/get-prism';
 export * from './utils/scroll';
 export * from './utils/scrollTo';
 export * from './utils/storage';
-// export * from './utils/storage';
 
 
 export { app, lazyInject, url };
@@ -40,15 +43,3 @@ if ( module.hot ) {
         import('./components/App').then(component => app.render(component.App));
     });
 }
-
-// let postMessage = window.postMessage;
-//
-// window.postMessage = function (...args) {
-//     // debugger;
-//     try {
-//         postMessage(...args);
-//     } catch(error){
-//         debugger;
-//         throw error;
-//     }
-// };

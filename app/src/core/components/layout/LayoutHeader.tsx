@@ -9,7 +9,6 @@ import { getColor } from 'utils/colors';
 import { DynamicMenu } from '../dynamic-menu';
 import { classes } from 'typestyle';
 import { MenuItemIcon } from 'components/dynamic-menu/MenuItemIcon';
-import { Icon } from 'components/icon';
 import { FontAwesomeIcon } from 'interfaces';
 
 const { Header } = Layout;
@@ -52,7 +51,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
             <Header style={computedStyle} className={className('header', computedClass)}>
                 <If condition={header.show_left_toggle}>
                     <Tooltip placement="right" title={toggleTooltip.left}>
-                        <Icon name={toggleClassName.left} className={className('header-toggle')} onClick={() => left.setCollapsed(! left.collapsed)}/>
+                        <i className={className('header-toggle', 'fa', 'fa-' + toggleClassName.left)} onClick={() => left.setCollapsed(! left.collapsed)}/>
                     </Tooltip>
                 </If>
                 <If condition={header.logo}>
@@ -85,7 +84,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
                 </AntdMenu>
                 <If condition={header.show_right_toggle}>
                     <Tooltip placement="left" title={toggleTooltip.right}>
-                        <Icon name={toggleClassName.right} className={className('header-toggle')} onClick={() => right.setCollapsed(! right.collapsed)}/>
+                        <i className={className('header-toggle', 'fa', 'fa-' + toggleClassName.right)} onClick={() => right.setCollapsed(! right.collapsed)}/>
                     </Tooltip>
                 </If>
             </Header>

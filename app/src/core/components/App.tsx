@@ -1,19 +1,17 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { hot, WithRouter, WithRouterProps } from '../decorators';
+import { hot, WithRouter, WithRouterProps } from 'decorators';
 import { BrowserRouter, Router } from 'react-router-dom';
-import { Store } from '../stores';
+import { Store } from 'stores';
 import { observer } from 'mobx-react';
-import { Routes } from '../collections/Routes';
-import { app, lazyInject } from '../ioc';
+import { Routes } from 'collections/Routes';
+import { app, lazyInject } from 'ioc';
 import { Helmet } from 'react-helmet';
 import { ErrorBoundary } from './errors';
 import { RouterPages } from './router-pages';
 import { Layout } from './layout';
 import { TunnelProvider } from 'components/tunnel';
 
-import '../styling/semantic.less';
-import '../styling/stylesheet.scss';
 import { StoreControl } from 'components/StoreControl';
 
 const log = require('debug')('app');
