@@ -1,0 +1,91 @@
+/**
+ * Copyright (c) 2018. Codex Project
+ *
+ * The license can be found in the package and online at https://codex-project.mit-license.org.
+ *
+ * @copyright 2018 Codex Project
+ * @author Robin Radic
+ * @license https://codex-project.mit-license.org MIT License
+ */
+// @formatter:off
+//////////////////////////////
+/// PHPDOC VARIABLES
+$phpdoc-type-color-external:                                                $red-7 !default;
+$phpdoc-type-color-external-hover:                                          $red-8 !default;
+$phpdoc-type-color-simple:                                                  $orange-8 !default;
+$phpdoc-type-color-interface:                                               $purple-8 !default;
+$phpdoc-type-color-class:                                                   $green-7 !default;
+$phpdoc-type-color-trait:                                                   $blue-5 !default;
+$phpdoc-type-color-namespace:                                               $orange-8 !default;
+
+$phpdoc-modifier-color-static:                                              $brown-5 !default;
+$phpdoc-modifier-color-abstract:                                            #343434;
+$phpdoc-modifier-color-inherited:                                           $blue-5 !default;
+$phpdoc-modifier-color-final:                                               #343434;
+$phpdoc-modifier-color-deprecated:                                          $red-7;
+
+$phpdoc-visibility-color-public    :                                        $green-7 !default;
+$phpdoc-visibility-color-protected :                                        $yellow-9 !default;
+$phpdoc-visibility-color-private   :                                        $red-7 !default;
+
+// see extending_variables.scss for icon declarations
+
+$phpdoc-method-list-item-font-color:                                        $grey-7 !default;
+$phpdoc-method-list-item-background:                                        $blue-grey-1 !default;
+$phpdoc-method-list-item-font-color-hover:                                  $grey-8 !default;
+$phpdoc-method-list-item-background-hover:                                  $blue-grey-2 !default;
+$phpdoc-method-list-item-modifier-background-hover:                                  $blue-grey-3 !default;
+$phpdoc-method-list-item-font-color-active:                                 $grey-9 !default;
+$phpdoc-method-list-item-background-active:                                 $blue-grey-3 !default;
+$phpdoc-method-list-item-border:                                            none !default; // 1px solid $blue-grey-3
+
+
+$phpdoc-visibility-icon-public:                                             $fa-var-unlock !default;
+$phpdoc-visibility-icon-protected:                                          $fa-var-unlock-alt !default;
+$phpdoc-visibility-icon-private:                                            $fa-var-lock !default;
+$phpdoc-modifier-icon-static:                                               $fa-var-bolt !default;
+$phpdoc-modifier-icon-abstract:                                             $fa-var-square-o !default;
+$phpdoc-modifier-icon-inherited:                                            $fa-var-angle-double-up !default;
+$phpdoc-modifier-icon-final:                                                $fa-var-lock !default;
+$phpdoc-modifier-icon-deprecated:                                           $fa-var-exclamation-triangle !default;
+//$phpdoc-modifier-icon-deprecated:                                           $fa-var-ban !default;
+$phpdoc-type-icon-class:                                                    $fa-var-file-code-o !default;
+$phpdoc-type-icon-interface:                                                $fa-var-code !default;
+$phpdoc-type-icon-trait:                                                    $fa-var-terminal !default;
+
+
+
+$phpdoc-method-arguments-font-family:                                       $font-family-monospace !default;
+$phpdoc-method-argument-color:                                              $cyan-9 !default;
+$phpdoc-method-argument-default-color:                                      $grey-7 !default;
+$phpdoc-method-argument-description-color:                                  $grey-7 !default;
+
+
+$phpdoc-method-signature-font-family:                                       $phpdoc-method-arguments-font-family !default;
+$phpdoc-method-signature-name-color:                                        $grey-10 !default;
+$phpdoc-method-signature-argument-color:                                    $phpdoc-method-argument-color !default;
+$phpdoc-method-signature-argument-default-color:                            $phpdoc-method-argument-default-color !default;
+$phpdoc-method-signature-punctuation-color:                                 $black !default;
+$phpdoc-method-signature-return-character-color:                            $grey-7 !default;
+
+
+
+
+// COmponents
+$phpdoc-boxed-border-color:                                                 #c5d0dc !default;
+$phpdoc-boxed-border:                                                       1px solid $phpdoc-boxed-border-color !default;
+
+$phpdoc-ctags-color:                                                        white !default;
+$phpdoc-ctags-font-size:                                                    0.8rem !default;
+$phpdoc-ctags-font-family:                                                  $font-family-monospace !default;
+$phpdoc-ctags-doctag-color:                                                 white !default;
+$phpdoc-ctags-doctag-font-size:                                             0.7rem !default;
+$phpdoc-ctags-doctag-font-weight:                                           normal !default;
+$phpdoc-ctags-doctag-name-color:                                            $phpdoc-ctags-color !default;
+$phpdoc-ctags-doctag-at-sign:                                               true !default;
+$phpdoc-ctags-doctag-at-sign-color:                                         lighten($phpdoc-ctags-color, 20) !default;
+
+
+
+
+// @formatter:on

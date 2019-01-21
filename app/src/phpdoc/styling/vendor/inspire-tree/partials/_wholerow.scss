@@ -1,0 +1,43 @@
+/**
+ * Copyright (c) 2018. Codex Project
+ *
+ * The license can be found in the package and online at https://codex-project.mit-license.org.
+ *
+ * @copyright 2018 Codex Project
+ * @author Robin Radic
+ * @license https://codex-project.mit-license.org MIT License
+ */
+
+.inspire-tree {
+    > ol {
+        position: relative;
+    }
+
+    .wholerow {
+        height: $tree-node-height;
+        left: 0;
+        // We can't use translation because IE11 doesn't render parent overflow right
+        margin-top: -$tree-node-height;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .focused:not(.selected) > .wholerow {
+        outline: 1px dotted #000;
+    }
+
+    .title-wrap:hover + .wholerow {
+        background: $tree-row-hover-color;
+    }
+
+    .selected > .wholerow,
+    .selected > .title-wrap:hover + .wholerow {
+        background: $tree-row-selected-color;
+    }
+
+    .matched:not(.selected) > .wholerow,
+    .matched:not(.selected) > .title-wrap:hover + .wholerow {
+        background: $tree-row-matched-color;
+    }
+}

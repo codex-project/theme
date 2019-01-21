@@ -15,6 +15,12 @@ export class Collection<T> extends Array<T> implements Array<T> {
 
     where(key: keyof T, value: any): Collection<T> { return new Collection<T>(...this.filter(item => item[ key ] === value)); }
 
+    newInstance(...items: T[]): this {
+        let Class: typeof Collection = this.constructor as any;
+        let instance                 = new Class<T>(...items);
+        return instance as this;
+    }
+
     keyBy<K extends keyof T>(key: K | ((item: T) => string)): Map<K, T> {
         let cb: ((item: T) => string) = key as any;
         if ( typeof key === 'string' ) {

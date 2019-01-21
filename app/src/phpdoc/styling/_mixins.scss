@@ -1,0 +1,56 @@
+/**
+ * Copyright (c) 2018. Codex Project
+ *
+ * The license can be found in the package and online at https://codex-project.mit-license.org.
+ *
+ * @copyright 2018 Codex Project
+ * @author Robin Radic
+ * @license https://codex-project.mit-license.org MIT License
+ */
+
+
+%phpdoc-component {
+    margin-bottom: 1rem;
+    &.boxed {
+        border: $phpdoc-boxed-border;
+        margin: 0.5rem 0;
+    }
+}
+
+
+@mixin phpdoc-type($name, $color, $clickable: true) {
+    .phpdoc-type-#{$name}:not(i){
+        font-family: $font-family-monospace !important;
+        padding: 0;
+        text-decoration: none;
+    }
+    .phpdoc-type-#{$name} {
+        color: $color;
+        &:not(a) {
+            cursor: text;
+        }
+        @if($clickable) {
+            &:not(.no-click) {
+                &:hover, &:active, &:focus {
+                    color: darken($color, 10);
+                    text-decoration: none;
+                }
+            }
+            &.no-click {
+                cursor: default;
+                &:hover {
+                    cursor: default;
+                    text-decoration: none;
+                    color: $color;
+                }
+            }
+        } @else {
+            &:hover, &:active, &:focus {
+                color: $color;
+                text-decoration: none;
+                cursor: default;
+            }
+        }
+        @content
+    }
+}

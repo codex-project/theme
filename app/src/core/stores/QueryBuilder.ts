@@ -146,7 +146,7 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
                 if ( data.codex.changes ) {
                     merge(codex, data.codex.changes);
                 }
-                this.fetched.setCodex(merge( codex, data.codex));
+                this.fetched.setCodex(merge(codex, data.codex));
             }
 
             if ( data.project ) {
@@ -194,9 +194,9 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
 
         let returns = {
             codex   : this.fetched.getCodex(),
-            project : this.fetched.getProject(this.projectKey),
-            revision: this.fetched.getRevision(this.projectKey, this.revisionKey),
-            document: this.fetched.getDocument(this.projectKey, this.revisionKey, this.documentKey),
+            project : this.projectKey ? this.fetched.getProject(this.projectKey) : null,
+            revision: this.revisionKey ? this.fetched.getRevision(this.projectKey, this.revisionKey) : null,
+            document: this.documentKey ? this.fetched.getDocument(this.projectKey, this.revisionKey, this.documentKey) : null,
         };
 
         this.hooks.returns.call(returns, this);

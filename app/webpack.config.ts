@@ -18,13 +18,13 @@ import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
 
-const cache             = true;
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
     sourceDir: resolve(__dirname, 'src'),
     outputDir: resolve(__dirname, process.env.NODE_ENV === 'development' ? 'dev' : 'dist'),
 });
 const { isDev, isProd } = chain;
+const cache             = isDev;
 const _assetPath        = isDev ? 'vendor' : 'vendor/codex_[entrypoint]';
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
@@ -229,20 +229,47 @@ chain.node.merge({
     child_process: 'empty',
 });
 
-chain.set('optimization', <webpack.Configuration['optimization']>{
-    namedModules: true,
-    namedChunks : true,
-    runtimeChunk: false,
-    splitChunks : {
-        name: true,
-    },
-});
 
-chain.when(isProd, chain => {
+chain.when(isDev, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
-        ...chain.get('optimization'),
-        minimize : true,
-        minimizer: [
+        namedModules: true,
+        namedChunks : true,
+        runtimeChunk: true,
+        splitChunks : {
+            name       : true,
+            cacheGroups: {
+                default: false as any,
+                commons: {
+                    name     : 'commons',
+                    chunks   : 'initial',
+                    minChunks: 2,
+                    minSize  : 0,
+                },
+            },
+        },
+    });
+}, chain => {
+    chain.set('optimization', <webpack.Configuration['optimization']>{
+        namedModules: true,
+        namedChunks : true,
+        runtimeChunk: true,
+        splitChunks : {
+            name              : true,
+            chunks            : 'all',
+            maxInitialRequests: Infinity,
+            minSize           : 0,
+            cacheGroups       : {
+                default: false as any,
+                commons: {
+                    name     : 'commons',
+                    chunks   : 'initial',
+                    minChunks: 2,
+                    minSize  : 0,
+                },
+            },
+        },
+        minimize    : true,
+        minimizer   : [
             new TerserPlugin(<TerserPlugin.TerserPluginOptions>{
                 terserOptions: {
                     parse   : { ecma: 8 },

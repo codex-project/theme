@@ -35,6 +35,7 @@ export class PopoverAction<T> extends React.Component<PopoverActionProps<T>> {
                 style={{ padding: 0 }}
                 arrowPointAtCenter={true}
                 placement="right"
+                autoAdjustOverflow={true}
                 mouseEnterDelay={0.2}
                 overlayClassName={style({ $nest: { '.ant-popover-inner-content': { padding: 0 } } })}
                 content={<Loader/>}

@@ -1,0 +1,20 @@
+@import "../../styling/base";
+
+.phpdoc {
+    &-type,
+    span[class*="phpdoc-type-"],
+    a[class*="phpdoc-type-"] {
+        font-family     : $font-family-monospace !important;
+        padding         : 0;
+        text-decoration : none;
+    }
+    &-type {
+        @extend %phpdoc-component;
+        &.boxed {
+            padding : 2px 6px 5px 6px;
+        }
+        .type-seperator {
+            color : #666666;
+        }
+    }
+}

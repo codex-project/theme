@@ -1,0 +1,78 @@
+/**
+ * Copyright (c) 2018. Codex Project
+ *
+ * The license can be found in the package and online at https://codex-project.mit-license.org.
+ *
+ * @copyright 2018 Codex Project
+ * @author Robin Radic
+ * @license https://codex-project.mit-license.org MIT License
+ */
+@import "./base";
+//@import "./vendor/inspire-tree/tree";
+
+a.phpdoc-link,
+a.phpdoc-class-link,
+a.phpdoc-popover-link {
+    text-decoration : none;
+}
+
+// Helper classes
+// @formatter:off
+.phpdoc {
+        &-visibility {
+            &-public    { color: $phpdoc-visibility-color-public; }
+            &-protected { color: $phpdoc-visibility-color-protected }
+            &-private   { color: $phpdoc-visibility-color-private }
+        }
+        &-modifier {
+            &-static    { color: $phpdoc-modifier-color-static }
+            &-abstract  { color: $phpdoc-modifier-color-abstract }
+            &-inherited { color: $phpdoc-modifier-color-inherited }
+            &-final     { color: $phpdoc-modifier-color-final }
+            &-deprecated{ color: $phpdoc-modifier-color-deprecated }
+        }
+}
+
+@include phpdoc-type(namespace, $phpdoc-type-color-namespace, false)
+@include phpdoc-type(class, $phpdoc-type-color-class, false)
+@include phpdoc-type(trait, $phpdoc-type-color-trait, false)
+@include phpdoc-type(interface, $phpdoc-type-color-interface, false)
+@include phpdoc-type(external, $phpdoc-type-color-external, false)
+@include phpdoc-type(simple, $phpdoc-type-color-simple, false)
+
+// Icon helper classes
+i.phpdoc {
+    &-visibility {
+        &-public    { @include c-icon($phpdoc-visibility-icon-public); }
+        &-protected { @include c-icon($phpdoc-visibility-icon-protected); }
+        &-private   { @include c-icon($phpdoc-visibility-icon-private); }
+    }
+    &-modifier {
+        &-static    { @include c-icon($phpdoc-modifier-icon-static); }
+        &-abstract  { @include c-icon($phpdoc-modifier-icon-abstract); }
+        &-inherited { @include c-icon($phpdoc-modifier-icon-inherited); }
+        &-final     { @include c-icon($phpdoc-modifier-icon-final); }
+        &-deprecated{ @include c-icon($phpdoc-modifier-icon-deprecated); }
+    }
+    &-type {
+        //&-class     { @include fa-icon(); &:before { content: fa-content($phpdoc-type-icon-class); } }
+        &-class     { @include c-icon($phpdoc-type-icon-class); }
+        &-interface { @include c-icon($phpdoc-type-icon-interface); }
+        &-trait     { @include c-icon($phpdoc-type-icon-trait) }
+    }
+}
+// @formatter:on
+
+.hasklig {
+    @include Monospace();
+}
+
+@include documentation-type(phpdoc-class, $phpdoc-type-color-class, $phpdoc-type-icon-class){
+
+}
+@include documentation-type(phpdoc-interface, $phpdoc-type-color-interface, $phpdoc-type-icon-interface){
+
+}
+@include documentation-type(phpdoc-trait, $phpdoc-type-color-trait, $phpdoc-type-icon-trait){
+
+}

@@ -12,7 +12,7 @@ import { RouterPages } from './router-pages';
 import { Layout } from './layout';
 import { TunnelProvider } from 'components/tunnel';
 
-import { StoreControl } from 'components/StoreControl';
+import { StoreControl } from 'components/store-control';
 
 const log = require('debug')('app');
 
@@ -74,6 +74,7 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
     }
 
     renderStoreController() {
+
         return (
             <StoreControl store={this.store.layout} stores={{
                 'container': {
@@ -92,7 +93,7 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
                 'left'     : {
                     show          : 'boolean',
                     width         : 'number',
-                    fixed            : 'boolean',
+                    fixed         : 'boolean',
                     collapsedWidth: 'number',
                     collapsed     : 'boolean',
                     outside       : 'boolean',
@@ -102,7 +103,7 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
                 'right'    : {
                     show          : 'boolean',
                     width         : 'number',
-                    fixed            : 'boolean',
+                    fixed         : 'boolean',
                     collapsedWidth: 'number',
                     collapsed     : 'boolean',
                     outside       : 'boolean',

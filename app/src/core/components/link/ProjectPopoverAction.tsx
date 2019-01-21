@@ -48,6 +48,7 @@ project(projectKey: "${project}"){
                         bodyStyle={{ padding: 0 }}
                     >
                         <Card.Meta
+
                             title={project.display_name}
                             style={{ borderBottom: '1px solid #e8e8e8', fontSize: 12, padding: 10, margin: 0 }}
                             description={project.description}

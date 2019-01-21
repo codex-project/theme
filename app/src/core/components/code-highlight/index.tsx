@@ -4,7 +4,7 @@ import { CodeHighlight as CodeHighlightClass } from 'components/code-highlight/C
 
 
 export const CodeHighlight = componentLoader<typeof CodeHighlightClass>(
-    async () => (await import('./CodeHighlight')).CodeHighlight,
+    async () => (await import(/* webpackChunkName: "core.components.code-highlight" */'./CodeHighlight')).CodeHighlight,
     (CodeHighlight, props) => <CodeHighlight {...props} />,
     { delay: 1000 },
 );

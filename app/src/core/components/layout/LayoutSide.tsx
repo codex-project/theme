@@ -6,7 +6,7 @@ import { hot } from 'decorators';
 import {  Layout } from 'antd';
 import { DynamicMenu } from '../dynamic-menu';
 import { observe } from 'mobx';
-import { LayoutStoreSide } from 'stores/store.layout';
+import { LayoutStoreSide } from 'stores/LayoutStore';
 import { IStoreProxy } from 'stores/proxy';
 import { classes } from 'typestyle';
 import { CookieStorage } from 'utils/storage';

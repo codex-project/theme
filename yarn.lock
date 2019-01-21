@@ -6679,7 +6679,7 @@ es6-promise@^2.3.0, es6-promise@~2.3.0:
   resolved "https://registry.npmjs.org/es6-promise/-/es6-promise-2.3.0.tgz#96edb9f2fdb01995822b263dd8aadab6748181bc"
   integrity sha1-lu258v2wGZWCKyY92KratnSBgbw=
 
-es6-promise@^4.0.3:
+es6-promise@^4.0.3, es6-promise@^4.1.1:
   version "4.2.5"
   resolved "https://registry.npmjs.org/es6-promise/-/es6-promise-4.2.5.tgz#da6d0d5692efb461e082c14817fe2427d8f5d054"
   integrity sha512-n6wvpdE43VFtJq+lUDYDBFUwV8TZbuGXLV4D6wKafg13ldznKsyEvatubnmUe31zcvelSzOHF+XbaT+Bl9ObDg==
@@ -6953,6 +6953,11 @@ event-stream@3.3.5, event-stream@=3.3.4:
     split "^1.0.1"
     stream-combiner "^0.2.2"
     through "^2.3.8"
+
+eventemitter2@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.npmjs.org/eventemitter2/-/eventemitter2-5.0.1.tgz#6197a095d5fb6b57e8942f6fd7eaad63a09c9452"
+  integrity sha1-YZegldX7a1folC9v1+qtY6CclFI=
 
 eventemitter3@^3.0.0:
   version "3.1.0"
@@ -9261,6 +9266,16 @@ inspectpack@^3.0.1:
     io-ts-reporters "^0.0.20"
     pify "^3.0.0"
     yargs "^11.0.0"
+
+inspire-tree@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.npmjs.org/inspire-tree/-/inspire-tree-5.0.2.tgz#923b5296fc94ec3f8164ab7588e0a8c6aeaf5f9f"
+  integrity sha512-G4uNWK04SOcLK6qtUaRNf15EvLP4h9Y+sm12qFPOvj6WY2nmflF5uF2CrTmV4R4aRKpGOY1Qn9scRlt3QRnVHg==
+  dependencies:
+    es6-promise "^4.1.1"
+    eventemitter2 "^5.0.1"
+    lodash "^4.17.5"
+    uuid "^3.1.0"
 
 internal-ip@^3.0.1:
   version "3.0.1"

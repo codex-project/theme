@@ -1,0 +1,43 @@
+@import "../../styling/base";
+@import "../../styling/vendor/inspire-tree/tree";
+
+.phpdoc-tree {
+        @extend %phpdoc-component;
+        width        : 100%;
+        border-right : 1px solid #f0f2f1;
+        overflow     : hidden;
+        //position     : absolute;
+
+        .title-wrap {
+            a.phpdoc-type-namespace {
+                padding-left : 18px;
+            }
+            a[class*="phpdoc-type-"] {
+                &:before {
+                    width : 0;
+                }
+            }
+
+            a[class*="phpdoc-type-"]:not(.phpdoc-type-namespace) {
+                padding-left : 7px;
+            }
+            i[class*="phpdoc-type-"] {
+                margin-right : 10px;
+            }
+        }
+
+        .q-search {
+            margin-top : 10px;
+
+            // search icon
+            i.q-if-control-before {
+                margin-left : 10px;
+            }
+            // cancel icon
+
+            i.q-if-control:not(.q-if-control-before) {
+                margin-right : 10px;
+            }
+        }
+
+    }

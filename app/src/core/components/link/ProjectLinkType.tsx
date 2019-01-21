@@ -20,7 +20,7 @@ export class ProjectLinkType extends LinkType {
     }
 
     render() {
-        if(!this.project) return <Fragment>{this.props.children}</Fragment>;
+        if ( ! this.project ) return <Fragment>{this.props.children}</Fragment>;
         const { children, link, route, to, icon, styling, ...rest } = this.props;
 
         let props: LinkProps = {

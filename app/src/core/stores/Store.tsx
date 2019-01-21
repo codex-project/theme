@@ -3,7 +3,7 @@ import React from 'react';
 import { action, computed, observable, toJS, transaction } from 'mobx';
 import { get, has, merge, set } from 'lodash';
 import { injectable, postConstruct } from 'inversify';
-import { LayoutStore } from './store.layout';
+import { LayoutStore } from './LayoutStore';
 import { app, lazyInject } from '../ioc';
 
 import { Api, api } from '@codex/api';
@@ -169,6 +169,12 @@ export class Store {
     }
 
     async fetchRevision(projectKey: string, revisionKey: string) {
+        if (
+            (projectKey && this.project && this.project.key === projectKey)
+            && (revisionKey && this.revision && this.revision.key === revisionKey)
+        ) {
+            return this.revision;
+        }
         await this.fetch(projectKey, revisionKey);
         return this.revision;
     }

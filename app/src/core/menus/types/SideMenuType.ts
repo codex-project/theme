@@ -1,7 +1,7 @@
 import { MenuItem } from '../MenuItem';
 import { MenuItems, MenuType } from '../../menus';
 import { IStoreProxy } from '../../stores/proxy';
-import { LayoutStoreSide } from '../../stores/store.layout';
+import { LayoutStoreSide } from '../../stores/LayoutStore';
 import { transaction } from 'mobx';
 import { SyncHook, SyncWaterfallHook } from 'tapable';
 

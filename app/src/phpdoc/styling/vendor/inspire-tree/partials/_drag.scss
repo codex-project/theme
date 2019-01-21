@@ -1,0 +1,23 @@
+/**
+ * Copyright (c) 2018. Codex Project
+ *
+ * The license can be found in the package and online at https://codex-project.mit-license.org.
+ *
+ * @copyright 2018 Codex Project
+ * @author Robin Radic
+ * @license https://codex-project.mit-license.org MIT License
+ */
+
+.itree-droppable-active {
+    &.itree-droppable-target {
+        border: 1px solid #2dadc5;
+    }
+
+    &.itree-droppable-target-above {
+        border-top: 3px solid #2dadc5;
+    }
+
+    &.itree-droppable-target-below {
+        border-bottom: 3px solid #2dadc5;
+    }
+}

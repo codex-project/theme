@@ -5,9 +5,12 @@ import { Application, componentLoader, url } from '@codex/core';
 import PhpdocPage from './PhpdocPage';
 import { PhpdocMenuType } from './PhpdocMenuType';
 import { api } from '@codex/api';
+import { containerModule } from './container-module';
+import { loadStyling } from './loadStyling';
 
 
 export function install(app: Application) {
+    app.load(containerModule);
     app.use(app => {
         app.routes.addRoutes({
             name  : 'documentation.phpdoc',
@@ -16,6 +19,7 @@ export function install(app: Application) {
             render: routeProps => React.createElement(componentLoader(
                 {
                     component: () => import(/* webpackChunkName: "phpdoc.page" */'./PhpdocPage'),
+                    loadStyling,
                     revision : async () => {
                         let params = routeProps.match.params;
                         params     = app.store.getDocumentParams(params.project, params.revision);
@@ -25,7 +29,7 @@ export function install(app: Application) {
                 },
                 (loaded: { component: { default: typeof PhpdocPage }, revision: api.Revision }, props) => {
                     const Component = loaded.component.default;
-                    return React.createElement(Component, { ...props.match.params });
+                    return React.createElement(Component, { revision: loaded.revision, ...props });
                 },
                 { delay: 1500 },
             )),

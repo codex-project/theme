@@ -1,43 +1,6 @@
 @import "../../styling/base";
 
 
-@mixin c-icon($icon:false) {
-    @include fa-icon();
-    vertical-align: -0.08em; // for SVG icon, see https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
-    text-align: center;
-    text-transform: none;
-    line-height: 0;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    //font-family : 'Font Awesome 5 Free', sans-serif;
-    @if $icon != false {
-        &:before {
-            content : $icon;
-        }
-    }
-}
-
-@mixin documentation-type($name, $color, $icon) {
-    .c-#{$name} {
-        &-link {
-            color         : $color;
-            padding       : 1px 5px;
-            background    : transparent; //rgba($color, 0.25);
-            border-bottom : 1px solid rgba($color, 0.35);
-            &:hover, &:focus {
-                color      : darken($color, 10);
-                background : rgba($color, 0.35);
-            }
-        }
-
-        &-icon {
-            color : $color;
-            @include c-icon($icon)
-        }
-        @content
-    }
-}
 
 //@formatter:off
 $project-color                  : $teal-6;

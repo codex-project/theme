@@ -6,7 +6,7 @@ import { IConfig } from 'interfaces';
 import { HtmlComponents } from 'classes/HtmlComponents';
 import { MenuManager } from 'menus/MenuManager';
 import { Routes } from 'collections/Routes';
-import { LayoutStore } from 'stores/store.layout';
+import { LayoutStore } from 'stores/LayoutStore';
 import { toJS } from 'mobx';
 import { Fetched } from 'stores/Fetched';
 import { CssVariables } from 'classes/CssVariables';

@@ -39,3 +39,21 @@ export class BatchResult extends Result<GraphQLBatchedResponse, GraphQLBatchedRe
     }
 }
 
+
+export class BatchMapResult extends Result<Record<string, GraphQLBatchedResponse>, GraphQLBatchedResponse> {
+    constructor(map: Record<string, GraphQLRequestContext>, response: ContentResponse<GraphQLBatchedResponse>, request: GraphQLRequestContext[]) {
+        super(response, request);
+        this.data = {};
+        (response as any).content = response.content || [];
+        Object.keys(map).forEach((key,i) => {
+            this.data[key] = response.content[i] as any
+        })
+
+        response.content.forEach(result => {
+            if ( result.errors && result.errors.length > 0 ) {
+                this.errors.push(...result.errors);
+            }
+        });
+    }
+}
+

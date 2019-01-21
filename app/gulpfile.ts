@@ -73,7 +73,9 @@ class Gulpfile {
 
         chain.devServer
             .contentBase([ chain.outPath() ])
-            .historyApiFallback(true)
+            .historyApiFallback({
+                disableDotRule: true
+            })
             .hotOnly(true)
             .inline(true)
             .progress(true)

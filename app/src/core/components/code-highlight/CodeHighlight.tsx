@@ -32,9 +32,7 @@ export interface CodeHighlightProps {
     getInstance?: () => any
 }
 
-/**
- * CodeHighlight component
- */
+
 @hot(module)
 @observer
 export class CodeHighlight extends React.Component<CodeHighlightProps> {

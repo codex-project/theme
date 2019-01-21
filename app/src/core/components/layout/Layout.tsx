@@ -1,5 +1,5 @@
-import React from 'react';
-import { LayoutStore } from 'stores/store.layout';
+import React, { RefObject } from 'react';
+import { LayoutStore } from 'stores/LayoutStore';
 import { hot } from 'decorators';
 import { observer } from 'mobx-react';
 import { BackTop, Layout as AntdLayout } from 'antd';
@@ -55,10 +55,14 @@ export class Layout extends React.Component<LayProps> {
     @lazyInject('store') store: Store;
     @lazyInject('routes') routes: Routes;
 
+    toolbarContainerRef: RefObject<HTMLDivElement> = React.createRef();
+
     render() {
         window[ 'layout' ]                                                = this;
         const { children, ...props }                                      = this.props;
         const { container, header, left, middle, content, right, footer } = this.layout;
+        let contentLayoutMinHeight                                        = this.toolbarContainerRef.current ? this.toolbarContainerRef.current.getBoundingClientRect().height : 0;
+
         return (
             <AntdLayout style={container.computedStyle}>
                 <TunnelPlaceholder id="layout-top" delay={0} multiple/>
@@ -79,7 +83,7 @@ export class Layout extends React.Component<LayProps> {
 
                         <Content style={{ minHeight: '100%' }}>
                             <Affix enabled={true}>
-                                <ToolbarContainer>
+                                <ToolbarContainer ref={this.toolbarContainerRef}>
                                     <Toolbar
                                         style={{
                                             backgroundColor: content.computedStyle.backgroundColor,
@@ -93,7 +97,7 @@ export class Layout extends React.Component<LayProps> {
                                 </ToolbarContainer>
                             </Affix>
 
-                            <AntdLayout>
+                            <AntdLayout style={{ minHeight: `calc(100% - ${contentLayoutMinHeight}px)` }}>
                                 <Content style={content.computedStyle} className={content.computedClass}>
                                     {children || props.content || null}
                                 </Content>

@@ -44,7 +44,7 @@ export interface Query {
     documents: Document[];
     document: Document;
     diff: Diff;
-    phpdoc?: Maybe<PhpdocQuery>;
+    phpdoc?: Maybe<PhpdocManifest>;
 }
 export interface User {
     id: string;
@@ -57,7 +57,9 @@ export interface Codex {
     documents: Document[];
     document: Document;
     diff: Diff;
+    phpdoc?: Maybe<PhpdocManifest>;
     changes?: Maybe<Assoc>;
+    cache?: Maybe<CacheConfig>;
     display_name?: Maybe<string>;
     description?: Maybe<string>;
     default_project?: Maybe<string>;
@@ -75,7 +77,6 @@ export interface Project {
     description?: Maybe<string>;
     disk?: Maybe<string>;
     view?: Maybe<string>;
-    cache?: Maybe<Cache>;
     meta?: Maybe<Meta>;
     default_revision?: Maybe<string>;
     allow_revision_php_config?: Maybe<string>;
@@ -86,6 +87,7 @@ export interface Project {
     git?: Maybe<GitConfig>;
     phpdoc?: Maybe<PhpdocConfig>;
     layout?: Maybe<Layout>;
+    cache?: Maybe<CacheConfig>;
 }
 export interface Revision {
     documents: Document[];
@@ -97,7 +99,7 @@ export interface Revision {
     meta?: Maybe<Meta>;
     layout?: Maybe<Layout>;
     view?: Maybe<string>;
-    cache?: Maybe<Cache>;
+    cache?: Maybe<CacheConfig>;
     default_document?: Maybe<string>;
     document_extensions?: Maybe<Assoc>;
     phpdoc?: Maybe<PhpdocConfig>;
@@ -117,7 +119,7 @@ export interface Document {
     meta?: Maybe<Meta>;
     layout?: Maybe<Layout>;
     view?: Maybe<string>;
-    cache?: Maybe<Cache>;
+    cache?: Maybe<CacheConfig>;
 }
 export interface Meta {
     icon?: Maybe<string>;
@@ -228,8 +230,9 @@ export interface LayoutContent {
     padding?: Maybe<Mixed>;
     margin?: Maybe<Mixed>;
 }
-export interface Cache {
-    mode?: Maybe<string>;
+export interface CacheConfig {
+    enabled?: Maybe<boolean>;
+    key?: Maybe<string>;
     minutes?: Maybe<number>;
 }
 export interface PhpdocConfig {
@@ -261,6 +264,122 @@ export interface GitConfig {
 export interface Diff {
     attributes?: Maybe<Assoc>;
 }
+export interface PhpdocManifest {
+    title?: Maybe<string>;
+    version?: Maybe<string>;
+    last_modified?: Maybe<number>;
+    default_class?: Maybe<string>;
+    project?: Maybe<string>;
+    revision?: Maybe<string>;
+    files?: Maybe<(Maybe<PhpdocManifestFile>)[]>;
+    file?: Maybe<PhpdocFile>;
+}
+export interface PhpdocManifestFile {
+    name?: Maybe<string>;
+    type?: Maybe<string>;
+    hash?: Maybe<string>;
+}
+export interface PhpdocFile {
+    type?: Maybe<string>;
+    path?: Maybe<string>;
+    generated_path?: Maybe<string>;
+    hash?: Maybe<string>;
+    package?: Maybe<string>;
+    uses?: Maybe<(Maybe<PhpdocNamespaceAlias>)[]>;
+    class?: Maybe<PhpdocClassFile>;
+    interface?: Maybe<PhpdocInterfaceFile>;
+    trait?: Maybe<PhpdocTraitFile>;
+    source?: Maybe<string>;
+    docblock?: Maybe<PhpdocDocblock>;
+}
+export interface PhpdocNamespaceAlias {
+    name?: Maybe<string>;
+    value?: Maybe<string>;
+}
+export interface PhpdocClassFile {
+    implements?: Maybe<(Maybe<Assoc>)[]>;
+    namespace?: Maybe<string>;
+    package?: Maybe<string>;
+    name?: Maybe<string>;
+    full_name?: Maybe<string>;
+    docblock?: Maybe<PhpdocDocblock>;
+    line?: Maybe<number>;
+    extends?: Maybe<(Maybe<string>)[]>;
+    properties?: Maybe<(Maybe<PhpdocProperty>)[]>;
+    methods?: Maybe<(Maybe<PhpdocMethod>)[]>;
+}
+export interface PhpdocDocblock {
+    line?: Maybe<number>;
+    description?: Maybe<string>;
+    longDescription?: Maybe<string>;
+    tags?: Maybe<(Maybe<PhpdocTag>)[]>;
+}
+export interface PhpdocTag {
+    name?: Maybe<string>;
+    description?: Maybe<string>;
+    link?: Maybe<string>;
+    refers?: Maybe<string>;
+    variable?: Maybe<string>;
+    type?: Maybe<string>;
+    types?: Maybe<(Maybe<string>)[]>;
+    line?: Maybe<number>;
+}
+export interface PhpdocProperty {
+    namespace?: Maybe<string>;
+    package?: Maybe<string>;
+    name?: Maybe<string>;
+    full_name?: Maybe<string>;
+    docblock?: Maybe<PhpdocDocblock>;
+    line?: Maybe<number>;
+    visibility?: Maybe<string>;
+    static?: Maybe<boolean>;
+    type?: Maybe<string>;
+    types?: Maybe<(Maybe<string>)[]>;
+}
+export interface PhpdocMethod {
+    arguments?: Maybe<(Maybe<PhpdocArgument>)[]>;
+    returns?: Maybe<(Maybe<string>)[]>;
+    namespace?: Maybe<string>;
+    package?: Maybe<string>;
+    name?: Maybe<string>;
+    full_name?: Maybe<string>;
+    docblock?: Maybe<PhpdocDocblock>;
+    line?: Maybe<number>;
+    final?: Maybe<boolean>;
+    abstract?: Maybe<boolean>;
+    visibility?: Maybe<string>;
+    inherited_from?: Maybe<string>;
+    static?: Maybe<boolean>;
+}
+export interface PhpdocArgument {
+    name?: Maybe<string>;
+    default?: Maybe<string>;
+    by_reference?: Maybe<boolean>;
+    type?: Maybe<string>;
+    types?: Maybe<(Maybe<string>)[]>;
+}
+export interface PhpdocInterfaceFile {
+    namespace?: Maybe<string>;
+    package?: Maybe<string>;
+    name?: Maybe<string>;
+    full_name?: Maybe<string>;
+    docblock?: Maybe<PhpdocDocblock>;
+    line?: Maybe<number>;
+    extends?: Maybe<(Maybe<string>)[]>;
+    properties?: Maybe<(Maybe<PhpdocProperty>)[]>;
+    methods?: Maybe<(Maybe<PhpdocMethod>)[]>;
+}
+export interface PhpdocTraitFile {
+    namespace?: Maybe<string>;
+    package?: Maybe<string>;
+    name?: Maybe<string>;
+    full_name?: Maybe<string>;
+    docblock?: Maybe<PhpdocDocblock>;
+    line?: Maybe<number>;
+    extends?: Maybe<(Maybe<string>)[]>;
+    properties?: Maybe<(Maybe<PhpdocProperty>)[]>;
+    methods?: Maybe<(Maybe<PhpdocMethod>)[]>;
+}
 export interface CodexUrls {
     api?: Maybe<string>;
     root?: Maybe<string>;
@@ -280,105 +399,6 @@ export interface Config {
     locale: string;
     fallback_locale: string;
     url: string;
-}
-export interface PhpdocQuery {
-    title?: Maybe<string>;
-    version?: Maybe<string>;
-    file?: Maybe<PhpdocFile>;
-}
-export interface PhpdocFile {
-    path?: Maybe<string>;
-    generatedPath?: Maybe<string>;
-    hash?: Maybe<string>;
-    package?: Maybe<string>;
-    namespaceAlias?: Maybe<(Maybe<PhpdocNamespaceAlias>)[]>;
-    class?: Maybe<PhpdocClassFile>;
-    interface?: Maybe<PhpdocInterfaceFile>;
-    trait?: Maybe<PhpdocTraitFile>;
-    source?: Maybe<string>;
-    docblock?: Maybe<PhpdocDocblock>;
-}
-export interface PhpdocNamespaceAlias {
-    name?: Maybe<string>;
-    value?: Maybe<string>;
-}
-export interface PhpdocClassFile {
-    implements?: Maybe<(Maybe<Assoc>)[]>;
-    namespace?: Maybe<string>;
-    package?: Maybe<string>;
-    name?: Maybe<string>;
-    fullName?: Maybe<string>;
-    docblock?: Maybe<PhpdocDocblock>;
-    line?: Maybe<number>;
-    extends?: Maybe<string>;
-    properties?: Maybe<(Maybe<PhpdocProperty>)[]>;
-    methods?: Maybe<(Maybe<PhpdocMethod>)[]>;
-}
-export interface PhpdocDocblock {
-    line?: Maybe<number>;
-    description?: Maybe<string>;
-    longDescription?: Maybe<string>;
-    tags?: Maybe<(Maybe<PhpdocTag>)[]>;
-}
-export interface PhpdocTag {
-    name?: Maybe<string>;
-    line?: Maybe<number>;
-    description?: Maybe<string>;
-    link?: Maybe<string>;
-    refers?: Maybe<string>;
-    type?: Maybe<string>;
-    variable?: Maybe<string>;
-}
-export interface PhpdocProperty {
-    namespace?: Maybe<string>;
-    package?: Maybe<string>;
-    name?: Maybe<string>;
-    fullName?: Maybe<string>;
-    docblock?: Maybe<PhpdocDocblock>;
-    line?: Maybe<number>;
-    visibility?: Maybe<string>;
-    static?: Maybe<boolean>;
-}
-export interface PhpdocMethod {
-    arguments?: Maybe<(Maybe<PhpdocArgument>)[]>;
-    namespace?: Maybe<string>;
-    package?: Maybe<string>;
-    name?: Maybe<string>;
-    fullName?: Maybe<string>;
-    docblock?: Maybe<PhpdocDocblock>;
-    line?: Maybe<number>;
-    final?: Maybe<boolean>;
-    abstract?: Maybe<boolean>;
-    visibility?: Maybe<string>;
-    inheritedFrom?: Maybe<string>;
-    static?: Maybe<boolean>;
-}
-export interface PhpdocArgument {
-    name?: Maybe<string>;
-    default?: Maybe<string>;
-    type?: Maybe<string>;
-}
-export interface PhpdocInterfaceFile {
-    namespace?: Maybe<string>;
-    package?: Maybe<string>;
-    name?: Maybe<string>;
-    fullName?: Maybe<string>;
-    docblock?: Maybe<PhpdocDocblock>;
-    line?: Maybe<number>;
-    extends?: Maybe<string>;
-    properties?: Maybe<(Maybe<PhpdocProperty>)[]>;
-    methods?: Maybe<(Maybe<PhpdocMethod>)[]>;
-}
-export interface PhpdocTraitFile {
-    namespace?: Maybe<string>;
-    package?: Maybe<string>;
-    name?: Maybe<string>;
-    fullName?: Maybe<string>;
-    docblock?: Maybe<PhpdocDocblock>;
-    line?: Maybe<number>;
-    extends?: Maybe<string>;
-    properties?: Maybe<(Maybe<PhpdocProperty>)[]>;
-    methods?: Maybe<(Maybe<PhpdocMethod>)[]>;
 }
 export interface PageInfo {
     /** When paginating forwards, are there more items? */
@@ -420,6 +440,7 @@ export interface PhpdocStructure {
     title?: Maybe<string>;
     version?: Maybe<string>;
     files?: Maybe<(Maybe<PhpdocFile>)[]>;
+    manifest?: Maybe<PhpdocManifest>;
 }
 export interface ProjectsQueryArgs {
     query?: Maybe<QueryConstraints>;
@@ -481,6 +502,10 @@ export interface DiffCodexArgs {
     left?: Maybe<string>;
     right?: Maybe<string>;
 }
+export interface PhpdocCodexArgs {
+    projectKey?: Maybe<string>;
+    revisionKey?: Maybe<string>;
+}
 export interface RevisionsProjectArgs {
     query?: Maybe<QueryConstraints>;
 }
@@ -493,7 +518,7 @@ export interface DocumentsRevisionArgs {
 export interface DocumentRevisionArgs {
     documentKey: string;
 }
-export interface FilePhpdocQueryArgs {
+export interface FilePhpdocManifestArgs {
     hash?: Maybe<string>;
     fullName?: Maybe<string>;
 }

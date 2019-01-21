@@ -1,0 +1,33 @@
+@import "../../styling/base";
+
+.phpdoc-entity {
+    @extend %phpdoc-component;
+    font-family   : $headings-font-family;
+    border-bottom : 1px solid #f0f2f1;
+    margin-bottom : 10px;
+    padding       : 0 20px 0 13px;
+    > i {
+        line-height   : 22px;
+        font-size     : 22px;
+        padding-right : 20px;
+        float         : left;
+    }
+    > .header-title {
+        font-weight  : 200;
+        margin-top   : 15px;
+        font-size    : 18px;
+        line-height  : 24px;
+        display      : block;
+        margin-right : 20px;
+    }
+
+    small {
+        font-size : 0.9rem;
+    }
+
+    &.compact {
+        > i { line-height : 20px; font-size : 13px; }
+        > .header-title { font-size : 13px; line-height : 15px; }
+    }
+}
+

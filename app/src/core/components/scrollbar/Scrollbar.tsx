@@ -1,4 +1,4 @@
-import Scrollbars, { ScrollbarProps } from 'react-custom-scrollbars'
+import Scrollbars, { ScrollbarProps as BaseScrollbarProps } from 'react-custom-scrollbars'
 import React from 'react';
 import { hot } from 'decorators';
 
@@ -47,12 +47,12 @@ function renderThumbVertical({ style, ...props }) {
     return <div style={finalStyle} {...props} className="c-scroll-thumb-vertical"/>;
 }
 
-export interface Props extends ScrollbarProps {
+export interface ScrollbarProps extends BaseScrollbarProps {
 
 }
 
 @hot(module)
-export class Scrollbar extends React.Component<Props> {
+export class Scrollbar extends React.Component<ScrollbarProps> {
     scrollbars: Scrollbars;
 
     render() {
