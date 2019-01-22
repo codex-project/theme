@@ -57,7 +57,7 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                     item.docblock.tags = new Tags(...item.docblock.tags);
                 }
                 item.arguments = new Arguments(...item.arguments);
-                return item;
+                return new PhpdocMethod(item);
             }));
         }
         if ( data.properties ) {
@@ -111,3 +111,18 @@ export class PhpdocTraitFile extends PhpdocBaseFile<api.PhpdocTraitFile> {
         super('trait', data);
     }
 }
+
+export interface PhpdocMethod extends api.PhpdocMethod {}
+
+export class PhpdocMethod extends PhpdocBaseType<api.PhpdocMethod> {
+    docblock: PhpdocDocblock;
+    arguments: Arguments;
+    fqns:FQNS
+    constructor(data) {
+        super(data);
+        if ( data.full_name ) {
+            this.fqns = FQNS.from(data.full_name);
+        }
+    }
+}
+

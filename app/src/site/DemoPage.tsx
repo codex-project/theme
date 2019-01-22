@@ -5,10 +5,11 @@ import { PhpdocContent, PhpdocDocblock, PhpdocEntity, PhpdocTree, TreeBuilder, P
 import { RouteComponentProps } from 'react-router';
 import { Col, Row } from 'antd/lib/grid';
 import { Card, Tabs } from 'antd';
-import { PhpdocFileComponent } from '@codex/phpdoc/components/PhpdocFileComponent';
+import { PhpdocFileComponent, PhpdocFileComponentContext } from '@codex/phpdoc/components/PhpdocFileComponent';
 import { action, observable } from 'mobx';
 import InspireTree from 'inspire-tree';
 import { api } from '@codex/api';
+import { PhpdocMethodSignature } from '@codex/phpdoc/components/method/PhpdocMethodSignature';
 
 const log     = require('debug')('pages:demo');
 const Tab     = Tabs.TabPane;
@@ -56,6 +57,13 @@ export default class DemoPage extends React.Component<{ revision: api.Revision }
                             <Tabs>
                                 <Tab key="entity" tab="Phpdoc Entity">
                                     <PhpdocEntity fqns={this.fqns}/>
+                                </Tab>
+                                <Tab key="method-signature" tab="Phpdoc Method Signature">
+                                    <PhpdocFileComponent fqns={this.fqns}>
+                                        <PhpdocMethodSignature fqns="\\Codex\\Codex::get()" hide={{
+                                            namespace:true
+                                        }}/>
+                                    </PhpdocFileComponent>
                                 </Tab>
                                 <Tab key="docblock" tab="Phpdoc Docblock">
                                     <PhpdocFileComponent fqns={this.fqns}>

@@ -6,6 +6,7 @@ import { lazyInject, Spin, SpinProps } from '@codex/core';
 import { PhpdocContent, PhpdocContentContext } from './PhpdocContent';
 import { classes } from 'typestyle';
 import { PhpdocManifestFile } from '@codex/api';
+import { observer } from 'mobx-react';
 
 
 const log = require('debug')('phpdoc:components:PhpdocComponent');
@@ -22,6 +23,7 @@ export interface PhpdocComponentState {
     fqns?: string | FQNS
 }
 
+@observer
 export class PhpdocComponent<T = {}, P extends PhpdocComponentProps = PhpdocComponentProps & T> extends React.Component<P, PhpdocComponentState> {
     static contextType             = PhpdocContentContext;
     context!: React.ContextType<typeof PhpdocContentContext>;

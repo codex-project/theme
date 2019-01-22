@@ -22,7 +22,7 @@ export interface PhpdocFileComponentBaseProps {
 }
 
 export interface PhpdocFileComponentProps extends PhpdocFileComponentBaseProps {
-    children: (value: PhpdocFile) => ReactNode;
+    children: ReactNode | ((value: PhpdocFile) => ReactNode)
 }
 
 @observer
@@ -96,7 +96,7 @@ export class PhpdocFileComponent extends React.Component<PhpdocFileComponentProp
                     {this.renderLoader()}
                 </If>
                 <If condition={! this.showLoader}>
-                    {children(this.file)}
+                    {typeof children === 'function' ? (children as any)(this.file) : children}
                 </If>
             </PhpdocFileComponentContext.Provider>
         );
