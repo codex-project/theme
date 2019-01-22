@@ -42,11 +42,15 @@ $tags-gutter: 0;
         }
     }
 
-    .tag-at,
-    .tag-name,
-    .tag-description,
-    .tag-link,
-    .tag-refers {
-        padding-right: 2px;
+    &-tag-right,
+    &-tag-left {
+        > span {
+            padding-right: 2px;
+
+            p {
+                display: inline;
+                padding: 0;
+            }
+        }
     }
 }

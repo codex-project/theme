@@ -77,11 +77,7 @@ export class NamedCollection<T> extends Collection<T> {
 
 export class Methods<T extends api.PhpdocMethod = api.PhpdocMethod> extends NamedCollection<T> {
     constructor(...items: T[]) {
-        super(...items.map(item => {
-            item.docblock.tags = new Tags(...item.docblock.tags);
-            item.arguments     = new Arguments(...item.arguments);
-            return item;
-        }));
+        super(...items);
         Object.setPrototypeOf(this, Methods.prototype);
 
     }
@@ -89,10 +85,7 @@ export class Methods<T extends api.PhpdocMethod = api.PhpdocMethod> extends Name
 
 export class Properties<T extends api.PhpdocProperty = api.PhpdocProperty> extends NamedCollection<T> {
     constructor(...items: T[]) {
-        super(...items.map(item => {
-            item.docblock.tags = new Tags(...item.docblock.tags);
-            return item;
-        }));
+        super(...items);
         Object.setPrototypeOf(this, Properties.prototype);
     }
 }

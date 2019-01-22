@@ -1,7 +1,6 @@
 import './styling/stylesheet.scss';
 
 import { app, App, componentLoader } from '@codex/core';
-import DemoPage from './DemoPage';
 import * as url from '@codex/core/utils/url';
 import React from 'react';
 
@@ -13,27 +12,35 @@ app.use(app => {
         path  : url.root('demo/:project/:revision'),
         exact : true,
         render: renderProps => {
-            const { staticContext, ...props } = renderProps;
-            log('render', props);
-            const ComponentLoader = componentLoader(
+            log('render', renderProps);
+            const { staticContext, ...routeProps } = renderProps;
+            return React.createElement(componentLoader(
                 {
-                    revision: async () => {
-                        const {params} = renderProps.match;
-                        const revision = await app.store.fetchRevision(params.project,params.revision);
+                    Component: async () => (await import('./DemoPage')).default,
+                    revision : async () => {
+                        const { params } = renderProps.match;
+                        const revision   = await app.store.fetchRevision(params.project, params.revision);
 
                         return revision;
                     },
                 },
                 (loaded, props) => {
-
-                    return <DemoPage revision={loaded.revision} {...props}/>;
+                    const { Component, revision } = loaded;
+                    if ( ! Component || ! revision ) {
+                        return null;
+                    }
+                    return <Component revision={revision} {...props}/>;
                 },
                 { delay: 1000 },
-            );
-            return React.createElement(ComponentLoader, props);
+            ), routeProps);
+
+            // ComponentLoader = hot(module,true)(ComponentLoader)
+            // return React.createElement(ComponentLoader, props);
+            // return React.cloneElement(Element);
         },
     });
 });
 
+window[ 'site' ] = module;
 
 export { app, App };

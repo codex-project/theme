@@ -42,4 +42,5 @@ if ( module.hot ) {
     module.hot.accept('./components/App', () => {
         import('./components/App').then(component => app.render(component.App));
     });
+    window['index']=module;
 }

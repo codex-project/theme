@@ -3,7 +3,7 @@ import { action, computed, observable, toJS } from 'mobx';
 import { FQNS, PhpdocFile, PhpdocManifest, PhpdocStore } from '../logic';
 import { isFunction, isNumber, isString } from 'lodash';
 import { lazyInject, Spin, SpinProps } from '@codex/core';
-import { PhpdocContent } from './PhpdocContent';
+import { PhpdocContent, PhpdocContentContext } from './PhpdocContent';
 import { classes } from 'typestyle';
 import { PhpdocManifestFile } from '@codex/api';
 
@@ -23,8 +23,8 @@ export interface PhpdocComponentState {
 }
 
 export class PhpdocComponent<T = {}, P extends PhpdocComponentProps = PhpdocComponentProps & T> extends React.Component<P, PhpdocComponentState> {
-    static contextType             = PhpdocContent.Context;
-    context!: React.ContextType<typeof PhpdocContent.Context>;
+    static contextType             = PhpdocContentContext;
+    context!: React.ContextType<typeof PhpdocContentContext>;
     @lazyInject('store.phpdoc') store: PhpdocStore;
     @observable file: PhpdocFile   = null;
     @observable isLoading: boolean = true;

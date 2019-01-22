@@ -41,8 +41,8 @@ export interface IRoute {
     children?: IRoute[]
     location?: RouteProps['location']
     component?: RouteProps['component']
-    // render?: RouteProps['render']
-    render?: (props: RouteComponentProps<any> & { [ key: string ]: any }, Component: React.ComponentType<any>, data?: any) => React.ReactNode | undefined
+    render?: RouteProps['render']
+    // render?: (props: RouteComponentProps<any> & { [ key: string ]: any }, Component: React.ComponentType<any>, data?: any) => React.ReactNode | undefined
     path?: RouteProps['path']
     exact?: RouteProps['exact']
     sensitive?: RouteProps['sensitive']

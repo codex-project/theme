@@ -3,8 +3,8 @@ import { RefObject } from 'react';
 import { hot, WithRouter, WithRouterProps } from '../../decorators';
 import { IRoute } from '../../interfaces';
 import posed, { PoseGroup } from 'react-pose';
-import { renderRoutes } from 'components/router-pages/renderRoutes';
 import { CurrentPose } from 'react-pose/lib/components/PoseElement/types';
+import { Route, Switch } from 'react-router';
 
 
 const log = require('debug')('components:RouterPages');
@@ -15,16 +15,16 @@ export interface PosedRouterPagesProps extends WithRouterProps {
 
 const RoutesContainer = posed.div({
     enter: {
-        opacity       : 1,
-        delay         : 500,
+        opacity: 1,
+        delay  : 500,
         // beforeChildren: true,
         // afterChildren : true,
         // height        : '100%',
         // position      : 'relative',
     },
     exit : {
-        opacity       : 0,
-        transition    : { duration: 500 },
+        opacity   : 0,
+        transition: { duration: 500 },
         // delay         : 500,
         // beforeChildren: true,
         // afterChildren : true,
@@ -38,7 +38,7 @@ const RoutesContainer = posed.div({
 
 @hot(module)
 @WithRouter()
-export class RouterPages extends React.PureComponent<PosedRouterPagesProps> {
+export class RouterPages extends React.Component<PosedRouterPagesProps> {
     static displayName             = 'RouterPages';
     ref: RefObject<HTMLDivElement> = React.createRef();
     prevHeight                     = null;
@@ -52,10 +52,10 @@ export class RouterPages extends React.PureComponent<PosedRouterPagesProps> {
                 // preEnterPose="preEnter"
                 // enterAfterExit={true}
                 onRest={() => log('onRest', this.ref)}
-                style={{minHeight: '100%'}}
+                style={{ minHeight: '100%' }}
             >
                 <RoutesContainer
-                    style={{minHeight: '100%'}}
+                    style={{ minHeight: '100%' }}
                     ref={this.ref}
                     key={location.key || location.pathname}
                     onPoseComplete={(pose: CurrentPose) => {
@@ -76,14 +76,23 @@ export class RouterPages extends React.PureComponent<PosedRouterPagesProps> {
                         },
                     }}
                 >
-                    {renderRoutes(routes, { switchProps: { location } })}
+                    {/*{renderRoutes(routes, { switchProps: { location } })}*/}
 
-                    {/*<Switch location={location}>
+                    {<Switch location={location}>
                         {routes.map((route, i) => {
-                            let {...props} = route;
-                            return <Route key={i} {...props} />;
+                            let { ...props } = route;
+                            return <Route
+                                key={i}
+                                component={route.component}
+                                exact={route.exact}
+                                location={route.location}
+                                path={route.path}
+                                render={route.render}
+                                sensitive={route.sensitive}
+                                strict={route.strict}
+                            />;
                         })}
-                    </Switch>*/}
+                    </Switch>}
                 </RoutesContainer>
             </PoseGroup>
         );

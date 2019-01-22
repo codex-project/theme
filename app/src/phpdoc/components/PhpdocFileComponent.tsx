@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { lazyInject, renderLoading, SpinProps } from '@codex/core';
 import { FQNS, PhpdocFile, PhpdocStore } from '../logic';
-import { PhpdocContent } from './PhpdocContent';
+import { PhpdocContentContext } from './PhpdocContent';
 import { isString } from 'lodash';
 import { action, computed, observable, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
@@ -9,11 +9,11 @@ import { observer } from 'mobx-react';
 
 const log = require('debug')('components:PhpdocFileContent');
 
-interface PhpdocFileComponentContext {
+export interface PhpdocFileContext {
     file: PhpdocFile
 }
 
-const Context = React.createContext<PhpdocFileComponentContext>({ manifest: null, file: null, fqns: null });
+export const PhpdocFileComponentContext = React.createContext<PhpdocFileContext>({ manifest: null, file: null, fqns: null });
 
 export interface PhpdocFileComponentBaseProps {
     fqns?: string | FQNS
@@ -25,7 +25,6 @@ export interface PhpdocFileComponentProps extends PhpdocFileComponentBaseProps {
     children: (value: PhpdocFile) => ReactNode;
 }
 
-
 @observer
 export class PhpdocFileComponent extends React.Component<PhpdocFileComponentProps> {
     static displayName                                     = 'PhpdocFileComponent';
@@ -33,9 +32,9 @@ export class PhpdocFileComponent extends React.Component<PhpdocFileComponentProp
         loader  : {},
         children: () => null,
     };
-    static Context: typeof Context                         = Context;
-    static contextType                                     = PhpdocContent.Context;
-    context!: React.ContextType<typeof PhpdocContent.Context>;
+    static Context: typeof PhpdocFileComponentContext      = PhpdocFileComponentContext;
+    static contextType                                     = PhpdocContentContext;
+    context!: React.ContextType<typeof PhpdocContentContext>;
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
 
     @observable private _file = null;
@@ -92,14 +91,14 @@ export class PhpdocFileComponent extends React.Component<PhpdocFileComponentProp
         const { children } = this.props;
 
         return (
-            <PhpdocFileComponent.Context.Provider value={{ file: this.file }}>
+            <PhpdocFileComponentContext.Provider value={{ file: this.file }}>
                 <If condition={this.showLoader}>
                     {this.renderLoader()}
                 </If>
                 <If condition={! this.showLoader}>
                     {children(this.file)}
                 </If>
-            </PhpdocFileComponent.Context.Provider>
+            </PhpdocFileComponentContext.Provider>
         );
     }
 

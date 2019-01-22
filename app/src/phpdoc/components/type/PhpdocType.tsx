@@ -58,9 +58,10 @@ export class PhpdocType extends React.Component<PhpdocTypeProps> {
 
     parseType(type): Type[] {
         if ( isString(type) ) {
-            type = type.split('|').filter(name => name.length > 1);
+            type = type.split('|')
         }
         if ( isArray(type) ) {
+            type = type.filter(name => name.length > 1);
             let newType = [];
             type.forEach((t: string) => {
                 if ( ! t.startsWith('array') ) {

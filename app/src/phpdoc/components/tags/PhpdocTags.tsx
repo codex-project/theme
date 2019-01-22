@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
-import { MaterialColor, strEnsureLeft } from '@codex/core';
+import { getColor, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
 import { classes } from 'typestyle';
 
 import './tags.scss';
 import { Tags } from '../../logic';
 import { api } from '@codex/api';
+import { PhpdocType } from '../type';
 
 const log = require('debug')('components:PhpdocTags');
 
@@ -24,6 +25,7 @@ export interface PhpdocTagsProps {
 
 @observer
 export class PhpdocTags extends React.Component<PhpdocTagsProps> {
+    @lazyInject('components') hc: HtmlComponents;
     static displayName: string                    = 'PhpdocTags';
     static defaultProps: Partial<PhpdocTagsProps> = {
         size     : 11,
@@ -38,13 +40,14 @@ export class PhpdocTags extends React.Component<PhpdocTagsProps> {
         if ( withoutTags && withoutTags.length > 0 ) {
             return this.props.tags.whereNotIn('name', withoutTags);
         }
+        return this.props.tags;
     }
 
     render() {
         const { style, className, prefixCls } = this.props;
         return (
             <div style={style} className={classes(prefixCls, className)}>
-                {this.filteredTags.map(tag => this.renderTag(tag))}
+                {this.filteredTags.map((tag, index) => this.renderTag(tag, index))}
             </div>
         );
     }
@@ -53,55 +56,68 @@ export class PhpdocTags extends React.Component<PhpdocTagsProps> {
         return classes(...names.filter(Boolean).map(name => strEnsureLeft(name, this.props.prefixCls + '-')));
     };
 
-    renderTag(tag: api.PhpdocTag) {
-        const { classNames }                                                   = this;
-        const { size, color }                                                  = this.props;
-        const { variable, refers, link, line, description, type, name, types } = tag;
-
-        // let styles = {
-        //     container  : style({
-        //         fontSize: this.size,
-        //         color   : this.color
-        //     }),
-        //     colLeft    : style({
-        //         minWidth: '100px'
-        //     }),
-        //     at         : style({
-        //         fontWeight  : 'bold',
-        //         paddingRight: '0 !important'
-        //     }),
-        //     name       : style({
-        //         fontWeight: 'bold'
-        //     }),
-        //     refers     : style({}),
-        //     link       : style({
-        //         fontWeight: 'bold'
-        //
-        //     }),
-        //     line       : style({}),
-        //     description: style({}),
-        //     type       : style({}),
-        //     each       : style({
-        //         paddingRight: '2px'
-        //     }),
-        //     hide       : style({})
-        // }
-
-        // log('i', i, 'name', tag.name, 'desc', tag.description)
+    renderTag(tag: api.PhpdocTag, i = null) {
+        const { classNames }  = this;
+        const { size, color } = this.props;
 
         return (
-            <div className={classNames('tag')} key={tag.name + tag.line}>
+            <div className={classNames('tag')} key={i || tag.name + tag.line} style={{ fontSize: size, color: getColor(color) }}>
                 <span className={classNames('tag-left')}>
                     <span className={classes('tag-at')}>@</span>
-                    <span className={classes('tag-name')}>{name}</span>
+                    <span className={classes('tag-name')}>{tag.name}</span>
                 </span>
                 <span className={classNames('tag-right')}>
-                    <span className={classes('tag-description')}>{description}</span>
-                    <a className={classes('tag-link')} href={link} target="_blank">{link}</a>
-                    <span className={classes('tag-refers')}>{refers}</span>
+                    {this.renderTagContent(tag)}
                 </span>
             </div>
         );
     }
 
+    renderTagContent(tag: api.PhpdocTag) {
+        const { classNames }                                                 = this;
+        const { size, color }                                                = this.props;
+        let { variable, refers, link, line, description, type, name, types } = tag;
+        variable                                                             = <span className={classes('tag-variable')}>{variable}</span> as any;
+        try {
+            description = this.hc.parse(description) as any;
+        } catch ( e ) {
+
+        }
+        description = <span className={classes('tag-description')}>{description}</span> as any;
+
+        switch ( name ) {
+            case 'see':
+                if ( link ) {
+                    return (
+                        <Fragment>
+                            <PhpdocType type={link}/>
+                            {description}
+                        </Fragment>
+                    );
+                }
+            case 'return':
+            case 'throws':
+                return (
+                    <Fragment>
+                        <PhpdocType type={types}/>
+                        {description}
+                    </Fragment>
+                );
+            case 'param':
+                return (
+                    <Fragment>
+                        <PhpdocType type={types}/>
+                        {variable}
+                        {description}
+                    </Fragment>
+                );
+        }
+        return (
+            <Fragment>
+                {description}
+                {link ? <a className={classes('tag-link')} href={link} target="_blank">{link}</a> : null}
+                {refers ? <span className={classes('tag-refers')}>{refers}</span> : null}
+            </Fragment>
+        );
+    }
 }

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { hot, lazyInject, Store } from '@codex/core';
 import { observer } from 'mobx-react';
-import { PhpdocContent, PhpdocDocblock, PhpdocEntity, PhpdocTree, TreeBuilder } from '@codex/phpdoc/components';
+import { PhpdocContent, PhpdocDocblock, PhpdocEntity, PhpdocTree, TreeBuilder, PhpdocContentContext } from '@codex/phpdoc/components';
 import { RouteComponentProps } from 'react-router';
 import { Col, Row } from 'antd/lib/grid';
 import { Card, Tabs } from 'antd';
@@ -10,10 +10,10 @@ import { action, observable } from 'mobx';
 import InspireTree from 'inspire-tree';
 import { api } from '@codex/api';
 
+const log     = require('debug')('pages:demo');
 const Tab     = Tabs.TabPane;
 const CardCol = (props: { title: string, children: any, span?: number }) => <Col span={props.span || 6}><Card size="small" title={props.title} bordered={false}>{props.children}</Card></Col>;
 
-@hot(module)
 @observer
 export default class DemoPage extends React.Component<{ revision: api.Revision } & RouteComponentProps<any>, {}> {
     @lazyInject('store') store: Store;
@@ -26,10 +26,6 @@ export default class DemoPage extends React.Component<{ revision: api.Revision }
 
     @observable tree: InspireTree = new InspireTree({});
 
-    public componentDidMount(): void {
-        this.store.mergeLayout(this.props.revision);
-    }
-
     render() {
         window[ 'demo' ]                                       = this;
         const { children, match, location, history, ...props } = this.props;
@@ -41,7 +37,7 @@ export default class DemoPage extends React.Component<{ revision: api.Revision }
                     <h2>DemoPage</h2>
                     <Row>
                         <Col span={6}>
-                            <PhpdocContent.Context.Consumer>
+                            <PhpdocContentContext.Consumer>
                                 {value => {
                                     if ( ! this.tree || this.tree.nodes().length === 0 ) {
                                         let builder = new TreeBuilder(value.manifest.files.keyBy('name'), {});
@@ -54,7 +50,7 @@ export default class DemoPage extends React.Component<{ revision: api.Revision }
                                         onNodeClick={node => this.setFQNS(node.fullName)}
                                     />;
                                 }}
-                            </PhpdocContent.Context.Consumer>
+                            </PhpdocContentContext.Consumer>
                         </Col>
                         <Col>
                             <Tabs>
@@ -64,9 +60,30 @@ export default class DemoPage extends React.Component<{ revision: api.Revision }
                                 <Tab key="docblock" tab="Phpdoc Docblock">
                                     <PhpdocFileComponent fqns={this.fqns}>
                                         {value => (
-                                            <If condition={value && value.docblock}>
-                                                <PhpdocDocblock docblock={value.docblock}/>
-                                            </If>
+                                            <Fragment>
+                                                <If condition={value && value.docblock}>
+                                                    <PhpdocDocblock docblock={value.docblock}/>
+                                                </If>
+                                                <If condition={value.entity.methods}>
+                                                    <Tabs
+                                                        tabPosition="left"
+                                                        style={{ height: 500 }}
+                                                        size="small"
+                                                    >
+                                                        {value.entity.methods.filter(method => ! ! method.docblock).map(method => {
+                                                            return (
+                                                                <Tab
+                                                                    key={method.full_name}
+                                                                    tab={method.name}
+                                                                    // style={{ height: 200 }}
+                                                                >
+                                                                    <PhpdocDocblock docblock={method.docblock} withoutTags={[]}/>
+                                                                </Tab>
+                                                            );
+                                                        })}
+                                                    </Tabs>
+                                                </If>
+                                            </Fragment>
                                         )}
                                     </PhpdocFileComponent>
                                 </Tab>

@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { classes, style } from 'typestyle';
 import { isString } from 'lodash';
-import { getColor, hot, MaterialColor } from '@codex/core';
+import { getColor, hot, HtmlComponents, lazyInject, MaterialColor } from '@codex/core';
 import { api } from '@codex/api';
 import { Tags } from '../../logic';
 import './docblock.scss';
@@ -30,6 +30,7 @@ export interface PhpdocDocblockProps {
 
 @observer
 export class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
+    @lazyInject('components') hc: HtmlComponents;
     static displayName: string                        = 'PhpdocDocblock';
     static defaultProps: Partial<PhpdocDocblockProps> = {
         boxed      : false,
@@ -54,8 +55,15 @@ export class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
         if ( ! docblock ) {
             return null;
         }
-
         let { description, line, tags, long_description } = docblock;
+        try {
+            description = this.hc.parse(description) as any;
+            if ( this.hasLongDescription ) {
+                long_description = this.hc.parse(long_description) as any;
+            }
+        } catch ( e ) {
+
+        }
         return (
             <div
                 style={{ fontSize: size, color: getColor(color), ...style }}
@@ -65,8 +73,8 @@ export class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
                     style={{ fontSize: size, color: getColor(color) }}
                     className={classes('phpdoc-docblock-description')}
                 >
-                    <p>{description}</p>
-                    {this.hasLongDescription ? <span dangerouslySetInnerHTML={{ __html: long_description || '' }}/> : null}
+                    {description}
+                    {this.hasLongDescription ? long_description : null}
                 </div>
                 <PhpdocTags size={tagSize} color={tagColor} tags={this.tags} withoutTags={withoutTags} onlyTags={onlyTags}/>
             </div>

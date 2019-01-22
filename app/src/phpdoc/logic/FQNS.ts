@@ -6,7 +6,6 @@ const log = require('debug')('phpdoc:logic:FQNS');
 export type FQNSMemberType = null | 'property' | 'method' | 'constant';
 
 export class FQNS {
-
     name: string;
     entityName: string;
     slashEntityName: string;

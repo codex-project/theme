@@ -1,5 +1,5 @@
 import { api } from '@codex/api';
-import { Methods, Properties, Tags } from './collections';
+import { Arguments, Methods, Properties, Tags } from './collections';
 import { FQNS } from './FQNS';
 
 export interface PhpdocDocblock extends api.PhpdocDocblock {
@@ -52,10 +52,21 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
     constructor(public readonly type: 'class' | 'trait' | 'interface', data: T) {
         super(data);
         if ( data.methods ) {
-            this[ 'methods' ] = new Methods(...data.methods);
+            this[ 'methods' ] = new Methods(...data.methods.map(item => {
+                if ( item.docblock && item.docblock.tags !== undefined ) {
+                    item.docblock.tags = new Tags(...item.docblock.tags);
+                }
+                item.arguments = new Arguments(...item.arguments);
+                return item;
+            }));
         }
         if ( data.properties ) {
-            this[ 'properties' ] = new Properties(...data.properties);
+            this[ 'properties' ] = new Properties(...data.properties.map(item => {
+                if ( item.docblock && item.docblock.tags !== undefined ) {
+                    item.docblock.tags = new Tags(...item.docblock.tags);
+                }
+                return item;
+            }));
         }
         if ( data.docblock && data.docblock.tags ) {
             this[ 'docblock' ][ 'tags' ] = new Tags(...data.docblock.tags);

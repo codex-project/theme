@@ -14,6 +14,7 @@ import { PhpdocManifestFile } from '@codex/api';
 import { FQNS } from './FQNS';
 
 export class Type {
+    static primitives    = [ 'boolean', 'integer', 'float', 'string', 'array', 'object', 'callable', 'iterable', 'resource', 'null', 'mixed', 'void' ];
     fqns: FQNS;
     type: string;
     fullName: string;
@@ -29,8 +30,8 @@ export class Type {
         this.fqns             = FQNS.from(fullName);
         this.fullName         = this.fqns.fullName;
         this.entityName       = this.fqns.entityName;
-        this.isEntity         = this.fqns.isEntity;
-        this.isPrimitive      = this.isEntity === false;
+        this.isPrimitive      = Type.primitives.includes(fullName);
+        this.isEntity         = this.isPrimitive ? false : this.fqns.isEntity;
         this.type             = this.isPrimitive ? 'primitive' : 'class';
         this.isLocal          = false;
         this.isExternal       = false;

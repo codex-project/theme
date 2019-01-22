@@ -1,12 +1,12 @@
 import React from 'react';
-import { hot, lazyInject } from '@codex/core';
+import { lazyInject } from '@codex/core';
 import { PhpdocManifest, PhpdocStore } from '../logic';
 
-interface PhpdocContext {
+export interface PhpdocContext {
     manifest: PhpdocManifest
 }
 
-const Context = React.createContext<PhpdocContext>({ manifest: null });
+export const PhpdocContentContext = React.createContext<PhpdocContext>({ manifest: null });
 
 export interface PhpdocContentProps {
     project: string
@@ -14,8 +14,8 @@ export interface PhpdocContentProps {
 }
 
 export class PhpdocContent extends React.Component<PhpdocContentProps> {
-    static displayName             = 'PhpdocContent';
-    static Context: typeof Context = Context;
+    static displayName                          = 'PhpdocContent';
+    static Context: typeof PhpdocContentContext = PhpdocContentContext;
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
 
     state: { manifest: PhpdocManifest } = { manifest: null };
@@ -44,11 +44,11 @@ export class PhpdocContent extends React.Component<PhpdocContentProps> {
         const { manifest } = this.state;
 
         return (
-            <PhpdocContent.Context.Provider value={{ manifest }}>
+            <PhpdocContentContext.Provider value={{ manifest }}>
                 <If condition={manifest !== null}>
                     {children}
                 </If>
-            </PhpdocContent.Context.Provider>
+            </PhpdocContentContext.Provider>
         );
     }
 }
