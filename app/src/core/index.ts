@@ -38,9 +38,9 @@ export * from './utils/storage';
 
 export { app, lazyInject, url };
 
-if ( module.hot ) {
-    module.hot.accept('./components/App', () => {
-        import('./components/App').then(component => app.render(component.App));
-    });
-    window['index']=module;
-}
+// if ( module.hot ) {
+//     module.hot.accept('./components/App', () => {
+//         import('./components/App').then(component => app.render(component.App));
+//     });
+//     window['index']=module;
+// }

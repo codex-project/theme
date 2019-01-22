@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React from 'react';
 import PropTypes from 'prop-types';
 import { hot, WithRouter, WithRouterProps } from 'decorators';
 import { BrowserRouter, Router } from 'react-router-dom';
@@ -20,10 +20,10 @@ interface State {}
 
 export interface AppProps {}
 
-@hot(module)
+
 @WithRouter()
 @observer
-export class App extends React.Component<AppProps & WithRouterProps, any> {
+class AppComponent extends React.Component<AppProps & WithRouterProps, any> {
     @lazyInject('store') store: Store;
     @lazyInject('routes') routes: Routes;
 
@@ -129,3 +129,5 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
         );
     }
 }
+
+export const App = hot(module)(AppComponent);

@@ -4,12 +4,21 @@ import { containerModule } from './container-module';
 import { getRandomId } from './utils/general';
 import { ColorElement } from './elements/ColorElement';
 import * as menuTypes from './menus/types';
+import { configureRouter } from './routing';
+import { Router } from 'router5';
 
 
 const log = require('debug')('index');
 
 //mobx
 configure({ enforceActions: 'never' });
+
+
+const router = configureRouter();
+
+app.bind('router').toConstantValue(router);
+
+// Rx.Observable.from(router);
 
 app.load(containerModule);
 
@@ -46,6 +55,9 @@ app.use(app => {
         app.menus.types.forEach(type => {
             type.boot();
         })
+    })
+    app.hooks.booted.tap('CORE', app => {
+        app.get<Router>('router').start();
     })
 });
 

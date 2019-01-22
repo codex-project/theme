@@ -68,7 +68,19 @@
         "react-hammerjs": "^1.0.1",
         "hammerjs": "^2.0.8",
         "memoize-one": "^5.0.0",
-        "history": "^4.7.2"
+        "history": "^4.7.2",
+        "@types/router5": "^5.0.0",
+        "router5": "^7.0.1",
+        "router5-helpers": "^7.0.0",
+        "router5-plugin-browser": "^7.0.1",
+        "router5-plugin-listeners": "^7.0.1",
+        "router5-plugin-logger": "^7.0.1",
+        "router5-plugin-persistent-params": "^7.0.1",
+        "router5-transition-path": "^7.0.0",
+        "react-router5": "^7.0.2",
+        "react-router5-hocs": "^7.0.2",
+        "@loadable/component": "^5.2.2",
+        "@types/loadable__component": "^5.2.0"
     },
     "devDependencies": {
         "@types/merge2": "^1.1.4",

@@ -6,7 +6,6 @@ export * from './loading';
 export * from './observables';
 export * from './router-pages';
 export * from './spin';
-export * from './App';
 export * from './off-canvas';
 export * from './responsive';
 export * from './icon';
@@ -15,3 +14,6 @@ export * from './centered';
 export * from './scrollbar';
 export * from './trigger';
 export * from './tunnel';
+
+
+export * from './App5';

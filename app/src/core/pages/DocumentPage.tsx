@@ -9,8 +9,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
-import { Toolbar } from 'components/toolbar/Toolbar';
-import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
 
 const log = require('debug')('pages:home');
 

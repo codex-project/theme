@@ -1496,6 +1496,13 @@
     libnpm "^2.0.1"
     write-file-atomic "^2.3.0"
 
+"@loadable/component@^5.2.2":
+  version "5.2.2"
+  resolved "https://registry.npmjs.org/@loadable/component/-/component-5.2.2.tgz#64db5fb1e93d6bc93596947336283979f055d5d2"
+  integrity sha512-trM/wBZbD1kL5CdBOD8pxbVZeKoycrb+qJs3FqKezUnzm6RTmYNYFYYDDzzapH9rc60/rPJYVXa9IP0TJF6Q6A==
+  dependencies:
+    hoist-non-react-statics "^3.2.1"
+
 "@most/multicast@^1.2.5":
   version "1.3.0"
   resolved "https://registry.npmjs.org/@most/multicast/-/multicast-1.3.0.tgz#e01574840df634478ac3fabd164c6e830fb3b966"
@@ -1966,6 +1973,13 @@
   resolved "https://registry.npmjs.org/@types/less/-/less-3.0.0.tgz#2b76e6a2fecf7108c1c2b701ad846b605d8f2c7e"
   integrity sha512-AUO7jdGrDi7x+7w2vYHNCom3NRjkspKSvamYp013Jyd/VYxpm0xtCupRZCdSX2IPx/W9C81Cj7nPXqQUj6MlQQ==
 
+"@types/loadable__component@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.npmjs.org/@types/loadable__component/-/loadable__component-5.2.0.tgz#8a6263bceb0a554363520a1e9fde9da863288ee4"
+  integrity sha512-OPs8SYUDXUn17RFc0tvCnBXziSy3KzubBwEJnlta7aj8UYS1qBe7mMrSaUkLZvwWvoKR23x2WoABOi4uiSRH9g==
+  dependencies:
+    "@types/react" "*"
+
 "@types/lodash-decorators@^4.0.0":
   version "4.0.0"
   resolved "https://registry.npmjs.org/@types/lodash-decorators/-/lodash-decorators-4.0.0.tgz#c09e271f1c4d723d59d1ab2df7bc361fb960341c"
@@ -2178,6 +2192,13 @@
   version "0.2.28"
   resolved "https://registry.npmjs.org/@types/relateurl/-/relateurl-0.2.28.tgz#6bda7db8653fa62643f5ee69e9f69c11a392e3a6"
   integrity sha1-a9p9uGU/piZD9e5p6facEaOS46Y=
+
+"@types/router5@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/@types/router5/-/router5-5.0.0.tgz#53d95de9aaa2963f35952cfaa8c79a144e1867e6"
+  integrity sha512-Q77yCR2A10qC5fg3CDCia5LVP8f7QV4k09ZDEEsalahmzVED0lijGOOItmNp6/3/kyB6XwepVmZgxio2Fu+piA==
+  dependencies:
+    router5 "*"
 
 "@types/rx-core-binding@*":
   version "4.0.4"
@@ -8831,7 +8852,7 @@ hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
   resolved "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
   integrity sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==
 
-hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.0.1:
+hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.0.1, hoist-non-react-statics@^3.2.1:
   version "3.2.1"
   resolved "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.2.1.tgz#c09c0555c84b38a7ede6912b61efddafd6e75e1e"
   integrity sha512-TFsu3TV3YLY+zFTZDrN8L2DTFanObwmBLpWvJs1qfUuEQ5bTAdFcwfx2T/bsCXfM9QHSLvjfP+nihEl0yvozxw==
@@ -13058,6 +13079,13 @@ path-parse@^1.0.5, path-parse@^1.0.6:
   resolved "https://registry.npmjs.org/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
   integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
 
+path-parser@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.npmjs.org/path-parser/-/path-parser-4.2.0.tgz#2fbb3df2d49659a9a4cac88be7d8d5f4666814fb"
+  integrity sha512-MPPZiWTTp2I72VXmGQQfsn2ohrbd9QTbZSLYNS+HXsnQ37VbiLR/szO2R7DHaZA1V1scYxuxgyQerj+6kMTXtA==
+  dependencies:
+    search-params "2.1.3"
+
 path-root-regex@^0.1.0:
   version "0.1.2"
   resolved "https://registry.npmjs.org/path-root-regex/-/path-root-regex-0.1.2.tgz#bfccdc8df5b12dc52c8b43ec38d18d72c04ba96d"
@@ -14491,7 +14519,7 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-prop-types@15.x, prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@15.x, prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@~15.6.2:
   version "15.6.2"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   integrity sha512-3pboPvLiWD7dkI3qf3KbUe6hKFKa52w+AE0VCqECtf+QHAKgOL37tTaNCnuX1nAAQ4ZhyP+kYVKf8rLmJ/feDQ==
@@ -15302,6 +15330,22 @@ react-router-transition@^1.2.1:
     react-motion "^0.5.0"
     react-router-dom "^4.1.1"
 
+react-router5-hocs@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.npmjs.org/react-router5-hocs/-/react-router5-hocs-7.0.2.tgz#1b4d954b379ef026964f740ebd0cede5786621bd"
+  integrity sha512-vtkSPqLXWiMrqNKMvmZeDg5+lf7pfiMXDu/9nZiFJf/Z+fxGnErYx6evHU8x4ZgC0HMooZGtvfhLxKUaUxnG/g==
+  dependencies:
+    prop-types "~15.6.2"
+    router5-transition-path "^7.0.0"
+
+react-router5@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.npmjs.org/react-router5/-/react-router5-7.0.2.tgz#da1c52faab25e747391dd09b6364161da7e68ad2"
+  integrity sha512-0Kkz9CBnhDMMDu+vuiO6afJCjT1KW4tvLO95bA0jzR6uumRAKyUk3UDR04O5jVFooHu1eDlDcorwjt5kov2UFg==
+  dependencies:
+    prop-types "~15.6.2"
+    router5-transition-path "^7.0.0"
+
 react-router@^4.3.1:
   version "4.3.1"
   resolved "https://registry.npmjs.org/react-router/-/react-router-4.3.1.tgz#aada4aef14c809cb2e686b05cee4742234506c4e"
@@ -16110,6 +16154,55 @@ rmc-feedback@^2.0.0:
     babel-runtime "6.x"
     classnames "^2.2.5"
 
+route-node@3.4.2:
+  version "3.4.2"
+  resolved "https://registry.npmjs.org/route-node/-/route-node-3.4.2.tgz#6481fd5949c34a785bfbb9c3bcdae4d8333bbd46"
+  integrity sha512-MDIllr+xwmzSKQh49Ls1g66LIH9JisXh15WXyu4hAYW95mrTSRWr7bqc23hcrjZpehTmSNOb64ZiHBgsHUArog==
+  dependencies:
+    path-parser "4.2.0"
+    search-params "2.1.3"
+
+router5-helpers@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/router5-helpers/-/router5-helpers-7.0.0.tgz#4c4ec55603051edfbf59abc1c6ddbbb5ad141718"
+  integrity sha512-01xmQYrsvuT939vjGV1qW5uqQTjbhS09REnwQUVx889Z2N4Bq1YzZPVNuzrTESIQahlald7gfjNKKV5rUpGJfQ==
+
+router5-plugin-browser@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npmjs.org/router5-plugin-browser/-/router5-plugin-browser-7.0.1.tgz#2c59cf6299f9edf25e83d0629eece589cf0b1985"
+  integrity sha512-3zKCyQlr4OKBOK8/9usJ8kcTMmqkSw8cYGt2T0+A2ktU5rAkDoLeZ7xJBjlcpJmEcT7lDx2K18gc6Epq6Zd6Ng==
+
+router5-plugin-listeners@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npmjs.org/router5-plugin-listeners/-/router5-plugin-listeners-7.0.1.tgz#10d24f2ccb2a79faf711bccf5cdf79f7073584b5"
+  integrity sha512-yHJd0jqT7urQvNaobaAkvo0t1pIHy86hOfBTlGqQo7XmFHjPgBuoFk6PhkSj6+1V1OdRhXtzio8Br/x8yuuglg==
+  dependencies:
+    router5-transition-path "^7.0.0"
+
+router5-plugin-logger@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npmjs.org/router5-plugin-logger/-/router5-plugin-logger-7.0.1.tgz#500049551b3dec0a16df5ca11c20647d4be05a55"
+  integrity sha512-jEXh+heKr7iove1atluhooKt8As7498UA60UtNAsQWKAUweVdqQXC+a7v1bvDCYspJ2I6uVypqrS0j+XibmttQ==
+
+router5-plugin-persistent-params@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npmjs.org/router5-plugin-persistent-params/-/router5-plugin-persistent-params-7.0.1.tgz#5ab367db7aad27492bb9556d47cda501a2a3dacf"
+  integrity sha512-xGEq/lQ25o0dXDaMnouSyjCVTvVInHNV4qv3eSOtmVw8U55HqYpEexm8Tccq/a3ChPz1MJ0EfJo7VTRLKi9gMQ==
+
+router5-transition-path@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/router5-transition-path/-/router5-transition-path-7.0.0.tgz#de95233c63757a37afd76e2e99cfb12896f16fd2"
+  integrity sha512-hZoRaEIc/Cx7RZhv9AV8PX3H0zlhG19Bjio4tMfCnYBVstJqd1wfJY/KQWfxtIzj2Lr0M9xICKgjAp+KRxQYbA==
+
+router5@*, router5@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npmjs.org/router5/-/router5-7.0.1.tgz#5590e7eee04625278d502d496dde0bc55d1758c3"
+  integrity sha512-FaAUSm/+0g3m3j+R4mmx5Hns0YHiWK4Oi0eIAt1KgoMQ9NWcJBVw04RAfHEpoa9m39cswVYG83ovh/QjCTbicA==
+  dependencies:
+    route-node "3.4.2"
+    router5-transition-path "^7.0.0"
+    symbol-observable "1.2.0"
+
 rsvp@^3.3.3:
   version "3.6.2"
   resolved "https://registry.npmjs.org/rsvp/-/rsvp-3.6.2.tgz#2e96491599a96cde1b515d5674a8f7a91452926a"
@@ -16249,6 +16342,11 @@ scss-tokenizer@^0.2.3:
   dependencies:
     js-base64 "^2.1.8"
     source-map "^0.4.2"
+
+search-params@2.1.3:
+  version "2.1.3"
+  resolved "https://registry.npmjs.org/search-params/-/search-params-2.1.3.tgz#90b98964eaf3d0edef0f73e6e8307d1480020413"
+  integrity sha512-hHxU9ZGWpZ/lrFBIHndSnQae2in7ra+m+tBSoeAahSWDDgOgpZqs4bfaTZpljgNgAgTbjiQoJtZW6FKSsfEcDA==
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -17254,7 +17352,7 @@ swap-case@^1.1.0:
     lower-case "^1.1.1"
     upper-case "^1.1.1"
 
-symbol-observable@^1.0.2, symbol-observable@^1.1.0:
+symbol-observable@1.2.0, symbol-observable@^1.0.2, symbol-observable@^1.1.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
   integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==

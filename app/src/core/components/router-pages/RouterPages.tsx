@@ -40,42 +40,15 @@ const RoutesContainer = posed.div({
 @WithRouter()
 export class RouterPages extends React.Component<PosedRouterPagesProps> {
     static displayName             = 'RouterPages';
-    ref: RefObject<HTMLDivElement> = React.createRef();
-    prevHeight                     = null;
 
     render() {
         window[ 'routerpages' ]    = this;
         const { location, routes } = this.props;
         return (
-            <PoseGroup
-                // animateOnMount={true}
-                // preEnterPose="preEnter"
-                // enterAfterExit={true}
-                onRest={() => log('onRest', this.ref)}
-                style={{ minHeight: '100%' }}
+            <PoseGroup animateOnMount={true}
+                       // style={{ minHeight: '100%' }}
             >
-                <RoutesContainer
-                    style={{ minHeight: '100%' }}
-                    ref={this.ref}
-                    key={location.key || location.pathname}
-                    onPoseComplete={(pose: CurrentPose) => {
-                        // log('onPoseComplete', pose, this.ref);
-                        // if ( pose === 'enter' && this.ref && this.ref.current ) {
-                        // this.prevHeight = this.ref.current.getBoundingClientRect().height;
-                        // }
-                    }}
-                    onValueChange={{
-                        opacity: (v: any) => {
-                            // if ( v === 1 && this.ref && this.ref.current ) {
-                            //     this.prevHeight                  = this.ref.current.getBoundingClientRect().height;
-                            //     this.ref.current.style.minHeight = null;
-                            // } else if ( this.ref && this.ref.current && this.prevHeight) {
-                            //     this.ref.current.style.minHeight = this.prevHeight + 'px';
-                            // }
-                            // log('onValueChange', v, this.ref);
-                        },
-                    }}
-                >
+                <RoutesContainer key={location.key || location.pathname}>
                     {/*{renderRoutes(routes, { switchProps: { location } })}*/}
 
                     {<Switch location={location}>

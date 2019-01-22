@@ -31,7 +31,7 @@ const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...pa
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
 
 chain.entry('core').add(chain.srcPath('core/index.ts'));
-chain.entry('phpdoc').add(chain.srcPath('phpdoc/index.ts'));
+// chain.entry('phpdoc').add(chain.srcPath('phpdoc/index.ts'));
 chain.entry('site').add(chain.srcPath('site/entry.ts'));
 
 chain.when(isProd, chain => chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
@@ -54,7 +54,7 @@ chain.output
 
 chain.externals({
     '@codex/core'  : [ 'codex', 'core' ],
-    '@codex/phpdoc': [ 'codex', 'phpdoc' ],
+    // '@codex/phpdoc': [ 'codex', 'phpdoc' ],
 });
 chain.resolve
     .symlinks(true)
@@ -66,7 +66,7 @@ chain.resolve
     'lodash-es$'         : 'lodash',
     'async$'             : 'neo-async',
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
-    '@codex/phpdoc'      : chain.srcPath('phpdoc'),
+    // '@codex/phpdoc'      : chain.srcPath('phpdoc'),
     '@codex/core'        : chain.srcPath('core'),
     // 'tapable'            : chain.srcPath('tapable/lib'),
     'heading'            : chain.srcPath('core/styling/heading.less'),
@@ -218,7 +218,7 @@ function addAssetsLoaderForEntry(chain: Chain, entrypoint: string, path: string)
 }
 
 addAssetsLoaderForEntry(chain, 'core', chain.srcPath('core'));
-addAssetsLoaderForEntry(chain, 'phpdoc', chain.srcPath('phpdoc'));
+// addAssetsLoaderForEntry(chain, 'phpdoc', chain.srcPath('phpdoc'));
 addAssetsLoaderForEntry(chain, 'site', chain.srcPath('site'));
 
 

@@ -23,16 +23,18 @@ declare module 'antd/lib/menu' {
 
 declare module 'antd/lib/drawer' {
     interface DrawerProps {
-        duration?:string
-        ease?:string
-        onChange?:Function
-        onMaskClick?:Function
-        onHandleClick?:Function
+        duration?: string
+        ease?: string
+        onChange?: Function
+        onMaskClick?: Function
+        onHandleClick?: Function
     }
 }
 // noinspection ES6UnusedImports
 import api from '@codex/api';
 import { LocationDescriptorObject } from 'history';
+// noinspection ES6UnusedImports
+import router5, { State } from 'router5';
 
 declare module '@codex/api/types/generated' {
 
@@ -42,5 +44,22 @@ declare module '@codex/api/types/generated' {
         parent?: string
         custom?: Function
         renderer?: string
+    }
+}
+
+declare module 'router5/types/types/base' {
+    interface State {
+        data?: { [ key: string ]: any }
+    }
+}
+declare module 'router5/types/types/router' {
+    import { RouteNodeProps } from 'react-router5/types/render/RouteNode';
+
+    interface Route {
+        wrapComponent?:boolean
+        component?:React.ComponentType<RouteNodeProps & any>
+        loadComponent?(toState: State, fromState: State | null): Promise<any>
+
+        onActivate?(toState: State, fromState: State | null): Promise<any>
     }
 }

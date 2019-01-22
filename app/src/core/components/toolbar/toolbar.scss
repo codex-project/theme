@@ -48,14 +48,17 @@ $toolbar-height-lg: $btn-height-lg;
 }
 
 
+.ant-btn-group .ant-btn-toolbar,
 .ant-btn-toolbar {
     @include button-variant-toolbar(#7a8990);
 }
 
+.ant-btn-group .ant-btn-codex,
 .ant-btn-codex {
     @include button-variant-toolbar($color-codex);
 }
 
+.ant-btn-group .ant-btn-codex-alt,
 .ant-btn-codex-alt {
     @include button-variant-toolbar($color-codex-alt);
 }
