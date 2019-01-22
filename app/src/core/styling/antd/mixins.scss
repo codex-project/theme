@@ -29,6 +29,7 @@
         font-family: $font-family-monospace;
         text-rendering: optimizeLegibility;
     }
+    font-weight: normal;
     @content
 }
 

@@ -13,7 +13,6 @@ export interface PhpdocContentProps {
     revision: string
 }
 
-@hot(module)
 export class PhpdocContent extends React.Component<PhpdocContentProps> {
     static displayName             = 'PhpdocContent';
     static Context: typeof Context = Context;

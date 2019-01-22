@@ -1,5 +1,6 @@
 import { api } from '@codex/api';
 import { Methods, Properties, Tags } from './collections';
+import { FQNS } from './FQNS';
 
 export interface PhpdocDocblock extends api.PhpdocDocblock {
     tags: Tags
@@ -34,6 +35,8 @@ export class PhpdocFile {
     get isTrait(): boolean {return this.type === 'trait';}
 
     get entity(): PhpdocClassFile | PhpdocTraitFile | PhpdocInterfaceFile { return this[ this.type ]; }
+
+    get fqns(): FQNS { return this.entity.fqns; }
 }
 
 
@@ -44,6 +47,7 @@ export abstract class PhpdocBaseType<T extends any> {
 }
 
 export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
+    fqns: FQNS;
 
     constructor(public readonly type: 'class' | 'trait' | 'interface', data: T) {
         super(data);
@@ -55,6 +59,9 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
         }
         if ( data.docblock && data.docblock.tags ) {
             this[ 'docblock' ][ 'tags' ] = new Tags(...data.docblock.tags);
+        }
+        if ( data.full_name ) {
+            this.fqns = FQNS.from(data.full_name);
         }
     }
 }

@@ -18,6 +18,19 @@ export function hot<T>(module: NodeModule, hoist = false) {
     };
 }
 
+export function cold<T>(module: NodeModule, hoist = false) {
+    return (TargetComponent) => {
+        if ( DEV ) {
+            let {cold} = require('react-hot-loader')
+            if ( ! hoist ) {
+                return cold(TargetComponent);
+            }
+            return hoistNonReactStatics(TargetComponent, cold(TargetComponent));
+        }
+        return TargetComponent;
+    };
+}
+
 export const WithRouter = () => {
     return (target) => {
         return withRouter(target) as any;

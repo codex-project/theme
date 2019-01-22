@@ -4,7 +4,7 @@ import { PhpdocTypeProps } from './PhpdocType';
 import { loadStyling } from '../../loadStyling';
 
 
-export const PhpdocType: React.ComponentType<PhpdocTypeProps> = componentLoader(
+export const PhpdocType: React.ComponentType<PhpdocTypeProps> = DEV ? require('./PhpdocType').PhpdocType :componentLoader(
     {
         Component: async () => (await import(/* webpackChunkName: "phpdoc.type" */'./PhpdocType')).PhpdocType,
         loadStyling,

@@ -558,7 +558,7 @@ export interface PhpdocDocblock {
 
     description?: Maybe<string>;
 
-    longDescription?: Maybe<string>;
+    long_description?: Maybe<string>;
 
     tags?: Maybe<(Maybe<PhpdocTag>)[]>;
 }

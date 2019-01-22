@@ -1,7 +1,10 @@
 @import "../../styling/base";
 @import "../../styling/vendor/inspire-tree/tree";
 
-.phpdoc-tree {
+
+$prefix-cls: 'phpdoc-tree';
+
+.#{$prefix-cls} {
         @extend %phpdoc-component;
         width        : 100%;
         border-right : 1px solid #f0f2f1;

@@ -4,7 +4,7 @@ import { PhpdocEntityProps } from './PhpdocEntity';
 import { loadStyling } from '../../loadStyling';
 
 
-export const PhpdocEntity: React.ComponentType<PhpdocEntityProps> = componentLoader(
+export const PhpdocEntity: React.ComponentType<PhpdocEntityProps> = DEV ? require('./PhpdocEntity').PhpdocEntity : componentLoader(
     {
         Component: async () => (await import(/* webpackChunkName: "phpdoc.entity" */'./PhpdocEntity')).PhpdocEntity,
         loadStyling,

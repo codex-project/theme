@@ -8,10 +8,13 @@ import { action, observable, runInAction } from 'mobx';
 import InspireTree from 'inspire-tree';
 import { findDOMNode } from 'react-dom';
 import { debounce } from 'lodash-decorators';
-import './PhpdocTree.scss';
 import { ITreeNode } from './interfaces';
-import { hot, Scrollbar, ucfirst } from '@codex/core';
+import { Scrollbar, ucfirst } from '@codex/core';
 import { Scrollbar as ScrollbarClass } from '@codex/core/components/scrollbar/Scrollbar';
+import { PhpdocContent } from '../PhpdocContent';
+import { TreeBuilder } from './TreeBuilder';
+
+import './PhpdocTree.scss';
 
 const Search = Input.Search;
 const log    = require('debug')('components:PhpdocTree');
@@ -20,21 +23,28 @@ export interface PhpdocTreeProps extends TreeProps {
     searchable?: boolean
     filterable?: boolean
     scrollToSelected?: boolean
-    tree: InspireTree
+    tree?: InspireTree
 }
 
-/**
- * PhpdocTree component
- */
-@hot(module)
 @observer
 export class PhpdocTree extends React.Component<PhpdocTreeProps> {
     static displayName: string                    = 'PhpdocTree';
     static defaultProps: Partial<PhpdocTreeProps> = {};
+    static contextType                            = PhpdocContent.Context;
+    context!: React.ContextType<typeof PhpdocContent.Context>;
 
 
     private search: typeof Search;
     private scrollbar: ScrollbarClass = React.createRef() as any;
+
+    get tree(): InspireTree {
+        if ( this.props.tree ) {
+            return this.props.tree;
+        }
+        let builder = new TreeBuilder(this.context.manifest.files.keyBy('name'), {});
+        let tree    = builder.build();
+        return tree;
+    }
 
     @observable treeFilters: {
         search: string
@@ -45,7 +55,7 @@ export class PhpdocTree extends React.Component<PhpdocTreeProps> {
 
     @action setTreeFilter(name: 'class' | 'trait' | 'interface', value: boolean) {
         this.treeFilters[ name ] = value;
-        this.props.tree.search((node: ITreeNode) => {
+        this.tree.search((node: ITreeNode) => {
             if ( ! [ 'class', 'trait', 'interface' ].includes(node.type) ) return true;
             return this.treeFilters[ node.type ] === false;
         });
@@ -59,21 +69,21 @@ export class PhpdocTree extends React.Component<PhpdocTreeProps> {
         if ( this.treeFilters.search !== search ) {
             this.treeFilters.search = search;
         }
-        log('searchInTree', { search, selected: this.props.tree.selected(), lastSelectedNode: this.props.tree.lastSelectedNode() });
-        if ( search === null && this.props.tree.selected().length > 0 ) {
-            let selected = this.props.tree.selected().get(0) as ITreeNode;
+        log('searchInTree', { search, selected: this.tree.selected(), lastSelectedNode: this.tree.lastSelectedNode() });
+        if ( search === null && this.tree.selected().length > 0 ) {
+            let selected = this.tree.selected().get(0) as ITreeNode;
             // this.tree.lastSelectedNode()
-            this.props.tree
+            this.tree
                 .clearSearch() // clear search, collapses all
                 .node(selected.id) //  get current @todo fix this
                 .expandParents(); // expand parents
             return;
         }
-        this.props.tree.search(search);
+        this.tree.search(search);
     }
 
     componentDidMount() {
-        this.props.tree.on('node.selected', (node: ITreeNode) => {
+        this.tree.on('node.selected', (node: ITreeNode) => {
             if ( this.props.scrollToSelected ) {
                 let $li = $(`li[data-uid="${node.id}"]`);
                 if ( $li.length === 1 ) {
@@ -86,7 +96,6 @@ export class PhpdocTree extends React.Component<PhpdocTreeProps> {
             }
         });
     }
-
 
     render() {
         const { nodes, searchable, filterable, style, className, ...treeProps } = this.props;
@@ -129,6 +138,7 @@ export class PhpdocTree extends React.Component<PhpdocTreeProps> {
                 </If>
                 <Scrollbar ref={this.scrollbar as any}>
                     <Tree
+                        tree={this.tree}
                         {...treeProps}
                         style={{
                             marginRight  : 8,

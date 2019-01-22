@@ -11,14 +11,15 @@
 @import "~bootstrap/scss/utilities/screenreaders";
 @import "~bootstrap/scss/utilities/shadows";
 @import "~bootstrap/scss/utilities/sizing";
-@import "~bootstrap/scss/utilities/spacing";
+//@import "~bootstrap/scss/utilities/spacing";
 @import "~bootstrap/scss/utilities/text";
 @import "~bootstrap/scss/utilities/visibility";
 @import "~font-awesome/scss/font-awesome";
-@import "root";
-@import "app";
-@import "content";
-@import "document";
+@import "./components/util";
+@import "./components/root";
+@import "./components/app";
+@import "./components/content";
+@import "./components/document";
 
 
 pre,code {
@@ -30,18 +31,18 @@ pre,code {
     @include button-variant-primary($blue-3, $red-7);
 }
 
-$breakpoints: (
-    null:0,
-    medium:0,
-    xs: $screen-xs,
-    sm: $screen-sm,
-    md: $screen-md,
-    lg: $screen-lg,
-    xl: $screen-xl,
-    xxl: $screen-xxl,
-);
+//$breakpoints: (
+//    null:0,
+//    medium:0,
+//    xs: $screen-xs,
+//    sm: $screen-sm,
+//    md: $screen-md,
+//    lg: $screen-lg,
+//    xl: $screen-xl,
+//    xxl: $screen-xxl,
+//);
 
 
-@import "~foundation-sites/scss/global";
-@import "~foundation-sites/scss/components/table";
+//@import "~foundation-sites/scss/global";
+//@import "~foundation-sites/scss/components/table";
 @include foundation-table()

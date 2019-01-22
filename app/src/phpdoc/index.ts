@@ -8,6 +8,9 @@ import { api } from '@codex/api';
 import { containerModule } from './container-module';
 import { loadStyling } from './loadStyling';
 
+if(DEV){
+    loadStyling();
+}
 
 export function install(app: Application) {
     app.load(containerModule);

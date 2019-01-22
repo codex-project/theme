@@ -26,7 +26,7 @@ app.use(app => {
                 },
                 (loaded, props) => {
 
-                    return <DemoPage {...props}/>;
+                    return <DemoPage revision={loaded.revision} {...props}/>;
                 },
                 { delay: 1000 },
             );

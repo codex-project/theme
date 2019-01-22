@@ -1,18 +1,16 @@
 import React from 'react';
 import { action, computed, observable, toJS } from 'mobx';
-import { PhpdocFile, PhpdocStore, Query } from '../logic';
+import { FQNS, PhpdocFile, PhpdocManifest, PhpdocStore } from '../logic';
 import { isFunction, isNumber, isString } from 'lodash';
 import { lazyInject, Spin, SpinProps } from '@codex/core';
 import { PhpdocContent } from './PhpdocContent';
 import { classes } from 'typestyle';
 import { PhpdocManifestFile } from '@codex/api';
-import { FQNS } from '../logic/FQNS';
 
 
 const log = require('debug')('phpdoc:components:PhpdocComponent');
 
 export interface PhpdocComponentProps {
-    query?: string | Query
     fqns?: string | FQNS
     file?: PhpdocFile
     loader?: SpinProps
@@ -21,7 +19,6 @@ export interface PhpdocComponentProps {
 
 export interface PhpdocComponentState {
     file?: PhpdocFile
-    query?: string | Query
     fqns?: string | FQNS
 }
 
@@ -32,9 +29,7 @@ export class PhpdocComponent<T = {}, P extends PhpdocComponentProps = PhpdocComp
     @observable file: PhpdocFile   = null;
     @observable isLoading: boolean = true;
 
-    // @computed get manifest(): PhpdocManifest {return this.context.manifest;}
-
-    state = { query: null };
+    state = { fqns: null };
 
     @computed get fileJS(): PhpdocFile {return toJS(this.file);}
 
@@ -47,12 +42,12 @@ export class PhpdocComponent<T = {}, P extends PhpdocComponentProps = PhpdocComp
 
     static getDerivedStateFromProps(nextProps: PhpdocComponentProps, prevState: PhpdocComponentState) {
         let state = prevState || {};
-        let query = nextProps.query;
-        if ( ! query && nextProps.file ) {
-            query = Query.from(nextProps.file.entity.full_name);
+        let fqns  = nextProps.fqns;
+        if ( ! fqns && nextProps.file ) {
+            fqns = FQNS.from(nextProps.file.entity.full_name);
         }
-        if ( ! prevState || ! prevState.query || prevState.query !== query || ! query ) {
-            state.query = isString(query) ? Query.from(query) : Query.fromHash();
+        if ( ! prevState || ! prevState.fqns || prevState.fqns !== fqns || ! fqns ) {
+            state.fqns = isString(fqns) ? FQNS.from(fqns) : fqns;
         }
         return state;
     }
@@ -66,10 +61,10 @@ export class PhpdocComponent<T = {}, P extends PhpdocComponentProps = PhpdocComp
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<PhpdocComponentState>, snapshot?: any): void {
-        if ( this.props.query !== prevProps.query || this.props.file !== prevProps.file ) {
+        if ( this.props.fqns !== prevProps.fqns || this.props.file !== prevProps.file ) {
             this._updateFile();
         }
-        if ( this.props.query && prevProps.query && this.props.query !== prevProps.query ) {
+        if ( this.props.fqns && prevProps.fqns && this.props.fqns !== prevProps.fqns ) {
             this.onQueryChange();
         }
     }
@@ -80,7 +75,7 @@ export class PhpdocComponent<T = {}, P extends PhpdocComponentProps = PhpdocComp
 
     @action
     protected async _updateFile() {
-        if ( ! this.props.file && ! this.state.query ) return false;
+        if ( ! this.props.file && ! this.state.fqns || ! this.context.manifest ) return false;
         this.setLoading(true);
         if ( this.props.file ) {
             this.setFile(this.props.file);
@@ -89,11 +84,11 @@ export class PhpdocComponent<T = {}, P extends PhpdocComponentProps = PhpdocComp
         }
 
         let mfile: PhpdocManifestFile;
-        if ( this.context.manifest.files.has(this.state.query.slashEntityName) ) {
-            mfile = this.context.manifest.files.get(this.state.query.slashEntityName);
+        if ( this.context.manifest.files.has(this.state.fqns.slashEntityName) ) {
+            mfile = this.context.manifest.files.get(this.state.fqns.slashEntityName);
         }
         if ( ! mfile || ! mfile.hash ) {
-            throw new Error('Cannot update file, query entity does not exist in manifest files: ' + this.state.query.slashEntityName);
+            throw new Error('Cannot update file, fqns entity does not exist in manifest files: ' + this.state.fqns.slashEntityName);
         }
         let file = await this.context.manifest.fetchFile(mfile.name);
         this.setFile(file);

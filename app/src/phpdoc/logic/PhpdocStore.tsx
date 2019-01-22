@@ -3,6 +3,7 @@ import { lazyInject } from '@codex/core';
 import { api, Api } from '@codex/api';
 import { NamedCollection } from './collections';
 import { PhpdocFile } from './types';
+import { FQNS } from './FQNS';
 
 export interface PhpdocManifest extends api.PhpdocManifest {}
 
@@ -16,7 +17,9 @@ export class PhpdocManifest {
         this.files = new NamedCollection(...data.files);
     }
 
-    async fetchFile(fullName: string):Promise<PhpdocFile> {
+    async fetchFile(fullName:string|FQNS):Promise<PhpdocFile>{
+        fullName = FQNS.from(fullName).slashEntityName;
+
         if ( this._files[ fullName ] === undefined ) {
             let result = await this._api.query(`
 query GetFile($projectKey:ID!, $revisionKey:ID!, $fullName:String!) {

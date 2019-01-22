@@ -1,0 +1,59 @@
+import React from 'react';
+import { computed, observable, runInAction } from 'mobx';
+import { FQNS, PhpdocFile, PhpdocStore } from '../logic';
+import { isFunction, isNumber } from 'lodash';
+import { lazyInject, Spin, SpinProps } from '@codex/core';
+import { PhpdocFileContent } from './PhpdocFileContent';
+
+
+const log = require('debug')('phpdoc:components:PhpdocFileComponent');
+
+export interface PhpdocFileComponentProps {
+    fqns?: string | FQNS
+    loader?: SpinProps
+    boxed?: boolean
+}
+
+export class PhpdocFileComponent<T = {}, P extends PhpdocFileComponentProps = PhpdocFileComponentProps & T> extends React.Component<P> {
+    static contextType = PhpdocFileContent.Context;
+    context!: React.ContextType<typeof PhpdocFileContent.Context>;
+    @lazyInject('store.phpdoc') store: PhpdocStore;
+
+    @observable private _file = null;
+
+    @computed get file(): PhpdocFile {return this.props.fqns ? this._file : this.context.file;}
+
+    update() {
+        if ( this.props.fqns && (! this.file || ! this.file.fqns.equals(this.props.fqns)) ) {
+            this.context.manifest
+                .fetchFile(this.props.fqns)
+                .then(file => runInAction(() => this._file = file));
+        }
+    }
+
+    public componentDidMount(): void {
+        this.update();
+    }
+
+    public componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<{}>, snapshot?: any): void {
+        this.update()
+    }
+
+    protected renderWithLoader(isLoading: boolean, content)
+    protected renderWithLoader(content)
+    protected renderWithLoader(...args: any[]) {
+        let content   = args[ args.length - 1 ];
+        let isLoading = (args.length > 1 ? args[ 0 ] : this.file === null);
+
+        if ( ! isLoading ) {
+            return isFunction(content) ? content(this.props) : content;
+        }
+        let props   = this.props.loader || {};
+        props.delay = isNumber(props.delay) ? props.delay : 0;
+
+        return (
+            <Spin {...props} />
+        );
+    }
+}
+

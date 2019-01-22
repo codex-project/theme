@@ -1,0 +1,52 @@
+@import "../../styling/base";
+
+$prefix-cls: 'phpdoc-tags';
+$tags-gutter: 0;
+
+.#{$prefix-cls} {
+    @extend %phpdoc-component;
+    @include make-container();
+
+    &-tag {
+        @include flex-grid-row;
+    }
+
+    &-tag-left {
+        @include flex-grid-column(shrink);
+        min-width: 100px;
+
+        .tag-name,
+        .tag-at {
+            font-weight: bold;
+        }
+
+        .tag-at {
+            padding-right: 0 !important;
+        }
+
+        .tag-name {
+        }
+    }
+
+    &-tag-right {
+        @include flex-grid-column;
+
+        .tag-description {
+        }
+
+        .tag-link {
+            font-weight: bold;
+        }
+
+        .tag-refers {
+        }
+    }
+
+    .tag-at,
+    .tag-name,
+    .tag-description,
+    .tag-link,
+    .tag-refers {
+        padding-right: 2px;
+    }
+}

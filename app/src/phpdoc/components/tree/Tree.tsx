@@ -18,6 +18,7 @@ export interface TreeProps {
     onDataLoaderror?: (err: Error) => void
     onModelLoaded?: (node: ITreeNode) => void
     onNodeAdded?: (node: ITreeNode) => void
+    onNodeClick?: (node: ITreeNode) => void
     onNodeBlurred?: (node: ITreeNode, isLoadEvent: boolean) => void
     onNodeChecked?: (node: ITreeNode, isLoadEvent: boolean) => void
     onNodeCollapsed?: (node: ITreeNode) => void

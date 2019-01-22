@@ -1507,6 +1507,7 @@ export interface FontAwesomePrefixedIcons {
     'fa-youtube-square': string
 }
 
+export type MaterialColor = keyof MaterialColors
 
 export interface MaterialColors {
 

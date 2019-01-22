@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { classes } from 'typestyle';
 import { Popover } from 'antd';
-import {Type} from '../../logic';
+import { FQNS, Type } from '../../logic';
 import {  PhpdocStore } from '../../logic';
 import { isArray, isString } from 'lodash';
 import { hot, lazyInject, strStripLeft, strStripRight } from '@codex/core';
@@ -30,10 +30,6 @@ export interface PhpdocTypeProps {
 }
 
 
-/**
- * PhpdocType component
- */
-@hot(module)
 @observer
 export class PhpdocType extends React.Component<PhpdocTypeProps> {
     static displayName: string                    = 'PhpdocType';
@@ -90,7 +86,7 @@ export class PhpdocType extends React.Component<PhpdocTypeProps> {
         const content                                                                = types.map((type, numType) => {
             let line,
                 clickable    = noClick !== true || type.isLocal,
-                lineChildren = children ? children : showNamespace ? type.entityName : Type.stripNamespace(type.entityName),
+                lineChildren = children ? children : showNamespace ? type.entityName : type.fqns.name,
                 lineProps    = {
                     style    : {
                         cursor: clickable ? 'pointer' : 'default',

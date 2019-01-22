@@ -311,7 +311,7 @@ export interface PhpdocClassFile {
 export interface PhpdocDocblock {
     line?: Maybe<number>;
     description?: Maybe<string>;
-    longDescription?: Maybe<string>;
+    long_description?: Maybe<string>;
     tags?: Maybe<(Maybe<PhpdocTag>)[]>;
 }
 export interface PhpdocTag {

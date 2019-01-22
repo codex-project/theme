@@ -7,6 +7,7 @@ export type FQNSMemberType = null | 'property' | 'method' | 'constant';
 
 export class FQNS {
 
+    name: string;
     entityName: string;
     slashEntityName: string;
     isEntity: boolean;
@@ -24,6 +25,7 @@ export class FQNS {
     }
 
     protected reset() {
+        this.name            = null;
         this.entityName      = null;
         this.slashEntityName = null;
         this.isEntity        = false;
@@ -45,7 +47,7 @@ export class FQNS {
      */
     update(fullName: string): this {
         this.reset();
-        this.fullName = fullName;
+        this.fullName = FQNS.replaceDoubleSlash(fullName);
         this.isValid  = FQNS.isValidFullName(this.fullName);
         if ( ! this.isValid ) {
             return this;
@@ -70,10 +72,15 @@ export class FQNS {
         }
         this.entityName      = FQNS.stripStartSlash(FQNS.replaceDoubleSlash(this.entityName));
         this.slashEntityName = FQNS.ensureStartSlash(FQNS.replaceDoubleSlash(this.entityName));
+        this.name            = FQNS.stripNamespace(this.entityName);
         return this;
     }
 
     toString() {return this.fullName;}
+
+    equals(other: string | FQNS): boolean {
+        return this.fullName === FQNS.from(other).fullName;
+    }
 
     static ensureStartSlash(value: string): string { return strEnsureLeft(value, '\\'); }
 
@@ -130,13 +137,13 @@ export class FQNS {
         return signature;
     }
 
-    static from(fullName: string): FQNS
+    static from(fullName: string | FQNS): FQNS
     static from(entityName: string, memberSignature: string): FQNS
     static from(entityName: string, memberType: FQNSMemberType, memberName: string): FQNS
     static from(...args: any[]): FQNS {
         let len = args.length;
         if ( len === 1 ) {
-            return new FQNS(args[ 0 ]);
+            return new FQNS(args[ 0 ].toString());
         } else if ( len === 2 ) {
             let entityName      = args[ 0 ];
             let memberSignature = args[ 1 ];

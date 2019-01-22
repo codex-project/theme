@@ -174,23 +174,24 @@ chain.module.rule('babel-loader')
         compact         : isProd,
     } as any);
 
-
-chain.module.rule('vendor-js')
-    .test(/\.(js|mjs)$/)
-    .exclude.add(/@babel(?:\/|\\{1,2})runtime/).end()
-    .use('babel-loader')
-    .loader('babel-loader')
-    .options(<BabelLoaderOptions>{
-        babelrc         : false,
-        configFile      : false,
-        compact         : false,
-        presets         : [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
-        plugins         : [
-            ...babelImportPlugins,
-        ],
-        cacheDirectory  : cache,
-        cacheCompression: isProd,
-    });
+// chain.when(isProd, chain =>
+    chain.module.rule('vendor-js')
+        .test(/\.(js|mjs)$/)
+        .exclude.add(/@babel(?:\/|\\{1,2})runtime/).end()
+        .use('babel-loader')
+        .loader('babel-loader')
+        .options(<BabelLoaderOptions>{
+            babelrc         : false,
+            configFile      : false,
+            compact         : false,
+            presets         : [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
+            plugins         : [
+                ...babelImportPlugins,
+            ],
+            cacheDirectory  : cache,
+            cacheCompression: isProd,
+        })
+// );
 
 function addAssetsLoaderForEntry(chain: Chain, entrypoint: string, path: string) {
     let assetPath = _assetPath.replace('[entrypoint]', entrypoint);
@@ -317,7 +318,10 @@ chain.plugin('define').use(webpack.DefinePlugin, [ {
     TEST         : chain.get('mode') === 'testing',
     ENV          : dotenv.load({ path: resolve('.env') }).parsed,
 } ]);
-chain.plugin('bar').use(BarPlugin, [ <BarOptions>{ profile: isDev, compiledIn: isDev } ]);
+chain.plugin('bar').use(BarPlugin, [ <BarOptions>{
+    profile   : true,
+    compiledIn: true
+} ]);
 chain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [ { options: {} } ]);
 chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptions>{
     compilationSuccessInfo: { messages: [ 'Build success' ], notes: [] },
@@ -345,6 +349,7 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
 chain.onToConfig(config => {
     AntdScssThemePlugin.SCSS_THEME_PATH = chain.srcPath('core/styling/antd/theme.scss');
     let antdScss                        = AntdScssThemePlugin.themify('sass-loader');
+    let antdFastScss                    = AntdScssThemePlugin.themify('sass-loader');
     let antdLess                        = AntdScssThemePlugin.themify('less-loader');
     config.module.rules.push(...[ {
         test: /\.module.css$/,
@@ -358,9 +363,9 @@ chain.onToConfig(config => {
         exclude: [ /\.module.css$/ ],
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'css-loader', options: { importLoaders: 1, sourceMap: isDev } },
-            { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-        ],
+            { loader: 'fast-css-loader', options: { importLoaders: 1, sourceMap: isDev } },
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+        ].filter(Boolean),
     }, {
         test: /\.(module\.scss|mscss)$/,
         use : [
@@ -374,18 +379,18 @@ chain.onToConfig(config => {
         exclude: [ /\.module\.scss$/, /\.mscss$/ ],
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
-            { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            { loader: antdScss.loader, options: { ...antdScss.options, functions: { [ colorPaletteFunctionSignature ]: colorPaletteFunction } } },
-        ],
+            { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            { loader: antdFastScss.loader, options: { ...antdFastScss.options, functions: { [ colorPaletteFunctionSignature ]: colorPaletteFunction } } },
+        ].filter(Boolean),
     }, {
         test: /\.less$/,
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev } },
-            { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev } },
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
             { loader: antdLess.loader, options: { ...antdLess.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
-        ],
+        ].filter(Boolean),
     } ]);
     config.plugins.push(new AntdScssThemePlugin(AntdScssThemePlugin.SCSS_THEME_PATH));
     return config;

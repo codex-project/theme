@@ -1,6 +1,8 @@
 @import "../../styling/base";
 
-.phpdoc-entity {
+$prefix-cls: 'phpdoc-entity';
+
+.#{$prefix-cls} {
     @extend %phpdoc-component;
     font-family   : $headings-font-family;
     border-bottom : 1px solid #f0f2f1;
