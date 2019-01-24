@@ -1,6 +1,6 @@
 import { MenuItem } from '../MenuItem';
-import * as url from '../../utils/url';
 import { MenuType } from '../MenuType';
+import { url } from 'classes/Url';
 
 export class DocumentMenuType extends MenuType {
     name = 'document';

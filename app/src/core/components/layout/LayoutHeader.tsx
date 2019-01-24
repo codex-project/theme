@@ -91,3 +91,4 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
         );
     }
 }
+export default LayoutHeader

@@ -1,11 +1,9 @@
 import { ContainerModule, decorate, injectable } from 'inversify';
-import { routes } from 'routes';
 import { Store } from 'stores';
 import { Api } from '@codex/api';
 import { IConfig } from 'interfaces';
 import { HtmlComponents } from 'classes/HtmlComponents';
 import { MenuManager } from 'menus/MenuManager';
-import { Routes } from 'collections/Routes';
 import { LayoutStore } from 'stores/LayoutStore';
 import { toJS } from 'mobx';
 import { Fetched } from 'stores/Fetched';
@@ -13,7 +11,8 @@ import { CssVariables } from 'classes/CssVariables';
 import { Breakpoints } from 'utils/breakpoints';
 import { CodeHighlight } from 'components/code-highlight';
 import { TOC, TOCHeader, TOCList, TOCListItem } from 'components/toc';
-import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
+// import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
+import { CookieStorage, LocalStorage, SessionStorage } from 'utils/storage';
 import { CLink } from 'components/link';
 import { Trigger } from 'components/trigger';
 import { Link } from 'react-router-dom';
@@ -26,15 +25,14 @@ import { ApiLocalStorageCache } from 'classes/ApiLocalStorageCache';
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     decorate(injectable(), Api);
 
-    bind<LocalStorage>('storage.local').to(LocalStorage).inSingletonScope();
-    bind<SessionStorage>('storage.session').to(SessionStorage).inSingletonScope();
-    bind<CookieStorage>('storage.cookie').to(CookieStorage).inSingletonScope();
+    bind<typeof LocalStorage>('storage.local').toConstantValue(LocalStorage);
+    bind<typeof SessionStorage>('storage.session').toConstantValue(SessionStorage);
+    bind<typeof CookieStorage>('storage.cookie').toConstantValue(CookieStorage);
     bind<Fetched>('fetched').to(Fetched).inSingletonScope();
 
     bind<Breakpoints>('breakpoints').to(Breakpoints).inSingletonScope();
     bind<CssVariables>('cssvars').to(CssVariables).inSingletonScope();
 
-    bind<Routes>('routes').toConstantValue(routes);
     bind<Store>('store').to(Store).inSingletonScope();
 
     bind<LayoutStore>('store.layout').to(LayoutStore).inSingletonScope().onActivation((ctx, layout) => {
@@ -71,6 +69,5 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
         }
         return api;
     });
-    bind<MenuManager>('menumanager').to(MenuManager).inSingletonScope();
 });
 

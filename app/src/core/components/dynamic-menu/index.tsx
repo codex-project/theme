@@ -1,6 +1,6 @@
 import { componentLoader } from 'utils/componentLoader';
 import React from 'react';
-import { DynamicMenuProps } from 'components/dynamic-menu/DynamicMenu';
+import { DynamicMenuProps } from './DynamicMenu';
 
 export * from './DynamicMenu';
 

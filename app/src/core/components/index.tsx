@@ -16,4 +16,4 @@ export * from './trigger';
 export * from './tunnel';
 
 
-export * from './App5';
+export * from '../App';

@@ -15,7 +15,7 @@ const addTestKeysToRoutes = (routes: IRoute[]): IDefinedRoute[] => routes.map((r
         route.test   = pathToRegexp(route.path, route.keys);
         route.toPath = pathToRegexp.compile(route.path.toString());
         // route.parsed = pathToRegexp.parse(route.path.toString())
-        if ( route.children ) route.routes = addTestKeysToRoutes(route.children);
+        if ( route.children ) route.routeMap = addTestKeysToRoutes(route.children);
     } catch ( e ) {
         console.warn('setRoutes', e);
     }

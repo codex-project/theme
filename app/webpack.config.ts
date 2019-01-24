@@ -17,6 +17,7 @@ import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from 
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
+import { Rule } from 'webpack-chain';
 
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
@@ -53,7 +54,7 @@ chain.output
     .libraryTarget('window');
 
 chain.externals({
-    '@codex/core'  : [ 'codex', 'core' ],
+    '@codex/core': [ 'codex', 'core' ],
     // '@codex/phpdoc': [ 'codex', 'phpdoc' ],
 });
 chain.resolve
@@ -65,6 +66,7 @@ chain.resolve
     .alias.merge({
     'lodash-es$'         : 'lodash',
     'async$'             : 'neo-async',
+    // 'router5/types$': rootPath('node_modules/router5/types/index.d.ts'),
     '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
     // '@codex/phpdoc'      : chain.srcPath('phpdoc'),
     '@codex/core'        : chain.srcPath('core'),
@@ -78,63 +80,82 @@ chain.resolveLoader
     .modules.merge([ 'node_modules' ]).end()
     .extensions.merge([ '.js', '.json', '.ts' ]).end();
 
-chain.module.set('strictExportPresence', true);
-
-chain.resolve.alias.set('@codex/api', rootPath('packages/api/src'));
-chain.module.rule('ts').include.add(rootPath('packages/api/src'));
 
 const babelImportPlugins = [
     [ 'import', { libraryName: 'antd', style: true }, 'import-antd' ],
     [ 'import', { libraryName: 'lodash', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash' ],
     [ 'import', { libraryName: 'lodash-es', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash-es' ],
 ];
-chain.module.rule('ts')
-    .test(/\.(ts|tsx)$/)
-    .include.add(chain.srcPath()).end()
-    .use('babel-loader')
-    .loader('babel-loader')
-    .options(<BabelLoaderOptions>{
-        babelrc: false,
-        presets: [
-            [ 'react-app' ],
-        ],
-        plugins: [
-            ...babelImportPlugins,
-            'jsx-control-statements',
-            [ 'react-css-modules', {
-                'context'               : chain.srcPath(),
-                'filetypes'             : {
-                    '.mscss': {
-                        'syntax' : 'postcss-scss',
-                        'plugins': [
-                            'postcss-nested',
-                        ],
-                    },
-                },
-                'handleMissingStyleName': 'warn',
-                'generateScopedName'    : '[name]__[local]',
-            } ],
-        ].filter(Boolean),
-    }).end()
-    .use('ts-loader')
-    .loader('ts-loader')
-    .options(<Partial<TypescriptLoaderOptions>>{
-        transpileOnly        : true,
-        configFile           : tsconfig,
-        compilerOptions      : { module: 'es2015' as any, target: 'es5' as any },
-        happyPackMode        : true,
-        getCustomTransformers: () => ({
-            before: [
-                tsImport([
-                    { libraryName: 'antd', style: true },
-                    { libraryName: 'semantic-ui-react', libraryDirectory: (importName) => Object.keys(require('./build/semantic-data').nameLocations).includes(importName) ? join('dist/es', require('./build/semantic-data').nameLocations[ importName ]) : 'dist/es' },
-                    { libraryName: 'neo-async', libraryDirectory: null, camel2DashComponentName: false },
-                    { libraryName: 'lodash', libraryDirectory: null, camel2DashComponentName: false },
-                    { libraryName: 'lodash-es', libraryDirectory: null, camel2DashComponentName: false },
-                ]) as any,
+
+export function addTsToRule(chain: Chain, rule: string | Rule)
+export function addTsToRule(rule: Rule)
+export function addTsToRule(...args: any[]) {
+    let rule: Rule   = args.length === 1 ? args[ 0 ] : args[ 1 ];
+    let chain: Chain = args[ 0 ] instanceof Chain ? args[ 0 ] : rule.end().end();
+    if ( typeof rule === 'string' ) {
+        rule = chain.module.rule(rule);
+    }
+    rule.use('babel-loader')
+        .loader('babel-loader')
+        .options(<BabelLoaderOptions>{
+            babelrc   : false,
+            configFile: false,
+            presets   : [
+                [ 'react-app' ],
             ],
-        }),
-    } as any);
+            plugins   : [
+                ...babelImportPlugins,
+                'jsx-control-statements',
+                [ 'react-css-modules', {
+                    'context'               : chain.srcPath(),
+                    'filetypes'             : {
+                        '.mscss': {
+                            'syntax' : 'postcss-scss',
+                            'plugins': [
+                                'postcss-nested',
+                            ],
+                        },
+                    },
+                    'handleMissingStyleName': 'warn',
+                    'generateScopedName'    : '[name]__[local]',
+                } ],
+            ].filter(Boolean),
+        }).end()
+        .use('ts-loader')
+        .loader('ts-loader')
+        .options(<Partial<TypescriptLoaderOptions>>{
+            transpileOnly        : true,
+            configFile           : tsconfig,
+            compilerOptions      : { module: 'es2015' as any, target: 'es5' as any },
+            happyPackMode        : true,
+            getCustomTransformers: () => ({
+                before: [
+                    tsImport([
+                        { libraryName: 'antd', style: true },
+                        { libraryName: 'semantic-ui-react', libraryDirectory: (importName) => Object.keys(require('./build/semantic-data').nameLocations).includes(importName) ? join('dist/es', require('./build/semantic-data').nameLocations[ importName ]) : 'dist/es' },
+                        { libraryName: 'neo-async', libraryDirectory: null, camel2DashComponentName: false },
+                        { libraryName: 'lodash', libraryDirectory: null, camel2DashComponentName: false },
+                        { libraryName: 'lodash-es', libraryDirectory: null, camel2DashComponentName: false },
+                    ]) as any,
+                ],
+            }),
+        } as any);
+}
+
+
+chain.module.set('strictExportPresence', true);
+
+
+addTsToRule(
+    chain.module.rule('ts')
+        .test(/\.(ts|tsx)$/)
+        .include.add(chain.srcPath())
+        .end(),
+);
+
+chain.resolve.alias.set('@codex/api', rootPath('packages/api/src'));
+chain.module.rules.has('ts') && chain.module.rule('ts').include.add(rootPath('packages/api/src'));
+// chain.module.rules.has('react-proxy') && chain.module.rule('react-proxy').include.add(rootPath('packages/api/src'));
 
 chain.stats({
     warningsFilter: /export .* was not found in/,
@@ -175,22 +196,23 @@ chain.module.rule('babel-loader')
     } as any);
 
 // chain.when(isProd, chain =>
-    chain.module.rule('vendor-js')
-        .test(/\.(js|mjs)$/)
-        .exclude.add(/@babel(?:\/|\\{1,2})runtime/).end()
-        .use('babel-loader')
-        .loader('babel-loader')
-        .options(<BabelLoaderOptions>{
-            babelrc         : false,
-            configFile      : false,
-            compact         : false,
-            presets         : [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
-            plugins         : [
-                ...babelImportPlugins,
-            ],
-            cacheDirectory  : cache,
-            cacheCompression: isProd,
-        })
+chain.module.rule('vendor-js')
+    .test(/\.(js|mjs)$/)
+    .exclude.add(/@babel(?:\/|\\{1,2})runtime/).end()
+    .use('babel-loader')
+    .loader('babel-loader')
+    .options(<BabelLoaderOptions>{
+        babelrc         : false,
+        configFile      : false,
+        compact         : false,
+        presets         : [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
+        plugins         : [
+            ...babelImportPlugins,
+        ],
+        cacheDirectory  : cache,
+        cacheCompression: isProd,
+    });
+
 // );
 
 function addAssetsLoaderForEntry(chain: Chain, entrypoint: string, path: string) {
@@ -320,7 +342,7 @@ chain.plugin('define').use(webpack.DefinePlugin, [ {
 } ]);
 chain.plugin('bar').use(BarPlugin, [ <BarOptions>{
     profile   : true,
-    compiledIn: true
+    compiledIn: true,
 } ]);
 chain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [ { options: {} } ]);
 chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptions>{
@@ -347,17 +369,30 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     ENV     : dotenv.load({ path: resolve('.env') }).parsed,
 } ]);
 chain.onToConfig(config => {
+    // const ThreadLoader = require('thread-loader');
+    // const workers      = require('os').cpus().length - 1;
+    // let threadLoader= { loader: 'thread-loader', options: { workers } };
+    // ThreadLoader.warmup(threadLoader.options,
+    //     [ 'sass-loader', 'less-loader', require.resolve('./build/antd-scss-theme-plugin/antdSassLoader') ],
+    // );
+    let cacheLoader = { loader: 'cache-loader', options: {} };
+
     AntdScssThemePlugin.SCSS_THEME_PATH = chain.srcPath('core/styling/antd/theme.scss');
-    let antdScss                        = AntdScssThemePlugin.themify('sass-loader');
-    let antdFastScss                    = AntdScssThemePlugin.themify('sass-loader');
-    let antdLess                        = AntdScssThemePlugin.themify('less-loader');
+    let antdScssLoader                  = AntdScssThemePlugin.themify({
+        loader : 'sass-loader',
+        options: {
+            scssThemePath: AntdScssThemePlugin.SCSS_THEME_PATH,
+            functions    : { [ colorPaletteFunctionSignature ]: colorPaletteFunction },
+        },
+    });
+    let antdLessLoader                  = AntdScssThemePlugin.themify('less-loader');
     config.module.rules.push(...[ {
         test: /\.module.css$/,
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'css-loader', options: { importLoaders: 1, sourceMap: isDev, modules: true, localIdentName: '[name]__[local]' } },
             { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-        ],
+        ].filter(Boolean),
     }, {
         test   : /\.css$/,
         exclude: [ /\.module.css$/ ],
@@ -370,18 +405,20 @@ chain.onToConfig(config => {
         test: /\.(module\.scss|mscss)$/,
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            // cacheLoader,
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: false, modules: true, localIdentName: '[name]__[local]' } },
-            { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            { loader: antdScss.loader, options: { ...antdScss.options, functions: { [ colorPaletteFunctionSignature ]: colorPaletteFunction } } },
-        ],
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            antdScssLoader,
+        ].filter(Boolean),
     }, {
         test   : /\.scss$/,
         exclude: [ /\.module\.scss$/, /\.mscss$/ ],
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
+            // cacheLoader,
+            { loader: 'css-loader', options: { importLoaders: 3, sourceMap: isDev, camelCase: true } },
             isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            { loader: antdFastScss.loader, options: { ...antdFastScss.options, functions: { [ colorPaletteFunctionSignature ]: colorPaletteFunction } } },
+            antdScssLoader,
         ].filter(Boolean),
     }, {
         test: /\.less$/,
@@ -389,7 +426,7 @@ chain.onToConfig(config => {
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev } },
             isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            { loader: antdLess.loader, options: { ...antdLess.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
+            { loader: antdLessLoader.loader, options: { ...antdLessLoader.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
         ].filter(Boolean),
     } ]);
     config.plugins.push(new AntdScssThemePlugin(AntdScssThemePlugin.SCSS_THEME_PATH));

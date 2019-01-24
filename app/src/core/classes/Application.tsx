@@ -2,29 +2,59 @@ import { Container, interfaces } from 'inversify';
 import { Dispatcher, EventTypes } from './Dispatcher';
 import EventEmitter from 'eventemitter3';
 import { Api } from '@codex/api';
-import { render } from '../utils/render';
-import { IConfig } from '../interfaces';
+import { IConfig } from 'interfaces';
 import { merge } from 'lodash';
 import { config } from '../config';
-import { ComponentType } from 'react';
+import React, { ComponentType } from 'react';
 import { SyncHook } from 'tapable';
-import { Store } from '../stores';
-import { Routes } from '../collections/Routes';
+import { Store } from 'stores';
+import { Routes } from 'collections/Routes';
 
 import { History } from 'history';
-import * as url from '../utils/url';
-import { MenuManager } from '../menus';
+import { MenuManager } from 'menus';
 import { CssVariables } from 'classes/CssVariables';
 import { Breakpoints } from 'utils/breakpoints';
-import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
+import { CookieStorage, LocalStorage, SessionStorage } from 'utils/storage';
+import { RouterProvider } from 'react-router5';
+import { app } from 'ioc';
+import ReactDOM from 'react-dom';
+import { Router } from 'router5';
+import { IUrl, url } from 'classes/Url';
+import { Plugin } from 'classes/Plugin';
+// import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
 
 const log = require('debug')('classes:Application');
 
+type PluginMap = Map<string, Plugin> & {
+    get<P extends Plugin = Plugin>(key: string): P | undefined;
+}
+type PluginMapProxy = PluginMap & Record<string, Plugin>
+
+function createPluginMapProxy<T extends Map<string, Plugin> = Map<string, Plugin>>(target: T): PluginMapProxy {
+    return new Proxy(target as any, {
+        get(target: T, p: PropertyKey, receiver: any): any {
+            let result;
+            let name = p.toString();
+            if ( p in target ) {
+                result = target[ p ];
+            }
+            if ( target.has(name) ) {
+                result = target.get(name);
+            }
+            if ( typeof result === 'function' ) {
+                result = result.bind(target);
+            }
+            log('pluginMap', 'get', name, { target, p, result, receiver });
+            return result;
+        },
+    });
+}
+
 export class Application extends Container {
-    protected plugins: Array<(app: this) => void> = [];
-    protected registered                          = false;
-    protected booted                              = false;
-    protected Component: ComponentType            = null;
+    public readonly plugins: PluginMapProxy = createPluginMapProxy(new Map());
+    protected registered               = false;
+    protected booted                   = false;
+    protected Component: ComponentType = null;
 
     public readonly hooks: {
         register: SyncHook<Application>
@@ -38,11 +68,11 @@ export class Application extends Container {
         booted    : new SyncHook<this>([ 'application' ]),
     };
 
-    get localStorage(): LocalStorage {return this.get('storage.local');}
+    get localStorage(): typeof LocalStorage {return this.get('storage.local');}
 
-    get sessionStorage(): SessionStorage {return this.get('storage.session');}
+    get sessionStorage(): typeof SessionStorage {return this.get('storage.session');}
 
-    get cookieStorage(): CookieStorage {return this.get('storage.cookies');}
+    get cookieStorage(): typeof CookieStorage {return this.get('storage.cookies');}
 
     get cssvars(): CssVariables { return this.get('cssvars');}
 
@@ -58,24 +88,43 @@ export class Application extends Container {
 
     get routes(): Routes { return this.get('routes'); }
 
+    get router(): Router { return this.get('router'); }
+
     get history(): History { return this.get('history'); }
 
     get config(): IConfig { return this.get('config');}
 
     get debug(): boolean { return this.config.debug === true; }
 
-    get url(): typeof url {return url;}
+    get url(): IUrl {return this.get('url');}
 
     constructor(containerOptions: interfaces.ContainerOptions) {
         super(containerOptions);
         this.bind('app').toConstantValue(this);
         this.bind('events').to(Dispatcher).inSingletonScope();
         this.bind('config').toConstantValue(config);
+        this.bind('url').toConstantValue(url);
     }
 
-    use(plugin: (app: this) => void): this {
-        // plugin(this);
-        this.plugins.push(plugin);
+    plugin(plugin: Plugin) {
+        this.plugins.set(plugin.name, plugin);
+        if ( this.registered ) {
+            this.installPlugin(plugin);
+        }
+        return this;
+    }
+
+    protected installPlugin(plugin: Plugin) {
+        if ( plugin.installed === true ) {
+            return this;
+        }
+        plugin.installed = true;
+        plugin.install(this);
+        return this;
+    }
+
+    use(cb: (app: this) => void): this {
+        cb(this);
         return this;
     }
 
@@ -87,11 +136,13 @@ export class Application extends Container {
 
     register(config: Partial<IConfig>): this {
         if ( this.registered ) return this;
-        this.emit('register', this);
-        this.hooks.register.call(this);
+
         this.configure(config);
 
-        this.plugins.forEach(plugin => plugin(this));
+        this.plugins.forEach(plugin => this.installPlugin(plugin));
+
+        this.emit('register', this);
+        this.hooks.register.call(this);
 
         this.registered = true;
         this.emit('registered', this);
@@ -117,7 +168,14 @@ export class Application extends Container {
     }
 
     render(Component?: ComponentType, cb?: () => void): this {
-        render(this.config.rootID, Component || this.Component, cb);
+        Component   = Component || this.Component;
+        const inner = (
+            <RouterProvider router={this.router}>
+                <Component/>
+            </RouterProvider>
+        );
+        const el    = document.getElementById(this.config.rootID);
+        ReactDOM.render(inner, el, cb);
         return this;
     }
 

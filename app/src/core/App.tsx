@@ -2,10 +2,10 @@ import React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Store } from 'stores';
 import { observer } from 'mobx-react';
-import { Routes } from 'collections/Routes';
 import { lazyInject } from 'ioc';
 import { TunnelProvider } from 'components/tunnel';
-import RootNode from 'components/RootNode';
+import RootNode from 'routing/nodes/RootNode';
+import Layout from 'components/layout';
 
 const log = require('debug')('App5');
 
@@ -15,23 +15,19 @@ export interface AppProps {}
 
 
 @observer
-class App5 extends React.Component<AppProps, any> {
+class AppComponent extends React.Component<AppProps, any> {
     @lazyInject('store') store: Store;
-    @lazyInject('routes') routes: Routes;
 
-    static displayName = 'App';
+    static displayName = 'AppComponent';
 
     render() {
         log('render', this.props);
         return (
-            <TunnelProvider>
-                <div>
-                    <RootNode/>
-                </div>
-            </TunnelProvider>
+
+            <RootNode/>
         );
     }
 
 }
 
-export const App = hot(App5);
+export const App = hot(AppComponent);

@@ -51,7 +51,7 @@ class Visitor {
     // __VARIABLES__ {
     //   var-name: @var-name;
     // }
-    const variables = root.variables();
+    const variables = root.lessVariables();
     const rules = Object.keys(variables).map(variable => (
       `${variable.slice(1)}: ${variable};`
     ));

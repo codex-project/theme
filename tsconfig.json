@@ -10,10 +10,13 @@
         ],
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "inlineSourceMap": true
+        "allowSyntheticDefaultImports": true,
+        "inlineSourceMap": true,
+        "jsx": "react"
     },
     "include": [
         "gulpfile.ts",
-        "test.ts"
+        "test.ts",
+        "./build"
     ]
 }

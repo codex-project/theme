@@ -1,7 +1,6 @@
 import './styling/stylesheet.scss';
 
-import { app, App, componentLoader } from '@codex/core';
-import * as url from '@codex/core/utils/url';
+import { app, App } from '@codex/core';
 import React from 'react';
 
 const log = require('debug')('site:index');

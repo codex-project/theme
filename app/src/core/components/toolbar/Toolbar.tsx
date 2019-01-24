@@ -6,8 +6,8 @@ import { Col, ColProps, Row } from 'antd/lib/grid';
 import { classes } from 'typestyle';
 import { strEnsureLeft } from 'utils/general';
 import { Tunnel, TunnelPlaceholder } from 'components/tunnel';
-
 import './toolbar.scss';
+
 
 export type ToolbarSize = 'small' | 'default' | 'large';
 
@@ -15,6 +15,8 @@ export interface ToolbarProps {
     className?: string
     style?: React.CSSProperties
     size?: ToolbarSize
+    left?: React.ReactNode
+    right?: React.ReactNode
 }
 
 const prefixCls  = 'c-toolbar';
@@ -41,7 +43,7 @@ export class Toolbar extends React.Component<ToolbarProps> {
     static Item: typeof Item                   = Item;
 
     render() {
-        let { children, className, style, size } = this.props;
+        let { children, className, style, size, left, right } = this.props;
 
         return (
             <Row
@@ -52,13 +54,15 @@ export class Toolbar extends React.Component<ToolbarProps> {
                 style={style}
             >
                 <Column>
-                    <TunnelPlaceholder id="toolbar-left" delay={1500} multiple/>
+                    {left ? left : <TunnelPlaceholder id="toolbar-left" delay={1500} multiple/>}
                 </Column>
                 <Spacer/>
                 <Column>
-                    <TunnelPlaceholder id="toolbar-right" delay={1500} multiple/>
+                    {right ? right : <TunnelPlaceholder id="toolbar-right" delay={1500} multiple/>}
                 </Column>
             </Row>
         );
     }
 }
+
+export default Toolbar;

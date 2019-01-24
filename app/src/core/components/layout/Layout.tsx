@@ -11,7 +11,7 @@ import { Routes } from 'collections/Routes';
 import { LayoutHeader } from 'components/layout/LayoutHeader';
 import { LayoutFooter } from 'components/layout/LayoutFooter';
 import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
-import { Toolbar } from 'components/toolbar/Toolbar';
+import { Toolbar } from 'components/toolbar';
 import posed from 'react-pose';
 import { Affix } from 'components/affix';
 import { TunnelPlaceholder } from 'components/tunnel';
@@ -33,7 +33,7 @@ const ToolbarContainer = posed.div({
     },
 });
 
-export interface LayProps {
+export interface LayoutProps {
     left?: React.ReactNode
     right?: React.ReactNode
     header?: React.ReactNode
@@ -43,9 +43,9 @@ export interface LayProps {
 
 @hot(module)
 @observer
-export class Layout extends React.Component<LayProps> {
+export class Layout extends React.Component<LayoutProps> {
     static displayName                           = 'Layout';
-    static defaultProps: Partial<LayProps>       = { left: null, right: null, header: null, footer: null, content: null };
+    static defaultProps: Partial<LayoutProps>    = { left: null, right: null, header: null, footer: null, content: null };
     static Header: typeof LayoutHeader           = LayoutHeader;
     static Footer: typeof LayoutFooter           = LayoutFooter;
     static Side: typeof LayoutSide               = LayoutSide;
@@ -53,7 +53,6 @@ export class Layout extends React.Component<LayProps> {
 
     @lazyInject('store.layout') layout: LayoutStore;
     @lazyInject('store') store: Store;
-    @lazyInject('routes') routes: Routes;
 
     toolbarContainerRef: RefObject<HTMLDivElement> = React.createRef();
 
@@ -126,3 +125,4 @@ export class Layout extends React.Component<LayProps> {
     }
 
 }
+export default Layout

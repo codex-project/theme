@@ -8,14 +8,16 @@ import './styling/stylesheet.scss';
 import './init';
 import './utils/zepto';
 
-import { app, lazyInject } from './ioc';
-import * as url from './utils/url';
+import { app, lazyInject } from 'ioc';
 
-export * from './interfaces';
+export * from 'interfaces';
 
 export * from './classes/Dispatcher';
 export * from './classes/Application';
 export * from './classes/HtmlComponents';
+export * from './classes/Url';
+export * from './classes/CssVariables';
+export * from './classes/ApiLocalStorageCache';
 export * from './collections/Collection';
 export * from './collections/DictionaryWrapper';
 export * from './collections/ArrayUtils';
@@ -35,8 +37,7 @@ export * from './utils/scroll';
 export * from './utils/scrollTo';
 export * from './utils/storage';
 
-
-export { app, lazyInject, url };
+export { app, lazyInject };
 
 // if ( module.hot ) {
 //     module.hot.accept('./components/App', () => {

@@ -130,4 +130,4 @@ class AppComponent extends React.Component<AppProps & WithRouterProps, any> {
     }
 }
 
-export const App = hot(module)(AppComponent);
+// export const App = hot(module)(AppComponent);

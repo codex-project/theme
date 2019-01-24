@@ -3,7 +3,7 @@ import { lazyInject } from '../../ioc';
 import { Store } from '../../stores';
 import React from 'react';
 import { Omit } from '../../interfaces';
-import { documentation } from 'utils/url';
+import { url } from 'classes/Url';
 import { hot } from 'decorators';
 import ErrorPage from 'pages/ErrorPage';
 
@@ -21,10 +21,12 @@ export interface ForwardToDocumentProps extends RouteComponentProps<ForwardToDoc
 
 }
 
+
 interface State {
     params: { project?: string, revision?: string, document?: string },
     error?: Error
 }
+
 
 @hot(module)
 export class ForwardToDocument extends React.PureComponent<ForwardToDocumentProps> {
@@ -73,7 +75,7 @@ export class ForwardToDocument extends React.PureComponent<ForwardToDocumentProp
         if ( ! this.state.params ) return null;
         let { location, history, staticContext, match, redirect, children } = this.props;
         let { project, revision, document }                                 = this.state.params;
-        let to                                                              = documentation(`${project}/${revision}/${document}`);
+        let to                                                              = url.documentation(`${project}/${revision}/${document}`);
 
         log('Forward render', { state: this.state, location: history.location });
         if ( history.location.pathname === to ) return null;

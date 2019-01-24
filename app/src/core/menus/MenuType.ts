@@ -3,7 +3,7 @@ import { Application } from '../classes/Application';
 import { app } from '../ioc';
 import { MenuItem } from '@codex/api';
 import { MenuItems } from './MenuItems';
-import { Hook, SyncBailHook, SyncHook, SyncWaterfallHook } from 'tapable';
+import { SyncBailHook, SyncHook, SyncWaterfallHook } from 'tapable';
 
 export type MenuTypeHooks<T> = {
     pre: SyncWaterfallHook<MenuItem>,
@@ -16,7 +16,7 @@ export type MenuTypeHooks<T> = {
 export abstract class MenuType implements IMenuType {
     name = this.constructor.name;
 
-    public static makeHooks<T extends Record<string, any>>(hooks?: T): MenuTypeHooks<T>{
+    public static makeHooks<T extends Record<string, any>>(hooks?: T): MenuTypeHooks<T> {
         hooks         = hooks || {} as any;
         hooks.pre     = new SyncHook<MenuItem>([ 'item' ]);
         hooks.post    = new SyncHook<MenuItem>([ 'item' ]);
@@ -29,7 +29,11 @@ export abstract class MenuType implements IMenuType {
 
     get app(): Application { return app; }
 
-    abstract test(item: MenuItem): boolean
+    abstract test(item: MenuItem, stage: IMenuTypeStage): boolean
+
+    defaults(item: MenuItem, parent?: MenuItem) {
+        return item;
+    }
 
     handle(item: MenuItem, event: any, items: MenuItems) {
 
@@ -48,13 +52,17 @@ export abstract class MenuType implements IMenuType {
     }
 }
 
+export type IMenuTypeStage = 'defaults' | 'pre' | 'post' | 'boot' | 'handle';
+
 export interface IMenuType {
     name: string
     hooks: MenuTypeHooks<{}>
 
-    test(item: MenuItem): boolean
+    test(item: MenuItem, stage: IMenuTypeStage): boolean
 
     handle(item: MenuItem, event: any, items: MenuItems): void | any
+
+    defaults(item: MenuItem, parent?: MenuItem): MenuItem
 
     pre(item: MenuItem): MenuItem
 

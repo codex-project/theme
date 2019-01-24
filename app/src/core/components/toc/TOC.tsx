@@ -5,7 +5,6 @@ import { Drawer, Popover } from 'antd';
 import { Toolbar } from 'components/toolbar';
 import { Button } from 'components/button';
 
-import './toc.scss';
 
 const log = require('debug')('components:TOC');
 

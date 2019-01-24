@@ -32,3 +32,4 @@ export class LayoutFooter extends React.Component<LayoutFooterProps> {
         );
     }
 }
+export default LayoutFooter

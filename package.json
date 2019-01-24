@@ -12,8 +12,8 @@
             "app"
         ],
         "nohoist": [
-            "@codex/site/lodash",
-            "@codex/site/lodash-es"
+            "@codex/app/lodash",
+            "@codex/app/lodash-es"
         ]
     },
     "resolutions": {

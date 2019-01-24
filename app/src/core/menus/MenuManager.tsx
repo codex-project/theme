@@ -5,28 +5,53 @@ import { ArrayUtils } from '../collections/ArrayUtils';
 import { Config } from '../classes/Config';
 import { MenuItems } from './MenuItems';
 import { SyncBailHook, SyncWaterfallHook } from 'tapable';
-import { IMenuType, IMenuTypeConstructor } from './MenuType';
+import { IMenuType, IMenuTypeConstructor, IMenuTypeStage } from './MenuType';
 import { MenuItem } from './MenuItem';
-import { toJS, transaction } from 'mobx';
+import { toJS } from 'mobx';
 
 const log = require('debug')('classes:MenuManager');
 
 @injectable()
 export class MenuManager {
     public readonly hooks = {
-        defaults: new SyncWaterfallHook<MenuItem, MenuItem | undefined>([ 'item', 'parent' ]),
-        pre     : new SyncWaterfallHook<MenuItem>([ 'item' ]),
-        post    : new SyncWaterfallHook<MenuItem>([ 'item' ]),
+        // defaults: new SyncWaterfallHook<MenuItem, MenuItem | undefined>([ 'item', 'parent' ]),
+        // pre     : new SyncWaterfallHook<MenuItem>([ 'item' ]),
+        // post    : new SyncWaterfallHook<MenuItem>([ 'item' ]),
         handle  : new SyncBailHook<MenuItem, any, MenuItems>([ 'item', 'event', 'items' ]),
     };
 
     public readonly types = new Map<string, IMenuType>();
 
-    callDefaults(item: MenuItem, parent?: MenuItem): MenuItem { return this.hooks.defaults.call(item, parent); }
+    // callDefaults(item: MenuItem, parent?: MenuItem): MenuItem { return this.hooks.defaults.call(item, parent); }
+    // callPre(item: MenuItem): MenuItem { return this.hooks.pre.call(item); }
+    // callPost(item: MenuItem): MenuItem { return this.hooks.post.call(item); }
 
-    callPre(item: MenuItem): MenuItem { return this.hooks.pre.call(item); }
+    callDefaults(item: MenuItem, parent?: MenuItem): MenuItem {
+        this.types.forEach(type => {
+            if ( type.test(item,'defaults') ) {
+                item = type.defaults(item, parent);
+            }
+        });
+        return item;
+    }
 
-    callPost(item: MenuItem): MenuItem { return this.hooks.post.call(item); }
+    callPre(item: MenuItem): MenuItem {
+        this.types.forEach(type => {
+            if ( type.test(item, 'pre') ) {
+                item = type.pre(item);
+            }
+        });
+        return item;
+    }
+
+    callPost(item: MenuItem): MenuItem {
+        this.types.forEach(type => {
+            if ( type.test(item, 'post') ) {
+                item = type.post(item);
+            }
+        });
+        return item;
+    }
 
     defaults(items: MenuItem[], parent?: MenuItem): MenuItem[] { return ArrayUtils.mapItems(items, (item, _parent) => this.callDefaults(item, _parent || parent));}
 
@@ -51,20 +76,20 @@ export class MenuManager {
     registerType(Type: IMenuTypeConstructor) {
         const type = app.resolve<IMenuType>(Type);
         this.types.set(type.name, type);
-        this.hooks.pre.tap(type.name, item => {
-            if ( type.test(item) ) {
-                item = type.pre(item); //type.hooks.pre.call(type.pre(item));
-            }
-            return item;
-        });
-        this.hooks.post.tap(type.name, item => {
-            if ( type.test(item) ) {
-                item = type.post(item); //type.hooks.post.call(type.post(item));
-            }
-            return item;
-        });
+        // this.hooks.pre.tap(type.name, item => {
+        //     if ( type.test(item) ) {
+        //         item = type.pre(item); //type.hooks.pre.call(type.pre(item));
+        //     }
+        //     return item;
+        // });
+        // this.hooks.post.tap(type.name, item => {
+        //     if ( type.test(item) ) {
+        //         item = type.post(item); //type.hooks.post.call(type.post(item));
+        //     }
+        //     return item;
+        // });
         this.hooks.handle.tap(type.name, (item, event, items) => {
-            if ( type.test(item) ) {
+            if ( type.test(item, 'handle') ) {
                 log('handle', type.name, { item, event, items });
                 // type.hooks.handle.call(item, event, items);
                 let handled = type.handle(item, event, items);
@@ -78,8 +103,8 @@ export class MenuManager {
 
     public getType<T extends IMenuType>(name: string): T {return this.types.get(name) as T; }
 
-    protected getTypes(item: MenuItem): IMenuType[] {
-        return Array.from(this.types.values()).filter((type, name) => type.test(item));
+    protected getTypes(item: MenuItem, stage:IMenuTypeStage): IMenuType[] {
+        return Array.from(this.types.values()).filter((type, name) => type.test(item,stage));
     }
 
     compile(item: MenuItem): MenuItem {

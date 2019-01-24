@@ -1,11 +1,10 @@
-import { ArrayUtils } from '../collections/ArrayUtils';
+import { ArrayUtils } from 'collections/ArrayUtils';
 import * as React from 'react';
-import { lazyInject } from '../ioc';
-import { MenuManager } from '../menus/MenuManager';
+import { lazyInject } from 'ioc';
+import { MenuManager } from 'menus';
 import { api } from '@codex/api';
-import * as  menus from '../utils/menus';
+import { toPath } from 'utils/menus';
 import { transaction } from 'mobx';
-import { SyncHook } from 'tapable';
 
 export type IMenuItemItems<T> = string | string[] | T | T[]
 
@@ -136,7 +135,13 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     }
 
     findActiveFromRoute() {
-        return menus.getActiveFromRoutePath(this) as T | undefined;
+
+        let current = null; //app.get<Routes>('routes').history.location.pathname;
+        if ( ! current ) return;
+        let active = this.rfind(item => {
+            return current === toPath(item);
+        });
+        return active;
     }
 
     selectActiveFromRoute(expandParents: boolean = false, collapseOthers: boolean = false) {

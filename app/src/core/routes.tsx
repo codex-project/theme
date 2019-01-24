@@ -1,111 +1,92 @@
+import { url } from 'classes/Url';
+import { action } from 'mobx';
+import DocumentationNode from 'routing/nodes/DocumentationNode';
 import React from 'react';
-import { componentLoader } from './utils/componentLoader';
-import { Routes } from './collections/Routes';
-import { ForwardToDocument } from './components/documents';
-import * as url from './utils/url';
+import { BaseRoute } from 'routing/BaseRoute';
+import HomePage from 'pages/HomePage';
 import { app } from 'ioc';
-import ErrorPage from 'pages/ErrorPage';
 
-const log    = require('debug')('config:routes');
-const routes = new Routes();
+const log = require('debug')('routes');
 
+export class HomeRoute extends BaseRoute {
+    public static id = 'home';
 
-routes.addRoutes(
-    {
-        name     : 'about',
-        path     : url.root('/about'),
-        exact    : true,
-        component: componentLoader(
-            () => import(/* webpackChunkName: "pages.about" */'./pages/AboutPage'),
-            (loaded, props) => <loaded.default {...props} />,
-            { delay: 1500 },
-        ),
-    },
-    {
-        name     : 'home',
-        path     : url.root(),
-        exact    : true,
-        component: componentLoader(() => import(/* webpackChunkName: "pages.home" */'./pages/HomePage'), undefined, { delay: 1500 }),
-    },
-    {
-        name  : 'documentation',
-        path  : url.documentation(),
-        exact : true,
-        render: props => <ForwardToDocument {...props}/>,
-    }, {
-        name  : 'documentation.project',
-        path  : url.documentation(':project'),
-        exact : true,
-        render: props => <ForwardToDocument {...props}/>,
-    }, {
-        name  : 'documentation.revision',
-        path  : url.documentation(':project/:revision'),
-        exact : true,
-        render: props => <ForwardToDocument {...props}/>,
-    }, {
-        name  : 'documentation.document',
-        path  : url.documentation(':project/:revision/:document+'),
-        exact : true,
-        // loadComponent: async () => (await import(/* webpackChunkName: "pages.document" */'./pages/DocumentPage')).default,
-        // onActivate: async props => {
-        //     const { project, revision, document } = props.match.params;
-        //     try {
-        //         await app.store.fetchDocument(project, revision, document);
-        //         // log('documentation.document loader.document', { project, revision, document });
-        //         console.groupCollapsed('documentation.document loader.document', {project,revision,document});
-        //         console.trace('documentation.document loader.document', {project,revision,document});
-        //         console.groupEnd();
-        //         return {
-        //             error   : false,
-        //             document: app.store.document,
-        //         };
-        //     } catch ( error ) {
-        //         log('ERROR documentation.document loader.document', error, { project, revision, document });
-        //         return { error };
-        //     }
-        // },
-        // render: (props, Component, data) => {
-        //     if(data && data.error){
-        //         return <ErrorPage error={data.error}/>
-        //     }
-        //     return <Component document={data.document} />
-        // },
-        render: routeProps => React.createElement(componentLoader(
-            {
-                Component: async () => (await import(/* webpackChunkName: "pages.document" */'./pages/DocumentPage')).default,
-                document : async () => {
-                    const { project, revision, document } = routeProps.match.params;
-                    try {
-                        await app.store.fetchDocument(project, revision, document);
-                        // log('documentation.document loader.document', { project, revision, document });
-                        console.groupCollapsed('documentation.document loader.document', {project,revision,document});
-                        console.trace('documentation.document loader.document', {project,revision,document});
-                        console.groupEnd();
-                        return {
-                            error   : false,
-                            document: app.store.document,
-                        };
-                    } catch ( error ) {
-                        log('ERROR documentation.document loader.document', error, { project, revision, document });
-                        return { error };
-                    }
-                },
-            },
-            (loaded, props) => {
-                const Component           = loaded.Component
-                const { error, document } = loaded.document;
-                log('documentation.document render', { Component, error, document });
-                if ( error ) {
-                    return <ErrorPage error={error}/>;
-                }
-                return <Component document={document}/>;
-            },
-            {
-                delay: 1500,
-            }),
-        ),
-    },
-);
+    path = url.root();
+
+    public async onActivate(toState, fromState): Promise<any> {
+        log('home onActivate', { toState, fromState });
+        let promise = new Promise((resolve, reject) => setTimeout(resolve, 500));
+        let result  = await promise;
+        log('home onActivate done', { toState, fromState, result, promise });
+    }
+
+    component = () => <HomePage/>;
+}
 
 
-export { routes };
+export class DocumentationRoute extends BaseRoute {
+    public static id = 'documentation';
+
+    path = url.documentation();
+
+    @action
+    async onActivate(toState, fromState): Promise<any> {
+        log('documentation onActivate', { toState, fromState });
+        let promise = new Promise((resolve, reject) => setTimeout(resolve, 500));
+        let result  = await promise;
+        log('documentation onActivate done', { toState, fromState, result, promise });
+    }
+
+    component = DocumentationNode;
+
+    public async forward(toState, fromState): Promise<any> {
+        return {
+            name  : 'documentation.project',
+            params: { project: app.store.codex.default_project },
+        };
+    }
+}
+
+
+export class DocumentationProjectRoute extends BaseRoute {
+    public static id = 'documentation.project';
+
+    path      = url.documentation(':project');
+    component = DocumentationNode;
+
+    public async forward(toState, fromState): Promise<any> {
+        const { project } = toState.params;
+        if ( ! app.store.hasProject(project) ) {
+            throw new Error(`Project ${project} does not exist`);
+        }
+
+        return {
+            name  : 'documentation.revision',
+            params: { project, revision: app.store.getProject(project).default_revision },
+        };
+    }
+}
+
+
+export class DocumentationRevisionRoute extends BaseRoute {
+    public static id = 'documentation.revision';
+
+    path      = url.documentation(':project/:revision');
+    component = DocumentationNode;
+
+    public async forward(toState, fromState): Promise<any> {
+        const { project, revision } = toState.params;
+        if ( ! app.store.hasProject(project) ) {
+            throw new Error(`Project ${project} does not exist`);
+        }
+        if ( ! app.store.hasRevision(project, revision) ) {
+            throw new Error(`Revision ${revision} does not exist`);
+        }
+
+        return {
+            name  : 'documentation.document',
+            params: { project, revision, document: app.store.getRevision(project, revision).default_document },
+        };
+    }
+}
+

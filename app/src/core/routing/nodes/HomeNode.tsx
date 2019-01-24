@@ -13,7 +13,7 @@ export interface HomeNodeProps {}
 
 
 @observer
-class HomeNode extends React.Component<HomeNodeProps & RouterState, any> {
+export default class HomeNode extends React.Component<HomeNodeProps & RouterState, any> {
     @lazyInject('store') store: Store;
 
     static displayName = 'HomeNode';
@@ -29,4 +29,4 @@ class HomeNode extends React.Component<HomeNodeProps & RouterState, any> {
 }
 
 
-export default routeNode('home')(HomeNode);
+// export default routeNode('home')(HomeNode);

@@ -6,9 +6,11 @@ import { Chain } from './build/chain';
 import { relative } from 'path';
 import { getFileSizeInfo } from '@radic/build-tools/dist/utils';
 import { readFileSync } from 'fs';
-
+import SMP from 'speed-measure-webpack-plugin'
 const chalk = require('chalk').default;
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
+
+const smp = new SMP()
 
 interface Gulpfile extends GulpEnvMixin {}
 
@@ -136,7 +138,13 @@ class Gulpfile {
             .inline(true)
             .progress(true)
             .quiet(true)
-            .stats('errors-only')
+            .stats({
+                ...chain.get('stats'),
+                // errors-only preset
+                all        : false,
+                errors     : true,
+                moduleTrace: true,
+            })
             .host(host)
             .port(port)
             .headers({ 'Access-Control-Allow-Origin': '*' })
@@ -153,7 +161,7 @@ class Gulpfile {
 
         console.log('Starting dev-server @ ', url);
 
-        const config           = chain.toConfig();
+        let config           = chain.toConfig();
         config.devServer.proxy = {
             '/api': {
                 target             : 'http://codex.local',
@@ -171,6 +179,7 @@ class Gulpfile {
             },
         };
         WebpackDevServer.addDevServerEntrypoints(config, config.devServer);
+        config = smp.wrap(config) as any
         const compiler = webpack(config);
         const server   = new WebpackDevServer(compiler, config.devServer);
 

@@ -19,7 +19,7 @@ const { SubMenu, Item, Divider } = AntdMenu;
 export type MenuExpandBehaviourType = 'single-root' | 'multi-root'
 export type MenuSelectBehaviourType = 'single' | 'multi'
 
-export interface DynamicMenuProps {
+export interface DynamicMenuBaseProps {
     items: MenuItems
     // iconStyle?: React.CSSProperties
     // fontSize?: number | string
@@ -33,16 +33,18 @@ interface State {
     openKeys: string[]
 }
 
-export type MenuItemRendererProps = DynamicMenuProps & {
+export type MenuItemRendererProps = DynamicMenuBaseProps & {
     [ key: string ]: any
     item: MenuItem
 }
 
+export type DynamicMenuProps = DynamicMenuBaseProps & AntdMenuProps
+
 @hot(module)
 @observer
-export class DynamicMenu extends React.Component<DynamicMenuProps & AntdMenuProps, State> {
+export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
     static displayName                                                        = 'DynamicMenu';
-    static defaultProps: Partial<DynamicMenuProps & AntdMenuProps>            = {
+    static defaultProps: Partial<DynamicMenuBaseProps & AntdMenuProps>        = {
         prefixCls          : 'c-dmenu',
         mode               : 'horizontal',
         multiroot          : false,
@@ -167,3 +169,4 @@ export function MenuItemRenderer(name: string) {
         return TargetComponent;
     };
 }
+export default DynamicMenu

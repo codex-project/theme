@@ -1,5 +1,5 @@
 import { MenuItem } from '../MenuItem';
-import * as url from '../../utils/url';
+import { url } from 'classes/Url';
 import { MenuType } from '../MenuType';
 import { toJS } from 'mobx';
 import { SideMenuType } from 'menus/types/SideMenuType';

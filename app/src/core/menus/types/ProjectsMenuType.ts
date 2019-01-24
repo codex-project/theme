@@ -1,6 +1,7 @@
 import { MenuItem } from '../MenuItem';
 import { MenuItems, MenuType } from '../../menus';
-import * as url from '../../utils/url';
+
+import { url } from 'classes/Url';
 import { SideMenuType } from './SideMenuType';
 import { toJS } from 'mobx';
 

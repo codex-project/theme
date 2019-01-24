@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { lazyInject } from 'ioc';
 import { Store } from 'stores';
 import { observer } from 'mobx-react';
 import { hot } from 'decorators';
-import {  Layout } from 'antd';
+import { Layout } from 'antd';
 import { DynamicMenu } from '../dynamic-menu';
 import { observe } from 'mobx';
 import { LayoutStoreSide } from 'stores/LayoutStore';
@@ -54,7 +54,8 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
     }
 
     render() {
-        let side = this.store.layout[ this.props.side ];
+        let { children } = this.props;
+        let side         = this.store.layout[ this.props.side ];
 
         let className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
 
@@ -77,20 +78,26 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                 collapsedWidth={side.collapsedWidth}
                 trigger={null}
             >
-                <Affix enabled={side.fixed} style={{ height: '100%', backgroundColor: getColor(side.color) }}>
-                    {/*{siderToggle}*/}
-                    <DynamicMenu
-                        className={className('side-menu')}
-                        items={side.menu}
-                        subMenuCloseDelay={side.collapsed ? 0.2 : 1}
-                        mode="inline"
-                        inlineCollapsed={side.collapsed}
-                        inlineIndent={15}
-                        color={side.color}
-                    />
-                </Affix>
+                {
+                    children ?
+                    children :
+                    <Affix enabled={side.fixed} style={{ height: '100%', backgroundColor: getColor(side.color) }}>
+                        {/*{siderToggle}*/}
+                        <DynamicMenu
+                            className={className('side-menu')}
+                            items={side.menu}
+                            subMenuCloseDelay={side.collapsed ? 0.2 : 1}
+                            mode="inline"
+                            inlineCollapsed={side.collapsed}
+                            inlineIndent={15}
+                            color={side.color}
+                        />
+                    </Affix>
+                }
             </Sider>
 
         );
     }
 }
+
+export default LayoutSide;

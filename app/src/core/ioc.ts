@@ -1,4 +1,4 @@
-import { Application } from './classes/Application';
+import { Application } from 'classes/Application';
 import createInjectDecorators from 'inversify-inject-decorators';
 import { decorate, injectable } from 'inversify';
 
