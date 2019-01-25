@@ -1,21 +1,25 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import { RouteComponentProps } from 'react-router';
+import { RouteState } from './routes';
 
 const log = require('debug')('router:HomePage');
 
-export interface HomePageProps {}
+export interface HomePageProps {
+    routeState: RouteState
+    home?:string
+}
 
-@observer
-export class HomePage extends Component<HomePageProps> {
+export class HomePage extends Component<HomePageProps & RouteComponentProps> {
     static displayName                          = 'HomePage';
     static defaultProps: Partial<HomePageProps> = {};
 
     render() {
-        const { children, ...props } = this.props;
+        const { children,home, ...props } = this.props;
         log('render', this);
         return (
             <div>
                 <h2>HomePage</h2>
+                <p>home: {home}</p>
                 {children}
             </div>
         );

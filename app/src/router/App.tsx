@@ -1,9 +1,9 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { generatePath, Link, Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
-import { RouteDefinition, routes } from './routes';
+import { generatePath, Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import { routeMap } from './routeMap';
 import { hot } from 'react-hot-loader/root';
-import { RenderRoute } from './RenderRoute';
+import {Routes} from './Routes';
 
 const log = require('debug')('router:App');
 
@@ -25,63 +25,13 @@ class AppComponent extends React.Component<AppProps & RouteComponentProps, any> 
                 <h3>App</h3>
                 <div>{this.renderLinks()}</div>
                 <div key={location.key}>
-                    <Switch location={location}>
-                        {routes.map((route, i) => {
-
-                            return (
-                                <Route
-                                    key={i}
-                                    path={route.path}
-                                    render={props => this.renderRoute(props, route)}
-                                    // component={route.component}
-                                    exact={route.exact}
-                                    // location={route.location}
-                                    sensitive={true}
-                                    // strict={route.strict}
-                                />
-                            );
-                        })}
-                    </Switch>
+                    <Routes routes={routeMap}/>
                 </div>
             </div>
         );
     }
 
-    renderRoute(props: RouteComponentProps, definition: RouteDefinition) {
-        log('renderRoute', definition.name, props, definition);
-        let routeState = RenderRoute.makeRouteState(props, definition);
-        return (
-            <RenderRoute routeState={routeState} definition={definition}>
-                {loaded => {
-                    let componentProps: any;
-                    let Component;
-                    if ( loaded.loadComponent ) {
-                        Component = loaded.loadComponent;
-                    } else if ( definition.component ) {
-                        Component = definition.component;
-                    }
-                    if ( loaded.loadData && definition.render ) {
-                        return definition.render(loaded.loadData);
-                    }
-                    if ( loaded.loadData && Component ) {
-                        return <Component {...props} routeState={routeState} {...loaded.loadData}/>;
-                    }
-                    if ( loaded.forward ) {
-                        return <Redirect to={loaded.forward}/>;
-                    }
-                    if ( Component ) {
-                        return <Component {...props} routeState={routeState} {...loaded || {}} />;
-                    }
-                    log('loaded render nothing')
-                    return null;
-                }}
-            </RenderRoute>
-        );
-    }
-
     renderLinks() {
-        const routeMap = new Map();
-        routes.forEach(route => routeMap.set(route.name, route));
 
         const linkData                       = [
             'home',

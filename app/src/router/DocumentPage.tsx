@@ -1,26 +1,26 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
-import { RouteLoadedComponentProps } from './routes';
+import { RouteComponentProps } from 'react-router';
+import { RouteState } from './routes';
 
 const log = require('debug')('router:DocumentPage');
-export interface DocumentPageProps extends RouteLoadedComponentProps<{}> {
 
+export interface DocumentPageProps {
+    routeState: RouteState
+    document: any
 }
 
-@observer
-export class DocumentPage extends Component<DocumentPageProps> {
-    static displayName                          = 'DocumentPage';
-    static defaultProps: Partial<DocumentPageProps> = {
-
-    };
+export class DocumentPage extends Component<DocumentPageProps & RouteComponentProps> {
+    static displayName                              = 'DocumentPage';
+    static defaultProps: Partial<DocumentPageProps> = {};
 
     render() {
-        const { children, ...props } = this.props;
-        log('render', this)
+        const { children, document, ...props } = this.props;
+        log('render', this);
         return (
             <div>
                 <h2>DocumentPage</h2>
-                {children}
+                <h3>{document.title}</h3>
+                <p>document:{document.key}</p>
             </div>
         );
     }
