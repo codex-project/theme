@@ -89,6 +89,7 @@
     "devDependencies": {
         "@radic/build-tools": "^1.2.0",
         "@radic/build-tools-gulp": "^1.1.0",
+        "@types/async": "^2.4.0",
         "@types/babel-core": "^6.25.5",
         "@types/chai": "^4.1.7",
         "@types/clean-webpack-plugin": "^0.1.2",

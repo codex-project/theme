@@ -26,57 +26,6 @@ class Gulpfile {
         reportFileSizes(chain.outPath('js/*.js'));
     }
 
-    @Task('dev:dll')
-    async devDll() {
-        this.dev();
-        const { chain } = require('./webpack.config');
-        chain.plugins
-            .delete('copy')
-            .delete('clean')
-            .delete('write-file')
-            .delete('html');
-        chain.entryPoints.clear();
-        chain.entry('library').merge([
-            'antd',
-            'jquery',
-            'lodash',
-            'react',
-            'react-dom',
-            'rc-trigger',
-            'rc-menu',
-            'react-motion',
-            'react-helmet',
-            'hammerjs',
-            'entities',
-            'react-pose',
-            'lodash-decorators',
-            'core-js',
-            'react-dom',
-            'inversify',
-            'mobx',
-            'mobx-react',
-            'react-html-parser',
-            'react-loadable',
-            'csstips',
-            'inspire-tree',
-            'purched-antd-icons',
-            'typestyle',
-            'typestyled-components',
-            'react-hammerjs',
-            'semantic-ui-react',
-        ]);
-        chain.plugin('dll').use(webpack.DllPlugin, [ <webpack.DllPlugin.Options>{
-            name: '[name]',
-            path: './dev/library.json',
-        } ]);
-        chain.output
-            .filename('[name].js')
-            .path(chain.outPath());
-        chain.set('optimization', {});
-
-        await this.build(chain);
-    }
-
     @Task('dev:watch')
     async devWatch() {
         this.dev();
@@ -89,12 +38,6 @@ class Gulpfile {
     async devServe() {
         this.dev();
         const { chain, addAnalyzerPlugins, addHMR } = require('./webpack.config');
-        // chain.plugin('dll-ref').use(webpack.DllReferencePlugin, [ <webpack.DllReferencePlugin.Options>{
-        //     context : __dirname,
-        //     manifest: require('./dev/library.json'),
-        //     sourceType: 'window'
-        // } ]);
-        // addAnalyzerPlugins(chain);
         addHMR(chain, true);
         return this.serve(chain);
     }
@@ -134,7 +77,7 @@ class Gulpfile {
             .historyApiFallback({
                 disableDotRule: true,
             })
-            .hotOnly(true)
+            .hot(true)
             .inline(true)
             .progress(true)
             .quiet(true)

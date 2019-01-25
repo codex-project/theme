@@ -428,15 +428,16 @@ addBabelToRule(chain, 'vendor-js', {
     ],
 });
 addPackage(chain, 'api', '@codex/api');
+addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.ts');
 addPluginEntry(chain, 'site', chain.srcPath('site'), 'entry.ts');
-addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.ts');
-chain.resolve.modules.add(chain.srcPath('core'));
-chain.resolve.alias.merge({
-    'heading'            : chain.srcPath('core/styling/heading.less'),
-    '../../theme.config$': chain.srcPath('core/styling/theme.config'),
-    './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
-});
-addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.ts');
+// addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.ts');
+// chain.resolve.modules.add(chain.srcPath('core'));
+// chain.resolve.alias.merge({
+//     'heading'            : chain.srcPath('core/styling/heading.less'),
+//     '../../theme.config$': chain.srcPath('core/styling/theme.config'),
+//     './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
+// });
+// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.ts');
 //endregion
 
 

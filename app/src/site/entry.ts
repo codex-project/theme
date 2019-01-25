@@ -33,10 +33,10 @@ export async function loadPolyfills() {
 }
 
 
-export async function loadApp(config) {
-    await loadPolyfills();
-    let core = await import(/* webpackChunkName: "site.index" */'@codex/core');
-    core.app.Component = core.App;
-    await core.app.register(config);
-    return core;
-}
+// export async function loadApp(config) {
+//     await loadPolyfills();
+//     let core = await import(/* webpackChunkName: "site.index" */'@codex/core');
+//     core.app.Component = core.App;
+//     await core.app.register(config);
+//     return core;
+// }

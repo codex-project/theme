@@ -1,0 +1,13 @@
+{
+    "extends": "../../tsconfig.webpack.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+
+        }
+    },
+    "include": [
+        "*",
+        "**/*"
+    ]
+}

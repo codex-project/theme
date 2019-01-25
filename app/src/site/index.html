@@ -39,6 +39,9 @@
 <script>
     (function () {
         var codex = window['codex'];
+        codex.router.render();
+        return;
+        var codex = window['codex'];
         codex.site.loadApp(function (app) {
             app.plugin(codex.phpdoc.default)
             return app.register({
