@@ -1,5 +1,5 @@
-import { MenuItem } from '../MenuItem';
 import { MenuType } from '../MenuType';
+import { MenuItem } from '@codex/api';
 
 export class DocumentMenuType extends MenuType {
     name = 'document';

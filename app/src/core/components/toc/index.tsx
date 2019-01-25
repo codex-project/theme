@@ -1,5 +1,5 @@
 import React from 'react';
-import { componentLoader } from 'utils/componentLoader';
+import { componentLoader } from 'utils/componentLoader'
 
 
 export const TOC = componentLoader(

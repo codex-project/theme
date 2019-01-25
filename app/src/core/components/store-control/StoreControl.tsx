@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { app } from 'ioc';
+
 import { hot } from 'decorators';
+import { app } from 'ioc';
 import { observer } from 'mobx-react';
-import { OffCanvas, Position, PositionHelper } from 'components/off-canvas';
+import { OffCanvas, Position, PositionHelper } from '../off-canvas';
 import { Checkbox, Collapse, Form, Input, InputNumber, Select, Tree } from 'antd';
 import { get } from 'lodash';
 import { observable } from 'mobx';

@@ -1,8 +1,9 @@
 import React from 'react';
-import { hot } from 'decorators';
-import { strEnsureLeft } from 'utils/general';
+
 import { classes } from 'typestyle';
 import { FontAwesomeIcon } from 'interfaces';
+import { hot } from 'decorators';
+import { strEnsureLeft } from 'utils/general';
 
 const log = require('debug')('components:Icon');
 

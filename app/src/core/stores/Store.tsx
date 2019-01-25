@@ -9,9 +9,9 @@ import { app, lazyInject } from '../ioc';
 import { Api, api } from '@codex/api';
 import { Breadcrumb } from '../interfaces';
 import { HelmetProps } from 'react-helmet';
-import { BuildQueryReturn, QueryBuilder } from 'stores/QueryBuilder';
-import { Fetched } from 'stores/Fetched';
-import { SyncHook, SyncWaterfallHook } from 'tapable';
+import { BuildQueryReturn, QueryBuilder } from './QueryBuilder';
+import { Fetched } from './Fetched';
+import { SyncHook } from 'tapable';
 
 const log = require('debug')('store');
 
@@ -45,7 +45,7 @@ export class Store {
         fetched: new SyncHook<BuildQueryReturn>([ 'result' ]),
     };
 
-    @lazyInject('api') api: Api;
+    @lazyInject('api') api:Api;
     @lazyInject('fetched') fetched: Fetched;
     @lazyInject('store.layout') layout: LayoutStore;
 
@@ -162,7 +162,7 @@ export class Store {
             return this.document;
         }
         await this.fetch(projectKey, revisionKey, documentKey);
-        if(this.document && this.document.meta){
+        if ( this.document && this.document.meta ) {
             this.helmet.merge(this.document.meta);
         }
         return this.document;
@@ -199,25 +199,25 @@ export class Store {
 
         let result = await query.get();
 
-        transaction( () => {
+        transaction(() => {
             let layout;
             if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
-                this.project = null;
-                this.revision= null;
+                this.project  = null;
+                this.revision = null;
                 this.document = null;
-                this.project = result.project;
-                layout = result.project;
+                this.project  = result.project;
+                layout        = result.project;
             }
             if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
-                this.revision= null;
+                this.revision = null;
                 this.document = null;
                 this.revision = result.revision;
-                layout = result.revision;
+                layout        = result.revision;
             }
             if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
                 this.document = null;
                 this.document = result.document;
-                layout = result.document;
+                layout        = result.document;
             }
             if ( layout ) {
                 this.mergeLayout(layout);

@@ -1,7 +1,7 @@
-import { MenuItem } from '../MenuItem';
-import { MenuItems, MenuType } from '../../menus';
+import { MenuItem } from '@codex/api';
+import { MenuItems, MenuType } from '..';
 
-import { url } from 'classes/Url';
+import { url } from '../../classes/Url';
 import { SideMenuType } from './SideMenuType';
 import { toJS } from 'mobx';
 

@@ -1,14 +1,15 @@
 import React from 'react';
-import { hot } from 'decorators';
+
 import { observer } from 'mobx-react';
 import { Breadcrumb, Dropdown, Menu } from 'antd';
-import { lazyInject } from 'ioc';
-import { IRouteMap, Link, Router } from 'routing';
-import { Store } from 'stores';
-import { Icon } from 'components/icon';
+import { Icon } from '../icon';
 import { classes } from 'typestyle';
 
 import './index.scss';
+import { hot } from 'decorators';
+import { Store } from 'stores';
+import { lazyInject } from 'ioc';
+import { RouteLink, RouteMap } from 'router';
 
 export interface LayoutBreadcrumbsProps {
     className?: string
@@ -21,8 +22,7 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
     static displayName                                   = 'LayoutBreadcrumbs';
     static defaultProps: Partial<LayoutBreadcrumbsProps> = {};
     @lazyInject('store') store: Store;
-    @lazyInject('routes') routes: IRouteMap;
-    @lazyInject('router') router: Router;
+    @lazyInject('routes') routes: RouteMap;
 
     render() {
         const { style, className, ...props }         = this.props;
@@ -37,9 +37,9 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
                 {...props}
             >
                 <Breadcrumb.Item>
-                    <Link to={this.router.getRouteLink('home')} title="Home">
+                    <RouteLink name="home" title="Home">
                         <Icon name="home"/>
-                    </Link>
+                    </RouteLink>
                 </Breadcrumb.Item>
 
                 <If condition={project && project.key}>
@@ -47,9 +47,15 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
                         <Dropdown overlay={
                             <Menu>
                                 {codex.projects.map((project, i) => {
-                                    let to    = this.router.getRouteLink('documentation.project', { project: project.key });
-                                    let title = project.display_name || project.key;
-                                    return <Menu.Item key={project.key || i}><Link to={to}><Icon name="book" style={iconStyle}/> {title}</Link></Menu.Item>;
+                                    let params = { project: project.key };
+                                    let title  = project.display_name || project.key;
+                                    return (
+                                        <Menu.Item key={project.key || i}>
+                                            <RouteLink name="documentation.project" params={params}>
+                                                <Icon name="book" style={iconStyle}/> {title}
+                                            </RouteLink>
+                                        </Menu.Item>
+                                    );
                                 })}
                             </Menu>
                         }>
@@ -64,9 +70,15 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
                             <Menu>
                                 <If condition={project.revisions}>
                                     {project.revisions.map((revision, i) => {
-                                        let to    = this.router.getRouteLink('documentation.revision', { project: project.key, revision: revision.key });
-                                        let title = revision.key;
-                                        return <Menu.Item key={revision.key || i}><Link to={to}><Icon name="code-fork" style={iconStyle}/> {title}</Link></Menu.Item>;
+                                        let params = { project: project.key, revision: revision.key };
+                                        let title  = revision.key;
+                                        return (
+                                            <Menu.Item key={revision.key || i}>
+                                                <RouteLink name="documentation.revision" params={params}>
+                                                    <Icon name="code-fork" style={iconStyle}/> {title}
+                                                </RouteLink>
+                                            </Menu.Item>
+                                        );
                                     })}
                                 </If>
                             </Menu>

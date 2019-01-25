@@ -1,6 +1,6 @@
 import { color, ColorHelper, em, percent, px, rem } from 'csx';
 import { ColorProperty } from 'csstype';
-import { strEnsureLeft } from 'utils/general';
+import { strEnsureLeft } from '../utils/general';
 import { injectable } from 'inversify';
 
 abstract class CssValue<T> {

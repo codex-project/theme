@@ -1,21 +1,19 @@
 import { observer } from 'mobx-react';
 import React from 'react';
-import { IDefinedRoute } from 'interfaces';
+
+
 import { hot } from 'decorators';
-import { clink } from 'stores/CLinkStore';
-import { lazyInject } from 'ioc';
-import { Api } from '@codex/api';
-import { Routes } from 'collections/Routes';
-import { Store } from 'stores';
-import { PopoverAction } from 'components/link/PopoverAction';
-import { Card, List } from 'antd';
-import { Scrollbar } from 'components/scrollbar';
-import { Link } from 'react-router-dom';
+import { clink, Store } from 'stores';
+import { app, lazyInject } from 'ioc';
+import { RouteDefinition, RouteMap } from 'router';
+import { Api, api } from '@codex/api';
+import { PopoverAction } from './PopoverAction';
+import { Card } from 'antd';
 
 
 export interface RevisionPopoverActionProps {
     link: React.ReactNode
-    route: IDefinedRoute
+    route: RouteDefinition
     to: string
 }
 
@@ -24,7 +22,7 @@ export interface RevisionPopoverActionProps {
 @clink.action('revision', 'popover')
 export class RevisionPopoverAction extends React.Component<RevisionPopoverActionProps> {
     @lazyInject('api') api: Api;
-    @lazyInject('routes') routes: Routes;
+    @lazyInject('routes') routes: RouteMap;
     @lazyInject('store') store: Store;
 
     render() {

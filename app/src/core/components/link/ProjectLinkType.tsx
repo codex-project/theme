@@ -3,9 +3,10 @@ import { action, observable } from 'mobx';
 import React, { Fragment } from 'react';
 import { LinkType } from './LinkType';
 import { Link, LinkProps } from 'react-router-dom';
+
 import { hot } from 'decorators';
+import { clink } from 'stores';
 import { app } from 'ioc';
-import { clink } from 'stores/CLinkStore';
 
 
 @hot(module)
@@ -25,7 +26,7 @@ export class ProjectLinkType extends LinkType {
 
         let props: LinkProps = {
             ...rest,
-            to       : app.routes.getRoute('documentation.project').toPath({ project: this.project }),
+            to       : app.routes.get('documentation.project').toPath({ project: this.project }),
             className: styling ? 'c-project-link' : null,
         };
         return (

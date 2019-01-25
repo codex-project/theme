@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { hot } from '../../decorators';
 import { MenuItemRenderer, MenuItemRendererProps } from './DynamicMenu';
 import { Menu as AntdMenu } from 'antd';
 import { MenuItemIcon } from './MenuItemIcon';
+import { hot } from 'decorators';
 
 const { SubMenu, Item } = AntdMenu;
 

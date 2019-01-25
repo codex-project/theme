@@ -3,8 +3,10 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@codex/core": ["../core"],
-            "@codex/core/*": ["../core/*"]
+            "@codex/documents": ["../documents"],
+            "@codex/documents/*": ["../documents/*"],
+            "@codex/site": ["../site"],
+            "@codex/site/*": ["../site/*"]
         }
     },
     "include": [

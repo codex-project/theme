@@ -1,15 +1,16 @@
 import React, { Fragment } from 'react';
-import { hot } from '../../decorators';
 import PropTypes from 'prop-types';
 import { Layout, Menu as AntdMenu } from 'antd';
 import { observer } from 'mobx-react';
-import { MenuItem, MenuItems } from '../../menus';
 import { MenuProps as AntdMenuProps } from 'antd/es/menu';
-import { getColor } from '../../utils/colors';
 import { MenuItemIcon } from './MenuItemIcon';
 import { classes } from 'typestyle';
 import { ClickParam } from 'antd/lib/menu';
 import { transaction } from 'mobx';
+import { getColor } from 'utils/colors';
+import { MenuItems } from 'menus';
+
+import { hot } from 'decorators';
 
 const log = require('debug')('components:DynamicMenu');
 

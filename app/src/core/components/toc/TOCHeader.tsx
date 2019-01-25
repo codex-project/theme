@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { hot } from 'decorators';
+
 import { classes } from 'typestyle';
+
+import { hot } from 'decorators';
 import { strEnsureLeft } from 'utils/general';
 
 const log = require('debug')('components:TOC');

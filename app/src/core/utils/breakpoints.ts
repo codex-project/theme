@@ -1,5 +1,5 @@
-import { injectable, lazyInject } from 'ioc';
-import { CssVariables, UnitValue } from 'classes/CssVariables';
+import { injectable, lazyInject } from '../ioc';
+import { CssVariables, UnitValue } from '../classes/CssVariables';
 
 export type BreakpointKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 

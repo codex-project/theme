@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import { cloneDeep, get, has, merge, set, unset } from 'lodash'
 import { action, computed, observable, toJS } from 'mobx';
-import { DictionaryWrapper } from '../collections/DictionaryWrapper';
+import { DictionaryWrapper } from './DictionaryWrapper';
 
 
 export class ObservableDictionaryWrapper<T> {

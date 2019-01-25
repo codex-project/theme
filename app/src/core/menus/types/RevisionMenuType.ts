@@ -1,4 +1,4 @@
-import { MenuItem } from '../MenuItem';
+import { MenuItem } from '@codex/api';
 import { MenuType } from '../MenuType';
 
 export class RevisionMenuType extends MenuType {

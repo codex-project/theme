@@ -2,10 +2,10 @@ import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import React, { Fragment } from 'react';
 import { LinkType } from './LinkType';
-import { hot } from 'decorators';
 import { Link, LinkProps } from 'react-router-dom';
+import { hot } from 'decorators';
+import { clink } from 'stores';
 import { app } from 'ioc';
-import { clink } from 'stores/CLinkStore';
 
 @hot(module)
 @observer
@@ -29,7 +29,11 @@ export class DocumentLinkType extends LinkType {
 
         let props: LinkProps = {
             ...rest,
-            to       : app.routes.getRoute('documentation.document').toPath({ project: this.project, revision: this.revision, document: this.document }),
+            to       : app.routes.get('documentation.document').toPath({
+                project : this.project,
+                revision: this.revision,
+                document: this.document,
+            }),
             className: styling ? 'c-document-link' : null,
         };
         return (

@@ -1,0 +1,15 @@
+{
+    "extends": "../../tsconfig.webpack.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@codex/core": ["../core"],
+            "@codex/core/*": ["../core/*"]
+
+        }
+    },
+    "include": [
+        "*",
+        "**/*"
+    ]
+}

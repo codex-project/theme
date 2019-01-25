@@ -2,26 +2,24 @@ import { Container, interfaces } from 'inversify';
 import { Dispatcher, EventTypes } from './Dispatcher';
 import EventEmitter from 'eventemitter3';
 import { Api } from '@codex/api';
-import { IConfig } from 'interfaces';
+import { IConfig } from '../interfaces';
 import { merge } from 'lodash';
 import { config } from '../config';
 import React, { ComponentType } from 'react';
 import { SyncHook } from 'tapable';
-import { Store } from 'stores';
-import { Routes } from 'collections/Routes';
-
 import { History } from 'history';
-import { MenuManager } from 'menus';
-import { CssVariables } from 'classes/CssVariables';
-import { Breakpoints } from 'utils/breakpoints';
-import { CookieStorage, LocalStorage, SessionStorage } from 'utils/storage';
-import { app } from 'ioc';
+import { CssVariables } from './CssVariables';
+import { Breakpoints } from '../utils/breakpoints';
+import { CookieStorage, LocalStorage, SessionStorage } from '../utils/storage';
+import { app } from '../ioc';
 import ReactDOM from 'react-dom';
-import { Router } from 'router5';
-import { IUrl, url } from 'classes/Url';
-import { Plugin } from 'classes/Plugin';
+import { IUrl, url } from './Url';
+import { Plugin } from './Plugin';
 import { notification } from 'antd';
 import { NotificationApi } from 'antd/lib/notification';
+import { MenuManager } from 'menus';
+import { RouteMap } from 'router';
+import { Store } from 'stores';
 
 const log = require('debug')('classes:Application');
 
@@ -64,10 +62,10 @@ export class Application extends Container {
         boot: SyncHook<Application>
         booted: SyncHook<Application>
     } = {
-        register  : new SyncHook<this>([ 'application' ]),
-        registered: new SyncHook<this>([ 'application' ]),
-        boot      : new SyncHook<this>([ 'application' ]),
-        booted    : new SyncHook<this>([ 'application' ]),
+        register  : new SyncHook<Application>([ 'application' ]),
+        registered: new SyncHook<Application>([ 'application' ]),
+        boot      : new SyncHook<Application>([ 'application' ]),
+        booted    : new SyncHook<Application>([ 'application' ]),
     };
 
     constructor(containerOptions: interfaces.ContainerOptions) {
@@ -102,6 +100,7 @@ export class Application extends Container {
         log('installPlugin', plugin.name, plugin);
         plugin.installed = true;
         plugin.install(this);
+        log('installedPlugin', plugin.name, plugin);
     }
 
     use(cb: (app: this) => void): this {
@@ -120,8 +119,11 @@ export class Application extends Container {
 
         this.configure(config);
 
+        log('register loadPlugins', Array.from(this.plugins.keys()));
         await Promise.all(Array.from(this.plugins.values()).map(async plugin => this.loadPlugin(plugin)));
+        log('register installPlugins', Array.from(this.plugins.keys()));
         await Promise.all(Array.from(this.plugins.values()).map(async plugin => this.installPlugin(plugin)));
+        log('register installedPlugins', Array.from(this.plugins.keys()));
 
         this.emit('register', this);
         this.hooks.register.call(this);
@@ -150,13 +152,21 @@ export class Application extends Container {
         });
     }
 
+    renderWrappers = new Set([]);
+
     render(Component?: ComponentType, cb?: () => void): this {
-        Component   = Component || this.Component;
-        const inner = (
-            <Component/>
-        );
-        const el    = document.getElementById(this.config.rootID);
-        ReactDOM.render(inner, el, cb);
+        Component           = Component || this.Component;
+        let previousWrapper = React.createElement(Component);
+        Array.from(this.renderWrappers).forEach(wrapper => {
+            let props   = {};
+            let Wrapper = wrapper;
+            if ( Array.isArray(wrapper) ) {
+                [ Wrapper, props ] = wrapper;
+            }
+            previousWrapper = React.createElement(Wrapper, props, previousWrapper);
+        });
+        const el = document.getElementById(this.config.rootID);
+        ReactDOM.render(previousWrapper, el, cb);
         return this;
     }
 
@@ -185,11 +195,9 @@ export class Application extends Container {
 
     get api(): Api { return this.get('api'); }
 
+    get routes(): RouteMap { return this.get('routes'); }
+
     get store(): Store { return this.get('store'); }
-
-    get routes(): Routes { return this.get('routes'); }
-
-    get router(): Router { return this.get('router'); }
 
     get history(): History { return this.get('history'); }
 

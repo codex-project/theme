@@ -1,5 +1,5 @@
 import React from 'react';
-import { componentLoader } from 'utils/componentLoader';
+import { componentLoader } from 'utils/componentLoader'
 import { StoreControl as StoreControlClass, StoreControlProps } from './StoreControl';
 
 export let StoreControl: React.ComponentType<StoreControlProps> = () => null;

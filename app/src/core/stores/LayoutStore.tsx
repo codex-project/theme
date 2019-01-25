@@ -5,12 +5,10 @@ import { colors } from '../utils/colors';
 import { app } from '../ioc';
 import { classes } from 'typestyle';
 import { api } from '@codex/api';
-import { createStoreProxy, IStoreProxy } from '../stores/proxy';
+import { createStoreProxy, IStoreProxy } from './proxy';
 import { margin, padding } from '../utils/box';
 import { MenuItems } from '../menus';
 import { injectable } from 'inversify';
-import { CookieStorage } from 'utils/storage';
-import { parseBool } from 'utils/general';
 
 const log = require('debug')('store:layout');
 
@@ -58,7 +56,7 @@ export class LayoutStore {
             collapsed     : false,
             outside       : false,
             color         : null,
-            fixed:false,
+            fixed         : false,
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -89,7 +87,7 @@ export class LayoutStore {
             collapsed     : false,
             outside       : false,
             color         : null,
-            fixed:false,
+            fixed         : false,
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },

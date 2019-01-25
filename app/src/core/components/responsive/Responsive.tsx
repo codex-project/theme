@@ -1,11 +1,13 @@
 import { Responsive as BaseResponsive, ResponsiveProps as BaseResponsiveProps } from 'semantic-ui-react';
 import React from 'react';
-import { CssVariables } from 'classes/CssVariables';
-import { BreakpointKey, Breakpoints } from 'utils/breakpoints';
-import { lazyInject } from 'ioc';
+
+
 import { hot } from 'decorators';
+import { lazyInject } from 'ioc';
 import { observer } from 'mobx-react';
 import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/Responsive';
+import { BreakpointKey, Breakpoints } from 'utils/breakpoints';
+import { CssVariables } from 'classes/CssVariables';
 
 export interface ResponsiveProps extends Record<BreakpointKey, boolean> {
     breakpoint?: BreakpointKey

@@ -2,15 +2,16 @@ import React, { CSSProperties } from 'react';
 import { findDOMNode } from 'react-dom';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
-import { hot } from 'decorators';
-import { Prism as PrismInstance } from 'interfaces';
-import { defer, Deferred, resolve } from 'utils/promise';
-import { getPrism } from 'utils/get-prism';
-import scrollTo from 'utils/scrollTo';
 import { classes } from 'typestyle';
-
-declare const Prism:PrismInstance
+import { hot } from 'decorators';
+import { defer, Deferred } from 'utils/promise';
+import { Prism as PrismInstance } from 'interfaces';
+import { getPrism } from 'utils/get-prism';
+import { ZeptoMap } from 'utils/scroll';
+declare const Prism: PrismInstance;
 const log = require('debug')('components:CodeHighlight');
+
+let a:ZeptoMap
 
 export interface CodeHighlightProps {
     /** Optional CSSProperties with nesting support (using typestyle) */
@@ -48,11 +49,11 @@ export class CodeHighlight extends React.Component<CodeHighlightProps> {
     };
 
     @observable code: string;
-    @observable showCode: boolean            = false;
-    @observable showLoader: boolean          = false;
+    @observable showCode: boolean                    = false;
+    @observable showLoader: boolean                  = false;
     @observable prism: Promise<PrismInstance>        = null;
     @observable highlighted: Deferred<PrismInstance> = null;
-    @observable isHighlighted                = false;
+    @observable isHighlighted                        = false;
 
     /**
      * If with-loader property is true, this will toggle the loader on / off
@@ -65,7 +66,7 @@ export class CodeHighlight extends React.Component<CodeHighlightProps> {
     componentDidMount() {
         this.highlighted = defer();
         this.setCode(this.props.code.length > 0 ? this.props.code : this.props.children.toString());
-        this.highlighted.then(async(prism) => {
+        this.highlighted.then(async (prism) => {
             this.isHighlighted = true;
             return prism;
         });
@@ -92,8 +93,8 @@ export class CodeHighlight extends React.Component<CodeHighlightProps> {
             if ( this.$code ) {
                 Prism.highlightElement(this.$code, false);
             }
-            return this.highlighted.resolve(Prism)
-        })
+            return this.highlighted.resolve(Prism);
+        });
     }
 
     get lineElements(): HTMLSpanElement[] { return $('.line-numbers-rows > span', findDOMNode(this)) as any;}

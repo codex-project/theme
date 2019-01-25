@@ -1,9 +1,9 @@
-import { strEnsureLeft } from '../utils/general';
+import { strEnsureLeft } from './general';
 import { app } from '../ioc';
 import { Routes } from '../collections/Routes';
 import { ArrayUtils } from '../collections/ArrayUtils';
 import { MenuItems } from '../menus';
-import { MenuItem } from '../menus/MenuItem';
+import { MenuItem } from '@codex/api';
 
 const log = require('debug')('utils:menus');
 

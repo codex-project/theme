@@ -6,8 +6,8 @@ import { Config } from '../classes/Config';
 import { MenuItems } from './MenuItems';
 import { SyncBailHook, SyncWaterfallHook } from 'tapable';
 import { IMenuType, IMenuTypeConstructor, IMenuTypeStage } from './MenuType';
-import { MenuItem } from './MenuItem';
 import { toJS } from 'mobx';
+import { MenuItem } from '@codex/api';
 
 const log = require('debug')('classes:MenuManager');
 

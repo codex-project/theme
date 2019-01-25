@@ -1,7 +1,7 @@
-import { Application } from 'classes/Application';
+import { Application } from './Application';
 import { Hook } from 'tapable';
-import { injectable } from 'ioc';
-import { AsyncContainerModule, ContainerModule, interfaces } from 'inversify';
+import { injectable } from '../ioc';
+import { AsyncContainerModule, interfaces } from 'inversify';
 
 export type Bind = interfaces.Bind
 export type Unbind = interfaces.Unbind
@@ -13,18 +13,17 @@ export interface PluginConstructor {
 }
 
 
-
 export interface Plugin<T = Record<string, Hook>> {
     name: string
     installed: boolean
     hooks: T
-    loading?:Promise<any>
+    loading?: Promise<any>
     module: AsyncContainerModule
 
     install(app: Application)
 
 
-    register?(bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind):Promise<any>
+    register?(bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind): Promise<any>
 }
 
 @injectable()
@@ -40,16 +39,16 @@ export abstract class BasePlugin<T = {}> implements Plugin {
     protected options: T;
     installed: boolean = false;
     hooks              = {};
-    loading             = null;
+    loading            = null;
 
     get module(): AsyncContainerModule {
         return new AsyncContainerModule(async (bind, unbind, isBound, rebind) => {
-            if ( typeof this['register'] === 'function' ) {
-                await this['register'](bind, unbind, isBound, rebind);
+            if ( typeof this[ 'register' ] === 'function' ) {
+                await this[ 'register' ](bind, unbind, isBound, rebind);
             }
         });
     }
 
     abstract install(app: Application)
-
 }
+

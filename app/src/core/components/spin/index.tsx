@@ -1,11 +1,12 @@
 import { SpinProps as AntdSpinProps } from 'antd/es/spin';
 import { Spin as AntdSpin } from 'antd';
-// import { Icon, IconProps } from '../../components/icon';
-import { hot } from '../../decorators';
+import { hot } from 'decorators';
 import * as React from 'react';
 import './index.scss';
-import { Icon } from 'components/icon';
+import { Icon } from '../icon';
 import { FontAwesomeIcon } from 'interfaces';
+
+// import { Icon, IconProps } from '../../components/icon';
 
 
 export interface SpinProps extends AntdSpinProps {

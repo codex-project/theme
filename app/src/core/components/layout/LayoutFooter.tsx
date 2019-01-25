@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { lazyInject } from 'ioc';
-import { Store } from 'stores';
-import { observer } from 'mobx-react';
+
 import { hot } from 'decorators';
+import { Store } from 'stores';
+import { lazyInject } from 'ioc';
+
+import { observer } from 'mobx-react';
+
 import { Layout } from 'antd';
 import { classes } from 'typestyle';
 

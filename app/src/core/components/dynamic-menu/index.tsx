@@ -1,4 +1,4 @@
-import { componentLoader } from 'utils/componentLoader';
+import { componentLoader } from 'utils/componentLoader'
 import React from 'react';
 import { DynamicMenuProps } from './DynamicMenu';
 

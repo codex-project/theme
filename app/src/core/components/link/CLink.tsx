@@ -1,12 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
+import { hot, WithRouterProps } from 'decorators';
+import { CLinkStore, Store } from 'stores';
+import { RouteMap } from 'router';
 import { lazyInject } from 'ioc';
-import { CLinkStore } from 'stores/CLinkStore';
-import { hot, WithRouter, WithRouterProps } from 'decorators';
-import { Store } from 'stores';
-import { Routes } from 'collections/Routes';
-import { RouterStore } from 'routing';
 
 const log = require('debug')('components:CLink');
 
@@ -27,15 +25,15 @@ export class CLink extends React.Component<CLinkProps & WithRouterProps> {
 
     @lazyInject('store') store: Store;
     @lazyInject('store.links') links: CLinkStore;
-    @lazyInject('store.router') routerStore: RouterStore;
+    @lazyInject('routes') routes: RouteMap;
 
     getChildContext() { return { router: this.props }; }
 
     render() {
         let { type, action, to, children, href,staticContext,history,match,location, ...rest } = this.props;
         if ( href ) to = href;
-        this.routerStore.router.matchPath(to)
-        const routes = [this.routerStore.router.matchPath(to)].filter(Boolean)
+
+        const routes = this.routes.matchPath(to);
         if ( routes.length === 0 ) {
             console.warn(`Link with to [${to}] does not match any route.`);
             return null;

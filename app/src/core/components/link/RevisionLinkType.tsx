@@ -2,10 +2,11 @@ import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import React, { Fragment } from 'react';
 import { LinkType } from './LinkType';
+
 import { hot } from 'decorators';
-import { Link, LinkProps } from 'react-router-dom';
+import { clink } from 'stores';
 import { app } from 'ioc';
-import { clink } from 'stores/CLinkStore';
+import { Link, LinkProps } from 'react-router-dom';
 
 
 @hot(module)
@@ -23,12 +24,12 @@ export class RevisionLinkType extends LinkType {
     }
 
     render() {
-        if(!this.project || !this.revision) return <Fragment>{this.props.children}</Fragment>;
+        if ( ! this.project || ! this.revision ) return <Fragment>{this.props.children}</Fragment>;
         const { children, link, route, to, icon, styling, ...rest } = this.props;
 
         let props: LinkProps = {
             ...rest,
-            to       : app.routes.getRoute('documentation.revision').toPath({ project: this.project, revision: this.revision }),
+            to       : app.routes.get('documentation.revision').toPath({ project: this.project, revision: this.revision }),
             className: styling ? 'c-revision-link' : null,
         };
         return (

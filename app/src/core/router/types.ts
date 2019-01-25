@@ -1,50 +1,79 @@
-import React from 'react';
 import * as H from 'history';
-import Path, { IBuildOptions, ITestOptions } from 'path-parser';
+import { match, RouteComponentProps, RouteProps } from 'react-router';
+import React from 'react';
+import pathToRegexp from 'path-to-regexp';
 
-export interface RouteComponentProps {}
+export type RouteState = Partial<H.Location<any>> & Partial<match<any>> & {
+    name: string
+    route: Partial<RouteDefinition>
+}
 
 export type RouteComponentType<P = {}> = React.ComponentType<RouteComponentProps & P>
-export type RouteDefinitionAction = (state: State) => Promise<RouteComponentType<any>>
+export type RouteActionDefnitionProps = RouteComponentProps & { routeState: RouteState }
 
-export interface RouteDefinition {
+export interface RouteDefinitionLoaderConfig {
+
+}
+
+export interface RouteDefinitionTransitionConfig {
+
+}
+
+export interface RouteDefinition extends Partial<RouteProps> {
     name: string
     path: string
-    action?: RouteDefinitionAction
+    loader?: RouteDefinitionLoaderConfig | boolean
+    transition?: RouteDefinitionTransitionConfig | boolean
+    action?: (props: RouteActionDefnitionProps, routeState: RouteState) => Promise<React.ReactNode>
+
+    component?: RouteProps['component']
+    render?: RouteProps['render']
+    children?: RouteProps['children']
+    exact?: RouteProps['exact']
+    sensitive?: RouteProps['sensitive']
+    strict?: RouteProps['strict']
 }
 
-export interface DefinedRoute extends RouteDefinition {
-    pattern: Path
+export interface RouteDefinitionTestKeys {
+    test?: RegExp
+    keys?: pathToRegexp.Key[]
+    toPath?: pathToRegexp.PathFunction
 }
 
-export type PatternMatchOptions = ITestOptions
-export type PatternBuildOptions = IBuildOptions
+export type Path = string
+export type Action = 'PUSH' | 'POP' | 'REPLACE';
+export type UnregisterCallback = () => void;
 
-export interface NavigateOptions extends IBuildOptions {
-    replace?: boolean
+export interface Location {
+    pathname?: string;
+    search?: string
+    state?: any;
+    hash?: string;
+    key?: string
 }
 
-export type Params = Record<string, string>
-export type StateData = Record<string, any>
+export interface History {
+    length: number;
+    action: Action;
+    location: Location;
 
-export interface LinkData<P extends Params = {}> {
-    name: string
-    params: P
-}
+    push(path: Path, state?: any): void;
 
-export interface State<P extends Params = {}, SD extends StateData = {}> {
-    name: string
-    params: P
-    data: SD
-}
+    push(location: Location): void;
 
-export interface RouterOptions {
-    basename?: H.BrowserHistoryBuildOptions['basename']
-    forceRefresh?: H.BrowserHistoryBuildOptions['forceRefresh']
-    getUserConfirmation?: H.BrowserHistoryBuildOptions['getUserConfirmation']
-    createBrowser?: (options: H.BrowserHistoryBuildOptions) => H.History
-    matching?: PatternMatchOptions
-    building?: PatternBuildOptions
-    defaultRoute?:string
-    defaultParams?:Params
+    replace(path: Path, state?: any): void;
+
+    replace(location: Location): void;
+
+    go(n: number): void;
+
+    goBack(): void;
+
+    goForward(): void;
+
+    block(prompt?: boolean | string | any): UnregisterCallback;
+
+    listen(listener: any): UnregisterCallback;
+
+    createHref(location: Location): string;
 }

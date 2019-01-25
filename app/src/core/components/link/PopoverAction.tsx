@@ -2,8 +2,8 @@ import React from 'react';
 import { style } from 'typestyle';
 import Loadable from 'react-loadable';
 import { Popover } from 'antd';
-import { Centered } from 'components/centered';
-import { Loading } from 'components/loading';
+import { Centered } from '../centered';
+import { Loading } from '../loading';
 
 export interface PopoverActionProps<T> {
     loader: () => Promise<T>
@@ -19,13 +19,13 @@ export class PopoverAction<T> extends React.Component<PopoverActionProps<T>> {
                         <Loading {...props} spin={{ size: 'large' }}/>
                     </Centered>
                 </div>
-            )
+            );
             return Loadable.Map({
                 delay  : 0,
                 loading: LoadingWrapper,
                 loader : { data: loader },
-                render : (loaded: { data: T }, props) => render(loaded.data)
-            })
+                render : (loaded: { data: T }, props) => render(loaded.data),
+            });
         }
 
         const Loader = createPopoverLoader<T>(this.props.loader, this.props.render);
@@ -41,6 +41,6 @@ export class PopoverAction<T> extends React.Component<PopoverActionProps<T>> {
                 content={<Loader/>}
             >{this.props.children}
             </Popover>
-        )
+        );
     }
 }

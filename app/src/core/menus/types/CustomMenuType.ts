@@ -1,7 +1,8 @@
-import { MenuItem } from '../MenuItem';
+///<reference path="../../../modules.d.ts"/>
 import { MenuItems } from '../MenuItems';
 import { MenuType } from '../MenuType';
 import React from 'react';
+import { MenuItem } from '@codex/api';
 
 const name = 'custom';
 const log  = require('debug')('menus:types:' + name);

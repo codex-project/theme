@@ -1,57 +1,41 @@
-import  React from 'react';
-import PropTypes from 'prop-types';
-import { hot, WithRouter, WithRouterProps } from 'decorators';
-import { BrowserRouter, Router } from 'react-router-dom';
-import { Store } from 'stores';
+import React from 'react';
+import { hot } from 'react-hot-loader/root';
 import { observer } from 'mobx-react';
-import { Routes } from 'collections/Routes';
-import { app, lazyInject } from 'ioc';
 import { Helmet } from 'react-helmet';
-import { ErrorBoundary } from './errors';
-import { RouterPages } from './router-pages';
-import { Layout } from './layout';
+import { Store } from 'stores';
+import { lazyInject } from 'ioc';
+import { ErrorBoundary } from 'components/errors';
 import { TunnelProvider } from 'components/tunnel';
+import Layout from 'components/layout';
+import { History } from 'router';
 
-import { StoreControl } from 'components/store-control';
-
-const log = require('debug')('app');
+const log = require('debug')('App5');
 
 interface State {}
 
 export interface AppProps {}
 
 
-@WithRouter()
 @observer
-class AppComponent extends React.Component<AppProps & WithRouterProps, any> {
+class AppComponent extends React.Component<AppProps, any> {
     @lazyInject('store') store: Store;
-    @lazyInject('routes') routes: Routes;
+    @lazyInject('history') history: History;
 
-    static displayName  = 'App';
-    static contextTypes = {
-        router: PropTypes.shape({
-            history: PropTypes.shape({
-                push      : PropTypes.func.isRequired,
-                replace   : PropTypes.func.isRequired,
-                createHref: PropTypes.func.isRequired,
-            }).isRequired,
-        }).isRequired,
-    };
+    static displayName = 'AppComponent';
 
-    context: { router: BrowserRouter };
-
-    constructor(props: {} & WithRouterProps, context: { router: Router }) {
-        super(props, context);
-        if ( ! app.isBound('router') ) {
-            app.bind('router').toConstantValue(context.router);
-        }
-        if ( ! app.isBound('history') ) {
-            app.bind('history').toConstantValue(props.history);
-        }
-        props.history.listen((location, action) => {
-            log('location', action, location);
-        });
-    }
+    // render() {
+    //     return (
+    //         <div>
+    //             <h3>Layout Content</h3>
+    //             <ul>
+    //                 <li>pathname: {this.history.location.pathname}</li>
+    //                 <li>key: {JSON.stringify(this.history.location.key)}</li>
+    //                 <li>hash: {JSON.stringify(this.history.location.hash)}</li>
+    //                 <li>state: {JSON.stringify(this.history.location.state, null, 4)}</li>
+    //             </ul>
+    //         </div>
+    //     );
+    // }
 
     render() {
         return (
@@ -64,70 +48,22 @@ class AppComponent extends React.Component<AppProps & WithRouterProps, any> {
                             {...this.store.helmet}
                         />
                         <ErrorBoundary>
-                            <RouterPages routes={this.routes}/>
+                            <div>
+                                <h3>Layout Content</h3>
+                                <ul>
+                                    <li>pathname: {this.history.location.pathname}</li>
+                                    <li>key: {JSON.stringify(this.history.location.key)}</li>
+                                    <li>hash: {JSON.stringify(this.history.location.hash)}</li>
+                                    <li>state: {JSON.stringify(this.history.location.state, null, 4)}</li>
+                                </ul>
+                            </div>
                         </ErrorBoundary>
-                        {this.renderStoreController()}
                     </Layout>
                 </TunnelProvider>
             </ErrorBoundary>
         );
     }
 
-    renderStoreController() {
-
-        return (
-            <StoreControl store={this.store.layout} stores={{
-                'container': {
-                    stretch: 'boolean',
-                },
-                'header'   : {
-                    show             : 'boolean',
-                    height           : 'number',
-                    fixed            : 'boolean',
-                    color            : 'color.name',
-                    logo             : 'boolean',
-                    show_left_toggle : 'boolean',
-                    show_right_toggle: 'boolean',
-                    menu             : 'menu',
-                },
-                'left'     : {
-                    show          : 'boolean',
-                    width         : 'number',
-                    fixed         : 'boolean',
-                    collapsedWidth: 'number',
-                    collapsed     : 'boolean',
-                    outside       : 'boolean',
-                    color         : 'color.name',
-                    menu          : 'menu',
-                },
-                'right'    : {
-                    show          : 'boolean',
-                    width         : 'number',
-                    fixed         : 'boolean',
-                    collapsedWidth: 'number',
-                    collapsed     : 'boolean',
-                    outside       : 'boolean',
-                    color         : 'color.name',
-                },
-                'middle'   : {
-                    padding: 'string',
-                    margin : 'string',
-                    color  : 'color.name',
-                },
-                'content'  : {
-                    padding: 'string',
-                    margin : 'string',
-                    color  : 'color.name',
-                },
-                'footer'   : {
-                    show  : 'boolean',
-                    height: 'number',
-                    fixed : 'boolean',
-                    color : 'color.name',
-                },
-            }}/>
-        );
-    }
 }
 
-// export const App = hot(module)(AppComponent);
+export const App = hot(AppComponent);

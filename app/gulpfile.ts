@@ -11,7 +11,8 @@ const chalk = require('chalk').default;
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
 
 const smp = new SMP()
-
+// Import the plugin:
+const DashboardPlugin = require('webpack-dashboard/plugin');
 interface Gulpfile extends GulpEnvMixin {}
 
 @Gulpclass(gulp)
@@ -39,6 +40,16 @@ class Gulpfile {
         this.dev();
         const { chain, addAnalyzerPlugins, addHMR } = require('./webpack.config');
         addHMR(chain, true);
+        return this.serve(chain);
+    }
+
+    @Task('dev:dashboard')
+    async devDashboard() {
+        this.dev();
+        const { chain, addAnalyzerPlugins, addHMR } = require('./webpack.config');
+        chain.plugin('dashboard').use(DashboardPlugin, [{}])
+        addHMR(chain, true);
+        addAnalyzerPlugins(chain, true)
         return this.serve(chain);
     }
 

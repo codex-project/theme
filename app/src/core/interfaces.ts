@@ -1,9 +1,6 @@
-import { RouteComponentProps, RouteProps } from 'react-router-dom';
 import { Hooks, LanguageDefinition, Languages, Token, Util } from 'prismjs';
 import { DictionaryWrapper } from './collections/DictionaryWrapper';
-import * as pathToRegexp from 'path-to-regexp';
 import { ApiOptions } from '@codex/api';
-import React from 'react';
 
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
@@ -33,30 +30,6 @@ declare global {
             styleName?: string
         }
     }
-}
-
-export interface IRoute {
-    name: string
-    meta?: any
-    children?: IRoute[]
-    location?: RouteProps['location']
-    component?: RouteProps['component']
-    render?: RouteProps['render']
-    // render?: (props: RouteComponentProps<any> & { [ key: string ]: any }, Component: React.ComponentType<any>, data?: any) => React.ReactNode | undefined
-    path?: RouteProps['path']
-    exact?: RouteProps['exact']
-    sensitive?: RouteProps['sensitive']
-    strict?: RouteProps['strict']
-
-    onActivate?: (props: RouteComponentProps<any>) => Promise<any>
-    loadComponent?: (props: RouteComponentProps<any>) => Promise<React.ComponentType<any>>
-}
-
-export interface IDefinedRoute extends IRoute {
-    test?: RegExp
-    keys?: pathToRegexp.Key[]
-    routes?: IDefinedRoute[]
-    toPath?: pathToRegexp.PathFunction
 }
 
 export interface ResizeSize {
@@ -2080,7 +2053,7 @@ export interface BreakpointDictionary<T> {
     xxl: T
 }
 
-export type Breakpoint = keyof BreakpointDictionary<any>
+export type IBreakpoint = keyof BreakpointDictionary<any>
 
 
 export interface Prism {

@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { hot } from 'decorators';
+
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import Hammer, { HammerDirection } from 'react-hammerjs';
 import { Motion, spring } from 'react-motion';
 import { isString } from 'lodash';
+import { hot } from 'decorators';
 
 const log = require('debug')('off-canvas');
 

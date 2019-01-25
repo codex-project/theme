@@ -1,5 +1,5 @@
-import { app } from 'ioc';
-import { Store } from 'stores';
+import { app } from '../ioc';
+import { Store } from '../stores';
 import urljoin from 'url-join';
 
 const make      = (prefix: string, ...parts: string[]) => urljoin(prefix, ...parts);

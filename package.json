@@ -20,7 +20,7 @@
         "trucolor": "^0.7.1",
         "term-ng": "^0.8.1",
         "event-stream": "3.3.5",
-        "webpack-chain": "^3.0.0",
+        "webpack-chain": "^5.2.0",
         "typescript": "3.1.*",
         "@types/webpack-chain": "^4.8.1",
         "@radic/build-tools": "^1.1.3",

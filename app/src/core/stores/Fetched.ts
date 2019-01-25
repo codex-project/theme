@@ -1,9 +1,9 @@
 // noinspection ES6UnusedImports
 import { get, has, merge, set, snakeCase } from 'lodash';
 import { api } from '@codex/api';
-import { LocalStorage } from 'utils/storage';
+import { LocalStorage } from '../utils/storage'
 import { SyncHook } from 'tapable';
-import { injectable } from 'ioc';
+import { injectable } from '../ioc'
 
 const STORAGE_KEY: string = 'codex.fetched';
 

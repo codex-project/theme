@@ -1,11 +1,9 @@
 import { Redirect, RedirectProps, RouteComponentProps } from 'react-router';
-import { lazyInject } from '../../ioc';
-import { Store } from '../../stores';
 import React from 'react';
-import { Omit } from '../../interfaces';
-import { url } from 'classes/Url';
 import { hot } from 'decorators';
-import ErrorPage from 'pages/ErrorPage';
+import { Store } from 'stores';
+import { app, lazyInject } from 'ioc';
+import { Omit } from 'interfaces';
 
 const log = require('debug')('components:forwardtodocument');
 
@@ -67,7 +65,7 @@ export class ForwardToDocument extends React.PureComponent<ForwardToDocumentProp
     renderError() {
         if ( ! this.state.error ) return null;
         return (
-            <ErrorPage error={this.state.error}/>
+            {/*<ErrorPage error={this.state.error}/>*/ }
         );
     }
 
@@ -75,7 +73,7 @@ export class ForwardToDocument extends React.PureComponent<ForwardToDocumentProp
         if ( ! this.state.params ) return null;
         let { location, history, staticContext, match, redirect, children } = this.props;
         let { project, revision, document }                                 = this.state.params;
-        let to                                                              = url.documentation(`${project}/${revision}/${document}`);
+        let to                                                              = app.url.documentation(`${project}/${revision}/${document}`);
 
         log('Forward render', { state: this.state, location: history.location });
         if ( history.location.pathname === to ) return null;

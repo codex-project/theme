@@ -1,6 +1,6 @@
 import { componentLoader } from 'utils/componentLoader';
 import React from 'react';
-import { CLinkStore } from 'stores/CLinkStore';
+import { CLinkStore } from 'stores';
 
 export * from './CLink';
 export * from './PopoverAction';

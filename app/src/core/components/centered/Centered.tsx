@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react';
-import { hot } from 'decorators';
-import { classes, style, types } from 'typestyle'
-import {ResizeObservable} from '../observables/ResizeObservable';
-import {WindowResizeObservable} from '../observables/WindowResizeObservable';
-import { findDOMNode } from 'react-dom';
 
-const log = require('debug')('components:Centered')
+import { classes, style, types } from 'typestyle';
+import { ResizeObservable } from '../observables/ResizeObservable';
+import { WindowResizeObservable } from '../observables/WindowResizeObservable';
+import { findDOMNode } from 'react-dom';
+import { hot } from 'decorators';
+
+const log = require('debug')('components:Centered');
 
 export interface CenteredProps {
     /** Optional CSSProperties with nesting support (using typestyle) */
@@ -23,10 +24,10 @@ export interface CenteredProps {
  */
 @hot(module)
 @observer
-export  class Centered extends React.Component<CenteredProps> {
+export class Centered extends React.Component<CenteredProps> {
     inner: HTMLDivElement;
-    static displayName: string                  = 'Centered'
-    static defaultProps: Partial<CenteredProps> = {}
+    static displayName: string                  = 'Centered';
+    static defaultProps: Partial<CenteredProps> = {};
 
     render() {
         // const {} = this.props;
@@ -37,16 +38,16 @@ export  class Centered extends React.Component<CenteredProps> {
             width        : '100%',
             display      : 'table',
             pointerEvents: 'none',
-            zIndex       : 9999
-        }
+            zIndex       : 9999,
+        };
         if ( this.props.fullScreen ) {
-            containerStyle.position = 'fixed'
+            containerStyle.position = 'fixed';
         }
         let innerStyle: React.CSSProperties = {
             display      : 'table-cell',
             verticalAlign: 'middle',
-            textAlign    : 'center'
-        }
+            textAlign    : 'center',
+        };
         return (
             <div className={classes(style(containerStyle), style(this.props.style), this.props.className)}>
                 <ResizeObservable onResize={this.applyChildStyle}/>
@@ -55,11 +56,11 @@ export  class Centered extends React.Component<CenteredProps> {
                     {this.props.children}
                 </div>
             </div>
-        )
+        );
     }
 
     applyChildStyle = () => {
-        const { autoHeight, autoTop } = this.props
+        const { autoHeight, autoTop } = this.props;
         if ( ! autoHeight && ! autoTop ) {
             return;
         }
@@ -83,5 +84,5 @@ export  class Centered extends React.Component<CenteredProps> {
                 child.style.height = height + 'px';
             }
         }
-    }
+    };
 }

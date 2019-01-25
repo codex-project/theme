@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 import { injectable } from 'inversify';
-import { app } from 'ioc';
+import { app } from '../ioc'
 
 export type CLinkStoreTypes = Record<string, ComponentType<any>>
 

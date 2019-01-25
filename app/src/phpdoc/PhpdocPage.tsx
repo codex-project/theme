@@ -4,6 +4,8 @@ import { api, Api } from '@codex/api';
 import { PhpdocManifest, PhpdocStore } from './logic/PhpdocStore';
 import { PhpdocTree, TreeBuilder } from './components/tree';
 import InspireTree from 'inspire-tree';
+import { RouteState } from '@codex/react-router';
+import { RouteComponentProps } from 'react-router';
 
 const log = require('debug')('pages:phpdoc');
 
@@ -12,7 +14,7 @@ export interface PhpdocPageProps {
 }
 
 
-export default class PhpdocPage extends React.Component<PhpdocPageProps> {
+export default class PhpdocPage extends React.Component<PhpdocPageProps & { routeState: RouteState } & RouteComponentProps> {
     @lazyInject('api') api: Api;
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
 

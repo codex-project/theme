@@ -1,19 +1,18 @@
 import React from 'react';
-import { lazyInject } from 'ioc';
-import { Store } from 'stores';
-import { observer } from 'mobx-react';
+
 import { hot } from 'decorators';
+import { IStoreProxy, LayoutStoreSide, Store } from 'stores';
+import { lazyInject } from 'ioc';
+import { observer } from 'mobx-react';
 import { Layout } from 'antd';
 import { DynamicMenu } from '../dynamic-menu';
 import { observe } from 'mobx';
-import { LayoutStoreSide } from 'stores/LayoutStore';
-import { IStoreProxy } from 'stores/proxy';
 import { classes } from 'typestyle';
+import { Icon } from '../icon';
+import { Affix } from '../affix';
 import { CookieStorage } from 'utils/storage';
 import { parseBool } from 'utils/general';
 import { getColor } from 'utils/colors';
-import { Icon } from 'components/icon';
-import { Affix } from 'components/affix';
 
 const { Header, Footer, Sider, Content } = Layout;
 

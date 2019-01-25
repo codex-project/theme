@@ -1,18 +1,21 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import { Card, List } from 'antd';
-import { IDefinedRoute } from 'interfaces';
+
+
+import { Scrollbar } from '../scrollbar';
+import { PopoverAction } from './PopoverAction';
+
 import { hot } from 'decorators';
+import { clink, Store } from 'stores';
 import { app, lazyInject } from 'ioc';
+import { RouteDefinition } from 'router';
 import { Api, api } from '@codex/api';
-import { Scrollbar } from 'components/scrollbar';
-import { PopoverAction } from 'components/link/PopoverAction';
-import { clink } from 'stores/CLinkStore';
 
 
 export interface DocumentPopoverActionProps {
     link: React.ReactNode
-    route: IDefinedRoute
+    route: RouteDefinition
     to: string
 }
 

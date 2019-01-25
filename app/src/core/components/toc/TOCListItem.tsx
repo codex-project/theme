@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { lazyInject } from 'ioc';
+
+import {scrollTo} from 'utils/scrollTo'
 import { hot } from 'decorators';
-import { strEnsureLeft } from 'utils/general';
-import { scrollTo } from 'utils/scrollTo';
+import { lazyInject } from 'ioc';
 import { classes } from 'typestyle';
+import { strEnsureLeft } from 'utils/general';
 
 
 const log = require('debug')('components:TOC');

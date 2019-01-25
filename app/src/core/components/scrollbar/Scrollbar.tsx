@@ -1,8 +1,9 @@
-import Scrollbars, { ScrollbarProps as BaseScrollbarProps } from 'react-custom-scrollbars'
+import Scrollbars, { ScrollbarProps as BaseScrollbarProps } from 'react-custom-scrollbars';
 import React from 'react';
+
 import { hot } from 'decorators';
 
-const log = require('debug')('components:app:Scrollbar')
+const log = require('debug')('components:app:Scrollbar');
 
 // https://github.com/malte-wessel/react-custom-scrollbars/blob/master/src/Scrollbars/defaultRenderElements.js
 function renderTrackHorizontal({ style, ...props }) {
@@ -11,7 +12,7 @@ function renderTrackHorizontal({ style, ...props }) {
         right       : 2,
         bottom      : 2,
         left        : 2,
-        borderRadius: 0
+        borderRadius: 0,
     };
     return <div style={finalStyle} {...props} className="c-scroll-track-horizontal"/>;
 }
@@ -22,7 +23,7 @@ function renderTrackVertical({ style, ...props }) {
         right       : 2,
         bottom      : 2,
         top         : 2,
-        borderRadius: 0
+        borderRadius: 0,
     };
     return <div style={finalStyle} {...props} className="c-scroll-track-vertical"/>;
 }
@@ -32,7 +33,7 @@ function renderThumbHorizontal({ style, ...props }) {
         ...style,
         cursor         : 'pointer',
         borderRadius   : 'inherit',
-        backgroundColor: 'rgba(0,0,0,.2)'
+        backgroundColor: 'rgba(0,0,0,.2)',
     };
     return <div style={finalStyle} {...props} className="c-scroll-thumb-horizontal"/>;
 }
@@ -42,7 +43,7 @@ function renderThumbVertical({ style, ...props }) {
         ...style,
         cursor         : 'pointer',
         borderRadius   : 'inherit',
-        backgroundColor: 'rgba(0,0,0,.2)'
+        backgroundColor: 'rgba(0,0,0,.2)',
     };
     return <div style={finalStyle} {...props} className="c-scroll-thumb-vertical"/>;
 }
@@ -73,7 +74,7 @@ export class Scrollbar extends React.Component<ScrollbarProps> {
 
                 {...this.props}
             />
-        )
+        );
     }
 
 }

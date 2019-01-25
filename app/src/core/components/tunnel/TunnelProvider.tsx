@@ -1,6 +1,7 @@
-import PropTypes from 'prop-types'
-import React,{ Children, Component } from 'react'
-import {TunnelState} from './TunnelState'
+import PropTypes from 'prop-types';
+import React, { Children, Component } from 'react';
+import { TunnelState } from './TunnelState';
+
 import { hot } from 'decorators';
 
 
@@ -11,21 +12,21 @@ export interface TunnelProviderProps {
 export class TunnelProvider extends Component<TunnelProviderProps> {
     static propTypes = {
         children: PropTypes.node,
-    }
+    };
 
     static childContextTypes = {
         tunnelState: PropTypes.object,
-    }
+    };
 
-    tunnelState = new TunnelState()
+    tunnelState = new TunnelState();
 
     getChildContext() {
         return {
             tunnelState: this.tunnelState,
-        }
+        };
     }
 
     render() {
-        return Children.only(this.props.children)
+        return Children.only(this.props.children);
     }
 }

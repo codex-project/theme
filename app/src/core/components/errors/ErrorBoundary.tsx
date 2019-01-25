@@ -1,8 +1,8 @@
 import React, { Component, ErrorInfo } from 'react';
-import { colors } from '../../utils/colors';
-import { hot, WithRouter, WithRouterProps } from '../../decorators';
 import { UnregisterCallback } from 'history';
 import { Button, Col, Row } from 'antd';
+import { colors } from 'utils/colors';
+import { hot, WithRouter, WithRouterProps } from 'decorators';
 
 export interface ErrorBoundaryProps {
     title?: string

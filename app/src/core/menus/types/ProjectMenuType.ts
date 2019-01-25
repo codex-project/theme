@@ -1,5 +1,4 @@
-import { MenuItem } from '../MenuItem';
-import { url } from 'classes/Url';
+import { MenuItem } from '@codex/api';
 import { MenuType } from '../MenuType';
 
 export class ProjectMenuType extends MenuType {
@@ -19,7 +18,7 @@ export class ProjectMenuType extends MenuType {
         //     item.to    = { name: 'documentation.project', params };
         //     return item;
         // }
-        item.to    = { name: 'documentation.project', params };
+        item.to = { name: 'documentation.project', params };
 
 
         return item;

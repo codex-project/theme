@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { hot } from '../../decorators';
 import { MenuItemRenderer, MenuItemRendererProps } from './DynamicMenu';
 import { Col, Menu as AntdMenu, Row } from 'antd';
-import { getRandomId } from '../../utils/general';
 // noinspection ES6UnusedImports
 import styles from './BigMenuItemRenderer.mscss';
 import './BigMenuItemRenderer.mscss';
 import { MenuItemIcon } from './MenuItemIcon';
-import {Link} from 'routing';
+import { getRandomId } from 'utils/general';
+import { hot } from 'decorators';
+import { RouteLink } from 'router';
 
 const { SubMenu, Item } = AntdMenu;
 
@@ -38,7 +38,7 @@ export class BigMenuItemRenderer extends React.Component<MenuItemRendererProps> 
                     item.type === 'link' ?
                     <a href={item.href} target={item.target} key={getRandomId(6)}>{content}</a> :
                     item.type === 'router-link' ?
-                    <Link to={item.to} key={getRandomId(6)}>{content}</Link> :
+                    <RouteLink to={item.to} key={getRandomId(6)}>{content}</RouteLink> :
                     content
                 }
             </Item>

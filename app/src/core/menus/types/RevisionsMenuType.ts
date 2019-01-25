@@ -1,8 +1,8 @@
-import { MenuItem } from '../MenuItem';
-import { url } from 'classes/Url';
+import { MenuItem } from '@codex/api';
+import { url } from '../../classes/Url';
 import { MenuType } from '../MenuType';
 import { toJS } from 'mobx';
-import { SideMenuType } from 'menus/types/SideMenuType';
+import { SideMenuType } from '../types/SideMenuType';
 
 export class RevisionsMenuType extends MenuType {
     name = 'revisions';

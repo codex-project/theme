@@ -22,8 +22,8 @@ let prismPromise;
 
 
 export async function getPrism(): Promise<null> {
-    await import(/* webpackChunkName: "prismjs" */'../utils/prism');
-    await import(/* webpackChunkName: "prismjs" */'../styling/prismjs.scss');
+    await import(/* webpackChunkName: "prismjs" */'./prism');
+    // await import(/* webpackChunkName: "prismjs" */'../../../../app/src/site/styling/prismjs.scss');
     return null
 }
 

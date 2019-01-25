@@ -1,9 +1,10 @@
-import { injectable, lazyInject } from 'ioc';
+import { injectable, lazyInject } from '../ioc'
 
 import { merge, uniq } from 'lodash';
-import { Api, api, FetchResult } from '@codex/api';
+// import { Api, api, FetchResult } from '@codex/api';
 import { SyncHook } from 'tapable';
-import { Fetched } from 'stores/Fetched';
+import { Fetched } from './Fetched';
+import { FetchResult } from '@codex/api';
 
 const log = require('debug')('BuildQuery');
 
@@ -14,16 +15,16 @@ function isMergable(target) {
 }
 
 export type BuildQueryReturn = {
-    codex: api.Codex,
-    project: api.Project,
-    revision: api.Revision,
-    document: api.Document,
+    codex: any //api.Codex,
+    project: any //api.Project,
+    revision: any //api.Revision,
+    document: any //api.Document,
 }
 type Fields = Record<string, string>
 
 @injectable()
 export class QueryBuilder {
-    @lazyInject('api') api: Api;
+    @lazyInject('api') api;
     @lazyInject('fetched') fetched: Fetched;
 
     public readonly hooks = {

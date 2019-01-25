@@ -1,5 +1,5 @@
-import { MenuItem } from '../MenuItem';
-import { MenuItems, MenuType } from '../../menus';
+import { MenuItem } from '@codex/api';
+import { MenuItems, MenuType } from '..';
 import { IStoreProxy } from '../../stores/proxy';
 import { LayoutStoreSide } from '../../stores/LayoutStore';
 import { transaction } from 'mobx';

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Spin, SpinProps } from '../../components/spin';
+import { Spin, SpinProps } from '../spin';
 import { LoadingComponentProps } from 'react-loadable';
-import { cold, hot } from 'decorators';
+
 import { noop } from 'lodash';
 import './loading.scss';
 import { classes } from 'typestyle';

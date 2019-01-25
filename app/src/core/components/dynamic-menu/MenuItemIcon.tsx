@@ -1,9 +1,9 @@
 import React from 'react';
-import { hot } from '../../decorators';
 import { observer } from 'mobx-react';
-import { strEnsureLeft } from '../../utils/general';
-import { api } from '@codex/api';
+
 import { classes } from 'typestyle';
+import { hot } from 'decorators';
+import { strEnsureLeft } from 'utils/general';
 
 const log = require('debug')('components:MenuItemIcon');
 

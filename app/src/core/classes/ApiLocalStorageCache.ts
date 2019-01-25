@@ -1,6 +1,6 @@
+import md5 from '../utils/md5';
+import { LocalStorage } from '../utils/storage';
 import { Api } from '@codex/api';
-import md5 from 'utils/md5';
-import { LocalStorage } from 'utils/storage';
 
 const name = 'ApiLocalStorageCache';
 

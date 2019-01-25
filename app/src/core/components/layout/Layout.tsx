@@ -1,21 +1,19 @@
 import React, { RefObject } from 'react';
-import { LayoutStore } from 'stores/LayoutStore';
 import { hot } from 'decorators';
 import { observer } from 'mobx-react';
 import { BackTop, Layout as AntdLayout } from 'antd';
-import { lazyInject } from 'ioc';
-import { LayoutSide } from 'components/layout/LayoutSide';
-import './index.scss';
-import { Store } from 'stores';
-import { Routes } from 'collections/Routes';
-import { LayoutHeader } from 'components/layout/LayoutHeader';
-import { LayoutFooter } from 'components/layout/LayoutFooter';
-import { LayoutBreadcrumbs } from 'components/layout/LayoutBreadcrumbs';
-import { Toolbar } from 'components/toolbar';
+import { LayoutSide } from './LayoutSide';
+import { LayoutHeader } from './LayoutHeader';
+import { LayoutFooter } from './LayoutFooter';
+import { LayoutBreadcrumbs } from './LayoutBreadcrumbs';
+import { Toolbar } from '../toolbar';
 import posed from 'react-pose';
-import { Affix } from 'components/affix';
-import { TunnelPlaceholder } from 'components/tunnel';
+import { Affix } from '../affix';
+import { TunnelPlaceholder } from '../tunnel';
 
+import './index.scss';
+import { LayoutStore, Store } from 'stores';
+import { lazyInject } from 'ioc';
 
 const { Sider, Header, Content, Footer } = AntdLayout;
 
@@ -125,4 +123,5 @@ export class Layout extends React.Component<LayoutProps> {
     }
 
 }
-export default Layout
+
+export default Layout;

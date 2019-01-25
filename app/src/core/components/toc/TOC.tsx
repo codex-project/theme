@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
+
 import { hot } from 'decorators';
 import { Drawer, Popover } from 'antd';
-import { Toolbar } from 'components/toolbar';
-import { Button } from 'components/button';
+import { Toolbar } from '../toolbar';
+import { Button } from '../button';
 
 
 const log = require('debug')('components:TOC');

@@ -1,22 +1,22 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import { Card, List } from 'antd';
+
+
+import { hot } from 'decorators';
+import { clink, ProjectPart, Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { Api } from '@codex/api';
-import { hot } from 'decorators';
-import { IDefinedRoute } from 'interfaces';
-import { PopoverAction } from 'components/link/PopoverAction';
-import { Scrollbar } from 'components/scrollbar';
+import { PopoverAction } from './PopoverAction';
+import { Scrollbar } from '../scrollbar';
 import { Link } from 'react-router-dom';
-import { Routes } from 'collections/Routes';
-import { ProjectPart, Store } from 'stores';
-import { Icon } from 'components/icon';
-import { clink } from 'stores/CLinkStore';
+import { Icon } from '../icon';
+import { RouteDefinition, RouteMap } from 'router';
 
 
 export interface ProjectPopoverActionProps {
     link: React.ReactNode
-    route: IDefinedRoute
+    route: RouteDefinition
     to: string
 }
 
@@ -25,7 +25,7 @@ export interface ProjectPopoverActionProps {
 @clink.action('project', 'popover')
 export class ProjectPopoverAction extends React.Component<ProjectPopoverActionProps> {
     @lazyInject('api') api: Api;
-    @lazyInject('routes') routes: Routes;
+    @lazyInject('routes') routes: RouteMap;
     @lazyInject('store') store: Store;
 
     render() {

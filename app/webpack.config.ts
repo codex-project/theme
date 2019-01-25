@@ -17,6 +17,7 @@ import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from 
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
+import WebappPlugin from 'webapp-webpack-plugin';
 
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
@@ -28,6 +29,7 @@ const cache             = isDev;
 const _assetPath        = isDev ? 'vendor' : 'vendor/codex_[entrypoint]';
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
+const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
 
 //region: Helper Functions
@@ -130,10 +132,7 @@ export function addPluginEntry(chain: Chain, name: string, dirPath: string, entr
         ...chain.get('externals') || {},
         [ umdName ]: [ 'codex', name ],
     });
-    chain.resolve.alias.set(umdName, dirPath);
-    if ( chain.module.rules.has('ts') ) {
-        chain.module.rule('ts').include.add(dirPath);
-    }
+    // chain.resolve.alias.set(umdName, dirPath);
     addAssetsLoaderForEntry(chain, name, dirPath);
     chain.module.rule('ts').include.add(dirPath);
     chain.module.rule('js').include.add(dirPath);
@@ -166,7 +165,7 @@ export function addAnalyzerPlugins(chain: Chain, when: boolean = true) {
 export function addPackage(chain: Chain, name: string, umdName?: string) {
     umdName = umdName || `@codex/${name}`;
     chain.when(isDev, chain => {
-        let path = rootPath('packages', name, 'src')
+        let path = rootPath('packages', name, 'src');
         chain.resolve.alias.set(umdName, path);
         chain.module.rule('ts').include.add(path);
     }, chain => {
@@ -211,13 +210,19 @@ chain.plugin('copy').use(CopyPlugin, [ [
 ].filter(Boolean) ]);
 chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     filename: 'index.html',
-    template: chain.srcPath('site/index.html'),
+    template: resolve(__dirname, 'index.html'),
     inject  : 'head',
     DEV     : isDev,
     PROD    : isProd,
     TEST    : process.env.NODE_ENV === 'test',
     ENV     : dotenv.load({ path: resolve('.env') }).parsed,
 } ]);
+chain.plugin('favicon').use(WebappPlugin, [ {
+    logo  : rootPath('node_modules/@fortawesome/fontawesome-free/svgs/solid/book.svg'),
+    cache,
+    prefix: isDev ? 'vendor/img' : 'vendor/code_core/img',
+    inject: true,
+} ]).after('html');
 
 chain.when(isProd, chain => {
     chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
@@ -231,7 +236,7 @@ chain.when(isProd, chain => {
         canPrint           : true,
     } ]);
     chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
-        defaultEntryPoint: 'site',
+        defaultEntryPoint: 'core',
     } ]);
 });
 //endregion
@@ -299,18 +304,19 @@ chain.when(isDev, chain => {
         namedModules: true,
         namedChunks : true,
         runtimeChunk: true,
-        splitChunks : {
-            name       : true,
-            cacheGroups: {
-                default: false as any,
-                commons: {
-                    name     : 'commons',
-                    chunks   : 'initial',
-                    minChunks: 2,
-                    minSize  : 0,
-                },
-            },
-        },
+        occurrenceOrder: true,
+        // splitChunks : {
+        //     name       : true,
+        //     cacheGroups: {
+        //         default: false as any,
+        //         commons: {
+        //             name     : 'commons',
+        //             chunks   : 'initial',
+        //             minChunks: 2,
+        //             minSize  : 0,
+        //         },
+        //     },
+        // },
     });
 }, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
@@ -407,12 +413,8 @@ chain.module.set('strictExportPresence', true);
 
 chain.module.rule('ts')
     .test(/\.(ts|tsx)$/);
-// .include.add(chain.srcPath());
-
 chain.module.rule('js')
     .test(/\.(js|mjs|jsx)$/);
-// .include.add(chain.srcPath());
-
 chain.module.rule('vendor-js')
     .test(/\.(js|mjs)$/)
     .exclude.add(/@babel(?:\/|\\{1,2})runtime/);
@@ -428,16 +430,16 @@ addBabelToRule(chain, 'vendor-js', {
     ],
 });
 addPackage(chain, 'api', '@codex/api');
-addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.ts');
-addPluginEntry(chain, 'site', chain.srcPath('site'), 'entry.ts');
-// addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.ts');
-// chain.resolve.modules.add(chain.srcPath('core'));
-// chain.resolve.alias.merge({
-//     'heading'            : chain.srcPath('core/styling/heading.less'),
-//     '../../theme.config$': chain.srcPath('core/styling/theme.config'),
-//     './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
-// });
-// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.ts');
+// addPluginEntry(chain, 'api', packagesPath('api/src'), 'index.ts');
+addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
+addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
+// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
+chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
+chain.resolve.alias.merge({
+    'heading'            : chain.srcPath('core/styling/heading.less'),
+    '../../theme.config$': chain.srcPath('core/styling/theme.config'),
+    './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
+});
 //endregion
 
 

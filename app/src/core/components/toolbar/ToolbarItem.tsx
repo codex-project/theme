@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Tunnel } from 'components/tunnel';
+import { Tunnel } from '../tunnel';
 import { strEnsureLeft } from 'utils/general';
+
 
 export interface ToolbarItemProps {
     side?: 'left' | 'right'

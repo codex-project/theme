@@ -1,12 +1,13 @@
 import React from 'react';
+
 import { hot } from 'decorators';
 import { observer } from 'mobx-react';
 
 import { Col, ColProps, Row } from 'antd/lib/grid';
 import { classes } from 'typestyle';
-import { strEnsureLeft } from 'utils/general';
-import { Tunnel, TunnelPlaceholder } from 'components/tunnel';
+import { Tunnel, TunnelPlaceholder } from '../tunnel';
 import './toolbar.scss';
+import { strEnsureLeft } from 'utils/general';
 
 
 export type ToolbarSize = 'small' | 'default' | 'large';

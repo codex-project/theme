@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { lazyInject } from 'ioc';
-import { Store } from 'stores';
-import { observer } from 'mobx-react';
+
 import { hot } from 'decorators';
+import { Store } from 'stores';
+import { lazyInject } from 'ioc';
+import { observer } from 'mobx-react';
 import { Layout, Menu as AntdMenu, Tooltip } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { getColor } from 'utils/colors';
 import { DynamicMenu } from '../dynamic-menu';
 import { classes } from 'typestyle';
-import { MenuItemIcon } from 'components/dynamic-menu/MenuItemIcon';
+import { MenuItemIcon } from '../dynamic-menu/MenuItemIcon';
 import { FontAwesomeIcon } from 'interfaces';
+import { getColor } from 'utils/colors';
 
 const { Header } = Layout;
 
@@ -91,4 +92,5 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
         );
     }
 }
-export default LayoutHeader
+
+export default LayoutHeader;

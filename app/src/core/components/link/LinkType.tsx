@@ -1,10 +1,10 @@
 import React from 'react';
+import { RouteDefinition } from 'router';
 import { app } from 'ioc';
-import { IDefinedRoute } from 'interfaces';
 
 export interface LinkTypeProps {
     link?: React.ReactNode
-    route?: IDefinedRoute
+    route?: RouteDefinition
     to?: string
     styling?: boolean
     icon?: boolean
@@ -16,10 +16,6 @@ export abstract class LinkType<P extends LinkTypeProps = LinkTypeProps, S = {}> 
         styling: true,
         icon   : true,
     };
-
-    // constructor(props: P, context: any) {
-    //     super(props, context);
-    // }
 
     public componentDidMount(): void {
         this.updateRouteParams();
