@@ -1,6 +1,5 @@
 import { MenuItem } from '../MenuItem';
 import { MenuType } from '../MenuType';
-import { url } from 'classes/Url';
 
 export class DocumentMenuType extends MenuType {
     name = 'document';
@@ -17,7 +16,7 @@ export class DocumentMenuType extends MenuType {
             revision: item.revision || store.revision.key,
             document: item.document,
         };
-        item.to    = { pathname: url.documentation(`${params.project}/${params.revision}/${params.document}`) };
+        item.to    = { name: 'documentation.document', params };
         return item;
     }
 }

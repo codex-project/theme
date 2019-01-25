@@ -3,11 +3,10 @@ import { hot } from 'decorators';
 import { observer } from 'mobx-react';
 import { Breadcrumb, Dropdown, Menu } from 'antd';
 import { lazyInject } from 'ioc';
-import { Link } from 'routing';
+import { IRouteMap, Link, Router } from 'routing';
 import { Store } from 'stores';
 import { Icon } from 'components/icon';
 import { classes } from 'typestyle';
-import { IRouteMap } from '../../routing';
 
 import './index.scss';
 
@@ -23,6 +22,7 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
     static defaultProps: Partial<LayoutBreadcrumbsProps> = {};
     @lazyInject('store') store: Store;
     @lazyInject('routes') routes: IRouteMap;
+    @lazyInject('router') router: Router;
 
     render() {
         const { style, className, ...props }         = this.props;
@@ -37,7 +37,7 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
                 {...props}
             >
                 <Breadcrumb.Item>
-                    <Link to={this.routes.get('home').link()} title="Home">
+                    <Link to={this.router.getRouteLink('home')} title="Home">
                         <Icon name="home"/>
                     </Link>
                 </Breadcrumb.Item>
@@ -47,8 +47,7 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
                         <Dropdown overlay={
                             <Menu>
                                 {codex.projects.map((project, i) => {
-                                    let route = this.routes.get('documentation.project');
-                                    let to    = route.link({ project: project.key });
+                                    let to    = this.router.getRouteLink('documentation.project', { project: project.key });
                                     let title = project.display_name || project.key;
                                     return <Menu.Item key={project.key || i}><Link to={to}><Icon name="book" style={iconStyle}/> {title}</Link></Menu.Item>;
                                 })}
@@ -65,8 +64,7 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
                             <Menu>
                                 <If condition={project.revisions}>
                                     {project.revisions.map((revision, i) => {
-                                        let route = this.routes.get('documentation.revision');
-                                        let to    = route.link({ project: project.key, revision: revision.key });
+                                        let to    = this.router.getRouteLink('documentation.revision', { project: project.key, revision: revision.key });
                                         let title = revision.key;
                                         return <Menu.Item key={revision.key || i}><Link to={to}><Icon name="code-fork" style={iconStyle}/> {title}</Link></Menu.Item>;
                                     })}

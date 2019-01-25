@@ -9,9 +9,11 @@ export interface MenuPluginOptions {
 }
 
 export class MenuPlugin extends BasePlugin<MenuPluginOptions> {
-    name  = 'menu';
-    hooks = {
-        register: new SyncHook<MenuManager>([ 'menus' ]),
+    name = 'menu';
+    hooks: {
+        register: SyncHook<MenuManager>
+    }    = {
+        register: new SyncHook([ 'manager' ]),
     };
 
     constructor(options: MenuPluginOptions = {}) {
@@ -20,7 +22,7 @@ export class MenuPlugin extends BasePlugin<MenuPluginOptions> {
         });
         this.hooks.register.tap(this.name, (menus) => {
             menus.registerType(class extends MenuType {
-                name = 'defaults'
+                name = 'defaults';
                 test = item => true;
 
                 public defaults(item, parent) {
@@ -45,13 +47,11 @@ export class MenuPlugin extends BasePlugin<MenuPluginOptions> {
 
     install(app: Application) {
         let {} = this.options;
-
+        let manager;
         app.hooks.register.tap(this.name, (app) => {
-            app.bind<MenuManager>('menumanager').to(MenuManager).inSingletonScope();
-        });
-        app.hooks.registered.tap(this.name, (app) => {
-            let menus = app.get<MenuManager>('menumanager');
-            this.hooks.register.call(menus)
+            manager = new MenuManager();
+            app.bind<MenuManager>('menumanager').toConstantValue(manager);
+            this.hooks.register.call(manager);
         });
         app.hooks.boot.tap(this.name, (app) => {
             app.menus.types.forEach(type => {

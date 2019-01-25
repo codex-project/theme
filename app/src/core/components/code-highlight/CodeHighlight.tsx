@@ -64,7 +64,7 @@ export class CodeHighlight extends React.Component<CodeHighlightProps> {
 
     componentDidMount() {
         this.highlighted = defer();
-        this.setCode(this.props.code);
+        this.setCode(this.props.code.length > 0 ? this.props.code : this.props.children.toString());
         this.highlighted.then(async(prism) => {
             this.isHighlighted = true;
             return prism;
@@ -75,7 +75,7 @@ export class CodeHighlight extends React.Component<CodeHighlightProps> {
 
     componentDidUpdate(prevProps: Readonly<CodeHighlightProps>, prevState: Readonly<{}>, snapshot?: any): void {
         if ( this.props.code !== prevProps.code ) {
-            this.setCode(this.props.code);
+            this.setCode(this.props.code.length > 0 ? this.props.code : this.props.children.toString());
             this.highlight();
         }
     }

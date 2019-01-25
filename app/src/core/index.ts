@@ -18,6 +18,7 @@ export * from './classes/HtmlComponents';
 export * from './classes/Url';
 export * from './classes/CssVariables';
 export * from './classes/ApiLocalStorageCache';
+export * from './classes/Plugin';
 export * from './collections/Collection';
 export * from './collections/DictionaryWrapper';
 export * from './collections/ArrayUtils';
@@ -26,6 +27,7 @@ export * from './collections/Routes';
 
 export * from './components';
 export * from './menus';
+export * from './routing';
 export * from './stores';
 export * from './decorators';
 

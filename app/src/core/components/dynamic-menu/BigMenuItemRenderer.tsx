@@ -7,7 +7,7 @@ import { getRandomId } from '../../utils/general';
 import styles from './BigMenuItemRenderer.mscss';
 import './BigMenuItemRenderer.mscss';
 import { MenuItemIcon } from './MenuItemIcon';
-import { NavLink } from 'react-router-dom';
+import {Link} from 'routing';
 
 const { SubMenu, Item } = AntdMenu;
 
@@ -38,7 +38,7 @@ export class BigMenuItemRenderer extends React.Component<MenuItemRendererProps> 
                     item.type === 'link' ?
                     <a href={item.href} target={item.target} key={getRandomId(6)}>{content}</a> :
                     item.type === 'router-link' ?
-                    <NavLink to={item.to} key={getRandomId(6)}>{content}</NavLink> :
+                    <Link to={item.to} key={getRandomId(6)}>{content}</Link> :
                     content
                 }
             </Item>

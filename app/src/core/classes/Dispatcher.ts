@@ -6,5 +6,5 @@ export type EventTypes = 'register' | 'registered' | 'boot' | 'booted';
 decorate(injectable(), EventEmitter);
 
 @injectable()
-export class Dispatcher extends EventEmitter<EventTypes> {
+export class Dispatcher<T extends string=EventTypes> extends EventEmitter<T> {
 }

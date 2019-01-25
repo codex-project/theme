@@ -1,7 +1,8 @@
-export * from './BaseRoute';
 export * from './Link';
 
-export * from './utils';
-export * from './plugin';
 export * from './RouterStore';
+export * from './RouteMap.js';
+
 export * from './types';
+
+export * from './plugin';

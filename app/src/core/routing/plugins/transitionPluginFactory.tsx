@@ -6,7 +6,7 @@ export interface TransitionPluginTarget {
 
 const log                            = require('debug')('routing:plugins:transition');
 export const transitionPluginFactory = (target: TransitionPluginTarget): PluginFactory => {
-    let transitionPlugin: PluginFactory = (router, dependencies): Plugin => {
+    return (router, dependencies): Plugin => {
         return {
             onTransitionStart  : (...args) => {
                 log('onTransitionStart', args);
@@ -27,7 +27,5 @@ export const transitionPluginFactory = (target: TransitionPluginTarget): PluginF
         };
     };
 
-    (transitionPlugin as any).pluginName = 'TRANSITION_PLUGIN';
-    return transitionPlugin as PluginFactory;
 };
 

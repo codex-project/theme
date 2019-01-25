@@ -34,9 +34,9 @@ export class Api {
     }
 
     async query(query: string, variables: Variables = {}, options: Partial<ApiOptions> = {}) {
-        let request = { query, variables: lessVariables };
+        let request = { query, variables };
         this.hooks.query.call(request);
-        let result = await this.fetch({ query, variables: lessVariables }, options);
+        let result = await this.fetch(request, options);
         result     = this.hooks.queryResult.call(result);
         return result;
     }

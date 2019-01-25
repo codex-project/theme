@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
+import { RouteContext } from 'react-router5/types/types';
 
 const log = require('debug')('pages:home');
 
@@ -18,7 +19,7 @@ export interface DocumentPageProps extends React.HTMLAttributes<HTMLDivElement> 
 
 @hot(module)
 @observer
-export default class DocumentPage extends React.Component<DocumentPageProps> {
+export default class DocumentPage extends React.Component<DocumentPageProps & RouteContext> {
     @lazyInject('api') api: Api;
     @lazyInject('components') hc: HtmlComponents;
     @lazyInject('store') store: Store;
@@ -41,7 +42,7 @@ export default class DocumentPage extends React.Component<DocumentPageProps> {
 
     render() {
         const { children, document, ...props } = this.props;
-        const content                          = this.hc.parse(document.content);
+        const content                                                        = this.hc.parse(document.content);
         return (
             <div id="document" {...props}>
                 <Helmet>

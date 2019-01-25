@@ -15,12 +15,13 @@ export class ProjectMenuType extends MenuType {
         let params = {
             project: item.project || (store.project ? store.project.key : store.codex.default_project),
         };
-        if ( ! store.hasProject(params.project) ) {
-            item.to = { pathname: url.documentation() };
-            return item;
-        }
-        let project = store.getProject(params.project);
-        item.to     = { pathname: url.documentation(`${params.project}/${project.default_revision}/${project.revisions[ project.default_revision ]}`) };
+        // if ( ! store.hasProject(params.project) ) {
+        //     item.to    = { name: 'documentation.project', params };
+        //     return item;
+        // }
+        item.to    = { name: 'documentation.project', params };
+
+
         return item;
     }
 }

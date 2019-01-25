@@ -5,7 +5,7 @@ import React from 'react';
 
 const log = require('debug')('site:index');
 
-app.use(app => {
+// app.use(app => {
     // app.routes.addRoutes({
     //     name  : 'demo',
     //     path  : url.root('demo/:project/:revision'),
@@ -38,7 +38,7 @@ app.use(app => {
     //         // return React.cloneElement(Element);
     //     },
     // });
-});
+// });
 
 window[ 'site' ] = module;
 

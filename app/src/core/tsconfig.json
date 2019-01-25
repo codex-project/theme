@@ -17,6 +17,8 @@
             "utils/*": ["utils/*"],
             "routing": ["routing"],
             "routing/*": ["routing/*"],
+            "router": ["router"],
+            "router/*": ["router/*"],
             "decorators": ["decorators.tsx"],
 
             "interfaces": ["interfaces.ts"],

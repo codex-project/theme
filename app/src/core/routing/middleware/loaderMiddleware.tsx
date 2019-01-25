@@ -1,6 +1,6 @@
 import { Route, Router, State, transitionPath } from 'router5';
 import { merge } from 'lodash';
-import { IRouteMap } from 'routing/types';
+import { RouterStore } from 'routing/RouterStore';
 
 interface LoaderMiddlewareOptions {
     with?: (keyof Route)[]
@@ -8,7 +8,7 @@ interface LoaderMiddlewareOptions {
 
 const log = require('debug')('routing:middleware:loader');
 
-export const loaderMiddlewareFactory = (routes: IRouteMap, options?: LoaderMiddlewareOptions) => {
+export const loaderMiddlewareFactory = (routerStore: RouterStore, options?: LoaderMiddlewareOptions) => {
     options = merge({
         with: [ 'loadComponent', 'canActivate' ],
     } as LoaderMiddlewareOptions, options);

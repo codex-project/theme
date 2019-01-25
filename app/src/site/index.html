@@ -37,25 +37,23 @@
 <body>
 <div id="root"></div>
 <script>
-    (function() {
-        var codex = window['codex']
-        codex.site.loadPolyfills()
-            .then(function () {
-                return codex.site.loadApp()
-            })
-            .then(function (site) {
-                // codex.phpdoc.install(site.app);
-
-                site.app.register({
-                    debug : true,
-                    rootID: 'root',
-                    api   : {
-                        url: '/api' // http://codex.local
-                    }
-                });
-                site.app.boot(site.App);
+    (function () {
+        var codex = window['codex'];
+        codex.site.loadApp(function (app) {
+            app.plugin(codex.phpdoc.default)
+            return app.register({
+                debug : true,
+                rootID: 'root',
+                api   : {
+                    url: '/api' // http://codex.local
+                }
             });
-    }).call()
+        }).then(function (core) {
+            return core.app.boot(core.App);
+        }).then(function (app) {
+            console.log('booted')
+        });
+    }).call();
 </script>
 </body>
 </html>

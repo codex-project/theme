@@ -3,7 +3,6 @@ import { Store } from 'stores';
 import { observer } from 'mobx-react';
 import { lazyInject } from 'ioc';
 import { RouterState } from 'react-router5-hocs/modules/types';
-import { handleRouteNode } from 'routing/handleRouteNode';
 
 const log = require('debug')('DocumentationNode');
 
@@ -19,7 +18,7 @@ export default class DocumentationNode extends React.Component<DocumentationNode
     static displayName = 'DocumentationNode';
 
     render() {
-        log('render', 'route', this.props.route);
+        log('render', this.props.route ? this.props.route.name : null, this.props.route);
         const { route, router, previousRoute, children } = this.props;
         // let child                                        = handleRouteNode(this);
 

@@ -1,4 +1,4 @@
-import { join, resolve } from 'path';
+import { isAbsolute, join, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import webpack from 'webpack';
@@ -17,7 +17,6 @@ import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from 
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
-import { Rule } from 'webpack-chain';
 
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
@@ -31,80 +30,24 @@ const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
 
-chain.entry('core').add(chain.srcPath('core/index.ts'));
-// chain.entry('phpdoc').add(chain.srcPath('phpdoc/index.ts'));
-chain.entry('site').add(chain.srcPath('site/entry.ts'));
-
-chain.when(isProd, chain => chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
-    defaultEntryPoint: 'site',
-} ]));
-
-chain
-    .target('web')
-    .cache(cache)
-    .devtool(isDev ? 'cheap-module-source-map' : false);
-
-chain.output
-    .path(chain.outPath())
-    .pathinfo(isDev)
-    .filename(assetPath('js/[name].js'))
-    .chunkFilename(assetPath('js/chunk.[name].js'))
-    .publicPath('/')
-    .library([ 'codex', '[name]' ] as any)
-    .libraryTarget('window');
-
-chain.externals({
-    '@codex/core': [ 'codex', 'core' ],
-    // '@codex/phpdoc': [ 'codex', 'phpdoc' ],
-});
-chain.resolve
-    .symlinks(true)
-    .extensions.merge([ '.js', '.vue', '.json', '.web.ts', '.ts', '.web.tsx', '.tsx', '.styl', '.less', '.scss', '.stylus', '.css', '.mjs', '.web.js', '.json', '.web.jsx', '.jsx' ]).end()
-    .mainFields.merge([ 'module', 'browser', 'main' ]).end() // 'jsnext:main',
-    .mainFiles.merge([ 'index', 'index.ts', 'index.tsx' ]).end()
-    .modules.merge([ 'node_modules', chain.srcPath('core') ]).end()
-    .alias.merge({
-    'lodash-es$'         : 'lodash',
-    'async$'             : 'neo-async',
-    // 'router5/types$': rootPath('node_modules/router5/types/index.d.ts'),
-    '@ant-design/icons'  : 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
-    // '@codex/phpdoc'      : chain.srcPath('phpdoc'),
-    '@codex/core'        : chain.srcPath('core'),
-    // 'tapable'            : chain.srcPath('tapable/lib'),
-    'heading'            : chain.srcPath('core/styling/heading.less'),
-    '../../theme.config$': chain.srcPath('core/styling/theme.config'),
-    './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
-}).end();
-
-chain.resolveLoader
-    .modules.merge([ 'node_modules' ]).end()
-    .extensions.merge([ '.js', '.json', '.ts' ]).end();
-
-
+//region: Helper Functions
 const babelImportPlugins = [
     [ 'import', { libraryName: 'antd', style: true }, 'import-antd' ],
     [ 'import', { libraryName: 'lodash', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash' ],
     [ 'import', { libraryName: 'lodash-es', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash-es' ],
 ];
 
-export function addTsToRule(chain: Chain, rule: string | Rule)
-export function addTsToRule(rule: Rule)
-export function addTsToRule(...args: any[]) {
-    let rule: Rule   = args.length === 1 ? args[ 0 ] : args[ 1 ];
-    let chain: Chain = args[ 0 ] instanceof Chain ? args[ 0 ] : rule.end().end();
-    if ( typeof rule === 'string' ) {
-        rule = chain.module.rule(rule);
-    }
+export function addBabelToRule(chain: Chain, ruleName: string, options: BabelLoaderOptions = {}) {
+    let rule = chain.module.rule(ruleName);
     rule.use('babel-loader')
         .loader('babel-loader')
         .options(<BabelLoaderOptions>{
-            babelrc   : false,
-            configFile: false,
-            presets   : [
+            babelrc         : false,
+            configFile      : false,
+            presets         : [
                 [ 'react-app' ],
             ],
-            plugins   : [
-                ...babelImportPlugins,
+            plugins         : [
                 'jsx-control-statements',
                 [ 'react-css-modules', {
                     'context'               : chain.srcPath(),
@@ -119,8 +62,21 @@ export function addTsToRule(...args: any[]) {
                     'handleMissingStyleName': 'warn',
                     'generateScopedName'    : '[name]__[local]',
                 } ],
+                ...babelImportPlugins,
             ].filter(Boolean),
-        }).end()
+            cacheDirectory  : cache,
+            cacheCompression: isProd,
+            compact         : isProd,
+            ...options,
+        } as any);
+}
+
+export function addTsToRule(chain: Chain, ruleName: string, options: Partial<TypescriptLoaderOptions> = {}, babelOptions: BabelLoaderOptions = {}) {
+    let rule = chain.module.rule(ruleName);
+    if ( ! rule.has('babel-loader') ) {
+        addBabelToRule(chain, ruleName, babelOptions);
+    }
+    rule
         .use('ts-loader')
         .loader('ts-loader')
         .options(<Partial<TypescriptLoaderOptions>>{
@@ -139,85 +95,13 @@ export function addTsToRule(...args: any[]) {
                     ]) as any,
                 ],
             }),
+            ...options,
         } as any);
 }
 
-
-chain.module.set('strictExportPresence', true);
-
-
-addTsToRule(
-    chain.module.rule('ts')
-        .test(/\.(ts|tsx)$/)
-        .include.add(chain.srcPath())
-        .end(),
-);
-
-chain.resolve.alias.set('@codex/api', rootPath('packages/api/src'));
-chain.module.rules.has('ts') && chain.module.rule('ts').include.add(rootPath('packages/api/src'));
-// chain.module.rules.has('react-proxy') && chain.module.rule('react-proxy').include.add(rootPath('packages/api/src'));
-
-chain.stats({
-    warningsFilter: /export .* was not found in/,
-});
-
-chain.module.rule('babel-loader')
-    .test(/\.(js|mjs|jsx)$/)
-    .include.add(chain.srcPath()).end()
-    .use('babel-loader')
-    .loader('babel-loader')
-    .options(<BabelLoaderOptions>{
-        customize       : require.resolve('babel-preset-react-app/webpack-overrides'),
-        babelrc         : false,
-        configFile      : false,
-        presets         : [
-            [ 'react-app' ],
-        ],
-        plugins         : [
-            'jsx-control-statements',
-            [ 'react-css-modules', {
-                'context'               : chain.srcPath(),
-                'filetypes'             : {
-                    '.mscss': {
-                        'syntax' : 'postcss-scss',
-                        'plugins': [
-                            'postcss-nested',
-                        ],
-                    },
-                },
-                'handleMissingStyleName': 'warn',
-                'generateScopedName'    : '[name]__[local]',
-            } ],
-            ...babelImportPlugins,
-        ].filter(Boolean),
-        cacheDirectory  : cache,
-        cacheCompression: isProd,
-        compact         : isProd,
-    } as any);
-
-// chain.when(isProd, chain =>
-chain.module.rule('vendor-js')
-    .test(/\.(js|mjs)$/)
-    .exclude.add(/@babel(?:\/|\\{1,2})runtime/).end()
-    .use('babel-loader')
-    .loader('babel-loader')
-    .options(<BabelLoaderOptions>{
-        babelrc         : false,
-        configFile      : false,
-        compact         : false,
-        presets         : [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
-        plugins         : [
-            ...babelImportPlugins,
-        ],
-        cacheDirectory  : cache,
-        cacheCompression: isProd,
-    });
-
-// );
-
-function addAssetsLoaderForEntry(chain: Chain, entrypoint: string, path: string) {
-    let assetPath = _assetPath.replace('[entrypoint]', entrypoint);
-    chain.module.rule('fonts-' + entrypoint)
+export function addAssetsLoaderForEntry(chain: Chain, name: string, path: string) {
+    let assetPath = _assetPath.replace('[entrypoint]', name);
+    chain.module.rule('fonts-' + name)
         .test(/\.*\.(woff2?|woff|eot|ttf|otf)(\?.*)?$/)
         .include.add(path).end()
         .use('file-loader')
@@ -227,7 +111,7 @@ function addAssetsLoaderForEntry(chain: Chain, entrypoint: string, path: string)
             // publicPath: '/' + assetPath + '/fonts/',
             outputPath: assetPath + '/fonts/',
         });
-    chain.module.rule('images-' + entrypoint)
+    chain.module.rule('images-' + name)
         .test(/\.*\.(png|jpe?g|gif|svg)(\?.*)?$/)
         .include.add(path).end()
         .use('file-loader')
@@ -239,20 +123,177 @@ function addAssetsLoaderForEntry(chain: Chain, entrypoint: string, path: string)
         });
 }
 
-addAssetsLoaderForEntry(chain, 'core', chain.srcPath('core'));
-// addAssetsLoaderForEntry(chain, 'phpdoc', chain.srcPath('phpdoc'));
-addAssetsLoaderForEntry(chain, 'site', chain.srcPath('site'));
+export function addPluginEntry(chain: Chain, name: string, dirPath: string, entryFile: string = 'index.ts') {
+    let umdName = `@codex/${name}`;
+    chain.entry(name).add(isAbsolute(entryFile) ? entryFile : join(dirPath, entryFile));
+    chain.externals({
+        ...chain.get('externals') || {},
+        [ umdName ]: [ 'codex', name ],
+    });
+    chain.resolve.alias.set(umdName, dirPath);
+    if ( chain.module.rules.has('ts') ) {
+        chain.module.rule('ts').include.add(dirPath);
+    }
+    addAssetsLoaderForEntry(chain, name, dirPath);
+    chain.module.rule('ts').include.add(dirPath);
+    chain.module.rule('js').include.add(dirPath);
+}
 
+export function addHMR(chain: Chain, reactHotLoader: boolean = true) {
+    chain.plugin('hmr').use(webpack.HotModuleReplacementPlugin, [ {} ]);
+    const modifyOptions = (o: BabelLoaderOptions) => {
+        if ( reactHotLoader ) {
+            o.plugins.push('react-hot-loader/babel');
+        }
+        let reactCssModulesIndex = o.plugins.findIndex(plugin => Array.isArray(plugin) && plugin[ 0 ] === 'react-css-modules');
+        if ( reactCssModulesIndex !== - 1 ) {
+            o.plugins[ reactCssModulesIndex ][ 1 ].webpackHotModuleReloading = true;
+        }
+        return o;
+    };
+    chain.module.rule('js').use('babel-loader').tap(modifyOptions);
+    chain.module.rule('ts').use('babel-loader').tap(modifyOptions);
+}
 
-chain.node.merge({
-    dgram        : 'empty',
-    fs           : 'empty',
-    net          : 'empty',
-    tls          : 'empty',
-    child_process: 'empty',
+export function addAnalyzerPlugins(chain: Chain, when: boolean = true) {
+    chain.when(when, chain => chain.plugin('bundle-analyzer').use(BundleAnalyzerPlugin, [ <BundleAnalyzerPlugin.Options>{
+        analyzerMode  : 'static',
+        openAnalyzer  : false,
+        reportFilename: 'bundle-analyzer.html',
+    } ]));
+}
+
+export function addPackage(chain: Chain, name: string, umdName?: string) {
+    umdName = umdName || `@codex/${name}`;
+    chain.when(isDev, chain => {
+        let path = rootPath('packages', name, 'src')
+        chain.resolve.alias.set(umdName, path);
+        chain.module.rule('ts').include.add(path);
+    }, chain => {
+        chain.resolve.alias.set(umdName, rootPath('packages', name, 'es'));
+    });
+}
+
+//endregion
+
+//region: Plugins
+chain.plugin('write-file').use(WriteFilePlugin, [ { useHashIndex: false } ]);
+chain.plugin('clean').use(CleanWebpackPlugin, [
+    [ 'js/', 'css/', '*.hot-update.js', '*.hot-update.js.map', '*.hot-update.json', 'assets/', 'vendor/' ],
+    <CleanWebpackPlugin.Options>{ root: chain.outPath(), verbose: false },
+]);
+chain.plugin('define').use(webpack.DefinePlugin, [ {
+    'process.env': {
+        NODE_ENV: `"${chain.get('mode')}"`,
+    },
+    DEV          : isDev,
+    PROD         : isProd,
+    TEST         : chain.get('mode') === 'testing',
+    ENV          : dotenv.load({ path: resolve('.env') }).parsed,
+} ]);
+chain.plugin('bar').use(BarPlugin, [ <BarOptions>{
+    profile   : true,
+    compiledIn: true,
+} ]);
+chain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [ { options: {} } ]);
+chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptions>{
+    compilationSuccessInfo: { messages: [ 'Build success' ], notes: [] },
+    onErrors              : function (severity, errors) { console.error(severity, errors); },
+    clearConsole          : false,
+    logLevel              : true,
+    additionalFormatters  : [],
+    additionalTransformers: [],
+} ]);
+chain.plugin('copy').use(CopyPlugin, [ [
+    isProd && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor/codex_core') },
+    isDev && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor') },
+
+].filter(Boolean) ]);
+chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
+    filename: 'index.html',
+    template: chain.srcPath('site/index.html'),
+    inject  : 'head',
+    DEV     : isDev,
+    PROD    : isProd,
+    TEST    : process.env.NODE_ENV === 'test',
+    ENV     : dotenv.load({ path: resolve('.env') }).parsed,
+} ]);
+
+chain.when(isProd, chain => {
+    chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
+        filename     : assetPath('css/[name].css?[hash]'),
+        chunkFilename: assetPath('css/[name].chunk.css?[chunkhash]'),
+    } ]);
+    chain.plugin('css-optimize').use(OptimizeCssAssetsPlugin, [ <OptimizeCssAssetsPlugin.Options>{
+        assetNameRegExp    : /\.css$/g,
+        cssProcessor       : require('cssnano'),
+        cssProcessorOptions: { discardComments: { removeAll: true } },
+        canPrint           : true,
+    } ]);
+    chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
+        defaultEntryPoint: 'site',
+    } ]);
 });
+//endregion
 
+//region: Style Loaders
+chain.onToConfig(config => {
+    AntdScssThemePlugin.SCSS_THEME_PATH = chain.srcPath('core/styling/antd/theme.scss');
+    let antdScssLoader                  = AntdScssThemePlugin.themify({
+        loader : 'sass-loader',
+        options: {
+            scssThemePath: AntdScssThemePlugin.SCSS_THEME_PATH,
+            functions    : { [ colorPaletteFunctionSignature ]: colorPaletteFunction },
+        },
+    });
+    let antdLessLoader                  = AntdScssThemePlugin.themify('less-loader');
+    config.module.rules.push(...[ {
+        test: /\.module.css$/,
+        use : [
+            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            { loader: 'css-loader', options: { importLoaders: 1, sourceMap: isDev, modules: true, localIdentName: '[name]__[local]' } },
+            { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+        ].filter(Boolean),
+    }, {
+        test   : /\.css$/,
+        exclude: [ /\.module.css$/ ],
+        use    : [
+            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            { loader: 'fast-css-loader', options: { importLoaders: 1, sourceMap: isDev } },
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+        ].filter(Boolean),
+    }, {
+        test: /\.(module\.scss|mscss)$/,
+        use : [
+            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: false, modules: true, localIdentName: '[name]__[local]' } },
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            antdScssLoader,
+        ].filter(Boolean),
+    }, {
+        test   : /\.scss$/,
+        exclude: [ /\.module\.scss$/, /\.mscss$/ ],
+        use    : [
+            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            { loader: 'css-loader', options: { importLoaders: 3, sourceMap: isDev, camelCase: true } },
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            antdScssLoader,
+        ].filter(Boolean),
+    }, {
+        test: /\.less$/,
+        use : [
+            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev } },
+            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            { loader: antdLessLoader.loader, options: { ...antdLessLoader.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
+        ].filter(Boolean),
+    } ]);
+    config.plugins.push(new AntdScssThemePlugin(AntdScssThemePlugin.SCSS_THEME_PATH));
+    return config;
+});
+//endregion
 
+//region: Optimization
 chain.when(isDev, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
         namedModules: true,
@@ -315,154 +356,89 @@ chain.when(isDev, chain => {
             }),
         ],
     });
-    chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
-        filename     : assetPath('css/[name].css?[hash]'),
-        chunkFilename: assetPath('css/[name].chunk.css?[chunkhash]'),
-    } ]);
-    chain.plugin('css-optimize').use(OptimizeCssAssetsPlugin, [ <OptimizeCssAssetsPlugin.Options>{
-        assetNameRegExp    : /\.css$/g,
-        cssProcessor       : require('cssnano'),
-        cssProcessorOptions: { discardComments: { removeAll: true } },
-        canPrint           : true,
-    } ]);
 });
-chain.plugin('write-file').use(WriteFilePlugin, [ { useHashIndex: false } ]);
-chain.plugin('clean').use(CleanWebpackPlugin, [
-    [ 'js/', 'css/', '*.hot-update.js', '*.hot-update.js.map', '*.hot-update.json', 'assets/', 'vendor/' ],
-    <CleanWebpackPlugin.Options>{ root: chain.outPath(), verbose: false },
-]);
-chain.plugin('define').use(webpack.DefinePlugin, [ {
-    'process.env': {
-        NODE_ENV: `"${chain.get('mode')}"`,
-    },
-    DEV          : isDev,
-    PROD         : isProd,
-    TEST         : chain.get('mode') === 'testing',
-    ENV          : dotenv.load({ path: resolve('.env') }).parsed,
-} ]);
-chain.plugin('bar').use(BarPlugin, [ <BarOptions>{
-    profile   : true,
-    compiledIn: true,
-} ]);
-chain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [ { options: {} } ]);
-chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptions>{
-    compilationSuccessInfo: { messages: [ 'Build success' ], notes: [] },
-    onErrors              : function (severity, errors) { console.error(severity, errors); },
-    clearConsole          : false,
-    logLevel              : true,
-    additionalFormatters  : [],
-    additionalTransformers: [],
-} ]);
-chain.plugin('copy').use(CopyPlugin, [ [
-        isProd && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor/codex_core') },
-        isDev && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor') },
+//endregion
 
-    ].filter(Boolean) ],
-);
-chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
-    filename: 'index.html',
-    template: chain.srcPath('site/index.html'),
-    inject  : 'head',
-    DEV     : isDev,
-    PROD    : isProd,
-    TEST    : process.env.NODE_ENV === 'test',
-    ENV     : dotenv.load({ path: resolve('.env') }).parsed,
-} ]);
-chain.onToConfig(config => {
-    // const ThreadLoader = require('thread-loader');
-    // const workers      = require('os').cpus().length - 1;
-    // let threadLoader= { loader: 'thread-loader', options: { workers } };
-    // ThreadLoader.warmup(threadLoader.options,
-    //     [ 'sass-loader', 'less-loader', require.resolve('./build/antd-scss-theme-plugin/antdSassLoader') ],
-    // );
-    let cacheLoader = { loader: 'cache-loader', options: {} };
-
-    AntdScssThemePlugin.SCSS_THEME_PATH = chain.srcPath('core/styling/antd/theme.scss');
-    let antdScssLoader                  = AntdScssThemePlugin.themify({
-        loader : 'sass-loader',
-        options: {
-            scssThemePath: AntdScssThemePlugin.SCSS_THEME_PATH,
-            functions    : { [ colorPaletteFunctionSignature ]: colorPaletteFunction },
-        },
-    });
-    let antdLessLoader                  = AntdScssThemePlugin.themify('less-loader');
-    config.module.rules.push(...[ {
-        test: /\.module.css$/,
-        use : [
-            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'css-loader', options: { importLoaders: 1, sourceMap: isDev, modules: true, localIdentName: '[name]__[local]' } },
-            { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-        ].filter(Boolean),
-    }, {
-        test   : /\.css$/,
-        exclude: [ /\.module.css$/ ],
-        use    : [
-            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'fast-css-loader', options: { importLoaders: 1, sourceMap: isDev } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-        ].filter(Boolean),
-    }, {
-        test: /\.(module\.scss|mscss)$/,
-        use : [
-            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            // cacheLoader,
-            { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: false, modules: true, localIdentName: '[name]__[local]' } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            antdScssLoader,
-        ].filter(Boolean),
-    }, {
-        test   : /\.scss$/,
-        exclude: [ /\.module\.scss$/, /\.mscss$/ ],
-        use    : [
-            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            // cacheLoader,
-            { loader: 'css-loader', options: { importLoaders: 3, sourceMap: isDev, camelCase: true } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            antdScssLoader,
-        ].filter(Boolean),
-    }, {
-        test: /\.less$/,
-        use : [
-            isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
-            { loader: antdLessLoader.loader, options: { ...antdLessLoader.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
-        ].filter(Boolean),
-    } ]);
-    config.plugins.push(new AntdScssThemePlugin(AntdScssThemePlugin.SCSS_THEME_PATH));
-    return config;
+//region: Init
+chain
+    .target('web')
+    .cache(cache)
+    .devtool(isDev ? 'cheap-module-source-map' : false);
+chain.output
+    .path(chain.outPath())
+    .pathinfo(isDev)
+    .filename(assetPath('js/[name].js'))
+    .chunkFilename(assetPath('js/chunk.[name].js'))
+    .publicPath('/')
+    .library([ 'codex', '[name]' ] as any)
+    .libraryTarget('window');
+chain.resolve
+    .symlinks(true)
+    .extensions.merge([ '.js', '.vue', '.json', '.web.ts', '.ts', '.web.tsx', '.tsx', '.styl', '.less', '.scss', '.stylus', '.css', '.mjs', '.web.js', '.json', '.web.jsx', '.jsx' ]).end()
+    .mainFields.merge([ 'module', 'browser', 'main' ]).end() // 'jsnext:main',
+    .mainFiles.merge([ 'index', 'index.ts', 'index.tsx' ]).end()
+    .modules.merge([ 'node_modules' ]).end()
+    .alias.merge({
+    'lodash-es$'       : 'lodash',
+    'async$'           : 'neo-async',
+    '@ant-design/icons': 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
+}).end();
+chain.resolveLoader
+    .modules.merge([ 'node_modules' ]).end()
+    .extensions.merge([ '.js', '.json', '.ts' ]).end();
+chain.externals({});
+chain.stats({
+    warningsFilter: /export .* was not found in/,
 });
-
+chain.node.merge({
+    dgram        : 'empty',
+    fs           : 'empty',
+    net          : 'empty',
+    tls          : 'empty',
+    child_process: 'empty',
+});
 chain.performance
     .hints(false)
     .maxEntrypointSize(999999999)
     .maxAssetSize(999999999)
     .assetFilter(as => false);
 
+chain.module.set('strictExportPresence', true);
 
-export function addHMR(chain: Chain, reactHotLoader: boolean = true) {
-    chain.plugin('hmr').use(webpack.HotModuleReplacementPlugin, [ {} ]);
-    const modifyOptions = (o: BabelLoaderOptions) => {
-        if ( reactHotLoader ) {
-            o.plugins.push('react-hot-loader/babel');
-        }
-        let reactCssModulesIndex = o.plugins.findIndex(plugin => Array.isArray(plugin) && plugin[ 0 ] === 'react-css-modules');
-        if ( reactCssModulesIndex !== - 1 ) {
-            o.plugins[ reactCssModulesIndex ][ 1 ].webpackHotModuleReloading = true;
-        }
-        return o;
-    };
-    chain.module.rule('babel-loader').use('babel-loader').tap(modifyOptions);
-    chain.module.rule('ts').use('babel-loader').tap(modifyOptions);
-}
+chain.module.rule('ts')
+    .test(/\.(ts|tsx)$/);
+// .include.add(chain.srcPath());
 
-export function addAnalyzerPlugins(chain: Chain, when: boolean = true) {
-    chain.when(when, chain => chain.plugin('bundle-analyzer').use(BundleAnalyzerPlugin, [ <BundleAnalyzerPlugin.Options>{
-        analyzerMode  : 'static',
-        openAnalyzer  : false,
-        reportFilename: 'bundle-analyzer.html',
-    } ]));
-}
+chain.module.rule('js')
+    .test(/\.(js|mjs|jsx)$/);
+// .include.add(chain.srcPath());
+
+chain.module.rule('vendor-js')
+    .test(/\.(js|mjs)$/)
+    .exclude.add(/@babel(?:\/|\\{1,2})runtime/);
+
+addTsToRule(chain, 'ts', {});
+addBabelToRule(chain, 'js', {
+    customize: require.resolve('babel-preset-react-app/webpack-overrides'),
+});
+addBabelToRule(chain, 'vendor-js', {
+    presets: [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
+    plugins: [
+        ...babelImportPlugins,
+    ],
+});
+addPackage(chain, 'api', '@codex/api');
+addPluginEntry(chain, 'site', chain.srcPath('site'), 'entry.ts');
+addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.ts');
+chain.resolve.modules.add(chain.srcPath('core'));
+chain.resolve.alias.merge({
+    'heading'            : chain.srcPath('core/styling/heading.less'),
+    '../../theme.config$': chain.srcPath('core/styling/theme.config'),
+    './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
+});
+addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.ts');
+//endregion
+
 
 const config = chain.toConfig();
 

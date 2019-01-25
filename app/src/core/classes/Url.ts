@@ -1,8 +1,8 @@
-import { strEnsureLeft, strEnsureRight, strStripLeft } from '../utils/general';
 import { app } from 'ioc';
 import { Store } from 'stores';
+import urljoin from 'url-join';
 
-const make      = (prefix: string, path: string) => strEnsureLeft(strEnsureRight(prefix, '/'), '/') + strStripLeft(path, '/');
+const make      = (prefix: string, ...parts: string[]) => urljoin(prefix, ...parts);
 const getPrefix = (name: string) => {
     if ( app.isBound('store') ) {
         let store = app.get<Store>('store');
@@ -35,9 +35,8 @@ export const url: IUrl = new Proxy(new Url(), {
         }
 
         return (...parts: string[]) => {
-            let path   = parts.join('/');
             let prefix = target.getPrefix(name);
-            return target.make(prefix, path);
+            return target.make(prefix, ...parts);
         };
     },
 });

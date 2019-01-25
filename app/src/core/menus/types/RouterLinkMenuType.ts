@@ -11,17 +11,17 @@ export class RouterLinkMenuType extends MenuType {
 
     public pre(item: MenuItem) {
         if ( ! item.to && item.path ) {
-            item.to = {
-                pathname: item.path,
-            };
+            let state = this.app.router.matchUrl(item.path);
+            item.to   = state;
         }
         return item;
     }
 
     public handle(item: MenuItem, event, items: MenuItems) {
-        if ( item.to.replace ) {
-            this.app.history.replace(item.to);
+        if ( item.to ) {
+            let {name, params, ...opts} = item.to
+            return this.app.router.navigate(item.to.name, item.to.params, opts);
         }
-        this.app.history.push(item.to);
+        console.warn('RouterLinkMenuType handle :: menu ite did not have a [to] property', {item})
     }
 }

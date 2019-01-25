@@ -1,40 +1,19 @@
-import { Route as BaseRoute, State as BaseState } from 'router5';
+import { NavigationOptions, Route as BaseRoute, Router as BaseRouter, State as BaseState } from 'router5';
+import { Params } from 'router5/types/types/base';
 
-export interface NavigationOptions {
-    replace?: boolean
-    reload?: boolean
-    skipTransition?: boolean
-    force?: boolean
-
-    [ key: string ]: any
-}
-
-export declare type Params = Record<string, any>
-export declare type Unsubscribe = () => void
-export declare type DoneFn = (err?: any, state?: State) => void
-export declare type CancelFn = () => void
-
-export interface StateMeta {
-    id: number
-    params: Params
-    options: NavigationOptions
-    redirected: Boolean
-    source?: string
-}
-
-export interface SimpleState {
+export interface LinkData extends NavigationOptions{
     name: string
-    params: Params
+    params?: Params
 }
 
-export interface State2 {
-    name: string
-    params: Params
-    path: string
-    meta?: StateMeta
+export interface Route extends BaseRoute {
 }
 
-export type State = BaseState;
-export type Route = BaseRoute;
+export interface State extends BaseState {
+}
+
+export interface Router extends BaseRouter {
+
+}
 
 export type IRouteMap = Map<string, Route>;

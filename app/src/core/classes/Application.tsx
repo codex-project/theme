@@ -15,13 +15,13 @@ import { MenuManager } from 'menus';
 import { CssVariables } from 'classes/CssVariables';
 import { Breakpoints } from 'utils/breakpoints';
 import { CookieStorage, LocalStorage, SessionStorage } from 'utils/storage';
-import { RouterProvider } from 'react-router5';
 import { app } from 'ioc';
 import ReactDOM from 'react-dom';
 import { Router } from 'router5';
 import { IUrl, url } from 'classes/Url';
 import { Plugin } from 'classes/Plugin';
-// import { CookieStorage, LocalStorage, SessionStorage } from '@radic/util';
+import { notification } from 'antd';
+import { NotificationApi } from 'antd/lib/notification';
 
 const log = require('debug')('classes:Application');
 
@@ -51,10 +51,12 @@ function createPluginMapProxy<T extends Map<string, Plugin> = Map<string, Plugin
 }
 
 export class Application extends Container {
-    public readonly plugins: PluginMapProxy = createPluginMapProxy(new Map());
-    protected registered               = false;
-    protected booted                   = false;
-    protected Component: ComponentType = null;
+    public readonly plugins: PluginMapProxy       = createPluginMapProxy(new Map());
+    public readonly notification: NotificationApi = notification;
+
+    protected registered            = false;
+    protected booted                = false;
+    public Component: ComponentType = null;
 
     public readonly hooks: {
         register: SyncHook<Application>
@@ -67,6 +69,105 @@ export class Application extends Container {
         boot      : new SyncHook<this>([ 'application' ]),
         booted    : new SyncHook<this>([ 'application' ]),
     };
+
+    constructor(containerOptions: interfaces.ContainerOptions) {
+        super(containerOptions);
+        this.bind('app').toConstantValue(this);
+        this.bind('events').to(Dispatcher).inSingletonScope();
+        this.bind('config').toConstantValue(config);
+        this.bind('url').toConstantValue(url);
+    }
+
+    plugin(plugin: Plugin) {
+        log('plugin', plugin.name, plugin);
+        this.plugins.set(plugin.name, plugin);
+        if ( this.registered ) {
+            this.installPlugin(plugin);
+        }
+        return this;
+    }
+
+    protected async loadPlugin(plugin: Plugin): Promise<any> {
+        if ( plugin.loading === null ) {
+            plugin.loading = this.loadAsync(plugin.module);
+            log('loadPlugin', plugin.name, plugin);
+        }
+        return plugin.loading;
+    }
+
+    protected async installPlugin(plugin: Plugin): Promise<any> {
+        if ( plugin.installed === true ) {
+            return this;
+        }
+        log('installPlugin', plugin.name, plugin);
+        plugin.installed = true;
+        plugin.install(this);
+    }
+
+    use(cb: (app: this) => void): this {
+        cb(this);
+        return this;
+    }
+
+    configure(config: Partial<IConfig>): this {
+        config = merge(this.get('config'), config);
+        this.rebind('config').toConstantValue(config);
+        return this;
+    }
+
+    async register(config: Partial<IConfig>): Promise<this> {
+        if ( this.registered ) return this;
+
+        this.configure(config);
+
+        await Promise.all(Array.from(this.plugins.values()).map(async plugin => this.loadPlugin(plugin)));
+        await Promise.all(Array.from(this.plugins.values()).map(async plugin => this.installPlugin(plugin)));
+
+        this.emit('register', this);
+        this.hooks.register.call(this);
+
+        this.registered = true;
+        this.emit('registered', this);
+        this.hooks.registered.call(this);
+        log('registered', this);
+        return this;
+    }
+
+    async boot(Component: ComponentType = this.Component): Promise<this> {
+        if ( this.booted ) return this;
+        this.Component = Component;
+        this.emit('boot', this);
+        this.hooks.boot.call(this);
+
+        return new Promise<this>((resolve, reject) => {
+            this.render(Component, () => {
+                this.booted = true;
+                log('booted', this);
+                this.emit('booted', this);
+                this.hooks.booted.call(this);
+                resolve(this);
+            });
+        });
+    }
+
+    render(Component?: ComponentType, cb?: () => void): this {
+        Component   = Component || this.Component;
+        const inner = (
+            <Component/>
+        );
+        const el    = document.getElementById(this.config.rootID);
+        ReactDOM.render(inner, el, cb);
+        return this;
+    }
+
+    bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, alias?: string): interfaces.BindingToSyntax<T> {
+        let binding = super.bind<T>(serviceIdentifier);
+        if ( alias ) {
+            this.bind(alias).toDynamicValue(ctx => ctx.container.get(serviceIdentifier));
+        }
+        return binding;
+    }
+
 
     get localStorage(): typeof LocalStorage {return this.get('storage.local');}
 
@@ -98,94 +199,6 @@ export class Application extends Container {
 
     get url(): IUrl {return this.get('url');}
 
-    constructor(containerOptions: interfaces.ContainerOptions) {
-        super(containerOptions);
-        this.bind('app').toConstantValue(this);
-        this.bind('events').to(Dispatcher).inSingletonScope();
-        this.bind('config').toConstantValue(config);
-        this.bind('url').toConstantValue(url);
-    }
-
-    plugin(plugin: Plugin) {
-        this.plugins.set(plugin.name, plugin);
-        if ( this.registered ) {
-            this.installPlugin(plugin);
-        }
-        return this;
-    }
-
-    protected installPlugin(plugin: Plugin) {
-        if ( plugin.installed === true ) {
-            return this;
-        }
-        plugin.installed = true;
-        plugin.install(this);
-        return this;
-    }
-
-    use(cb: (app: this) => void): this {
-        cb(this);
-        return this;
-    }
-
-    configure(config: Partial<IConfig>): this {
-        config = merge(this.get('config'), config);
-        this.rebind('config').toConstantValue(config);
-        return this;
-    }
-
-    register(config: Partial<IConfig>): this {
-        if ( this.registered ) return this;
-
-        this.configure(config);
-
-        this.plugins.forEach(plugin => this.installPlugin(plugin));
-
-        this.emit('register', this);
-        this.hooks.register.call(this);
-
-        this.registered = true;
-        this.emit('registered', this);
-        this.hooks.registered.call(this);
-        log('registered', this);
-        return this;
-    }
-
-    boot(Component: ComponentType): this {
-        if ( this.booted ) return this;
-        this.Component = Component;
-        this.emit('boot', this);
-        this.hooks.boot.call(this);
-
-        this.render(Component, () => {
-            this.booted = true;
-            log('booted', this);
-            this.emit('booted', this);
-            this.hooks.booted.call(this);
-
-        });
-        return this;
-    }
-
-    render(Component?: ComponentType, cb?: () => void): this {
-        Component   = Component || this.Component;
-        const inner = (
-            <RouterProvider router={this.router}>
-                <Component/>
-            </RouterProvider>
-        );
-        const el    = document.getElementById(this.config.rootID);
-        ReactDOM.render(inner, el, cb);
-        return this;
-    }
-
-    bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, alias?: string): interfaces.BindingToSyntax<T> {
-        let binding = super.bind<T>(serviceIdentifier);
-        if ( alias ) {
-            this.bind(alias).toDynamicValue(ctx => ctx.container.get(serviceIdentifier));
-        }
-        return binding;
-    }
 
     eventNames(): Array<EventTypes> {return this.events.eventNames.apply(this.events, arguments);}
 
