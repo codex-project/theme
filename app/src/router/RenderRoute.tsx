@@ -32,7 +32,7 @@ export class RenderRoute extends Component<RenderRouteProps & RouteComponentProp
         }
     }
 
-    public componentDidMount(): void {
+    componentDidMount() {
         this.load();
     }
 

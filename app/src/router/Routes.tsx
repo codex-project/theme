@@ -33,7 +33,6 @@ class RoutesComponent extends Component<RoutesProps & RouteComponentProps> {
         return (
             <Switch location={props.location}>
                 {routes.map((route, i) => {
-                    // let routeState = props.makeRouteState(props, route);
                     return (
                         <Route
                             key={i}

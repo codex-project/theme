@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { generatePath, Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { routeMap } from './routeMap';
 import { hot } from 'react-hot-loader/root';
-import {Routes} from './Routes';
+import { Routes } from './Routes';
 
 const log = require('debug')('router:App');
 
