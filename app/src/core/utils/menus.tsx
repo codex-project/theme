@@ -1,6 +1,5 @@
 import { strEnsureLeft } from './general';
 import { app } from '../ioc';
-import { Routes } from '../collections/Routes';
 import { ArrayUtils } from '../collections/ArrayUtils';
 import { MenuItems } from '../menus';
 import { MenuItem } from '@codex/api';
@@ -30,7 +29,7 @@ export function isPath(item: MenuItem): boolean {
 }
 
 export function getActiveFromRoutePath(items: MenuItems) {
-    let current = app.get<Routes>('routes').history.location.pathname;
+    let current = app.routes.history.location.pathname;
     if ( ! current ) return;
     let active = items.rfind(item => {
         return current === toPath(item);

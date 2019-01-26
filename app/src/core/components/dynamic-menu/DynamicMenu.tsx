@@ -11,6 +11,7 @@ import { getColor } from 'utils/colors';
 import { MenuItems } from 'menus';
 
 import { hot } from 'decorators';
+import { MenuItem } from '@codex/api';
 
 const log = require('debug')('components:DynamicMenu');
 

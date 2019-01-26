@@ -2,10 +2,11 @@ import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import React, { Fragment } from 'react';
 import { LinkType } from './LinkType';
-import { Link, LinkProps } from 'react-router-dom';
+import { LinkProps } from 'react-router-dom';
 import { hot } from 'decorators';
 import { clink } from 'stores';
 import { app } from 'ioc';
+import { RouteLink } from 'router';
 
 @hot(module)
 @observer
@@ -25,7 +26,7 @@ export class DocumentLinkType extends LinkType {
 
     render() {
         if ( ! this.project || ! this.revision || ! this.document ) return <Fragment>{this.props.children}</Fragment>;
-        const { children, link, route, to, icon, styling, ...rest } = this.props;
+        const { children, link, match, to, icon, styling, ...rest } = this.props;
 
         let props: LinkProps = {
             ...rest,
@@ -37,10 +38,10 @@ export class DocumentLinkType extends LinkType {
             className: styling ? 'c-document-link' : null,
         };
         return (
-            <Link {...props}>
+            <RouteLink {...props}>
                 {icon ? <i className="c-document-icon"/> : null}
                 {children || this.document}
-            </Link>
+            </RouteLink>
         );
     }
 }

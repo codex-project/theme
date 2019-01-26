@@ -7,15 +7,15 @@ import { Scrollbar } from '../scrollbar';
 import { PopoverAction } from './PopoverAction';
 
 import { hot } from 'decorators';
-import { clink, Store } from 'stores';
-import { app, lazyInject } from 'ioc';
-import { RouteDefinition } from 'router';
+import { clink } from 'stores';
+import { lazyInject } from 'ioc';
 import { Api, api } from '@codex/api';
+import { match } from 'react-router';
 
 
 export interface DocumentPopoverActionProps {
     link: React.ReactNode
-    route: RouteDefinition
+    match: match<any>
     to: string
 }
 
@@ -26,7 +26,7 @@ export class DocumentPopoverAction extends React.Component<DocumentPopoverAction
     @lazyInject('api') api: Api;
 
     render() {
-        let { project, revision, document } = app.routes.getRouteParams(this.props.route, this.props.to); //getRouteParams(this.props.route, this.props.to);
+        let { project, revision, document } = this.props.match.params; //app.routes.getRouteParams(this.props.route, this.props.to); //getRouteParams(this.props.route, this.props.to);
         let query                           = `{
 document(projectKey: "${project}", revisionKey: "${revision}", documentKey: "${document}"){
     title

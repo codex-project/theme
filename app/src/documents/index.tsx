@@ -1,9 +1,10 @@
 ///<reference path="../modules.d.ts"/>
 ///<reference path="../globals.d.ts"/>
 
-import { app, Application, BasePlugin, Bind, IsBound, Rebind, RouteMap, Unbind } from '@codex/core';
+import { app, Application, BasePlugin, Bind, Button, CLink, CodeHighlight, HtmlComponents, Icon, IsBound, Rebind, RouteLink, RouteMap, TOC, TOCHeader, TOCList, TOCListItem, Trigger, Unbind } from '@codex/core';
 import { generatePath, Redirect } from 'react-router';
 import React from 'react';
+import { Col, Modal, Popover, Row, Tooltip } from 'antd';
 
 const log = require('debug')('documents');
 
@@ -35,25 +36,25 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
             });
         }
         app.hooks.registered.tap(this.name, app => {
-            // const components = app.get<HtmlComponents>('components');
-            // components.registerMap({
-            //     'c-code-highlight': CodeHighlight,
-            //     'c-toc'           : TOC,
-            //     'c-toc-list'      : TOCList,
-            //     'c-toc-list-item' : TOCListItem,
-            //     'c-toc-header'    : TOCHeader,
-            //     'c-link'          : CLink,
-            //
-            //     'link'   : RouteLink,
-            //     'trigger': Trigger,
-            //     'modal'  : Modal,
-            //     'icon'   : Icon as any,
-            //     'col'    : Col,
-            //     'row'    : Row,
-            //     'button' : Button,
-            //     'tooltip': Tooltip,
-            //     'popover': Popover,
-            // });
+            const components = app.get<HtmlComponents>('components');
+            components.registerMap({
+                'c-code-highlight': CodeHighlight,
+                'c-toc'           : TOC,
+                'c-toc-list'      : TOCList,
+                'c-toc-list-item' : TOCListItem,
+                'c-toc-header'    : TOCHeader,
+                'c-link'          : CLink,
+
+                'link'   : RouteLink,
+                'trigger': Trigger,
+                'modal'  : Modal,
+                'icon'   : Icon as any,
+                'col'    : Col,
+                'row'    : Row,
+                'button' : Button,
+                'tooltip': Tooltip,
+                'popover': Popover,
+            });
         });
 
         // customElements.define(ColorElement.TAG, ColorElement);

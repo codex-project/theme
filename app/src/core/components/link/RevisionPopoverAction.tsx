@@ -4,16 +4,17 @@ import React from 'react';
 
 import { hot } from 'decorators';
 import { clink, Store } from 'stores';
-import { app, lazyInject } from 'ioc';
-import { RouteDefinition, RouteMap } from 'router';
-import { Api, api } from '@codex/api';
+import { lazyInject } from 'ioc';
+import { RouteMap } from 'router';
+import { Api } from '@codex/api';
 import { PopoverAction } from './PopoverAction';
 import { Card } from 'antd';
+import { match } from 'react-router';
 
 
 export interface RevisionPopoverActionProps {
     link: React.ReactNode
-    route: RouteDefinition
+    match: match<any>
     to: string
 }
 
@@ -26,7 +27,7 @@ export class RevisionPopoverAction extends React.Component<RevisionPopoverAction
     @lazyInject('store') store: Store;
 
     render() {
-        let { project, revision } = this.routes.getRouteParams(this.props.route, this.props.to); //getRouteParams(this.props.route, this.props.to);
+        let { project, revision } = this.props.match.params; // this.routes.getRouteParams(this.props.route, this.props.to); //getRouteParams(this.props.route, this.props.to);
         let query                 = `{
 revision(projectKey: "${project}", revisionKey: "${revision}"){
     key

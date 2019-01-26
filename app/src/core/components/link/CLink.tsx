@@ -30,15 +30,17 @@ export class CLink extends React.Component<CLinkProps & WithRouterProps> {
     getChildContext() { return { router: this.props }; }
 
     render() {
-        let { type, action, to, children, href,staticContext,history,match,location, ...rest } = this.props;
+        let { type, action, to, children, href,staticContext,history,location, ...rest } = this.props;
         if ( href ) to = href;
 
-        const routes = this.routes.matchPath(to);
-        if ( routes.length === 0 ) {
+        to = this.routes.toUrl(to)
+        const matches = this.routes.matchPath(to);
+
+        if ( matches.length === 0 ) {
             console.warn(`Link with to [${to}] does not match any route.`);
             return null;
         }
-        const route = routes[ 0 ];
+        const match = matches[ 0 ];
 
         if ( ! this.links.hasType(type) ) {
             console.warn(`Link type [${type}] not valid. Register it with Link.registerType()`);
@@ -56,15 +58,15 @@ export class CLink extends React.Component<CLinkProps & WithRouterProps> {
             const ActionComponent = this.links.getAction(type, action);
 
             return (
-                <ActionComponent to={to} route={route} {...rest}>
-                    <TypeComponent to={to} route={route} {...rest}>{children}</TypeComponent>
+                <ActionComponent to={to} match={match} {...rest}>
+                    <TypeComponent to={to} match={match} {...rest}>{children}</TypeComponent>
                 </ActionComponent>
             );
         }
 
 
         return (
-            <TypeComponent to={to} route={route} {...rest} />
+            <TypeComponent to={to} match={match} {...rest} />
         );
     }
 }

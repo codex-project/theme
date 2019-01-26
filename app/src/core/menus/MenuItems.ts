@@ -1,9 +1,8 @@
 import { ArrayUtils } from '../collections/ArrayUtils';
 import * as React from 'react';
-import { lazyInject } from '../ioc';
+import { app, lazyInject } from '../ioc';
 import { MenuManager } from './MenuManager';
 import { api } from '@codex/api';
-import { toPath } from '../utils/menus';
 import { transaction } from 'mobx';
 
 export type IMenuItemItems<T> = string | string[] | T | T[]
@@ -135,11 +134,14 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     }
 
     findActiveFromRoute() {
-
-        let current = null; //app.get<Routes>('routes').history.location.pathname;
+        let current = app.routes.getCurrentRoute();
         if ( ! current ) return;
         let active = this.rfind(item => {
-            return current === toPath(item);
+            let url = app.routes.toUrl(item);
+            if ( ! url && item.to ) {
+                url = app.routes.toUrl(item.to);
+            }
+            return current && url && current === url;
         });
         return active;
     }

@@ -9,14 +9,14 @@ import { lazyInject } from 'ioc';
 import { Api } from '@codex/api';
 import { PopoverAction } from './PopoverAction';
 import { Scrollbar } from '../scrollbar';
-import { Link } from 'react-router-dom';
+import { match } from 'react-router-dom';
 import { Icon } from '../icon';
-import { RouteDefinition, RouteMap } from 'router';
+import { RouteLink, RouteMap } from 'router';
 
 
 export interface ProjectPopoverActionProps {
     link: React.ReactNode
-    route: RouteDefinition
+    match: match<any>
     to: string
 }
 
@@ -29,7 +29,7 @@ export class ProjectPopoverAction extends React.Component<ProjectPopoverActionPr
     @lazyInject('store') store: Store;
 
     render() {
-        let { project } = this.routes.getRouteParams(this.props.route, this.props.to); //getRouteParams(this.props.route, this.props.to);
+        let { project } = this.props.match.params; //this.routes.getRouteParams(this.props.route, this.props.to); //getRouteParams(this.props.route, this.props.to);
         let query       = `{
 project(projectKey: "${project}"){
     key
@@ -61,7 +61,7 @@ project(projectKey: "${project}"){
                                     <List.Item style={{ padding: 5 }}>
                                         <List.Item.Meta
                                             avatar={<Icon name="code-fork" style={{ fontSize: 25, marginLeft: 10 }}/>}
-                                            title={<Link to={this.routes.getRoute('documentation.revision').toPath({ project: project.key, revision: revision.key })} style={{ display: 'block' }}>{revision.key}</Link>}
+                                            title={<RouteLink to={this.routes.get('documentation.revision').toPath({ project: project.key, revision: revision.key })} style={{ display: 'block' }}>{revision.key}</RouteLink>}
                                         />
                                         {revision.key === project.default_revision ? <Icon name="dot-circle-o" title="Default Revision" style={{ fontSize: 15, margin: 5 }}/> : null}
                                     </List.Item>

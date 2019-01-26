@@ -1,10 +1,10 @@
 import React from 'react';
-import { RouteDefinition } from 'router';
 import { app } from 'ioc';
+import { match } from 'react-router';
 
 export interface LinkTypeProps {
     link?: React.ReactNode
-    route?: RouteDefinition
+    match?: match<any>
     to?: string
     styling?: boolean
     icon?: boolean
@@ -23,7 +23,7 @@ export abstract class LinkType<P extends LinkTypeProps = LinkTypeProps, S = {}> 
 
     abstract updateRouteParams()
 
-    getRouteParams() { return app.routes.getRouteParams(this.props.route, this.props.to); }
+    getRouteParams() { return this.props.match.params; }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any): void {
         if ( this.props.to !== prevProps.to ) {

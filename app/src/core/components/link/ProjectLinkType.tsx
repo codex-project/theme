@@ -2,11 +2,12 @@ import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import React, { Fragment } from 'react';
 import { LinkType } from './LinkType';
-import { Link, LinkProps } from 'react-router-dom';
+import { LinkProps } from 'react-router-dom';
 
 import { hot } from 'decorators';
 import { clink } from 'stores';
 import { app } from 'ioc';
+import { RouteLink } from 'router';
 
 
 @hot(module)
@@ -22,7 +23,7 @@ export class ProjectLinkType extends LinkType {
 
     render() {
         if ( ! this.project ) return <Fragment>{this.props.children}</Fragment>;
-        const { children, link, route, to, icon, styling, ...rest } = this.props;
+        const { children, link, match, to, icon, styling, ...rest } = this.props;
 
         let props: LinkProps = {
             ...rest,
@@ -30,10 +31,10 @@ export class ProjectLinkType extends LinkType {
             className: styling ? 'c-project-link' : null,
         };
         return (
-            <Link {...props}>
+            <RouteLink {...props}>
                 {icon ? <i className="c-project-icon"/> : null}
                 {children || this.project}
-            </Link>
+            </RouteLink>
         );
     }
 }

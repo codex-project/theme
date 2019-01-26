@@ -6,7 +6,8 @@ import { LinkType } from './LinkType';
 import { hot } from 'decorators';
 import { clink } from 'stores';
 import { app } from 'ioc';
-import { Link, LinkProps } from 'react-router-dom';
+import {  LinkProps } from 'react-router-dom';
+import { RouteLink } from 'router';
 
 
 @hot(module)
@@ -25,7 +26,7 @@ export class RevisionLinkType extends LinkType {
 
     render() {
         if ( ! this.project || ! this.revision ) return <Fragment>{this.props.children}</Fragment>;
-        const { children, link, route, to, icon, styling, ...rest } = this.props;
+        const { children, link, match, to, icon, styling, ...rest } = this.props;
 
         let props: LinkProps = {
             ...rest,
@@ -33,10 +34,10 @@ export class RevisionLinkType extends LinkType {
             className: styling ? 'c-revision-link' : null,
         };
         return (
-            <Link {...props}>
+            <RouteLink {...props}>
                 {icon ? <i className="c-revision-icon"/> : null}
                 {children || this.revision}
-            </Link>
+            </RouteLink>
         );
     }
 }
