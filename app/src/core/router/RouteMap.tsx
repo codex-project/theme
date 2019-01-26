@@ -40,6 +40,8 @@ export class RouteMap<T extends RouteDefinition = RouteDefinition, E extends Rou
             return to.pathname;
         } else if ( to.name ) {
             return this.generatePath(to.name, to.params);
+        } else if ( to.to ) {
+            return this.toUrl(to.to);
         }
     }
 

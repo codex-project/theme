@@ -134,16 +134,12 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     }
 
     findActiveFromRoute() {
-        let current = app.routes.getCurrentRoute();
+        let current = app.routes.history.location.pathname;
         if ( ! current ) return;
-        let active = this.rfind(item => {
+        return this.rfind(item => {
             let url = app.routes.toUrl(item);
-            if ( ! url && item.to ) {
-                url = app.routes.toUrl(item.to);
-            }
-            return current && url && current === url;
+            return url && current === url;
         });
-        return active;
     }
 
     selectActiveFromRoute(expandParents: boolean = false, collapseOthers: boolean = false) {

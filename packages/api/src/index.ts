@@ -6,7 +6,6 @@ export * from './Api'
 export * from './ApiError'
 export * from './ContentResponse'
 export * from './results'
-export * from './util'
 
 
 export {api}

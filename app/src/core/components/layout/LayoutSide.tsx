@@ -89,6 +89,7 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                             mode="inline"
                             inlineCollapsed={side.collapsed}
                             inlineIndent={15}
+                            selectFromRoutePath={true}
                             color={side.color}
                         />
                     </Affix>
