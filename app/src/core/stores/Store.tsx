@@ -224,6 +224,7 @@ export class Store {
             }
         });
 
+        log('fetched', {result})
         this.fetching = false;
         // this.hooks.fetched.call(result);
         return result;

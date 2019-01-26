@@ -7,7 +7,7 @@ import { toJS } from 'mobx';
 import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
 
-const log = require('debug')('pages:home');
+const log = require('debug')('pages:DocumentPage');
 
 export interface DocumentPageProps extends React.HTMLAttributes<HTMLDivElement> {
     routeState: RouteState
@@ -38,8 +38,11 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
     }
 
     render() {
-        const { children, document, ...props } = this.props;
-        const content                          = this.hc.parse(document.content);
+        const { children, document, routeState, history, staticContext, location, match, ...props } = this.props;
+
+        const content = this.hc.parse(document.content);
+
+        log('render', document.key, { document, props });
         return (
             <div id="document" {...props}>
                 <Helmet>

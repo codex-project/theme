@@ -11,17 +11,21 @@ export class RouterLinkMenuType extends MenuType {
 
     public pre(item: MenuItem) {
         if ( ! item.to && item.path ) {
-            let state = this.app.routes.matchPath(item.path);
-            item.to   = state;
+            let matches = this.app.routes.matchPath(item.path);
+            item.to     = matches[ 0 ] ? matches[ 0 ] : item.path;
         }
         return item;
     }
 
     public handle(item: MenuItem, event, items: MenuItems) {
+        event.preventDefault();
         if ( item.to ) {
-            let {name, params, ...opts} = item.to
-            return this.app.history.push(this.app.routes.generatePath(item.to.name, item.to.params));
+            let url = this.app.routes.toUrl(item.to);
+            if ( item.to.replace ) {
+                return this.app.history.replace(url);
+            }
+            return this.app.history.push(url);
         }
-        console.warn('RouterLinkMenuType handle :: menu ite did not have a [to] property', {item})
+        console.warn('RouterLinkMenuType handle :: menu ite did not have a [to] property', { item });
     }
 }

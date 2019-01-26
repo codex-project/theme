@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { RouteDefinition, RouteState } from './types';
 import { RouteComponentProps } from 'react-router';
-import { lazyInject } from 'ioc';
-import { History } from 'router';
 
 const log = require('debug')('router:RenderRoute');
 
@@ -18,44 +16,29 @@ export interface RenderRouteProps {
 export class RenderRoute extends Component<RenderRouteProps & RouteComponentProps> {
     static displayName                             = 'RenderRoute';
     static defaultProps: Partial<RenderRouteProps> = {};
-    state                                          = { routeName: null, action: null, loading: true };
-    @lazyInject('history') history: History;
-
+    state                                          = { action: null, loading: true };
 
     load() {
         const { children, definition, staticContext, ...props } = this.props;
-        log('load', props.routeState.pathname);
         if ( definition.action ) {
+            log('load', this);
             if ( this.state.action ) {
                 return;
             }
-            this.setState({ routeName: props.routeState.name, loading: true });
-            log('loading', props.routeState.pathname);
+            this.setState({ loading: true });
             definition.action(props, props.routeState).then(action => {
-                log('loaded', props.routeState.pathname, action);
-                this.setState({ routeName: props.routeState.name, action, loading: false });
+                this.setState({ action, loading: false });
             });
         }
     }
 
     componentDidMount() {
-        const { children, definition, routeState, staticContext, ...props } = this.props;
-        // log('componentDidMount', definition.name, { routeState, state: this.state, action: definition.action });
-        this.setState({ name: routeState.name });
         this.load();
     }
 
-    public componentDidUpdate(prevProps: Readonly<RenderRouteProps & RouteComponentProps>, prevState: Readonly<{}>, snapshot?: any): void {
-        const { children, definition, routeState, staticContext, ...props } = this.props;
-        // log('componentDidUpdate', definition.name, { routeState, state: this.state, action: definition.action });
-        if ( routeState.name !== this.state.routeName ) {
-            this.load();
-        }
-    }
-
     render() {
+        log('render', this);
         const { children, definition, routeState, staticContext, ...props } = this.props;
-        // log('render', definition.name, { routeState, state: this.state, action: definition.action });
         if ( definition.action && this.state.loading ) {
             return null;
         }

@@ -5,15 +5,15 @@ import { lazyInject } from 'ioc';
 
 
 export interface RouteLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-    name: string
+    name?: string
     params?: any
     replace?: boolean
-    to?: string
+    to?: any
 }
 
 
 export class RouteLink extends Component<RouteLinkProps> {
-    static displayName                           = 'Link';
+    static displayName                           = 'RouteLink';
     static defaultProps: Partial<RouteLinkProps> = {
         params : {},
         replace: false,
@@ -21,12 +21,21 @@ export class RouteLink extends Component<RouteLinkProps> {
     @lazyInject('routes') routes: RouteMap;
     @lazyInject('history') history: History;
 
+    getUrl() {
+        const { children, name, params, replace, to, ...props } = this.props;
+        if ( to ) {
+            return this.routes.toUrl(to);
+        } else if ( name ) {
+            return this.routes.generatePath(name, params);
+        }
+        return null;
+    }
+
     render() {
         const { children, name, params, replace, to, ...props } = this.props;
-        let url                                                 = to ? to : this.routes.generatePath(name, params);
         return (
             <a
-                href={url}
+                href={this.getUrl()}
                 onClick={this.onClick}
                 {...props}>
                 {children}
@@ -35,9 +44,13 @@ export class RouteLink extends Component<RouteLinkProps> {
     }
 
     onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        const { name, params, replace, to } = this.props;
-        let url                             = to ? to : this.routes.generatePath(name, params);
-        this.history.push(url);
+        e.preventDefault();
+        let url = this.getUrl();
+        if ( this.props.replace ) {
+            this.history.replace(url);
+        } else {
+            this.history.push(url);
+        }
     };
 }
 

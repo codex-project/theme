@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.webpack.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@codex/react-router": ["../../../packages/react-router/src"],
+            "@codex/react-router/*": ["../../../packages/react-router/src/*"]
+        }
+    },
+    "include": [
+        "*",
+        "**/*"
+    ]
+}

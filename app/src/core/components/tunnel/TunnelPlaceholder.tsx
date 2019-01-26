@@ -11,7 +11,6 @@ export interface TunnelPlaceholderProps {
     delay?: number
 }
 
-@cold(module)
 export class TunnelPlaceholder extends PureComponent<TunnelPlaceholderProps> {
     static defaultProps: Partial<TunnelPlaceholderProps> = {
         component: Fragment,

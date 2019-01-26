@@ -1,8 +1,8 @@
 import React from 'react';
 import { generatePath, match, matchPath } from 'react-router';
-import { SyncWaterfallHook } from 'tapable';
+import { SyncHook, SyncWaterfallHook } from 'tapable';
 import { RouteDefinition, RouteDefinitionTestKeys } from './types';
-import { History } from 'history';
+import { Action, History, Location } from 'history';
 
 const log = require('debug')('router:RouteMap');
 
@@ -11,7 +11,8 @@ export class RouteMap<T extends RouteDefinition = RouteDefinition, E extends Rou
     protected map         = new Map();
     public history: History;
     public readonly hooks = {
-        set: new SyncWaterfallHook<T>([ 'value', 'key' ]),
+        set       : new SyncWaterfallHook<T>([ 'value', 'key' ]),
+        transition: new SyncHook<Location, Action>([ 'location', 'action' ]),
     };
 
     set(key, value: T, override = false) {
@@ -25,10 +26,22 @@ export class RouteMap<T extends RouteDefinition = RouteDefinition, E extends Rou
     }
 
     push            = (...routes: T[]) => routes.forEach(route => this.set(route.name, route));
-    items           = (): TE[] => Array.from(this.map) as any;
+    items           = (): TE[] => Array.from(this.map.values()) as any;
     find            = (predicate: (value: TE, index: number, obj: TE[]) => boolean, thisArg?: any) => this.items().find(predicate, thisArg);
     getCurrentRoute = (): TE | undefined => this.find(route => route.test.test(this.history.location.pathname));
-    generatePath    = (routeName: string, routeParams?: any) => generatePath(this.get(routeName).path, routeParams);
+    generatePath    = (routeName: string, routeParams?: any) => this.has(routeName) ? decodeURIComponent(generatePath(this.get(routeName).path, routeParams)) : undefined;
+
+    toUrl(to) {
+        if ( typeof to === 'string' ) {
+            return to;
+        } else if ( to.path ) {
+            return to.path;
+        } else if ( to.pathname ) {
+            return to.pathname;
+        } else if ( to.name ) {
+            return this.generatePath(to.name, to.params);
+        }
+    }
 
     matchPath(pathname: string): match<any>[] {
         let matches = Array.from(this.values()).map(route => matchPath(pathname, {

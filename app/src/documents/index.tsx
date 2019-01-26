@@ -1,19 +1,21 @@
 ///<reference path="../modules.d.ts"/>
 ///<reference path="../globals.d.ts"/>
 
-import { Application, BasePlugin, Bind, Button, CLink, CodeHighlight, HtmlComponents, Icon, IsBound, Rebind, RouteLink, RouteMap, RouterPlugin, TOC, TOCHeader, TOCList, TOCListItem, Trigger, Unbind } from '@codex/core';
-import { Col, Modal, Popover, Row, Tooltip } from 'antd';
+import { app, Application, BasePlugin, Bind, IsBound, Rebind, RouteMap, Unbind } from '@codex/core';
 import { generatePath, Redirect } from 'react-router';
 import React from 'react';
-import { ColorElement } from './elements';
+
+const log = require('debug')('documents');
 
 // export * from './components';
 export * from './elements';
+
 // export * from './pages';
 
 export interface DocumentsPluginOptions {
 
 }
+
 
 export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
     name = 'documents';
@@ -33,28 +35,28 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
             });
         }
         app.hooks.registered.tap(this.name, app => {
-            const components = app.get<HtmlComponents>('components');
-            components.registerMap({
-                'c-code-highlight': CodeHighlight,
-                'c-toc'           : TOC,
-                'c-toc-list'      : TOCList,
-                'c-toc-list-item' : TOCListItem,
-                'c-toc-header'    : TOCHeader,
-                'c-link'          : CLink,
-
-                'link'   : RouteLink,
-                'trigger': Trigger,
-                'modal'  : Modal,
-                'icon'   : Icon as any,
-                'col'    : Col,
-                'row'    : Row,
-                'button' : Button,
-                'tooltip': Tooltip,
-                'popover': Popover,
-            });
+            // const components = app.get<HtmlComponents>('components');
+            // components.registerMap({
+            //     'c-code-highlight': CodeHighlight,
+            //     'c-toc'           : TOC,
+            //     'c-toc-list'      : TOCList,
+            //     'c-toc-list-item' : TOCListItem,
+            //     'c-toc-header'    : TOCHeader,
+            //     'c-link'          : CLink,
+            //
+            //     'link'   : RouteLink,
+            //     'trigger': Trigger,
+            //     'modal'  : Modal,
+            //     'icon'   : Icon as any,
+            //     'col'    : Col,
+            //     'row'    : Row,
+            //     'button' : Button,
+            //     'tooltip': Tooltip,
+            //     'popover': Popover,
+            // });
         });
 
-        customElements.define(ColorElement.TAG, ColorElement);
+        // customElements.define(ColorElement.TAG, ColorElement);
     }
 
     protected registerRoutes(routes: RouteMap) {
@@ -146,10 +148,22 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                             message: <p>Could not find revision [{params.revision}] in project [{project.key}]</p>,
                         });
                     }
-                    let promise     = new Promise((resolve, reject) => setTimeout(() => resolve({ document: { title: 'test', key: params.document } }), 500));
-                    let result: any = await promise;
-                    const Component = (await import('../documents/pages/DocumentPage')).default;
-                    return <Component {...props} routeState={routeState} document={result.document}/>;
+                    log('documentation.document', 'FETCH', params);
+                    let document, Component;
+                    try {
+                        document  = await app.store.fetchDocument(params.project, params.revision, params.document);
+                        Component = (await import('../documents/pages/DocumentPage')).default;
+                        log('documentation.document', 'FETCHED', params, document, Component);
+                        return <Component {...props} routeState={routeState} document={document}/>;
+                    } catch ( error ) {
+                        console.warn('documentation.document', 'FETCH_ERROR', { e: error, params, document, Component });
+                        return React.createElement((await import('../documents/pages/ErrorPage')).default, {
+                            ...props,
+                            routeState,
+                            title  : error.name,
+                            message: <p>{error.message || ''}</p>,
+                        });
+                    }
                 },
             },
         );
