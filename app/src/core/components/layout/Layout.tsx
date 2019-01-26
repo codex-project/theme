@@ -1,5 +1,4 @@
 import React, { RefObject } from 'react';
-import { hot } from 'decorators';
 import { observer } from 'mobx-react';
 import { BackTop, Layout as AntdLayout } from 'antd';
 import { LayoutSide } from './LayoutSide';
@@ -14,6 +13,8 @@ import { TunnelPlaceholder } from '../tunnel';
 import './index.scss';
 import { LayoutStore, Store } from 'stores';
 import { lazyInject } from 'ioc';
+import { hot } from 'decorators';
+import { action, observable } from 'mobx';
 
 const { Sider, Header, Content, Footer } = AntdLayout;
 
@@ -39,9 +40,12 @@ export interface LayoutProps {
     content?: React.ReactNode
 }
 
+export { Layout };
+
+
 @hot(module)
 @observer
-export class Layout extends React.Component<LayoutProps> {
+export default class Layout extends React.Component<LayoutProps> {
     static displayName                           = 'Layout';
     static defaultProps: Partial<LayoutProps>    = { left: null, right: null, header: null, footer: null, content: null };
     static Header: typeof LayoutHeader           = LayoutHeader;
@@ -54,11 +58,45 @@ export class Layout extends React.Component<LayoutProps> {
 
     toolbarContainerRef: RefObject<HTMLDivElement> = React.createRef();
 
+    @observable contentLayoutMinHeight = null;
+    @action updateContentMinHeight     = () => this.contentLayoutMinHeight = this.toolbarContainerRef.current ? this.toolbarContainerRef.current.getBoundingClientRect().height : 0;
+    observer: ResizeObserver;
+    observingElement
+    observing
+
+    observe(){
+        if(this.observing){
+            this.observing();
+        }
+        this.observingElement = this.toolbarContainerRef.current;
+        if(this.toolbarContainerRef.current) {
+            this.observer.observe(this.toolbarContainerRef.current);
+            this.observing = () => {
+                this.observer.unobserve(this.observingElement)
+            }
+        }
+    }
+    public componentDidMount(): void {
+        this.observer = new ResizeObserver(() => {
+            this.updateContentMinHeight()
+        });
+        this.observe();
+    }
+
+    public componentWillUnmount(): void {
+        if ( this.observer && this.observer.disconnect ) {
+            this.observer.disconnect();
+        }
+    }
+
+    public componentDidUpdate(prevProps: Readonly<LayoutProps>, prevState: Readonly<{}>, snapshot?: any): void {
+        this.observe();
+    }
+
     render() {
         window[ 'layout' ]                                                = this;
         const { children, ...props }                                      = this.props;
         const { container, header, left, middle, content, right, footer } = this.layout;
-        let contentLayoutMinHeight                                        = this.toolbarContainerRef.current ? this.toolbarContainerRef.current.getBoundingClientRect().height : 0;
 
         return (
             <AntdLayout style={container.computedStyle}>
@@ -94,7 +132,7 @@ export class Layout extends React.Component<LayoutProps> {
                                 </ToolbarContainer>
                             </Affix>
 
-                            <AntdLayout style={{ minHeight: `calc(100% - ${contentLayoutMinHeight}px)` }}>
+                            <AntdLayout style={{ minHeight: `calc(100% - ${this.contentLayoutMinHeight}px)` }}>
                                 <Content style={content.computedStyle} className={content.computedClass}>
                                     {children || props.content || null}
                                 </Content>
@@ -124,4 +162,4 @@ export class Layout extends React.Component<LayoutProps> {
 
 }
 
-export default Layout;
+// export default hot(module)(Layout)

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { hot } from 'react-hot-loader/root';
 import { observer } from 'mobx-react';
 import { Helmet } from 'react-helmet';
 import { Store } from 'stores';
@@ -9,11 +8,11 @@ import { ErrorBoundary } from 'components/errors';
 import { TunnelProvider } from 'components/tunnel';
 import Layout from 'components/layout';
 import { History, RouteGroup, RouteMap } from 'router';
-import { generatePath, Router } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Router } from 'react-router';
 import { WithRouter, WithRouterProps } from 'decorators';
+import { StoreControl } from 'components/store-control';
 
-const log = require('debug')('App5');
+const log = require('debug')('App');
 
 interface State {}
 
@@ -22,12 +21,12 @@ export interface AppProps {}
 
 @observer
 @WithRouter()
-class AppComponent extends React.Component<AppProps & WithRouterProps, any> {
+export class App extends React.Component<AppProps & WithRouterProps, any> {
     @lazyInject('store') store: Store;
     @lazyInject('routes') routes: RouteMap;
     @lazyInject('history') history: History;
 
-    static displayName  = 'AppComponent';
+    static displayName  = 'App';
     static contextTypes = {
         router: PropTypes.shape({
             history: PropTypes.shape({
@@ -60,59 +59,72 @@ class AppComponent extends React.Component<AppProps & WithRouterProps, any> {
                             titleTemplate={this.store.codex.display_name + ' - %s'}
                             {...this.store.helmet}
                         />
-                        {this.renderLinks()}
                         <ErrorBoundary key={this.history.location.key}>
                             <RouteGroup routes={this.routes} withTransitions={true}/>
                         </ErrorBoundary>
+
+                        {this.renderStoreController()}
                     </Layout>
                 </TunnelProvider>
             </ErrorBoundary>
         );
     }
 
-
-    renderLinks() {
-
-        const linkData                       = [
-            'home',
-            'documentation',
-            [ 'documentation.project', { project: 'codex' } ],
-            [ 'documentation.revision', { project: 'codex', revision: '2.0.0-alpha' } ],
-            [ 'documentation.document', { project: 'codex', revision: '2.0.0-alpha', document: 'index' } ],
-            [ 'documentation.project', { project: 'does-not-exist' } ],
-            [ 'documentation.revision', { project: 'codex', revision: 'does-not-exist' } ],
-            [ 'documentation.document', { project: 'codex', revision: '2.0.0-alpha', document: 'does-not-exist' } ],
-        ];
-        const linkStyle: React.CSSProperties = {
-            border        : '1px solid black',
-            padding       : 2,
-            marginRight   : 2,
-            fontSize      : 12,
-            textDecoration: 'none',
-        };
-        const links                          = linkData
-            .map((link: any) => {
-                let result: any = { name: link };
-                if ( typeof link !== 'string' ) {
-                    result.name   = link[ 0 ];
-                    result.params = link[ 1 ];
-                }
-                return result;
-            })
-            .filter(result => this.routes.has(result.name))
-            .map(result => {
-                let route   = this.routes.get(result.name);
-                result.path = generatePath(route.path, result.params);
-                return result;
-            });
+    renderStoreController() {
 
         return (
-            <div>
-                {links.map((link, i) => <Link key={link.path} to={link.path} style={linkStyle}>{link.path}</Link>)}
-            </div>
+            <StoreControl store={this.store.layout} stores={{
+                'container': {
+                    stretch: 'boolean',
+                },
+                'header'   : {
+                    show             : 'boolean',
+                    height           : 'number',
+                    fixed            : 'boolean',
+                    color            : 'color.name',
+                    logo             : 'boolean',
+                    show_left_toggle : 'boolean',
+                    show_right_toggle: 'boolean',
+                    menu             : 'menu',
+                },
+                'left'     : {
+                    show          : 'boolean',
+                    width         : 'number',
+                    fixed         : 'boolean',
+                    collapsedWidth: 'number',
+                    collapsed     : 'boolean',
+                    outside       : 'boolean',
+                    color         : 'color.name',
+                    menu          : 'menu',
+                },
+                'right'    : {
+                    show          : 'boolean',
+                    width         : 'number',
+                    fixed         : 'boolean',
+                    collapsedWidth: 'number',
+                    collapsed     : 'boolean',
+                    outside       : 'boolean',
+                    color         : 'color.name',
+                },
+                'middle'   : {
+                    padding: 'string',
+                    margin : 'string',
+                    color  : 'color.name',
+                },
+                'content'  : {
+                    padding: 'string',
+                    margin : 'string',
+                    color  : 'color.name',
+                },
+                'footer'   : {
+                    show  : 'boolean',
+                    height: 'number',
+                    fixed : 'boolean',
+                    color : 'color.name',
+                },
+            }}/>
         );
     }
 
 }
 
-export const App = hot(AppComponent);

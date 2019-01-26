@@ -8,7 +8,6 @@ const log = require('debug')('decorators');
 export function hot<T>(module: NodeModule, hoist = false) {
     return (TargetComponent) => {
         if ( DEV ) {
-            return TargetComponent;
             let decorator = require('react-hot-loader').hot(module);
             if ( ! hoist ) {
                 return decorator(TargetComponent);

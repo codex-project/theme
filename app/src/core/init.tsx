@@ -4,13 +4,13 @@ import { configure } from 'mobx';
 import { app } from 'ioc';
 import { MenuPlugin } from 'menus';
 import { RouterPlugin } from 'router';
-import { App } from 'components/App';
+import Root from 'components/Root';
 
 const log = require('debug')('site:index');
 
 configure({ enforceActions: 'never' });
 
-app.Component = App;
+app.Component = Root;
 
 app
     .plugin(new MenuPlugin())

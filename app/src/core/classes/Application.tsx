@@ -156,17 +156,8 @@ export class Application extends Container {
 
     render(Component?: ComponentType, cb?: () => void): this {
         Component           = Component || this.Component;
-        let previousWrapper = React.createElement(Component);
-        Array.from(this.renderWrappers).forEach(wrapper => {
-            let props   = {};
-            let Wrapper = wrapper;
-            if ( Array.isArray(wrapper) ) {
-                [ Wrapper, props ] = wrapper;
-            }
-            previousWrapper = React.createElement(Wrapper, props, previousWrapper);
-        });
         const el = document.getElementById(this.config.rootID);
-        ReactDOM.render(previousWrapper, el, cb);
+        ReactDOM.render(React.createElement(Component), el, cb);
         return this;
     }
 
