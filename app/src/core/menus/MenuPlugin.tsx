@@ -49,7 +49,6 @@ export class MenuPlugin extends BasePlugin<MenuPluginOptions> {
 
     install(app: Application) {
         let {} = this.options;
-        app.bind<MenuManager>('menumanager').to(MenuManager).inSingletonScope();
         app.hooks.register.tap(this.name, (app) => {
             const manager = app.get<MenuManager>('menumanager');
             this.hooks.register.call(manager);
@@ -63,6 +62,7 @@ export class MenuPlugin extends BasePlugin<MenuPluginOptions> {
 
     async register(bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind): Promise<any> {
         // bind<MenuManager>('menumanager').to(MenuManager).inSingletonScope();
+        bind<MenuManager>('menumanager').to(MenuManager).inSingletonScope();
     }
 
 

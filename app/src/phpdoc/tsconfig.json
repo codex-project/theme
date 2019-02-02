@@ -5,8 +5,8 @@
         "paths": {
             "@codex/documents": ["../documents"],
             "@codex/documents/*": ["../documents/*"],
-            "@codex/site": ["../site"],
-            "@codex/site/*": ["../site/*"]
+            "@codex/core": ["../core"],
+            "@codex/core/*": ["../core/*"]
         }
     },
     "include": [

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>Codex</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -25,6 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.2.1/custom-elements-es5-adapter.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.2.1/webcomponents-loader.js"></script>
     <script src="http://codex.local/backend_data.js"></script>
+    <% if(DEV){ %>
     <script>
         if ( window.localStorage.getItem('test-polys') ) {
             delete window.fetch;
@@ -37,9 +38,11 @@
     <link rel="icon" type="image/png" sizes="228x228" href="/vendor/img/coast-228x228.png">
     <link rel="manifest" href="/vendor/img/manifest.json">
     <link rel="shortcut icon" href="/vendor/img/favicon.ico">
+    <% } %>
 </head>
 <body>
 <div id="root"></div>
+<% if(DEV){ %>
 <script>
     (function () {
         var codex = window['codex'];
@@ -60,5 +63,29 @@
         });
     }).call();
 </script>
+<% } %>
+<% if(PROD){ %>
+<script>
+    (function () {
+        var codex = window['codex'];
+        codex.core.loadPolyfills().then(function () {
+            var app = codex.core.app;
+            app.plugin(new codex.documents.default());
+            return app.register({
+                debug : false,
+                cache : true,
+                rootID: 'root',
+                api   : {
+                    url: '/api' // http://codex.local
+                }
+            });
+        }).then(function (app) {
+            return app.boot();
+        }).then(function (app) {
+            console.log('booted');
+        });
+    }).call();
+</script>
+<% } %>
 </body>
 </html>

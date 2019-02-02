@@ -32,9 +32,7 @@ export abstract class BasePlugin<T = {}> implements Plugin {
         this.options = options;
     }
 
-    get name() { return this.constructor.name.replace(/Plugin$/m, '').toLowerCase(); }
-
-    set name(name: string) { }
+    name:string
 
     protected options: T;
     installed: boolean = false;

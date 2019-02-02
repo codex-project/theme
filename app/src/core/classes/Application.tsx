@@ -17,9 +17,9 @@ import { IUrl, url } from './Url';
 import { Plugin } from './Plugin';
 import { notification } from 'antd';
 import { NotificationApi } from 'antd/lib/notification';
-import { MenuManager } from 'menus';
-import { RouteMap } from 'router';
-import { Store } from 'stores';
+import { MenuManager } from '../menus';
+import { RouteMap } from '../router';
+import { Store } from '../stores';
 
 const log = require('debug')('classes:Application');
 
@@ -70,6 +70,7 @@ export class Application extends Container {
 
     constructor(containerOptions: interfaces.ContainerOptions) {
         super(containerOptions);
+        log('constructor',this)
         this.bind('app').toConstantValue(this);
         this.bind('events').to(Dispatcher).inSingletonScope();
         this.bind('config').toConstantValue(config);
@@ -106,6 +107,7 @@ export class Application extends Container {
     use(cb: (app: this) => void): this {
         cb(this);
         return this;
+
     }
 
     configure(config: Partial<IConfig>): this {

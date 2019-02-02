@@ -73,7 +73,7 @@ class Gulpfile {
         this.prod();
         const { chain, addAnalyzerPlugins } = require('./webpack.config');
         addAnalyzerPlugins(chain);
-        this.watch(chain);
+        return this.watch(chain);
     }
 
     protected async serve(chain: Chain, host: string = 'localhost', port: number = 8513) {
@@ -152,7 +152,7 @@ class Gulpfile {
             if ( err ) {
                 return console.error(err);
             }
-            reportFileSizes(chain.outPath('js/*.js') as any);
+            reportFileSizes(chain.outPath('vendor/**/*.js') as any);
         });
     }
 

@@ -8,16 +8,16 @@ import CleanWebpackPlugin from 'clean-webpack-plugin';
 import WriteFilePlugin from 'write-file-webpack-plugin';
 import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import HtmlPlugin from 'html-webpack-plugin';
 import { BabelLoaderOptions, Chain } from './build/chain';
 import AntdScssThemePlugin from './build/antd-scss-theme-plugin';
-import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from './build/AssetPathSubstitutionPlugin';
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
 import WebappPlugin from 'webapp-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from './build/AssetPathSubstitutionPlugin';
 
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
@@ -31,6 +31,7 @@ const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
+const minimize          = isProd;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -68,7 +69,7 @@ export function addBabelToRule(chain: Chain, ruleName: string, options: BabelLoa
             ].filter(Boolean),
             cacheDirectory  : cache,
             cacheCompression: isProd,
-            compact         : isProd,
+            compact         : minimize,
             ...options,
         } as any);
 }
@@ -132,7 +133,7 @@ export function addPluginEntry(chain: Chain, name: string, dirPath: string, entr
         ...chain.get('externals') || {},
         [ umdName ]: [ 'codex', name ],
     });
-    // chain.resolve.alias.set(umdName, dirPath);
+    chain.resolve.alias.set(umdName, dirPath);
     addAssetsLoaderForEntry(chain, name, dirPath);
     chain.module.rule('ts').include.add(dirPath);
     chain.module.rule('js').include.add(dirPath);
@@ -212,15 +213,18 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     filename: 'index.html',
     template: resolve(__dirname, 'index.html'),
     inject  : 'head',
-    DEV     : isDev,
-    PROD    : isProd,
-    TEST    : process.env.NODE_ENV === 'test',
-    ENV     : dotenv.load({ path: resolve('.env') }).parsed,
+
+    templateParameters: {
+        DEV : isDev,
+        PROD: isProd,
+        TEST: process.env.NODE_ENV === 'test',
+        ENV : dotenv.load({ path: resolve('.env') }).parsed,
+    },
 } ]);
 chain.plugin('favicon').use(WebappPlugin, [ {
     logo  : rootPath('node_modules/@fortawesome/fontawesome-free/svgs/solid/book.svg'),
     cache,
-    prefix: isDev ? 'vendor/img' : 'vendor/code_core/img',
+    prefix: isDev ? 'vendor/img' : 'vendor/codex_core/img',
     inject: true,
 } ]).after('html');
 
@@ -301,9 +305,9 @@ chain.onToConfig(config => {
 //region: Optimization
 chain.when(isDev, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
-        namedModules: true,
-        namedChunks : true,
-        runtimeChunk: true,
+        namedModules   : true,
+        namedChunks    : true,
+        runtimeChunk   : true,
         occurrenceOrder: true,
         // splitChunks : {
         //     name       : true,
@@ -320,26 +324,26 @@ chain.when(isDev, chain => {
     });
 }, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
-        namedModules: true,
-        namedChunks : true,
-        runtimeChunk: true,
-        splitChunks : {
-            name              : true,
-            chunks            : 'all',
-            maxInitialRequests: Infinity,
-            minSize           : 0,
-            cacheGroups       : {
-                default: false as any,
+        namedModules      : true,
+        namedChunks       : true,
+        runtimeChunk      : true,
+        occurrenceOrder   : true,
+        flagIncludedChunks: false,
+        usedExports       : false,
+        sideEffects       : false,
+        concatenateModules: false,
+        splitChunks       : {
+            name       : true,
+            cacheGroups: {
                 commons: {
                     name     : 'commons',
                     chunks   : 'initial',
                     minChunks: 2,
-                    minSize  : 0,
                 },
             },
         },
-        minimize    : true,
-        minimizer   : [
+        minimize,
+        minimizer         : [
             new TerserPlugin(<TerserPlugin.TerserPluginOptions>{
                 terserOptions: {
                     parse   : { ecma: 8 },
@@ -363,6 +367,10 @@ chain.when(isDev, chain => {
         ],
     });
 });
+// chain.plugin('split').use(webpack.optimize.AggressiveSplittingPlugin, [{
+//     minSize: 3000,
+//     maxSize: 50000
+// }])
 //endregion
 
 //region: Init
@@ -370,6 +378,7 @@ chain
     .target('web')
     .cache(cache)
     .devtool(isDev ? 'cheap-module-source-map' : false);
+// .mode('development');
 chain.output
     .path(chain.outPath())
     .pathinfo(isDev)
