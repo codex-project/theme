@@ -5,6 +5,7 @@ import './styling/stylesheet.scss'
 
 import 'reflect-metadata';
 import './utils/zepto';
+import './vendor'
 
 import './ioc';
 import './init';

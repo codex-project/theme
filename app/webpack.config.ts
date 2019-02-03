@@ -18,20 +18,21 @@ import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/ant
 import WebappPlugin from 'webapp-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from './build/AssetPathSubstitutionPlugin';
-
+import TemplatedPathPlugin from './build/TemplatedPathPlugin'
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
     sourceDir: resolve(__dirname, 'src'),
     outputDir: resolve(__dirname, process.env.NODE_ENV === 'development' ? 'dev' : 'dist'),
 });
 const { isDev, isProd } = chain;
-const cache             = isDev;
+const cache             = true;
+// const _assetPath        = 'vendor';
 const _assetPath        = isDev ? 'vendor' : 'vendor/codex_[entrypoint]';
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
-const minimize          = isProd;
+const minimize          = false;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -133,7 +134,7 @@ export function addPluginEntry(chain: Chain, name: string, dirPath: string, entr
         ...chain.get('externals') || {},
         [ umdName ]: [ 'codex', name ],
     });
-    chain.resolve.alias.set(umdName, dirPath);
+    // chain.resolve.alias.set(umdName, dirPath);
     addAssetsLoaderForEntry(chain, name, dirPath);
     chain.module.rule('ts').include.add(dirPath);
     chain.module.rule('js').include.add(dirPath);
@@ -194,6 +195,7 @@ chain.plugin('define').use(webpack.DefinePlugin, [ {
 chain.plugin('bar').use(BarPlugin, [ <BarOptions>{
     profile   : true,
     compiledIn: true,
+    minimal:false,
 } ]);
 chain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [ { options: {} } ]);
 chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptions>{
@@ -238,9 +240,6 @@ chain.when(isProd, chain => {
         cssProcessor       : require('cssnano'),
         cssProcessorOptions: { discardComments: { removeAll: true } },
         canPrint           : true,
-    } ]);
-    chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
-        defaultEntryPoint: 'core',
     } ]);
 });
 //endregion
@@ -305,45 +304,33 @@ chain.onToConfig(config => {
 //region: Optimization
 chain.when(isDev, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
-        namedModules   : true,
-        namedChunks    : true,
-        runtimeChunk   : true,
-        occurrenceOrder: true,
-        // splitChunks : {
-        //     name       : true,
-        //     cacheGroups: {
-        //         default: false as any,
-        //         commons: {
-        //             name     : 'commons',
-        //             chunks   : 'initial',
-        //             minChunks: 2,
-        //             minSize  : 0,
-        //         },
-        //     },
-        // },
+        namedModules: true,
+        namedChunks : true,
     });
 }, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
-        namedModules      : true,
-        namedChunks       : true,
-        runtimeChunk      : true,
-        occurrenceOrder   : true,
-        flagIncludedChunks: false,
-        usedExports       : false,
-        sideEffects       : false,
-        concatenateModules: false,
-        splitChunks       : {
-            name       : true,
-            cacheGroups: {
-                commons: {
-                    name     : 'commons',
-                    chunks   : 'initial',
-                    minChunks: 2,
-                },
-            },
-        },
+        namedModules: true,
+        namedChunks : true,
+        runtimeChunk: 'single',
+        // occurrenceOrder: true,
+        // runtimeChunk          : true,
+        //https://github.com/webpack/webpack/tree/master/examples/multiple-entry-points
+        // splitChunks : {
+        //     minSize           : 0,
+        //     maxSize           : Infinity,
+        //     maxInitialRequests: Infinity,
+        //     maxAsyncRequests  : Infinity,
+        //     cacheGroups       : {
+        //         default: false,
+        //         commons: {
+        //             name     : 'commons',
+        //             chunks   : 'initial',
+        //             minChunks: 1,
+        //         },
+        //     },
+        // },
         minimize,
-        minimizer         : [
+        minimizer   : [
             new TerserPlugin(<TerserPlugin.TerserPluginOptions>{
                 terserOptions: {
                     parse   : { ecma: 8 },
@@ -366,27 +353,47 @@ chain.when(isDev, chain => {
             }),
         ],
     });
+    chain.plugin('path').use(TemplatedPathPlugin)
+    // chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
+    //     defaultEntryPoint: 'core',
+    // } ]);
+    return;
+    chain.plugin('split').use(webpack.optimize.AggressiveSplittingPlugin, [ {
+        minSize: 3000,
+        maxSize: 50000,
+    } ]);
+    chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
+        defaultEntryPoint: 'core',
+    } ]);
 });
-// chain.plugin('split').use(webpack.optimize.AggressiveSplittingPlugin, [{
-//     minSize: 3000,
-//     maxSize: 50000
-// }])
 //endregion
 
 //region: Init
 chain
     .target('web')
     .cache(cache)
-    .devtool(isDev ? 'cheap-module-source-map' : false);
-// .mode('development');
+    .devtool(isDev ? 'cheap-module-source-map' : false)
+    .mode('development')
+;
 chain.output
     .path(chain.outPath())
     .pathinfo(isDev)
-    .filename(assetPath('js/[name].js'))
-    .chunkFilename(assetPath('js/chunk.[name].js'))
     .publicPath('/')
     .library([ 'codex', '[name]' ] as any)
-    .libraryTarget('window');
+    .libraryTarget('window')
+    .filename(assetPath('js/[name].js'))
+    .chunkFilename(assetPath('js/chunk.[name].js'));
+// .set('filename', (chunkData: IData) => {
+//     let a = chunkData;
+//     if(chunkData.chunk.entryModule === undefined){
+//
+//         debugger;
+//     }
+//     let entry = chunkData.chunk.entryModule.name;
+//     return assetPath(entry, 'js', '[name].js');
+//
+// })
+// .set('chunkFilename', assetPath('js/chunk.[name].js'));
 chain.resolve
     .symlinks(true)
     .extensions.merge([ '.js', '.vue', '.json', '.web.ts', '.ts', '.web.tsx', '.tsx', '.styl', '.less', '.scss', '.stylus', '.css', '.mjs', '.web.js', '.json', '.web.jsx', '.jsx' ]).end()
@@ -401,7 +408,8 @@ chain.resolve
 chain.resolveLoader
     .modules.merge([ 'node_modules' ]).end()
     .extensions.merge([ '.js', '.json', '.ts' ]).end();
-chain.externals({});
+chain.externals({
+});
 chain.stats({
     warningsFilter: /export .* was not found in/,
 });
@@ -449,6 +457,26 @@ chain.resolve.alias.merge({
     '../../theme.config$': chain.srcPath('core/styling/theme.config'),
     './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
 });
+// chain.set('externals', [ chain.get('externals'), (context: any, request: any, callback: (error?: any, result?: any) => void) => {
+//     let a = { context, request, callback };
+//
+//     if ( ! context.startsWith(chain.srcPath('core')) ) {
+//         if ( /^(react|react-dom|mobx|mobx-react)$/.test(request) ) {
+//             let name = request
+//                 .replace('react', 'React')
+//                 .replace('react-dom', 'ReactDOM')
+//                 .replace('mobx', 'mobx')
+//                 .replace('mobx-react', 'mobxReact');
+//
+//             debugger;
+//             return callback(null, 'var ' + name);
+//         }
+//     }
+//     callback();
+// } ]);
+// chain.entry('vendor').merge([
+//     'react', 'react-dom', 'mobx', 'mobx-react'
+// ]);
 //endregion
 
 

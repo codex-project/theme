@@ -10,8 +10,6 @@
         "skipLibCheck": true,
         "allowJs": false,
         "checkJs": false,
-        "inlineSourceMap": true,
-        "inlineSources": true,
         "noImplicitReturns": false,
         "noImplicitThis": false,
         "noImplicitAny": false,
@@ -25,7 +23,8 @@
         "noStrictGenericChecks": false,
         "noImplicitUseStrict": true,
         "strict": false,
-        "outDir": "out"
+        "outDir": "out",
+        "sourceMap": true
     },
     "include": [
         "./test.ts",

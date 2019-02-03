@@ -10,11 +10,11 @@
         "dev:serve": "gulp dev:serve",
         "dev:dashboard": "gulp dev:dashboard",
         "dashboard": "webpack-dashboard",
-        "dev:browser": "cd dev && browser-sync start -s localhost:3000 --ss .",
+        "dev:browser": "cd dev && browser-sync start -s http://codex.local:3000 --ss .",
         "prod:build": "gulp prod:build",
         "prod:watch": "gulp prod:watch",
         "prod:serve": "gulp prod:serve",
-        "prod:browser": "cd dist && browser-sync start -s localhost:3000 --ss ."
+        "prod:browser": "cd dist && browser-sync start -s http://codex.local:3000 --host codex.local --ss ."
     },
     "dependencies": {
         "@codex/api": "^1.0.0",

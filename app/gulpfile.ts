@@ -6,13 +6,15 @@ import { Chain } from './build/chain';
 import { relative } from 'path';
 import { getFileSizeInfo } from '@radic/build-tools/dist/utils';
 import { readFileSync } from 'fs';
-import SMP from 'speed-measure-webpack-plugin'
+import SMP from 'speed-measure-webpack-plugin';
+
 const chalk = require('chalk').default;
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
 
-const smp = new SMP()
+const smp             = new SMP();
 // Import the plugin:
 const DashboardPlugin = require('webpack-dashboard/plugin');
+
 interface Gulpfile extends GulpEnvMixin {}
 
 @Gulpclass(gulp)
@@ -47,11 +49,12 @@ class Gulpfile {
     async devDashboard() {
         this.dev();
         const { chain, addAnalyzerPlugins, addHMR } = require('./webpack.config');
-        chain.plugin('dashboard').use(DashboardPlugin, [{}])
+        chain.plugin('dashboard').use(DashboardPlugin, [ {} ]);
         addHMR(chain, true);
-        addAnalyzerPlugins(chain, true)
+        addAnalyzerPlugins(chain, true);
         return this.serve(chain);
     }
+
 
     @Task('prod:build')
     async prodBuild() {
@@ -115,7 +118,7 @@ class Gulpfile {
 
         console.log('Starting dev-server @ ', url);
 
-        let config           = chain.toConfig();
+        let config             = chain.toConfig();
         config.devServer.proxy = {
             '/api': {
                 target             : 'http://codex.local',
@@ -133,7 +136,7 @@ class Gulpfile {
             },
         };
         WebpackDevServer.addDevServerEntrypoints(config, config.devServer);
-        config = smp.wrap(config) as any
+        config         = smp.wrap(config) as any;
         const compiler = webpack(config);
         const server   = new WebpackDevServer(compiler, config.devServer);
 

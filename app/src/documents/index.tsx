@@ -68,7 +68,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                 action: async (props, routeState) => {
                     let promise    = new Promise((resolve, reject) => setTimeout(() => resolve({ home: 'ok' }), 500));
                     let result     = await promise;
-                    const HomePage = (await import('./pages/HomePage')).default;
+                    const HomePage = (await import(/* webpackChunkName: "documents.pages.home" */'./pages/HomePage')).default;
                     return <HomePage {...props} {...result} />;
                 },
             },
@@ -87,7 +87,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     let params  = { project: routeState.params.project, revision: 'master' };
                     let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                     if ( ! project ) {
-                        return React.createElement((await import('../documents/pages/ErrorPage')).default, {
+                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
                             ...props,
                             routeState,
                             title  : 'Project not found',
@@ -105,7 +105,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     let params  = { project: routeState.params.project, revision: routeState.params.revision, document: 'index' };
                     let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                     if ( ! project ) {
-                        return React.createElement((await import('../documents/pages/ErrorPage')).default, {
+                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
                             ...props,
                             routeState,
                             title  : 'Project not found',
@@ -114,7 +114,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     }
                     let revision = project.revisions.find(r => r.key === params.revision);
                     if ( ! revision ) {
-                        return React.createElement((await import('../documents/pages/ErrorPage')).default, {
+                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
                             ...props,
                             routeState,
                             title  : 'Revision not found',
@@ -133,7 +133,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     let params  = routeState.params;
                     let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                     if ( ! project ) {
-                        return React.createElement((await import('../documents/pages/ErrorPage')).default, {
+                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
                             ...props,
                             routeState,
                             title  : 'Project not found',
@@ -142,7 +142,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     }
                     let revision = project.revisions.find(r => r.key === params.revision);
                     if ( ! revision ) {
-                        return React.createElement((await import('../documents/pages/ErrorPage')).default, {
+                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
                             ...props,
                             routeState,
                             title  : 'Revision not found',
@@ -153,12 +153,12 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     let document, Component;
                     try {
                         document  = await app.store.fetchDocument(params.project, params.revision, params.document);
-                        Component = (await import('../documents/pages/DocumentPage')).default;
+                        Component = (await import(/* webpackChunkName: "documents.pages.document" */'./pages/DocumentPage')).default;
                         log('documentation.document', 'FETCHED', params, document, Component);
                         return <Component {...props} routeState={routeState} document={document}/>;
                     } catch ( error ) {
                         console.warn('documentation.document', 'FETCH_ERROR', { e: error, params, document, Component });
-                        return React.createElement((await import('../documents/pages/ErrorPage')).default, {
+                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
                             ...props,
                             routeState,
                             title  : error.name,
