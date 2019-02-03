@@ -5,6 +5,7 @@ import { PhpdocMethodComponent, PhpdocMethodComponentBaseProps } from '../Phpdoc
 import { PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type/PhpdocType';
 import { classes } from 'typestyle';
+import { hot } from '@codex/core';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
@@ -32,9 +33,11 @@ export interface PhpdocMethodSignatureProps extends PhpdocMethodComponentBasePro
         typeTooltipClick?: boolean
     }
 }
+export {PhpdocMethodSignature}
 
+@hot(module)
 @observer
-export class PhpdocMethodSignature extends React.Component<PhpdocMethodSignatureProps> {
+export default class PhpdocMethodSignature extends React.Component<PhpdocMethodSignatureProps> {
     static displayName: string                               = 'PhpdocMethodSignature';
     static defaultProps: Partial<PhpdocMethodSignatureProps> = {
         prefixCls      : 'phpdoc-method-signature',

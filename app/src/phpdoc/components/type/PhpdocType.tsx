@@ -28,10 +28,10 @@ export interface PhpdocTypeProps {
     linkToApi?: boolean
     onClick?: () => void
 }
-
-
+export {PhpdocType}
+@hot(module)
 @observer
-export class PhpdocType extends React.Component<PhpdocTypeProps> {
+export default class PhpdocType extends React.Component<PhpdocTypeProps> {
     static displayName: string                    = 'PhpdocType';
     static defaultProps: Partial<PhpdocTypeProps> = {
         seperator       : ' | ',

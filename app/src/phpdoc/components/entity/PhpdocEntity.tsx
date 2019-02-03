@@ -23,9 +23,11 @@ export interface PhpdocEntityBaseProps {
 
 export interface PhpdocEntityProps extends PhpdocEntityBaseProps, PhpdocFileComponentBaseProps {}
 
+export {PhpdocEntity}
 
+@hot(module)
 @observer
-export class PhpdocEntity extends React.Component<PhpdocEntityProps> {
+export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     static displayName: string                      = 'PhpdocEntity';
     static defaultProps: Partial<PhpdocEntityProps> = {
         prefixCls: 'phpdoc-entity',

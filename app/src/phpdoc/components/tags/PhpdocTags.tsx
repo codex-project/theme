@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
-import { getColor, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
+import { getColor, hot, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
 import { classes } from 'typestyle';
 
 import './tags.scss';
@@ -23,8 +23,10 @@ export interface PhpdocTagsProps {
     onlyTags?: string[]
 }
 
+export { PhpdocTags };
+@hot(module)
 @observer
-export class PhpdocTags extends React.Component<PhpdocTagsProps> {
+export default class PhpdocTags extends React.Component<PhpdocTagsProps> {
     @lazyInject('components') hc: HtmlComponents;
     static displayName: string                    = 'PhpdocTags';
     static defaultProps: Partial<PhpdocTagsProps> = {

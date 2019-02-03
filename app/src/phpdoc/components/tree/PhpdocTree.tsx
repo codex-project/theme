@@ -9,7 +9,7 @@ import InspireTree from 'inspire-tree';
 import { findDOMNode } from 'react-dom';
 import { debounce } from 'lodash-decorators';
 import { ITreeNode } from './interfaces';
-import { Scrollbar, ucfirst } from '@codex/core';
+import { hot, Scrollbar, ucfirst } from '@codex/core';
 import { Scrollbar as ScrollbarClass } from '@codex/core/components/scrollbar/Scrollbar';
 import { PhpdocContent } from '../PhpdocContent';
 import { TreeBuilder } from './TreeBuilder';
@@ -25,9 +25,10 @@ export interface PhpdocTreeProps extends TreeProps {
     scrollToSelected?: boolean
     tree?: InspireTree
 }
-
+export {PhpdocTree}
+@hot(module)
 @observer
-export class PhpdocTree extends React.Component<PhpdocTreeProps> {
+export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
     static displayName: string                    = 'PhpdocTree';
     static defaultProps: Partial<PhpdocTreeProps> = {};
     static contextType                            = PhpdocContent.Context;

@@ -207,17 +207,20 @@ export class Store {
                 this.document = null;
                 this.project  = result.project;
                 layout        = result.project;
+                this.mergeLayout(layout);
             }
             if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
                 this.revision = null;
                 this.document = null;
                 this.revision = result.revision;
                 layout        = result.revision;
+                this.mergeLayout(layout);
             }
             if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
                 this.document = null;
                 this.document = result.document;
                 layout        = result.document;
+                this.mergeLayout(layout);
             }
             if ( layout ) {
                 this.mergeLayout(layout);

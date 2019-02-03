@@ -28,8 +28,11 @@ export interface PhpdocDocblockProps {
     onlyTags?: string[]
 }
 
+export { PhpdocDocblock };
+
+@hot(module)
 @observer
-export class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
+export default class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
     @lazyInject('components') hc: HtmlComponents;
     static displayName: string                        = 'PhpdocDocblock';
     static defaultProps: Partial<PhpdocDocblockProps> = {

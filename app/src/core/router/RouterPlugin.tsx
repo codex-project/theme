@@ -78,7 +78,7 @@ export class RouterPlugin extends BasePlugin<Partial<RouterPluginOptions>> {
             this.hooks.registered.call(this.routes);
         });
         app.hooks.booted.tap(this.name, app => {
-            app.get<History>('history').listen((location, action) => {
+            app.get('history').listen((location, action) => {
                 this.routes.hooks.transition.call(location, action);
             })
         })

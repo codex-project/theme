@@ -1,14 +1,21 @@
-import { componentLoader } from '@codex/core';
-import React from 'react';
+import React, { ComponentType } from 'react';
+import loadable from '@loadable/component';
 import { PhpdocEntityProps } from './PhpdocEntity';
 import { loadStyling } from '../../loadStyling';
 
 
-export const PhpdocEntity: React.ComponentType<PhpdocEntityProps> = DEV ? require('./PhpdocEntity').PhpdocEntity : componentLoader(
-    {
-        Component: async () => (await import(/* webpackChunkName: "phpdoc.entity" */'./PhpdocEntity')).PhpdocEntity,
-        loadStyling,
-    },
-    (loader: any, props: any) => <loader.Component {...props} />,
-    { delay: 1000 },
-);
+const loader = () => Promise.all([
+    import(
+        /* webpackChunkName: "core.components.entity" */
+        /* webpackPrefetch: true */
+        './PhpdocEntity'
+        ),
+    loadStyling(),
+]).then(value => value[ 0 ]);
+
+export type PhpdocEntityComponent = ComponentType<PhpdocEntityProps> & {}
+
+export let PhpdocEntity: PhpdocEntityComponent = loadable(loader);
+
+export default PhpdocEntity;
+

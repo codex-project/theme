@@ -1,14 +1,18 @@
-import { componentLoader } from '@codex/core';
-import React from 'react';
+import React, { ComponentType } from 'react';
+import loadable from '@loadable/component';
 import { PhpdocDocblockProps } from './PhpdocDocblock';
 import { loadStyling } from '../../loadStyling';
 
+const loader = () => Promise.all([
+    import(
+        /* webpackChunkName: "core.components.docblock" */
+        /* webpackPrefetch: true */
+        './PhpdocDocblock'
+        ),
+    loadStyling(),
+]).then(value => value[ 0 ]);
+export type PhpdocDocblockComponent = ComponentType<PhpdocDocblockProps> & {}
 
-export const PhpdocDocblock: React.ComponentType<PhpdocDocblockProps> = DEV ? require('./PhpdocDocblock').PhpdocDocblock : componentLoader(
-    {
-        Component: async () =>  (await import(/* webpackChunkName: "phpdoc.docblock" */'./PhpdocDocblock')).PhpdocDocblock,
-        loadStyling,
-    },
-    (loader: any, props: any) => <loader.Component {...props} />,
-    { delay: 1000 },
-);
+export let PhpdocDocblock: PhpdocDocblockComponent = loadable(loader);
+
+export default PhpdocDocblock;

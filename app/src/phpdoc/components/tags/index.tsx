@@ -1,14 +1,18 @@
-import { componentLoader } from '@codex/core';
-import React from 'react';
+import React, { ComponentType } from 'react';
+import loadable from '@loadable/component';
 import { PhpdocTagsProps } from './PhpdocTags';
 import { loadStyling } from '../../loadStyling';
 
+const loader = () => Promise.all([
+    import(
+        /* webpackChunkName: "core.components.tags" */
+        /* webpackPrefetch: true */
+        './PhpdocTags'
+        ),
+    loadStyling(),
+]).then(value => value[ 0 ]);
+export type PhpdocTagsComponent = ComponentType<PhpdocTagsProps> & {}
 
-export const PhpdocTags: React.ComponentType<PhpdocTagsProps> = DEV ? require('./PhpdocTags').PhpdocTags :componentLoader(
-    {
-        Component: async () => (await import(/* webpackChunkName: "phpdoc.tags" */'./PhpdocTags')).PhpdocTags,
-        loadStyling,
-    },
-    (loader: any, props: any) => <loader.Component {...props} />,
-    { delay: 1000 },
-);
+export let PhpdocTags: PhpdocTagsComponent = loadable(loader);
+
+export default PhpdocTags;

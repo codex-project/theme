@@ -32,7 +32,7 @@ const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
-const minimize          = false;
+const minimize          = isProd;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -255,6 +255,7 @@ chain.onToConfig(config => {
         },
     });
     let antdLessLoader                  = AntdScssThemePlugin.themify('less-loader');
+    let postCssLoader = { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('postcss-clean'), require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } }
     config.module.rules.push(...[ {
         test: /\.module.css$/,
         use : [
@@ -268,14 +269,14 @@ chain.onToConfig(config => {
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'fast-css-loader', options: { importLoaders: 1, sourceMap: isDev } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            isProd && postCssLoader,
         ].filter(Boolean),
     }, {
         test: /\.(module\.scss|mscss)$/,
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: false, modules: true, localIdentName: '[name]__[local]' } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            isProd && postCssLoader,
             antdScssLoader,
         ].filter(Boolean),
     }, {
@@ -283,8 +284,8 @@ chain.onToConfig(config => {
         exclude: [ /\.module\.scss$/, /\.mscss$/ ],
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'css-loader', options: { importLoaders: 3, sourceMap: isDev, camelCase: true } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
+            isProd && postCssLoader,
             antdScssLoader,
         ].filter(Boolean),
     }, {
@@ -292,7 +293,7 @@ chain.onToConfig(config => {
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
             { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev } },
-            isProd && { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } },
+            isProd && postCssLoader,
             { loader: antdLessLoader.loader, options: { ...antdLessLoader.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
         ].filter(Boolean),
     } ]);
@@ -312,6 +313,9 @@ chain.when(isDev, chain => {
         namedModules: true,
         namedChunks : true,
         runtimeChunk: 'single',
+        splitChunks: {
+            name:true,
+        },
         // occurrenceOrder: true,
         // runtimeChunk          : true,
         //https://github.com/webpack/webpack/tree/master/examples/multiple-entry-points
@@ -354,17 +358,6 @@ chain.when(isDev, chain => {
         ],
     });
     chain.plugin('path').use(TemplatedPathPlugin)
-    // chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
-    //     defaultEntryPoint: 'core',
-    // } ]);
-    return;
-    chain.plugin('split').use(webpack.optimize.AggressiveSplittingPlugin, [ {
-        minSize: 3000,
-        maxSize: 50000,
-    } ]);
-    chain.plugin('path-substitution').use(AssetPathSubstitutionPlugin, [ <AssetPathSubstitutionPluginOptions>{
-        defaultEntryPoint: 'core',
-    } ]);
 });
 //endregion
 
@@ -373,7 +366,6 @@ chain
     .target('web')
     .cache(cache)
     .devtool(isDev ? 'cheap-module-source-map' : false)
-    .mode('development')
 ;
 chain.output
     .path(chain.outPath())
@@ -450,7 +442,7 @@ addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'api', packagesPath('api/src'), 'index.ts');
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
 addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
-// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
+addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
 chain.resolve.alias.merge({
     'heading'            : chain.srcPath('core/styling/heading.less'),

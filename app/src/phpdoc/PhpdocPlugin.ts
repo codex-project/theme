@@ -1,8 +1,7 @@
-import { Application, BasePlugin, Bind, IsBound, MenuPlugin, Rebind, Unbind } from '@codex/core';
+import { Application, BasePlugin, Bind, IsBound, MenuPlugin, Rebind, RouterPlugin, Unbind } from '@codex/core';
 import { loadStyling } from './loadStyling';
 import React from 'react';
 import { PhpdocStore } from './logic';
-import { RouterPlugin } from '@codex/site/router';
 
 export class PhpdocPlugin extends BasePlugin {
     name = 'phpdoc';
