@@ -1,10 +1,10 @@
 //@ts-ignore TS2307
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { observable, runInAction } from 'mobx';
 import './method.scss';
 import PhpdocMethodArguments from './PhpdocMethodArguments';
-import { CodeHighlight,HtmlComponents, lazyInject } from '@codex/core';
+import { CodeHighlight, HtmlComponents, lazyInject } from '@codex/core';
 import { PhpdocTag } from '@codex/api';
 import { classes } from 'typestyle';
 import { FQNS, PhpdocMethod as Method } from '../../logic';
@@ -61,7 +61,9 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     static displayName: string                      = 'PhpdocMethod';
     static defaultProps: Partial<PhpdocMethodProps> = {
         withoutTags: [ 'param', 'example', 'return' ],
-        hide       : {},
+        hide       : {
+            namespace: true,
+        },
     };
     static Arguments: typeof PhpdocMethodArguments  = PhpdocMethodArguments;
     static Signature: typeof PhpdocMethodSignature  = PhpdocMethodSignature;
@@ -125,6 +127,30 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
         const method = file.entity.methods.get(fqns.memberName);
         let closed   = ! this.open;
 
+        let show = {
+            description: this.has.description && ! this.hide.description,
+            example    : method.docblock.tags.has('example') && ! this.hide.example,
+            tags       : this.has.tags && ! this.hide.tags && this.filteredTags.length > 0,
+            arguments  : method.arguments && method.arguments.length > 0 && ! this.hide.arguments,
+            returns    : this.has.returns && ! this.hide.returns,
+        };
+        let
+            description,
+            long_description,
+            returns: any
+        ;
+        if ( show.description ) {
+            description      = this.hc.parse(method.docblock.description) as any;
+            long_description = method.docblock.long_description ? this.hc.parse(method.docblock.long_description) as any : null;
+        }
+
+        if ( show.returns ) {
+            returns = method.returns;
+            if ( returns[ 0 ] === 'static' ) {
+                returns = method.fqns.entityName;
+            }
+        }
+
         log('render', { props: this.props, me: this });
         return (
             <div ref={innerRef} className={classes('phpdoc-method', className, ...[ boxed && 'boxed', closed && 'closed' ].filter(Boolean))} style={style}>
@@ -141,80 +167,108 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
                 <If condition={this.open}>
                     <div className="method-details">
-                        {this.renderDescription(method)}
-                        {this.renderExample(method)}
-                        {this.renderTags(method)}
-                        {this.renderArguments(method)}
-                        {this.renderReturns(method)}
+                        {/*{this.renderDescription(method)}*/}
+                        <If condition={show.description}>
+                            {/*<h4 className="method-block-title">Description</h4>*/}
+                            <div className="method-block pt-md">
+                                {description ? <div>{description}</div> : null}
+                                {long_description ? <div>{long_description}</div> : null}
+                            </div>
+                        </If>
+                        {/*{this.renderExample(method)}*/}
+                        <If condition={show.example}>
+                            <h4 className="method-block-title">Example</h4>
+                            <div className="method-block">
+                                <CodeHighlight language="php" withLineNumbers code={method.docblock.tags.get('example').description}/>
+                            </div>
+                        </If>
+                        {/*{this.renderTags(method)}*/}
+                        <If condition={show.tags}>
+                            <h4 className="method-block-title">Tags</h4>
+                            <div className="method-block">
+                                <PhpdocTags tags={method.docblock.tags} withoutTags={this.props.withoutTags} onlyTags={this.props.onlyTags}/>
+                            </div>
+                        </If>
+                        {/*{this.renderArguments(method)}*/}
+                        <If condition={show.arguments}>
+                            <h4 className="method-block-title">Arguments</h4>
+                            <PhpdocMethodArguments fqns={this.state.fqns}>{null}</PhpdocMethodArguments>
+                        </If>
+                        {/*{this.renderReturns(method)}*/}
+                        <If condition={show.returns}>
+                            <h4 className="method-block-title">Returns</h4>
+                            <div className="method-block">
+                                <PhpdocType type={returns}/>
+                            </div>
+                        </If>
                     </div>
                 </If>
             </div>
         );
     }
 
-    private renderDescription(method: Method): any {
-        if ( ! this.has.description || this.hide.description ) return null;
-        // const description      = this.hc.parse(method.docblock.description) as any;
-        // const long_description = method.docblock.long_description ? this.hc.parse(method.docblock.long_description) as any : null;
-        return (
-            <Fragment>
-                {/*<h4 className="method-block-title">Description</h4>*/}
-                <div className="method-block pt-md">
-                    {/*{description ? <div>{description}</div> : null}*/}
-                    {/*{long_description ? <div>{long_description}</div> : null}*/}
-                </div>
-            </Fragment>
-        );
-    }
-
-    private renderExample(method: Method): any {
-        if ( ! method.docblock.tags.has('example') || this.hide.example ) return null;
-        return (
-            <Fragment>
-                <h4 className="method-block-title">Example</h4>
-                <div className="method-block">
-                    <CodeHighlight language="php" withLineNumbers code={method.docblock.tags.get('example').description}/>
-                </div>
-            </Fragment>
-        );
-    }
-
-    private renderArguments(method: Method): any {
-        if ( ! method.arguments || method.arguments.length === 0 || this.hide.arguments ) return null;
-        return (
-            <Fragment>
-                <h4 className="method-block-title">Arguments</h4>
-                <PhpdocMethodArguments fqns={this.state.fqns}>{null}</PhpdocMethodArguments>
-            </Fragment>
-        );
-    }
-
-    private renderTags(method: Method) {
-        if ( ! this.has.tags || this.hide.tags || this.filteredTags.length === 0 ) return null;
-        return (
-            <Fragment>
-                <h4 className="method-block-title">Tags</h4>
-                <div className="method-block">
-                    <PhpdocTags tags={method.docblock.tags} withoutTags={this.props.withoutTags} onlyTags={this.props.onlyTags}/>
-                    {/*<phpdoc-tags :tags="tags" :without="withoutTags" :only="onlyTags"></phpdoc-tags>*/}
-                </div>
-            </Fragment>
-        );
-    }
-
-    private renderReturns(method: Method) {
-        if ( ! this.has.returns || this.hide.returns ) return null;
-        let returns: any = method.returns;
-        if ( returns[ 0 ] === 'static' ) {
-            returns = method.fqns.entityName;
-        }
-        return (
-            <Fragment>
-                <h4 className="method-block-title">Returns</h4>
-                <div className="method-block">
-                    <PhpdocType type={returns}/>
-                </div>
-            </Fragment>
-        );
-    }
+    // private renderDescription(method: Method): any {
+    //     if ( ! this.has.description || this.hide.description ) return null;
+    //     const description      = this.hc.parse(method.docblock.description) as any;
+    //     const long_description = method.docblock.long_description ? this.hc.parse(method.docblock.long_description) as any : null;
+    //     return (
+    //         <Fragment>
+    //             {/*<h4 className="method-block-title">Description</h4>*/}
+    //             <div className="method-block pt-md">
+    //                 {description ? <div>{description}</div> : null}
+    //                 {long_description ? <div>{long_description}</div> : null}
+    //             </div>
+    //         </Fragment>
+    //     );
+    // }
+    //
+    // private renderExample(method: Method): any {
+    //     if ( ! method.docblock.tags.has('example') || this.hide.example ) return null;
+    //     return (
+    //         <Fragment>
+    //             <h4 className="method-block-title">Example</h4>
+    //             <div className="method-block">
+    //                 <CodeHighlight language="php" withLineNumbers code={method.docblock.tags.get('example').description}/>
+    //             </div>
+    //         </Fragment>
+    //     );
+    // }
+    //
+    // private renderArguments(method: Method): any {
+    //     if ( ! method.arguments || method.arguments.length === 0 || this.hide.arguments ) return null;
+    //     return (
+    //         <Fragment>
+    //             <h4 className="method-block-title">Arguments</h4>
+    //             <PhpdocMethodArguments fqns={this.state.fqns}>{null}</PhpdocMethodArguments>
+    //         </Fragment>
+    //     );
+    // }
+    //
+    // private renderTags(method: Method) {
+    //     if ( ! this.has.tags || this.hide.tags || this.filteredTags.length === 0 ) return null;
+    //     return (
+    //         <Fragment>
+    //             <h4 className="method-block-title">Tags</h4>
+    //             <div className="method-block">
+    //                 <PhpdocTags tags={method.docblock.tags} withoutTags={this.props.withoutTags} onlyTags={this.props.onlyTags}/>
+    //             </div>
+    //         </Fragment>
+    //     );
+    // }
+    //
+    // private renderReturns(method: Method) {
+    //     if ( ! this.has.returns || this.hide.returns ) return null;
+    //     let returns: any = method.returns;
+    //     if ( returns[ 0 ] === 'static' ) {
+    //         returns = method.fqns.entityName;
+    //     }
+    //     return (
+    //         <Fragment>
+    //             <h4 className="method-block-title">Returns</h4>
+    //             <div className="method-block">
+    //                 <PhpdocType type={returns}/>
+    //             </div>
+    //         </Fragment>
+    //     );
+    // }
 }

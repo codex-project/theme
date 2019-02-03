@@ -11,8 +11,10 @@ const loader = () => Promise.all([
         ),
     loadStyling(),
 ]).then(value => value[ 0 ]);
-export type PhpdocPopoverComponent = ComponentType<PhpdocPopoverProps> & {}
+export type PhpdocPopoverComponent = ComponentType<PhpdocPopoverProps> & {
+    loader?:typeof loader
+}
 
 export let PhpdocPopover: PhpdocPopoverComponent = loadable(loader);
-
+PhpdocPopover.loader=loader;
 export default PhpdocPopover;

@@ -2,6 +2,7 @@ import React, { ComponentType } from 'react';
 import loadable from '@loadable/component';
 import { PhpdocTypeProps } from './PhpdocType';
 import { loadStyling } from '../../loadStyling';
+import PhpdocPopover from '../popover';
 
 const loader = () => Promise.all([
     import(
@@ -9,6 +10,7 @@ const loader = () => Promise.all([
         // /* webpackPrefetch: true */
         './PhpdocType'
         ),
+    PhpdocPopover.loader(),
     loadStyling(),
 ]).then(value => value[ 0 ]);
 export type PhpdocTypeComponent = ComponentType<PhpdocTypeProps> & {}
