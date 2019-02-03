@@ -12,7 +12,7 @@ export class PhpdocPlugin extends BasePlugin {
     async register(bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind): Promise<any> {
         bind('phpdoc.menutype').toConstantValue(PhpdocMenuType);
         bind('store.phpdoc').to(PhpdocStore).inSingletonScope();
-        return loadStyling();
+        // return loadStyling();
     }
 
     install(app: Application) {
