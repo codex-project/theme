@@ -6,8 +6,8 @@ import { TreeBuilder } from './TreeBuilder';
 
 const loader = () => Promise.all([
     import(
-        /* webpackChunkName: "core.components.tree" */
-        /* webpackPrefetch: true */
+        /* webpackChunkName: "phpdoc.components.tree" */
+        // /* webpackPrefetch: true */
         './PhpdocTree'
         ),
     loadStyling(),

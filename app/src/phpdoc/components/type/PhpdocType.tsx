@@ -2,13 +2,12 @@ import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { classes } from 'typestyle';
 import { Popover } from 'antd';
-import { FQNS, Type } from '../../logic';
-import {  PhpdocStore } from '../../logic';
+import { PhpdocStore, Type } from '../../logic';
 import { isArray, isString } from 'lodash';
 import { hot, lazyInject, strStripLeft, strStripRight } from '@codex/core';
-import { PhpdocContent } from '../PhpdocContent';
 import { Link } from 'react-router-dom';
 import './type.scss';
+import { PhpdocManifestProvider } from '../providers';
 
 const log = require('debug')('components:PhpdocType');
 
@@ -28,7 +27,8 @@ export interface PhpdocTypeProps {
     linkToApi?: boolean
     onClick?: () => void
 }
-export {PhpdocType}
+
+export { PhpdocType };
 @hot(module)
 @observer
 export default class PhpdocType extends React.Component<PhpdocTypeProps> {
@@ -41,8 +41,8 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
         linkToApi       : false,
     };
 
-    static contextType            = PhpdocContent.Context;
-    context!: React.ContextType<typeof PhpdocContent.Context>;
+    static contextType = PhpdocManifestProvider.Context.Context;
+    context!: React.ContextType<typeof PhpdocManifestProvider.Context>;
 
     @lazyInject('store.phpdoc') store: PhpdocStore;
 
@@ -58,10 +58,10 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
 
     parseType(type): Type[] {
         if ( isString(type) ) {
-            type = type.split('|')
+            type = type.split('|');
         }
         if ( isArray(type) ) {
-            type = type.filter(name => name.length > 1);
+            type        = type.filter(name => name.length > 1);
             let newType = [];
             type.forEach((t: string) => {
                 if ( ! t.startsWith('array') ) {

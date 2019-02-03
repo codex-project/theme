@@ -1,12 +1,16 @@
 import React from 'react';
 
 
-export * from './docblock';
-export * from './entity';
-export * from './tree';
-export * from './tags';
-export * from './type';
-export * from './PhpdocComponent';
+export {PhpdocDocblock} from './docblock';
+export {PhpdocEntity} from './entity';
+export {PhpdocLink} from './link';
+export {PhpdocMethod} from './method';
+export {PhpdocPopover} from './popover';
+export {PhpdocTree} from './tree';
+export {PhpdocTags} from './tags';
+export {PhpdocType} from './type';
+
 export * from './PhpdocContent';
 export * from './PhpdocFileComponent';
+export * from './PhpdocMethodComponent';
 

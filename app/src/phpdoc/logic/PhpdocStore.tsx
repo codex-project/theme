@@ -12,9 +12,9 @@ export class PhpdocManifest {
     files: NamedCollection<api.PhpdocManifestFile>;
     protected _files: Record<string, PhpdocFile> = {};
 
-    constructor(data: api.PhpdocManifest) {
-        Object.assign(this, data);
-        this.files = new NamedCollection(...data.files);
+    constructor(protected _data: api.PhpdocManifest) {
+        Object.assign(this, _data);
+        this.files = new NamedCollection(..._data.files);
     }
 
     async fetchFile(fullName: string | FQNS): Promise<PhpdocFile> {

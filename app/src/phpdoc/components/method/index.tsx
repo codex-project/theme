@@ -2,17 +2,24 @@ import React, { ComponentType } from 'react';
 import loadable from '@loadable/component';
 import { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
 import { loadStyling } from '../../loadStyling';
+import { PhpdocMethodArgumentsProps } from './PhpdocMethodArguments';
 
 const loader = () => Promise.all([
     import(
-        /* webpackChunkName: "core.components.type" */
-        /* webpackPrefetch: true */
-        './PhpdocMethodSignature'
+        /* webpackChunkName: "phpdoc.components.method" */
+        // /* webpackPrefetch: true */
+        './PhpdocMethod'
         ),
     loadStyling(),
 ]).then(value => value[ 0 ]);
-export type PhpdocMethodSignatureComponent = ComponentType<PhpdocMethodSignatureProps> & {}
+export type PhpdocMethodComponent = ComponentType<PhpdocMethodSignatureProps> & {
+    Arguments?: ComponentType<PhpdocMethodArgumentsProps>
+    Signature?: ComponentType<PhpdocMethodSignatureProps>
+}
 
-export let PhpdocMethodSignature: PhpdocMethodSignatureComponent = loadable(loader);
+export let PhpdocMethod: PhpdocMethodComponent = loadable(loader);
 
-export default PhpdocMethodSignature;
+export default PhpdocMethod;
+
+PhpdocMethod.Arguments = loadable(() => loader().then(m => m.PhpdocMethod.Arguments));
+PhpdocMethod.Signature = loadable(() => loader().then(m => m.PhpdocMethod.Signature));

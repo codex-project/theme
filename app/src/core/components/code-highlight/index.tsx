@@ -1,12 +1,16 @@
-import React from 'react';
-import { CodeHighlight as CodeHighlightClass, CodeHighlightProps } from './CodeHighlight';
-import { componentLoader } from 'utils/componentLoader';
+import {CodeHighlight, CodeHighlightProps } from './CodeHighlight';
+import React, { ComponentType } from 'react';
+import loadable from '@loadable/component';
 
+// const loader = () => import(
+//     /* webpackChunkName: "core.components.code-highlight" */
+//     // /* webpackPrefetch: true */
+//     './CodeHighlight'
+//     );
+// export type CodeHighlightComponent = ComponentType<CodeHighlightProps> & {}
+//
+// export let CodeHighlight: CodeHighlightComponent = loadable(loader);
+//
+// export default CodeHighlight;
 
-export const CodeHighlight:React.ComponentType<CodeHighlightProps> = componentLoader<typeof CodeHighlightClass>(
-    async () => (await import(/* webpackChunkName: "core.components.code-highlight" */'./CodeHighlight')).CodeHighlight,
-    (CodeHighlight, props) => <CodeHighlight {...props} />,
-    { delay: 1000 },
-);
-
-
+export {CodeHighlight}

@@ -1,0 +1,35 @@
+@import "../../styling/base";
+
+
+.phpdoc-popover,
+.phpdoc-tooltip {
+    @extend %phpdoc-component;
+    //background-color: $blue-grey-1;
+    color         : $grey-8;
+    font-size     : 12px;
+    font-family   : $font-family-monospace;
+    //padding: 7px;
+    border-radius : 0;
+
+    .ant-popover-arrow,
+    .ant-tooltip-inner,
+    .ant-popover-inner {
+        background-color : $blue-grey-1;
+    }
+
+    .ant-popover-inner-content {
+        padding : 7px;
+    }
+
+    .phpdoc-popover-footer,
+    .phpdoc-tooltip-footer {
+        font-size      : 8px;
+        display        : block;
+        text-align     : right;
+        bottom         : 2px;
+        text-transform : uppercase;
+        position       : absolute;
+        right          : 7px;
+        color          : $blue-grey-6;
+    }
+}

@@ -6,8 +6,8 @@ import createBrowserHistory, { BrowserHistoryBuildOptions } from 'history/create
 import { LocationDescriptorObject } from 'history';
 import { RouteDefinition, RouteDefinitionTestKeys } from './types';
 import pathToRegexp from 'path-to-regexp';
-import { Application } from 'classes/Application';
-import { BasePlugin, Bind, IsBound, Rebind, Unbind } from 'classes/Plugin';
+import { Application } from '../classes/Application';
+import { BasePlugin, Bind, IsBound, Rebind, Unbind } from '../classes/Plugin';
 import { merge } from 'lodash';
 
 const addTestKeysToRoute = (route: RouteDefinition): RouteDefinition & RouteDefinitionTestKeys => {
@@ -78,7 +78,7 @@ export class RouterPlugin extends BasePlugin<Partial<RouterPluginOptions>> {
             this.hooks.registered.call(this.routes);
         });
         app.hooks.booted.tap(this.name, app => {
-            app.history.listen((location, action) => {
+            app.get<History>('history').listen((location, action) => {
                 this.routes.hooks.transition.call(location, action);
             })
         })

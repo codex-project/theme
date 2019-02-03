@@ -23,7 +23,7 @@ import { Store } from '../stores';
 
 const log = require('debug')('classes:Application');
 
-type PluginMap = Map<string, Plugin> & {
+interface PluginMap extends Map<string, Plugin> {
     get<P extends Plugin = Plugin>(key: string): P | undefined;
 }
 type PluginMapProxy = PluginMap & Record<string, Plugin>

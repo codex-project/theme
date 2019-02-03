@@ -1,4 +1,5 @@
 import { api } from '@codex/api';
+import { PhpdocMethod } from './types';
 
 export class Collection<T> extends Array<T> implements Array<T> {
 
@@ -73,13 +74,20 @@ export class NamedCollection<T> extends Collection<T> {
     getKeys(): string[] {
         return this.map(item => item[ this.KEYNAME ]);
     }
+
+    only(keys: string[]) {
+        return this.whereIn(this.KEYNAME as any, keys);
+    }
+
+    without(keys: string[]) {
+        return this.whereNotIn(this.KEYNAME as any, keys);
+    }
 }
 
-export class Methods<T extends api.PhpdocMethod = api.PhpdocMethod> extends NamedCollection<T> {
+export class Methods<T extends api.PhpdocMethod = PhpdocMethod> extends NamedCollection<T> {
     constructor(...items: T[]) {
         super(...items);
         Object.setPrototypeOf(this, Methods.prototype);
-
     }
 }
 

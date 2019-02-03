@@ -1,10 +1,9 @@
 import { Application, BasePlugin, Bind, HtmlComponents, IsBound, MenuPlugin, Rebind, RouterPlugin, Unbind } from '@codex/core';
-import { loadStyling } from './loadStyling';
 import React from 'react';
 import { PhpdocStore } from './logic';
-import { PhpdocContent } from './components';
+import { PhpdocContent, PhpdocDocblock, PhpdocEntity, PhpdocFileComponent, PhpdocLink, PhpdocMethod, PhpdocMethodComponent, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
 import { PhpdocMenuType } from './PhpdocMenuType';
-import PhpdocLink from './components/link';
+import PhpdocTestPage from './PhpdocTestPage';
 
 export class PhpdocPlugin extends BasePlugin {
     name = 'phpdoc';
@@ -19,8 +18,19 @@ export class PhpdocPlugin extends BasePlugin {
         app.hooks.registered.tap(this.name, app => {
             const components = app.get<HtmlComponents>('components');
             components.registerMap({
-                'phpdoc-content': PhpdocContent,
-                'phpdoc-link': PhpdocLink,
+                'phpdoc-docblock'        : PhpdocDocblock,
+                'phpdoc-entity'          : PhpdocEntity,
+                'phpdoc-link'            : PhpdocLink,
+                'phpdoc-method'          : PhpdocMethod,
+                'phpdoc-method-arguments': PhpdocMethod.Arguments,
+                'phpdoc-method-signature': PhpdocMethod.Signature,
+                'phpdoc-popover'         : PhpdocPopover,
+                'phpdoc-tags'            : PhpdocTags,
+                'phpdoc-tree'            : PhpdocTree,
+                'phpdoc-type'            : PhpdocType,
+                'phpdoc-content'         : PhpdocContent,
+                'phpdoc-method-component': PhpdocMethodComponent,
+                'phpdoc-file-component'  : PhpdocFileComponent,
             });
         });
         if ( app.plugins.has('router') ) {
@@ -42,6 +52,11 @@ export class PhpdocPlugin extends BasePlugin {
                             ...props,
                         });
                     },
+                });
+                routeMap.set('phpdoc.test', {
+                    name     : 'phpdoc.test',
+                    path     : app.url.root('phpdoc-test'),
+                    component: PhpdocTestPage,
                 });
             });
         }

@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react';
-import { action, computed, observable } from 'mobx';
-import { FQNS,  PhpdocStore } from '../logic';
+import { action, computed, observable, toJS } from 'mobx';
+import { FQNS, PhpdocStore } from '../logic';
 import { PhpdocMethod } from '../logic/types';
 import { lazyInject, renderLoading, SpinProps } from '@codex/core';
 import { observer } from 'mobx-react';
-import { PhpdocFileComponentContext } from './PhpdocFileComponent';
+import { PhpdocFileComponent, PhpdocFileComponentContext } from './PhpdocFileComponent';
 import { isString } from 'lodash';
 
 const log = require('debug')('components:PhpdocMethodComponent');
@@ -18,11 +18,32 @@ export const PhpdocMethodComponentContext = React.createContext<PhpdocMethodCont
 export interface PhpdocMethodComponentBaseProps {
     fqns?: string | FQNS
     method?: PhpdocMethod
-    loader?: SpinProps
+    loader?: SpinProps | false
 }
 
 export interface PhpdocMethodComponentProps extends PhpdocMethodComponentBaseProps {
-    children: (value: PhpdocMethod) => ReactNode;
+    children: ReactNode | ((value: PhpdocMethod) => ReactNode)
+}
+
+export function withMethodComponent() {
+    return Component => {
+        class ComponentHOC extends React.PureComponent<any> {
+
+            render() {
+                const { method, fqns, loader, children, ...props } = this.props;
+                return (
+                    <PhpdocFileComponent fqns={fqns} loader={loader}>
+                        <PhpdocMethodComponent method={method} fqns={fqns} loader={loader}>
+                            {/*{method => React.cloneElement(React.Children.only(children), { ...props, method })}*/}
+                            {/*{method => <Component method={method} fqns={fqns} loader={loader} {...props}>{children}</Component>}*/}
+                            <Component fqns={fqns} loader={loader} {...props}>{children}</Component>
+                        </PhpdocMethodComponent>
+                    </PhpdocFileComponent>
+                );
+            }
+        };
+        return ComponentHOC as any;
+    };
 }
 
 @observer
@@ -88,19 +109,22 @@ export class PhpdocMethodComponent extends React.Component<PhpdocMethodComponent
         const { children } = this.props;
 
         return (
-            <PhpdocMethodComponentContext.Provider value={{ method: this.method }}>
+            <PhpdocMethodComponentContext.Provider value={{ method: toJS(this.method) }}>
                 <If condition={this.showLoader}>
                     {this.renderLoader()}
                 </If>
                 <If condition={! this.showLoader}>
-                    {children(this.method)}
+                    {typeof children === 'function' ? (children as any)(toJS(this.method)) : children}
                 </If>
             </PhpdocMethodComponentContext.Provider>
         );
     }
 
     renderLoader() {
-        const { loader }                           = this.props;
+        const { loader } = this.props;
+        if ( loader === false ) {
+            return null;
+        }
         const { delay, prefixCls, ...loaderProps } = loader;
         return renderLoading({
             loadingText: null,

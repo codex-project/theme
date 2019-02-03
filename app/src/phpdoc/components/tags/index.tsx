@@ -5,8 +5,8 @@ import { loadStyling } from '../../loadStyling';
 
 const loader = () => Promise.all([
     import(
-        /* webpackChunkName: "core.components.tags" */
-        /* webpackPrefetch: true */
+        /* webpackChunkName: "phpdoc.components.tags" */
+        // /* webpackPrefetch: true */
         './PhpdocTags'
         ),
     loadStyling(),

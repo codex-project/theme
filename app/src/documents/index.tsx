@@ -18,6 +18,7 @@ export interface DocumentsPluginOptions {
 }
 
 
+
 export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
     name = 'documents';
 
@@ -36,9 +37,9 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
             });
         }
         app.hooks.registered.tap(this.name, app => {
-            const components = app.get<HtmlComponents>('components');
+            const components = app.get('components');
             components.registerMap({
-                'c-code-highlight': CodeHighlight,
+                // 'c-code-highlight': CodeHighlight,
                 'c-toc'           : TOC,
                 'c-toc-list'      : TOCList,
                 'c-toc-list-item' : TOCListItem,
@@ -152,10 +153,11 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     log('documentation.document', 'FETCH', params);
                     let document, Component;
                     try {
-                        document  = await app.store.fetchDocument(params.project, params.revision, params.document);
-                        Component = (await import(/* webpackChunkName: "documents.pages.document" */'./pages/DocumentPage')).default;
-                        log('documentation.document', 'FETCHED', params, document, Component);
-                        return <Component {...props} routeState={routeState} document={document}/>;
+                        // app.store.fetchDocument(params.project, params.revision, params.document);
+                        let ComponentPromise = import(/* webpackChunkName: "documents.pages.document" */'./pages/DocumentPage').then(val => val.default);
+                        Component = await ComponentPromise
+                        log('documentation.document', 'FETCHING', params, app.store.document, Component);
+                        return <Component {...props} routeState={routeState} project={params.project} revision={params.revision} document={params.document}/>;
                     } catch ( error ) {
                         console.warn('documentation.document', 'FETCH_ERROR', { e: error, params, document, Component });
                         return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {

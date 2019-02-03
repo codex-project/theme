@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { hot, lazyInject, RouteState, Store } from '@codex/core';
 import { RouteComponentProps } from 'react-router';
 

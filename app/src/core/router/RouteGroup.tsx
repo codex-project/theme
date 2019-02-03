@@ -30,7 +30,6 @@ const RoutesContainer = posed.div({
         opacity: 1,
         delay  : 500,
 
-        beforeChildren: true,
         // afterChildren : true,
         // height        : '100%',
         // position      : 'relative',
@@ -77,18 +76,29 @@ class RoutesComponent extends Component<RoutesProps & RouteComponentProps> {
     }
 
     render() {
-        const { children, staticContext, withTransitions, ...props } = this.props;
-        let routes                                                   = Array.from(this.props.routes.values());
-        const sw                                                     = (
+        let { children, staticContext, withTransitions, ...props } = this.props;
+        let routes                                                 = Array.from(this.props.routes.values());
+
+        const sw = (
             <Switch location={this.history.location as any}>
-                {routes.map((route, i) => <Route
-                    key={i}
-                    sensitive={route.sensitive}
-                    strict={route.strict}
-                    path={route.path}
-                    exact={route.exact}
-                    render={props1 => this.renderRoute(props1, route)}
-                />)}
+                {routes.map((route, i) => {
+                        // let render, component;
+                        // if ( route.component ) {
+                        //     component = route.component;
+                        // } else {
+                        //     render = props1 => this.renderRoute(props1, route);
+                        // }
+                        return (<Route
+                            key={i}
+                            sensitive={route.sensitive}
+                            strict={route.strict}
+                            path={route.path}
+                            exact={route.exact}
+                            // component={component}
+                            render={props1 => this.renderRoute(props1, route)}
+                        />);
+                    },
+                )}
             </Switch>
         );
         if ( ! withTransitions ) {
@@ -96,7 +106,7 @@ class RoutesComponent extends Component<RoutesProps & RouteComponentProps> {
         }
 
         return (
-            <PoseGroup animateOnMount={true} enterAfterExit={true}>
+            <PoseGroup animateOnMount={true}>
                 <RoutesContainer key={props.location.key || props.location.pathname}>
                     {sw}
                 </RoutesContainer>

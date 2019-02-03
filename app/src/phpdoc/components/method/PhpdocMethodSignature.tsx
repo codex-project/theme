@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
-import './signature.scss';
-import { PhpdocMethodComponent, PhpdocMethodComponentBaseProps } from '../PhpdocMethodComponent';
-import { PhpdocMethod } from '../../logic';
+import './method-signature.scss';
+import { PhpdocMethodComponentBaseProps } from '../PhpdocMethodComponent';
+import { FQNS, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type/PhpdocType';
 import { classes } from 'typestyle';
 import { hot } from '@codex/core';
+import { PhpdocFileProvider, withPhpdocFile, withPhpdocManifest } from '../providers';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
@@ -33,9 +34,11 @@ export interface PhpdocMethodSignatureProps extends PhpdocMethodComponentBasePro
         typeTooltipClick?: boolean
     }
 }
-export {PhpdocMethodSignature}
 
-@hot(module)
+export { PhpdocMethodSignature };
+
+@withPhpdocManifest()
+@withPhpdocFile()
 @observer
 export default class PhpdocMethodSignature extends React.Component<PhpdocMethodSignatureProps> {
     static displayName: string                               = 'PhpdocMethodSignature';
@@ -45,6 +48,9 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
         size           : 14,
         hide           : {},
     };
+    static contextType                                       = PhpdocFileProvider.Context.Context;
+    context!: React.ContextType<typeof PhpdocFileProvider.Context>;
+    state: { fqns: FQNS }                                    = { fqns: null };
 
     className(...classNames: any[]) {
         const { prefixCls, link, innerClass, inline } = this.props;
@@ -58,26 +64,30 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
         return classes(...names);
     }
 
+    static getDerivedStateFromProps(nextProps, prevState) {
+        return { fqns: FQNS.from(nextProps.fqns) };
+    }
+
     render() {
-        window[ 'signature' ]          = this;
-        const { link, inline }         = this.props;
-        const { fqns, method, loader } = this.props;
+        window[ 'signature' ]  = this;
+        const { link, inline } = this.props;
+        const { fqns }         = this.state;
+        const { file }         = this.context;
+        if ( ! file.entity.methods.has(fqns.memberName) ) {
+            return <span>nomethod</span>;
+        }
+        const method = file.entity.methods.get(fqns.memberName);
+
         return (
             <span style={{ fontSize: this.props.size, ...this.props.style }}>
-                <PhpdocMethodComponent fqns={fqns} loader={loader} method={method}>
-                    {value => (
-                        <Fragment>
-                            {
-                                link ? <a className={this.className()} onClick={this.onClick}>{this.renderSignature(value)}</a> :
-                                inline ? <span className={this.className()}>{this.renderSignature(value)}</span> :
-                                <div className={this.className()}>
-                                    {inline ? <span>{this.renderSignature(value)}</span> : <div>{this.renderSignature(value)}</div>}
-                                    {this.props.children}
-                                </div>
-                            }
-                        </Fragment>
-                    )}
-                </PhpdocMethodComponent>
+                {
+                    link ? <a className={this.className()} onClick={this.onClick}>{this.renderSignature(method)}</a> :
+                    inline ? <span className={this.className()}>{this.renderSignature(method)}</span> :
+                    <div className={this.className()}>
+                        {inline ? <span>{this.renderSignature(method)}</span> : <div>{this.renderSignature(method)}</div>}
+                        {this.props.children}
+                    </div>
+                }
             </span>
         );
     }

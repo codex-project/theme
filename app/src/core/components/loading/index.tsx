@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React from 'react';
 import { Spin, SpinProps } from '../spin';
 import { LoadingComponentProps } from 'react-loadable';
 
@@ -38,17 +38,17 @@ export class Loading extends React.PureComponent<LoadingProps> {
 
         if ( error ) {
             log('error', error);
-            return <div className={classNames} style={style}>{errorText}</div>;
+            return <span className={classNames} style={style}>{errorText}</span>;
         } else if ( timedOut ) {
-            return <div className={classNames} style={style}>{timeoutText}</div>;
+            return <span className={classNames} style={style}>{timeoutText}</span>;
         } else if ( pastDelay && isLoading ) {
             return (
-                <div className={classNames} style={style}>
+                <span className={classNames} style={style}>
                     <Spin className={prefixCls + '-spin'} {...spin || { iconStyle: { fontSize: '5em' } }} />
                     <If condition={loadingText}>
                         <div className={prefixCls + '-text'}>{loadingText}</div>
                     </If>
-                </div>
+                </span>
             );
         }
         return null;

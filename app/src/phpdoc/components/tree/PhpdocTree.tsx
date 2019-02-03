@@ -11,10 +11,10 @@ import { debounce } from 'lodash-decorators';
 import { ITreeNode } from './interfaces';
 import { hot, Scrollbar, ucfirst } from '@codex/core';
 import { Scrollbar as ScrollbarClass } from '@codex/core/components/scrollbar/Scrollbar';
-import { PhpdocContent } from '../PhpdocContent';
 import { TreeBuilder } from './TreeBuilder';
 
 import './PhpdocTree.scss';
+import { PhpdocManifestProvider } from '../providers';
 
 const Search = Input.Search;
 const log    = require('debug')('components:PhpdocTree');
@@ -25,14 +25,15 @@ export interface PhpdocTreeProps extends TreeProps {
     scrollToSelected?: boolean
     tree?: InspireTree
 }
-export {PhpdocTree}
+
+export { PhpdocTree };
 @hot(module)
 @observer
 export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
     static displayName: string                    = 'PhpdocTree';
     static defaultProps: Partial<PhpdocTreeProps> = {};
-    static contextType                            = PhpdocContent.Context;
-    context!: React.ContextType<typeof PhpdocContent.Context>;
+    static contextType                            = PhpdocManifestProvider.Context.Context;
+    context!: React.ContextType<typeof PhpdocManifestProvider.Context>;
 
 
     private search: typeof Search;
