@@ -49,6 +49,8 @@
         codex.core.loadPolyfills().then(function () {
             var app = codex.core.app;
             app.plugin(new codex.documents.default());
+            app.plugin(new codex.phpdoc.default());
+
             return app.register({
                 debug : true,
                 rootID: 'root',
@@ -71,6 +73,7 @@
         codex.core.loadPolyfills().then(function () {
             var app = codex.core.app;
             app.plugin(new codex.documents.default());
+            app.plugin(new codex.phpdoc.default());
             return app.register({
                 debug : false,
                 cache : true,

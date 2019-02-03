@@ -1,7 +1,6 @@
 import React from 'react';
 import { lazyInject } from '@codex/core';
 import { PhpdocManifest, PhpdocStore } from '../logic';
-import { observer } from 'mobx-react';
 
 export interface PhpdocContext {
     manifest: PhpdocManifest
@@ -14,7 +13,6 @@ export interface PhpdocContentProps {
     revision: string
 }
 
-@observer
 export class PhpdocContent extends React.Component<PhpdocContentProps> {
     static displayName                          = 'PhpdocContent';
     static Context: typeof PhpdocContentContext = PhpdocContentContext;
@@ -25,9 +23,11 @@ export class PhpdocContent extends React.Component<PhpdocContentProps> {
     setManifest = (manifest: PhpdocManifest) => this.setState({ manifest });
 
     async update() {
+
         const { project, revision } = this.props;
         let manifest                = await this.phpdoc.fetchManifest(project, revision);
         this.setManifest(manifest);
+
     }
 
     public componentDidMount(): void {
@@ -47,6 +47,7 @@ export class PhpdocContent extends React.Component<PhpdocContentProps> {
 
         return (
             <PhpdocContentContext.Provider value={{ manifest }}>
+                {/*{! manifest ? <span/> : children}*/}
                 <If condition={manifest !== null}>
                     {children}
                 </If>

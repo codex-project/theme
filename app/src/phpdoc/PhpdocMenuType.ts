@@ -1,4 +1,4 @@
-import { MenuItem, MenuType, url } from '@codex/core';
+import {  MenuType, url } from '@codex/core';
 import { api } from '@codex/api';
 
 const name = 'phpdoc';
@@ -11,7 +11,7 @@ export class PhpdocMenuType extends MenuType {
         return item['phpdoc'] !== undefined;
     }
 
-    public pre(item: MenuItem) {
+    public pre(item: api.MenuItem) {
         let { store, menus } = this.app;
 
         return item;

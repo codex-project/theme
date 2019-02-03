@@ -30,7 +30,7 @@ const RoutesContainer = posed.div({
         opacity: 1,
         delay  : 500,
 
-        // beforeChildren: true,
+        beforeChildren: true,
         // afterChildren : true,
         // height        : '100%',
         // position      : 'relative',
@@ -96,7 +96,7 @@ class RoutesComponent extends Component<RoutesProps & RouteComponentProps> {
         }
 
         return (
-            <PoseGroup animateOnMount={true}>
+            <PoseGroup animateOnMount={true} enterAfterExit={true}>
                 <RoutesContainer key={props.location.key || props.location.pathname}>
                     {sw}
                 </RoutesContainer>

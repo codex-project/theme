@@ -17,7 +17,7 @@ export class PhpdocManifest {
         this.files = new NamedCollection(...data.files);
     }
 
-    async fetchFile(fullName:string|FQNS):Promise<PhpdocFile>{
+    async fetchFile(fullName: string | FQNS): Promise<PhpdocFile> {
         fullName = FQNS.from(fullName).slashEntityName;
 
         if ( this._files[ fullName ] === undefined ) {
@@ -50,11 +50,12 @@ query GetFile($projectKey:ID!, $revisionKey:ID!, $fullName:String!) {
 export class PhpdocStore {
     @lazyInject('api') api: Api;
 
-    protected _manifests: Record<string, PhpdocManifest> = {};
-    typeClickHandler:any=()=>null
+    protected _manifests: Record<string, Promise<PhpdocManifest>> = {};
+    typeClickHandler: any                                         = () => null;
+
     async fetchManifest(projectKey: string, revisionKey: string): Promise<PhpdocManifest> {
         if ( this._manifests[ projectKey + '/' + revisionKey ] === undefined ) {
-            let result                                        = await this.api.query(`
+            this._manifests[ projectKey + '/' + revisionKey ] = this.api.query(`
 query GetManifest($projectKey:ID!, $revisionKey:ID!) {
     phpdoc(projectKey:$projectKey, revisionKey:$revisionKey){
         default_class
@@ -69,10 +70,9 @@ query GetManifest($projectKey:ID!, $revisionKey:ID!) {
             type
         }
     }
-}`, { projectKey, revisionKey });
-            this._manifests[ projectKey + '/' + revisionKey ] = new PhpdocManifest(result.data.phpdoc);
+}`, { projectKey, revisionKey }).then(result => new PhpdocManifest(result.data.phpdoc));
         }
 
-        return this._manifests[ projectKey + '/' + revisionKey ];
+        return await this._manifests[ projectKey + '/' + revisionKey ];
     }
 }
