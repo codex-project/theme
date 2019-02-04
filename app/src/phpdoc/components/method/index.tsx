@@ -3,6 +3,7 @@ import loadable from '@loadable/component';
 import { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
 import { loadStyling } from '../../loadStyling';
 import { PhpdocMethodArgumentsProps } from './PhpdocMethodArguments';
+import { PhpdocMethodProps } from './PhpdocMethod';
 
 const loader = () => Promise.all([
     import(
@@ -12,7 +13,7 @@ const loader = () => Promise.all([
         ),
     loadStyling(),
 ]).then(value => value[ 0 ]);
-export type PhpdocMethodComponent = ComponentType<PhpdocMethodSignatureProps> & {
+export type PhpdocMethodComponent = ComponentType<PhpdocMethodProps> & {
     Arguments?: ComponentType<PhpdocMethodArgumentsProps>
     Signature?: ComponentType<PhpdocMethodSignatureProps>
 }

@@ -1,16 +1,14 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import './method-signature.scss';
-import { PhpdocMethodComponentBaseProps } from '../PhpdocMethodComponent';
 import { FQNS, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type/PhpdocType';
 import { classes } from 'typestyle';
-import { hot } from '@codex/core';
-import { PhpdocFileProvider, withPhpdocFile, withPhpdocManifest } from '../providers';
+import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile, withPhpdocManifest } from '../providers';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
-export interface PhpdocMethodSignatureProps extends PhpdocMethodComponentBaseProps {
+export interface PhpdocMethodSignatureProps extends PhpdocFileProviderProps {
     style?: React.CSSProperties
     className?: string;
     prefixCls?: string

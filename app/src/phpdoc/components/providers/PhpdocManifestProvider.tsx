@@ -13,9 +13,13 @@ export interface IPhpdocManifestContext {
 const PhpdocManifestContext       = createObservableContext<IPhpdocManifestContext>({ manifest: null });
 PhpdocManifestContext.displayName = 'PhpdocManifestContext';
 
-export interface PhpdocManifestProviderProps {
+export interface PhpdocManifestProviderBaseProps {
     project: string
     revision: string
+}
+
+export interface PhpdocManifestProviderProps extends PhpdocManifestProviderBaseProps {
+    forceRenderChildren?: boolean
 }
 
 
@@ -58,7 +62,7 @@ export class PhpdocManifestProvider extends Component<PhpdocManifestProviderProp
         return (
             <PhpdocManifestContext.Provider value={{ manifest: this.manifest }}>
                 {/*{this.manifest ? children : null}*/}
-                {children}
+                {this.manifest ? children : props.forceRenderChildren ? children : null}
             </PhpdocManifestContext.Provider>
         );
     }

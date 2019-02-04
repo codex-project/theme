@@ -9,6 +9,7 @@ import { PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMethod, PhpdocPopover, 
 import { PhpdocMenuType } from './PhpdocMenuType';
 import PhpdocTestPage from './PhpdocTestPage';
 import { PhpdocFileProvider, PhpdocManifestProvider } from './components/providers';
+import PhpdocMosaicTestPage from './PhpdocMosaicTestPage';
 
 export * from './components';
 export * from './logic/FQNS';
@@ -27,6 +28,7 @@ export default class PhpdocPlugin extends BasePlugin {
         bind('store.phpdoc').to(PhpdocStore).inSingletonScope();
         // return loadStyling();
     }
+
 
     install(app: Application) {
         app.hooks.registered.tap(this.name, app => {
@@ -73,6 +75,11 @@ export default class PhpdocPlugin extends BasePlugin {
                     name     : 'phpdoc.test',
                     path     : app.url.root('phpdoc-test'),
                     component: PhpdocTestPage,
+                });
+                routeMap.set('phpdoc.mosaic.test', {
+                    name     : 'phpdoc.mosaic.test',
+                    path     : app.url.root('phpdoc-mosaic'),
+                    component: PhpdocMosaicTestPage,
                 });
             });
         }

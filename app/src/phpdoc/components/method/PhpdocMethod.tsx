@@ -10,7 +10,7 @@ import { classes } from 'typestyle';
 import { FQNS, PhpdocMethod as Method } from '../../logic';
 import PhpdocTags from '../tags';
 import PhpdocType from '../type';
-import PhpdocMethodSignature from './PhpdocMethodSignature';
+import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
 import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile } from '../providers';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
@@ -25,6 +25,7 @@ export interface PhpdocMethodBaseProps {
     closed?: boolean
     innerRef?: any
     signature?: React.ReactNode
+    signatureProps?: Partial<PhpdocMethodSignatureProps>
     boxed?: boolean
 
     hide?: {
@@ -64,6 +65,8 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
         hide       : {
             namespace: true,
         },
+        signature: null,
+        signatureProps: {}
     };
     static Arguments: typeof PhpdocMethodArguments  = PhpdocMethodArguments;
     static Signature: typeof PhpdocMethodSignature  = PhpdocMethodSignature;
@@ -118,7 +121,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
     render() {
 
-        const { innerRef, collapse, boxed, className, hide, signature, style } = this.props;
+        const { innerRef, collapse, boxed, className, hide, signature,signatureProps, style } = this.props;
         const { fqns }                                                         = this.state;
         const { file }                                                         = this.context;
         if ( ! file.entity.methods.has(fqns.memberName) ) {
@@ -155,8 +158,12 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
         return (
             <div ref={innerRef} className={classes('phpdoc-method', className, ...[ boxed && 'boxed', closed && 'closed' ].filter(Boolean))} style={style}>
 
+                <If condition={! hide.signature && signature}>
+                    {signature}
+                </If>
+
                 <If condition={! hide.signature && ! signature}>
-                    <PhpdocMethodSignature fqns={fqns} method={method} hide={hide}>
+                    <PhpdocMethodSignature fqns={fqns} hide={hide} {...signatureProps}>
                         <If condition={collapse}>
                             <a href="javascript:" onClick={this.toggleCollapse}
                                className={classes('method-collapse')} //, { closed })}

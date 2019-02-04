@@ -177,6 +177,16 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
         @include Monospace();
     }
 
+    &-content {
+        display: flex;
+        > div {
+            &:first-child {
+                display: flex;
+                flex-direction: column;
+                flex:auto
+            }
+        }
+    }
     &-footer {
 
     }

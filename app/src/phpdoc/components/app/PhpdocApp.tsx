@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { hot, lazyInject, Store } from '@codex/core';
-import { PhpdocFileProvider, PhpdocFileProviderProps, PhpdocManifestProvider, PhpdocManifestProviderProps, withPhpdocFile, withPhpdocManifest } from '../providers';
+import { PhpdocFileProvider, PhpdocFileProviderProps, PhpdocManifestProvider, PhpdocManifestProviderBaseProps, withPhpdocFile, withPhpdocManifest } from '../providers';
 import { Api } from '@codex/api';
 import { PhpdocManifest, PhpdocStore } from '../../logic';
 import { action, observable } from 'mobx';
@@ -16,7 +16,7 @@ import PhpdocDocblock from '../docblock';
 
 import './app.scss'
 
-export interface PhpdocAppProps extends PhpdocFileProviderProps, PhpdocManifestProviderProps {}
+export interface PhpdocAppProps extends PhpdocFileProviderProps, PhpdocManifestProviderBaseProps {}
 
 const Tab = Tabs.TabPane;
 
