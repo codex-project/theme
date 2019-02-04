@@ -40,6 +40,9 @@ export class MenuPlugin extends BasePlugin<MenuPluginOptions> {
                     if ( item.expand === undefined ) {
                         item.expand = false;
                     }
+                    if(item.renderer === undefined){
+                        item.renderer = 'default';
+                    }
                     return item;
                 }
             });

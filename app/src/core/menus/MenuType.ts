@@ -4,6 +4,8 @@ import { app } from '../ioc';
 import { MenuItem } from '@codex/api';
 import { MenuItems } from './MenuItems';
 import { SyncBailHook, SyncHook, SyncWaterfallHook } from 'tapable';
+import React from 'react';
+import {DynamicMenu} from '../components/dynamic-menu/DynamicMenu';
 
 export type MenuTypeHooks<T> = {
     pre: SyncWaterfallHook<MenuItem>,
@@ -52,7 +54,7 @@ export abstract class MenuType implements IMenuType {
     }
 }
 
-export type IMenuTypeStage = 'defaults' | 'pre' | 'post' | 'boot' | 'handle';
+export type IMenuTypeStage = 'defaults' | 'pre' | 'post' | 'boot' | 'handle' | 'renderInner' | 'render' | 'rendered';
 
 export interface IMenuType {
     name: string
@@ -69,6 +71,10 @@ export interface IMenuType {
     post(item: MenuItem): MenuItem
 
     boot(): void | any
+
+    renderInner?(item:MenuItem,menu:DynamicMenu)
+    render?(inner:React.ReactElement<any>,item:MenuItem,menu:DynamicMenu)
+    rendered?(element:React.ReactElement<any>, item:MenuItem,menu:DynamicMenu)
 }
 
 export interface IMenuTypeConstructor {

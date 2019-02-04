@@ -1,17 +1,14 @@
-import { componentLoader } from 'utils/componentLoader'
-import React from 'react';
 import { DynamicMenuProps } from './DynamicMenu';
+import React, { ComponentType } from 'react';
+import loadable from '@loadable/component';
 
-export * from './DynamicMenu';
+const loader = () => import(
+    /* webpackChunkName: "core.components.dynamic-menu" */
+    // /* webpackPrefetch: true */
+    './DynamicMenu'
+    );
+export type DynamicMenuComponent = ComponentType<DynamicMenuProps> & {}
 
+export let DynamicMenu: DynamicMenuComponent = loadable(loader);
 
-export const DynamicMenu: React.ComponentType<DynamicMenuProps> = componentLoader(
-    {
-        DefaultMenuItemRenderer: async () => (await import(/* webpackChunkName: "core.components.dynamic-menu" */'./DefaultMenuItemRenderer')).DefaultMenuItemRenderer,
-        BigMenuItemRenderer    : async () => (await import(/* webpackChunkName: "core.components.dynamic-menu" */'./BigMenuItemRenderer')).BigMenuItemRenderer,
-        Component              : async () => (await import(/* webpackChunkName: "core.components.dynamic-menu" */'./DynamicMenu')).DynamicMenu,
-        style                  : async () => await import(/* webpackChunkName: "core.components.dynamic-menu" */'./index.scss'),
-    },
-    ({ Component }, props: any) => <Component {...props} />,
-    { delay: 1000 },
-);
+export default DynamicMenu;

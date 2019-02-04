@@ -1,12 +1,18 @@
 import { MenuItem } from '@codex/api';
 import { MenuType } from '../MenuType';
 import { MenuItems } from '../MenuItems';
+import React from 'react';
+import { getRandomId } from 'utils/general';
+import { RouteLink } from 'router';
+import { Menu } from 'antd';
+
+const Item = Menu.Item;
 
 export class RouterLinkMenuType extends MenuType {
     name = 'router-link';
 
-    public test(item: MenuItem): boolean {
-        return item.type === 'router-link';
+    public test(item: MenuItem, stage): boolean {
+        return item.type === 'router-link' || (item.type === 'router-link' && stage === 'render');
     }
 
     public pre(item: MenuItem) {
@@ -28,4 +34,22 @@ export class RouterLinkMenuType extends MenuType {
         }
         console.warn('RouterLinkMenuType handle :: menu ite did not have a [to] property', { item });
     }
+
+    public render(inner: React.ReactElement<any>, item: MenuItem) {
+
+        return (
+            <Item key={item.id}>
+                <RouteLink to={item.to} key={getRandomId(6)}>{inner}</RouteLink>
+            </Item>
+            //     {
+            //         item.type === 'link' ?
+            //         <a href={item.href} target={item.target} key={getRandomId(6)}>{inner}</a> :
+            //         item.type === 'router-link' ?
+            //          :
+            //         inner
+            //     }
+            // </Item>
+        );
+    }
+
 }

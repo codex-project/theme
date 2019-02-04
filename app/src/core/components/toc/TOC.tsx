@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
 
 import { hot } from 'decorators';
 import { Drawer, Popover } from 'antd';
@@ -42,30 +42,32 @@ export class TOC extends Component<TOCProps> {
         return (
             <Fragment>
                 <Toolbar.Item side="right">
-                    <Button.Group>
-                        <If condition={type === 'popover'}>
-                            <Popover
-                                title="Table of Contents"
-                                trigger="hover"
-                                mouseEnterDelay={0}
-                                align={{
-                                    points: [ 'tr', 'br' ],
-                                    offset: [ - 10, 10 ],
-                                }}
-                                visible={this.state.visible}
-                                onVisibleChange={this.setVisible}
-                                content={<div className="c-toc">{children}</div>}
-                                autoAdjustOverflow
-                                placement={'bottomLeft'}
-                                style={{ minWidth: 100, maxWidth: 150 }}
-                            >
-                                <Button borderless type="toolbar" icon="list-alt">Table of Contents</Button>
-                            </Popover>
-                        </If>
-                        <If condition={type === 'drawer'}>
-                            <Button borderless type="toolbar" icon="list-alt" onClick={this.showDrawer}>Table of Contents</Button>
-                        </If>
-                    </Button.Group>
+                    <Observer>{() =>
+                        <Button.Group>
+                            <If condition={type === 'popover'}>
+                                <Popover
+                                    title="Table of Contents"
+                                    trigger="hover"
+                                    mouseEnterDelay={0}
+                                    align={{
+                                        points: [ 'tr', 'br' ],
+                                        offset: [ - 10, 10 ],
+                                    }}
+                                    visible={this.state.visible}
+                                    onVisibleChange={this.setVisible}
+                                    content={<div className="c-toc">{children}</div>}
+                                    autoAdjustOverflow
+                                    placement={'bottomLeft'}
+                                    style={{ minWidth: 100, maxWidth: 150 }}
+                                >
+                                    <Button borderless type="toolbar" icon="list-alt">Table of Contents</Button>
+                                </Popover>
+                            </If>
+                            <If condition={type === 'drawer'}>
+                                <Button borderless type="toolbar" icon="list-alt" onClick={this.showDrawer}>Table of Contents</Button>
+                            </If>
+                        </Button.Group>
+                    }</Observer>
                 </Toolbar.Item>
                 <If condition={type === 'drawer'}>
                     <Drawer

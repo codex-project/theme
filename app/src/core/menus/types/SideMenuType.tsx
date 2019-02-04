@@ -4,7 +4,11 @@ import { IStoreProxy } from '../../stores/proxy';
 import { LayoutStoreSide } from '../../stores/LayoutStore';
 import { transaction } from 'mobx';
 import { SyncHook, SyncWaterfallHook } from 'tapable';
+import * as React from 'react';
 
+import { DynamicMenu } from '../../components/dynamic-menu/DynamicMenu';
+import { Menu } from 'antd';
+const Item = Menu.Item;
 const name = 'side-menu';
 const log  = require('debug')('menus:types:' + name);
 
@@ -60,5 +64,12 @@ export class SideMenuType extends MenuType {
             close();
         }
     }
+
+    public render(inner: React.ReactElement<any>, item: MenuItem, menu: DynamicMenu) {
+        return <Item key={item.id}>{inner}</Item>
+    }
+
+
+
 
 }

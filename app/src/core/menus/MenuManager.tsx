@@ -1,6 +1,6 @@
 import { app } from '../ioc';
 import { injectable } from 'inversify';
-import * as React from 'react';
+import React from 'react';
 import { ArrayUtils } from '../collections/ArrayUtils';
 import { Config } from '../classes/Config';
 import { MenuItems } from './MenuItems';
@@ -8,27 +8,24 @@ import { SyncBailHook, SyncWaterfallHook } from 'tapable';
 import { IMenuType, IMenuTypeConstructor, IMenuTypeStage } from './MenuType';
 import { toJS } from 'mobx';
 import { MenuItem } from '@codex/api';
+import { DynamicMenu } from '../components/dynamic-menu/DynamicMenu';
 
 const log = require('debug')('classes:MenuManager');
 
 @injectable()
 export class MenuManager {
     public readonly hooks = {
-        // defaults: new SyncWaterfallHook<MenuItem, MenuItem | undefined>([ 'item', 'parent' ]),
-        // pre     : new SyncWaterfallHook<MenuItem>([ 'item' ]),
-        // post    : new SyncWaterfallHook<MenuItem>([ 'item' ]),
-        handle  : new SyncBailHook<MenuItem, any, MenuItems>([ 'item', 'event', 'items' ]),
+        handle     : new SyncBailHook<MenuItem, any, MenuItems>([ 'item', 'event', 'items' ]),
+        renderInner: new SyncBailHook<MenuItem, DynamicMenu, any, React.ReactElement<any>>([ 'item', 'menu' ]),
+        render     : new SyncBailHook<React.ReactElement<any>, MenuItem, DynamicMenu, React.ReactElement<any>>([ 'inner', 'item', 'menu' ]),
+        rendered   : new SyncWaterfallHook<React.ReactElement<any>, MenuItem, DynamicMenu>([ 'element', 'item', 'menu' ]),
     };
 
     public readonly types = new Map<string, IMenuType>();
 
-    // callDefaults(item: MenuItem, parent?: MenuItem): MenuItem { return this.hooks.defaults.call(item, parent); }
-    // callPre(item: MenuItem): MenuItem { return this.hooks.pre.call(item); }
-    // callPost(item: MenuItem): MenuItem { return this.hooks.post.call(item); }
-
     callDefaults(item: MenuItem, parent?: MenuItem): MenuItem {
         this.types.forEach(type => {
-            if ( type.test(item,'defaults') ) {
+            if ( type.test(item, 'defaults') ) {
                 item = type.defaults(item, parent);
             }
         });
@@ -76,18 +73,7 @@ export class MenuManager {
     registerType(Type: IMenuTypeConstructor) {
         const type = app.resolve<IMenuType>(Type);
         this.types.set(type.name, type);
-        // this.hooks.pre.tap(type.name, item => {
-        //     if ( type.test(item) ) {
-        //         item = type.pre(item); //type.hooks.pre.call(type.pre(item));
-        //     }
-        //     return item;
-        // });
-        // this.hooks.post.tap(type.name, item => {
-        //     if ( type.test(item) ) {
-        //         item = type.post(item); //type.hooks.post.call(type.post(item));
-        //     }
-        //     return item;
-        // });
+
         this.hooks.handle.tap(type.name, (item, event, items) => {
             if ( type.test(item, 'handle') ) {
                 log('handle', type.name, { item, event, items });
@@ -98,13 +84,35 @@ export class MenuManager {
             }
         });
 
+        if ( type.renderInner ) {
+            this.hooks.renderInner.tap(type.name, (item, menu) => {
+                if ( type.test(item, 'renderInner') ) {
+                    return type.renderInner(item, menu);
+                }
+            });
+        }
+        if ( type.render ) {
+            this.hooks.render.tap(type.name, (inner, item, menu) => {
+                if ( type.test(item, 'render') ) {
+                    return type.render(inner, item, menu);
+                }
+            });
+        }
+        if ( type.rendered ) {
+            this.hooks.rendered.tap(type.name, (element, item, menu) => {
+                if ( type.test(item, 'rendered') ) {
+                    return type.rendered(element, item, menu);
+                }
+            });
+        }
+
         return this;
     }
 
     public getType<T extends IMenuType>(name: string): T {return this.types.get(name) as T; }
 
-    protected getTypes(item: MenuItem, stage:IMenuTypeStage): IMenuType[] {
-        return Array.from(this.types.values()).filter((type, name) => type.test(item,stage));
+    protected getTypes(item: MenuItem, stage: IMenuTypeStage): IMenuType[] {
+        return Array.from(this.types.values()).filter((type, name) => type.test(item, stage));
     }
 
     compile(item: MenuItem): MenuItem {
@@ -130,5 +138,17 @@ export class MenuManager {
     public handleMenuItemClick(item: MenuItem, event: React.MouseEvent<any>, items: MenuItems) {
         this.compile(item);
         this.hooks.handle.call(item, event, items);
+    }
+
+    public renderInner(item: MenuItem, menu: DynamicMenu): React.ReactElement<any> {
+        return this.hooks.renderInner.call(item, menu);
+    }
+
+    public render(inner: React.ReactElement<any>, item: MenuItem, menu: DynamicMenu): React.ReactElement<any> {
+        return this.hooks.render.call(inner, item, menu);
+    }
+
+    public rendered(element: React.ReactElement<any>, item: MenuItem, menu: DynamicMenu): React.ReactElement<any> {
+        return this.hooks.rendered.call(element, item, menu);
     }
 }
