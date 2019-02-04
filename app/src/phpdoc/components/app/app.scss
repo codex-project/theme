@@ -1,0 +1,7 @@
+@import "../../styling/base";
+
+$prefix-cls: 'phpdoc-app';
+
+.#{$prefix-cls} {
+    @extend %phpdoc-component;
+}

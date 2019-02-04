@@ -19,6 +19,7 @@ export interface PhpdocFileProviderProps {
     fqns: string | FQNS
 }
 
+// @withPhpdocManifest()
 @observer
 export class PhpdocFileProvider extends Component<PhpdocFileProviderProps> {
     static displayName                                    = 'PhpdocFileProvider';
@@ -60,24 +61,37 @@ export class PhpdocFileProvider extends Component<PhpdocFileProviderProps> {
     }
 }
 
-export function withPhpdocFile() {
+export function withPhpdocFile(consumer: boolean = true, provider: boolean = true) {
     return function <T>(TargetComponent: T): T {
 
         class PhpdocFileHOC extends Component<any> {
             render() {
-                const { ...props } = this.props;
-
-                return (
-                    <PhpdocFileProvider fqns={props.fqns}>
+                const { children,...props } = this.props;
+                if ( consumer && provider ) {
+                    return (
+                        <PhpdocFileProvider fqns={this.props.fqns}>
+                            <PhpdocFileContext.Consumer>
+                                {context => context.file ? React.createElement(TargetComponent as any, { manifest: context.file, ...props }, children) : null}
+                            </PhpdocFileContext.Consumer>
+                        </PhpdocFileProvider>
+                    );
+                }
+                if ( consumer ) {
+                    return (
                         <PhpdocFileContext.Consumer>
-                            {context => context.file ? React.createElement(TargetComponent as any, { file: context.file, ...props }) : null}
+                            {context => context.file ? React.createElement(TargetComponent as any, { manifest: context.file, ...props }, children) : null}
                         </PhpdocFileContext.Consumer>
-                    </PhpdocFileProvider>
-                );
+                    );
+                }
+                if ( provider ) {
+                    return (
+                        <PhpdocFileProvider fqns={this.props.fqns}>
+                            {React.createElement(TargetComponent as any, props, children)}
+                        </PhpdocFileProvider>
+                    );
+                }
             }
         }
         return hoistNonReactStatics(PhpdocFileHOC,TargetComponent as any) as any;
-
-        return PhpdocFileHOC as any;
     };
 }

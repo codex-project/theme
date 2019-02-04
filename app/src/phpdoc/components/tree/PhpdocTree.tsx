@@ -140,6 +140,7 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
                 </If>
                 <Scrollbar ref={this.scrollbar as any}>
                     <Tree
+
                         tree={this.tree}
                         {...treeProps}
                         style={{

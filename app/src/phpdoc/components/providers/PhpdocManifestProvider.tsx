@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { PhpdocManifest, PhpdocStore } from '../../logic';
 import { createObservableContext, lazyInject } from '@codex/core';
-import { action, observable } from 'mobx';
+import { observable, runInAction } from 'mobx';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 
@@ -18,6 +18,7 @@ export interface PhpdocManifestProviderProps {
     revision: string
 }
 
+
 @observer
 export class PhpdocManifestProvider extends Component<PhpdocManifestProviderProps> {
     static displayName                                        = 'PhpdocManifestProvider';
@@ -26,24 +27,29 @@ export class PhpdocManifestProvider extends Component<PhpdocManifestProviderProp
 
     @lazyInject('store.phpdoc') store: PhpdocStore;
     @observable manifest: PhpdocManifest = null;
-
-    @action setManifest(manifest: PhpdocManifest) {this.manifest = manifest;}
-
-    state: { project: string, revision: string } = { project: null, revision: null };
+    unmounting: boolean;
 
     async update() {
         const { props, state }      = this;
         const { project, revision } = props;
-        if ( state.project === project && state.revision === revision ) {
+        if ( this.manifest && this.manifest.project === project && this.manifest.revision === revision ) {
             return;
         }
-        const manifest = await this.store.fetchManifest(project, revision);
-        this.setManifest(manifest);
-        this.setState({ project, revision });
+        this.store.fetchManifest(project, revision).then(manifest => {
+            if ( ! this.unmounting ) {
+                runInAction(() => {
+                    this.manifest = manifest;
+                });
+            }
+        });
     }
 
     public componentDidMount(): void {
         this.update();
+    }
+
+    public componentWillUnmount(): void {
+        this.unmounting = true;
     }
 
     render() {
@@ -51,26 +57,44 @@ export class PhpdocManifestProvider extends Component<PhpdocManifestProviderProp
 
         return (
             <PhpdocManifestContext.Provider value={{ manifest: this.manifest }}>
-                {this.manifest ? children : null}
+                {/*{this.manifest ? children : null}*/}
+                {children}
             </PhpdocManifestContext.Provider>
         );
     }
 }
 
-export function withPhpdocManifest() {
+export function withPhpdocManifest(consumer: boolean = true, provider: boolean = false) {
     return function <T>(TargetComponent: T): T {
         class PhpdocManifestHOC extends Component<any> {
             render() {
-                const { ...props } = this.props;
-
-                return (
-                    <PhpdocManifestContext.Consumer>
-                        {context => context.manifest ? React.createElement(TargetComponent as any, { manifest: context.manifest, ...props }) : null}
-                    </PhpdocManifestContext.Consumer>
-                );
+                const { children, ...props } = this.props;
+                if ( consumer && provider ) {
+                    return (
+                        <PhpdocManifestProvider project={this.props.project} revision={this.props.revision}>
+                            <PhpdocManifestContext.Consumer>
+                                {context => context.manifest ? React.createElement(TargetComponent as any, { manifest: context.manifest, ...props }, children) : null}
+                            </PhpdocManifestContext.Consumer>
+                        </PhpdocManifestProvider>
+                    );
+                }
+                if ( consumer ) {
+                    return (
+                        <PhpdocManifestContext.Consumer>
+                            {context => context.manifest ? React.createElement(TargetComponent as any, { manifest: context.manifest, ...props }, children) : null}
+                        </PhpdocManifestContext.Consumer>
+                    );
+                }
+                if ( provider ) {
+                    return (
+                        <PhpdocManifestProvider project={this.props.project} revision={this.props.revision}>
+                            {React.createElement(TargetComponent as any, props, children)}
+                        </PhpdocManifestProvider>
+                    );
+                }
             }
         }
 
-        return hoistNonReactStatics(PhpdocManifestHOC,TargetComponent as any) as any;
+        return hoistNonReactStatics(PhpdocManifestHOC, TargetComponent as any) as any;
     };
 }

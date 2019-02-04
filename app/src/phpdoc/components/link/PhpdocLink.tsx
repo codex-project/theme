@@ -27,6 +27,7 @@ export interface PhpdocLinkProps {
 
 
 @hot(module)
+@withPhpdocManifest()
 @observer
 export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
     static displayName                            = 'PhpdocLink';

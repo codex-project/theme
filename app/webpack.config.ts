@@ -17,8 +17,8 @@ import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
 import WebappPlugin from 'webapp-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
-import { AssetPathSubstitutionPlugin, AssetPathSubstitutionPluginOptions } from './build/AssetPathSubstitutionPlugin';
-import TemplatedPathPlugin from './build/TemplatedPathPlugin'
+import TemplatedPathPlugin from './build/TemplatedPathPlugin';
+
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
     sourceDir: resolve(__dirname, 'src'),
@@ -195,7 +195,7 @@ chain.plugin('define').use(webpack.DefinePlugin, [ {
 chain.plugin('bar').use(BarPlugin, [ <BarOptions>{
     profile   : true,
     compiledIn: true,
-    minimal:false,
+    minimal   : false,
 } ]);
 chain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [ { options: {} } ]);
 chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptions>{
@@ -255,7 +255,7 @@ chain.onToConfig(config => {
         },
     });
     let antdLessLoader                  = AntdScssThemePlugin.themify('less-loader');
-    let postCssLoader = { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('postcss-clean'), require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } }
+    let postCssLoader                   = { loader: 'postcss-loader', options: { sourceMap: isDev, plugins: [ require('postcss-clean'), require('autoprefixer'), require('cssnext'), require('postcss-nested') ] } };
     config.module.rules.push(...[ {
         test: /\.module.css$/,
         use : [
@@ -313,8 +313,8 @@ chain.when(isDev, chain => {
         namedModules: true,
         namedChunks : true,
         runtimeChunk: 'single',
-        splitChunks: {
-            name:true,
+        splitChunks : {
+            name: true,
         },
         // occurrenceOrder: true,
         // runtimeChunk          : true,
@@ -357,7 +357,7 @@ chain.when(isDev, chain => {
             }),
         ],
     });
-    chain.plugin('path').use(TemplatedPathPlugin)
+    chain.plugin('path').use(TemplatedPathPlugin);
 });
 //endregion
 
@@ -393,6 +393,7 @@ chain.resolve
     .mainFiles.merge([ 'index', 'index.ts', 'index.tsx' ]).end()
     .modules.merge([ 'node_modules' ]).end()
     .alias.merge({
+    'mobx$'            : chain.srcPath('mobx.js'),
     'lodash-es$'       : 'lodash',
     'async$'           : 'neo-async',
     '@ant-design/icons': 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
@@ -400,8 +401,7 @@ chain.resolve
 chain.resolveLoader
     .modules.merge([ 'node_modules' ]).end()
     .extensions.merge([ '.js', '.json', '.ts' ]).end();
-chain.externals({
-});
+chain.externals({});
 chain.stats({
     warningsFilter: /export .* was not found in/,
 });

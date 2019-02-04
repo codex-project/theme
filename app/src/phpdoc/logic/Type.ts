@@ -12,6 +12,7 @@ import { Query } from './Query';
 import { PhpdocManifest } from './PhpdocStore';
 import { PhpdocManifestFile } from '@codex/api';
 import { FQNS } from './FQNS';
+import { strStripRight } from '@codex/core';
 
 export class Type {
     static primitives    = [ 'boolean', 'integer', 'float', 'string', 'array', 'object', 'callable', 'iterable', 'resource', 'null', 'mixed', 'void' ];
@@ -23,10 +24,15 @@ export class Type {
     isPrimitive: boolean = false;
     isLocal: boolean     = false;
     isExternal: boolean  = false;
+    isArray: boolean     = false;
     cssClass: string;
     protected entity: PhpdocManifestFile;
 
     constructor(protected manifest: PhpdocManifest, fullName: string) {
+        this.isArray = Type.isArray(fullName);
+        if ( this.isArray ) {
+            fullName = strStripRight(fullName, '[]');
+        }
         this.fqns             = FQNS.from(fullName);
         this.fullName         = this.fqns.fullName;
         this.entityName       = this.fqns.entityName;
@@ -56,6 +62,7 @@ export class Type {
         this.cssClass = classes.join(' ');
     }
 
+    static isArray(fullName: string) {return fullName.endsWith('[]'); }
 
     toQuery(): Query {
         return new Query(this.fullName);

@@ -6,6 +6,7 @@ import { BrowserRouter, RouteComponentProps } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
 import posed from 'react-pose';
+import { toJS } from 'mobx';
 
 const log = require('debug')('pages:DocumentPage');
 
@@ -53,7 +54,7 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
     getChildContext() {
         return {
             router  : app.get<BrowserRouter>('router'),
-            document: this.store.document,
+            document: toJS(this.store.document),
         };
     }
 

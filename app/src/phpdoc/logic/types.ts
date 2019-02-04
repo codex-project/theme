@@ -56,7 +56,15 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 if ( item.docblock && item.docblock.tags !== undefined ) {
                     item.docblock.tags = new Tags(...item.docblock.tags);
                 }
-                item.arguments = new Arguments(...item.arguments);
+                item.arguments = new Arguments(...item.arguments.map(argument => {
+                    if ( ! argument.type ) {
+                        argument.type  = 'mixed';
+                    }
+                    if ( ! argument.types ) {
+                        argument.types  = argument.type.split('|')
+                    }
+                    return argument;
+                }));
                 return new PhpdocMethod(item);
             }));
         }
@@ -117,7 +125,8 @@ export interface PhpdocMethod extends api.PhpdocMethod {}
 export class PhpdocMethod extends PhpdocBaseType<api.PhpdocMethod> {
     docblock: PhpdocDocblock;
     arguments: Arguments;
-    fqns:FQNS
+    fqns: FQNS;
+
     constructor(data) {
         super(data);
         if ( data.full_name ) {

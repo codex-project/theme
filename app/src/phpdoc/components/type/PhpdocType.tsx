@@ -68,9 +68,9 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
                     newType.push(t);
                     return;
                 }
-                strStripLeft(t, 'array<');
-                strStripRight(t, '>');
-                newType = newType.concat(t.split(','));
+                t       = strStripLeft(t, 'array<');
+                t       = strStripRight(t, '>');
+                newType = newType.concat(t.split(',').map(t => t + '[]'));
             });
 
             type = newType.map(t => new Type(this.context.manifest, t.toString()));
@@ -88,6 +88,7 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
             let line,
                 clickable    = noClick !== true || type.isLocal,
                 lineChildren = children ? children : showNamespace ? type.entityName : type.fqns.name,
+                suffix       = '',
                 lineProps    = {
                     style    : {
                         cursor: clickable ? 'pointer' : 'default',
@@ -97,13 +98,16 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
                     key      : numType,
                     onClick  : onClick ? () => onClick() : clickable && this.store.typeClickHandler ? () => this.store.typeClickHandler(type) : null,
                 };
+            if ( type.isArray ) {
+                suffix='[]';
+            }
 
             if ( ! clickable ) {
-                line = <span {...lineProps}>{lineChildren}</span>;
+                line = <span {...lineProps}>{lineChildren}{suffix}</span>;
             } else if ( linkToApi ) {
-                line = <Link to={{ name: 'phpdoc', params: { project, revision }, hash: type.toQuery().toHash() }} {...lineProps}>{lineChildren}</Link>;
+                line = <Link to={{ name: 'phpdoc', params: { project, revision }, hash: type.toQuery().toHash() }} {...lineProps}>{lineChildren}{suffix}</Link>;
             } else {
-                line = <a {...lineProps}>{lineChildren}</a>;
+                line = <a {...lineProps}>{lineChildren}{suffix}</a>;
             }
 
             return (

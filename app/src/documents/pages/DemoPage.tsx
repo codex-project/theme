@@ -5,9 +5,9 @@ import { PhpdocContent, PhpdocDocblock, PhpdocEntity, PhpdocTree, TreeBuilder, P
 import { RouteComponentProps } from 'react-router';
 import { Col, Row } from 'antd/lib/grid';
 import { Card, Tabs } from 'antd';
+import InspireTree from 'inspire-tree';
 import { PhpdocFileComponent, PhpdocFileComponentContext } from '@codex/phpdoc/components/PhpdocFileComponent';
 import { action, observable } from 'mobx';
-import InspireTree from 'inspire-tree';
 import { api } from '@codex/api';
 import { PhpdocMethodSignature } from '@codex/phpdoc/components/method/PhpdocMethodSignature';
 

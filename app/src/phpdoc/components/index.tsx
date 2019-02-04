@@ -10,7 +10,4 @@ export {PhpdocTree} from './tree';
 export {PhpdocTags} from './tags';
 export {PhpdocType} from './type';
 
-export * from './PhpdocContent';
-export * from './PhpdocFileComponent';
-export * from './PhpdocMethodComponent';
 

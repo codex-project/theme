@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
-import { getColor, hot, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
+import { CodeHighlight,getColor, hot, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
 import { classes } from 'typestyle';
 
 import './tags.scss';
@@ -87,7 +87,12 @@ export default class PhpdocTags extends React.Component<PhpdocTagsProps> {
         }
         description = <span className={classes('tag-description')}>{description}</span> as any;
 
+
         switch ( name ) {
+            case 'example':
+                return (
+                    <CodeHighlight language="php" withLineNumbers code={tag.description}/>
+                )
             case 'see':
                 if ( link ) {
                     return (

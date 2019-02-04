@@ -37,27 +37,25 @@ export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     context!: React.ContextType<typeof PhpdocFileProvider.Context>;
 
     render() {
-        let { size, style, className, titleStyle, prefixCls } = this.props;
-        let { fqns }                                          = this.props;
-        let classSize                                         = size ? size.class ? size.class : size : 14;
-        let textSize                                          = size ? size.class ? size.class : size : 14;
+        let { fqns, size, style, className, titleStyle, prefixCls } = this.props;
+        let { file }                                                = this.context;
+        let classSize                                               = size ? size.class ? size.class : size : 14;
+        let textSize                                                = size ? size.class ? size.class : size : 14;
 
         return (
             <header style={style} className={classes(prefixCls, className)}>
-                {file => (
-                    <h3 style={titleStyle} className="header-title">
-                        <i className={'mr-xs phpdoc-type-' + file.type}/>
-                        <span className={'phpdoc-type-' + file.type} style={{ fontSize: classSize }}>{file.fqns.entityName}</span>
-                        <If condition={file.entity.extends}>
-                            <small className="pl-xs" style={{ fontSize: textSize }}>extends</small>
-                            <PhpdocType className="pl-xs" style={{ fontSize: classSize }} type={file.entity.extends}/>
-                        </If>
-                        <If condition={file.isClass && file.class.implements.length > 0}>
-                            <small className="pl-xs" style={{ fontSize: textSize }}>implements</small>
-                            <PhpdocType className="pl-xs" style={{ fontSize: classSize }} type={file.class.implements}/>
-                        </If>
-                    </h3>
-                )}
+                <h3 style={titleStyle} className="header-title">
+                    <i className={'mr-xs phpdoc-type-' + file.type}/>
+                    <span className={'phpdoc-type-' + file.type} style={{ fontSize: classSize }}>{file.fqns.entityName}</span>
+                    <If condition={file.entity.extends}>
+                        <small className="pl-xs" style={{ fontSize: textSize }}>extends</small>
+                        <PhpdocType className="pl-xs" style={{ fontSize: classSize }} type={file.entity.extends}/>
+                    </If>
+                    <If condition={file.isClass && file.class.implements.length > 0}>
+                        <small className="pl-xs" style={{ fontSize: textSize }}>implements</small>
+                        <PhpdocType className="pl-xs" style={{ fontSize: classSize }} type={file.class.implements}/>
+                    </If>
+                </h3>
             </header>
 
         );

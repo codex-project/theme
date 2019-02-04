@@ -37,9 +37,9 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
             });
         }
         app.hooks.registered.tap(this.name, app => {
-            const components = app.get('components');
+            const components = app.get<any>('components');
             components.registerMap({
-                // 'c-code-highlight': CodeHighlight,
+                'c-code-highlight': CodeHighlight,
                 'c-toc'           : TOC,
                 'c-toc-list'      : TOCList,
                 'c-toc-list-item' : TOCListItem,

@@ -10,5 +10,5 @@ export function createObservableContext<T>(defaultValue: T, calculateChangedBits
             }}</Observer>
         )}</Context.Consumer>;
     };
-    return { Provider: Context.Provider, Consumer: ObservableConsumer, Context } as any;
+    return { Provider: Context.Provider, Consumer2:Context.Consumer, Consumer: ObservableConsumer, Context } as any;
 }

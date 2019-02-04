@@ -4,6 +4,7 @@ import { RouteDefinition, RouteState } from './types';
 import { RouteComponentProps } from 'react-router';
 import { lazyInject } from 'ioc';
 import { History } from 'router';
+import { hot } from 'decorators';
 
 const log = require('debug')('router:RenderRoute');
 
@@ -14,6 +15,7 @@ export interface RenderRouteProps {
     routeState: RouteState
 }
 
+@hot(module)
 @observer
 export class RenderRoute extends Component<RenderRouteProps & RouteComponentProps> {
     static displayName                             = 'RenderRoute';

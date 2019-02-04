@@ -87,7 +87,7 @@ export default class PhpdocMethodArguments extends React.Component<PhpdocMethodA
                     return (
                         <li key={argumentIndex}>
                             <If condition={! this.hide.argumentTypes}>
-                                <PhpdocType type={argument[ 'type' ]}>{null}</PhpdocType>
+                                <PhpdocType type={argument.types}>{null}</PhpdocType>
                             </If>
                             <span className="method-argument"> {argument.name}</span>
                             <If condition={! this.hide.argumentDefaults && argument[ 'default' ] && argument[ 'default' ].length > 0}>

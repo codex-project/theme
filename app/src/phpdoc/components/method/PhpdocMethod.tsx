@@ -177,26 +177,26 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
                         </If>
                         {/*{this.renderExample(method)}*/}
                         <If condition={show.example}>
-                            <h4 className="method-block-title">Example</h4>
+                            <div className="method-block-title">Example</div>
                             <div className="method-block">
                                 <CodeHighlight language="php" withLineNumbers code={method.docblock.tags.get('example').description}/>
                             </div>
                         </If>
                         {/*{this.renderTags(method)}*/}
                         <If condition={show.tags}>
-                            <h4 className="method-block-title">Tags</h4>
+                            <div className="method-block-title">Tags</div>
                             <div className="method-block">
                                 <PhpdocTags tags={method.docblock.tags} withoutTags={this.props.withoutTags} onlyTags={this.props.onlyTags}/>
                             </div>
                         </If>
                         {/*{this.renderArguments(method)}*/}
                         <If condition={show.arguments}>
-                            <h4 className="method-block-title">Arguments</h4>
+                            <div className="method-block-title">Arguments</div>
                             <PhpdocMethodArguments fqns={this.state.fqns}>{null}</PhpdocMethodArguments>
                         </If>
                         {/*{this.renderReturns(method)}*/}
                         <If condition={show.returns}>
-                            <h4 className="method-block-title">Returns</h4>
+                            <div className="method-block-title">Returns</div>
                             <div className="method-block">
                                 <PhpdocType type={returns}/>
                             </div>
