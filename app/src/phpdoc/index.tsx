@@ -8,8 +8,9 @@ import { PhpdocStore } from './logic';
 import { PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMethod, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
 import { PhpdocMenuType } from './PhpdocMenuType';
 import PhpdocTestPage from './PhpdocTestPage';
-import { PhpdocFileProvider, PhpdocManifestProvider } from './components/providers';
+import { PhpdocFileProvider } from './components/providers';
 import PhpdocMosaicTestPage from './PhpdocMosaicTestPage';
+import { ManifestProvider } from './components/base';
 
 export * from './components';
 export * from './logic/FQNS';
@@ -18,7 +19,7 @@ export * from './logic/Query';
 export * from './logic/Type';
 export * from './logic/collections';
 
-export { types,PhpdocPlugin };
+export { types, PhpdocPlugin };
 
 export default class PhpdocPlugin extends BasePlugin {
     name = 'phpdoc';
@@ -44,7 +45,7 @@ export default class PhpdocPlugin extends BasePlugin {
                 'phpdoc-tags'             : PhpdocTags,
                 'phpdoc-tree'             : PhpdocTree,
                 'phpdoc-type'             : PhpdocType,
-                'phpdoc-manifest-provider': PhpdocManifestProvider,
+                'phpdoc-manifest-provider': ManifestProvider,
                 'phpdoc-file-provider'    : PhpdocFileProvider,
                 // 'phpdoc-content'         : PhpdocContent,
                 // 'phpdoc-method-component': PhpdocMethodComponent,

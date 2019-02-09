@@ -129,7 +129,9 @@ export function addAssetsLoaderForEntry(chain: Chain, name: string, path: string
 
 export function addPluginEntry(chain: Chain, name: string, dirPath: string, entryFile: string = 'index.ts') {
     let umdName = `@codex/${name}`;
-    chain.entry(name).add(isAbsolute(entryFile) ? entryFile : join(dirPath, entryFile));
+    chain.entry(name)
+        .add(chain.srcPath(`pre-path.js?entryName=${name}`))
+        .add(isAbsolute(entryFile) ? entryFile : join(dirPath, entryFile));
     chain.externals({
         ...chain.get('externals') || {},
         [ umdName ]: [ 'codex', name ],
@@ -307,6 +309,10 @@ chain.when(isDev, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
         namedModules: true,
         namedChunks : true,
+        splitChunks: {
+            maxAsyncRequests: Infinity,
+            maxInitialRequests: Infinity
+        }
     });
 }, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
@@ -440,6 +446,7 @@ addBabelToRule(chain, 'vendor-js', {
 });
 addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'api', packagesPath('api/src'), 'index.ts');
+// addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.ts');
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
 addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
 addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');

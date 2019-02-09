@@ -71,6 +71,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProp
         this.unregisterLocationListener();
     }
 
+    static getDerivedStateFromError(){
+        return {hasError:true}
+    }
+
     render() {
         let { title, showStacks, goBackText, withError } = this.props
         let { error, errorInfo, hasError }               = this.state

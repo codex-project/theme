@@ -11,6 +11,7 @@ import './ioc';
 import './init';
 import { app, lazyInject } from './ioc';
 import { containerModule } from './container-module';
+import Root from 'components/Root';
 
 app.load(containerModule);
 
@@ -53,5 +54,11 @@ export * from './utils/storage';
 
 export { app, lazyInject };
 
-
-
+//
+//
+// if(module.hot){
+//     module.hot.accept(['./components/Root'], updated => {
+//         console.log('module.hot.accept', {updated,Root})
+//         app.render(Root)
+//     })
+// }

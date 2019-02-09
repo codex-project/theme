@@ -10,7 +10,7 @@ export interface PhpdocManifest extends api.PhpdocManifest {}
 export class PhpdocManifest {
     @lazyInject('api') protected _api: Api;
     files: NamedCollection<api.PhpdocManifestFile>;
-    protected _files: Record<string, PhpdocFile> = {};
+    protected _files: Record<string, Promise<PhpdocFile>> = {};
 
     constructor(protected _data: api.PhpdocManifest) {
         Object.assign(this, _data);
@@ -21,7 +21,7 @@ export class PhpdocManifest {
         fullName = FQNS.from(fullName).slashEntityName;
 
         if ( this._files[ fullName ] === undefined ) {
-            let result = await this._api.query(`
+            this._files[ fullName ] = this._api.query(`
 query GetFile($projectKey:ID!, $revisionKey:ID!, $fullName:String!) {
     phpdoc(projectKey:$projectKey, revisionKey:$revisionKey){
         file(fullName:$fullName) {
@@ -35,12 +35,10 @@ query GetFile($projectKey:ID!, $revisionKey:ID!, $fullName:String!) {
             interface @assoc
         }
     }
-}`, { projectKey: this.project, revisionKey: this.revision, fullName });
-
-            this._files[ fullName ] = new PhpdocFile(result.data.phpdoc.file);
+}`, { projectKey: this.project, revisionKey: this.revision, fullName }).then(value => new PhpdocFile(value.data.phpdoc.file));
         }
 
-        return this._files[ fullName ];
+        return await this._files[ fullName ];
 
     }
 

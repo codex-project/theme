@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
 import posed from 'react-pose';
 import { toJS } from 'mobx';
+import { hot } from 'react-hot-loader';
 
 const log = require('debug')('pages:DocumentPage');
 
@@ -38,7 +39,7 @@ const DocumentContainer = posed.div({
     },
 });
 @observer
-export default class DocumentPage extends React.Component<DocumentPageProps & RouteComponentProps> {
+export class DocumentPage extends React.Component<DocumentPageProps & RouteComponentProps> {
     @lazyInject('api') api: Api;
     @lazyInject('components') hc: HtmlComponents;
     @lazyInject('store') store: Store;
@@ -100,3 +101,5 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
         );
     }
 }
+
+export default hot(module)(DocumentPage);

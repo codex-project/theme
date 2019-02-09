@@ -7,7 +7,7 @@ import { isArray, isString } from 'lodash';
 import { hot, lazyInject, strStripLeft, strStripRight } from '@codex/core';
 import { Link } from 'react-router-dom';
 import './type.scss';
-import { PhpdocManifestProvider } from '../providers';
+import { ManifestCtx } from '../base';
 
 const log = require('debug')('components:PhpdocType');
 
@@ -41,8 +41,8 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
         linkToApi       : false,
     };
 
-    static contextType = PhpdocManifestProvider.Context.Context;
-    context!: React.ContextType<typeof PhpdocManifestProvider.Context>;
+    static contextType = ManifestCtx;
+    context!: React.ContextType<typeof ManifestCtx>;
 
     @lazyInject('store.phpdoc') store: PhpdocStore;
 
@@ -99,7 +99,7 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
                     onClick  : onClick ? () => onClick() : clickable && this.store.typeClickHandler ? () => this.store.typeClickHandler(type) : null,
                 };
             if ( type.isArray ) {
-                suffix='[]';
+                suffix = '[]';
             }
 
             if ( ! clickable ) {

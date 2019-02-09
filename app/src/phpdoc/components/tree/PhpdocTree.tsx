@@ -14,7 +14,7 @@ import { Scrollbar as ScrollbarClass } from '@codex/core/components/scrollbar/Sc
 import { TreeBuilder } from './TreeBuilder';
 
 import './PhpdocTree.scss';
-import { PhpdocManifestProvider } from '../providers';
+import { ManifestCtx } from '../base';
 
 const Search = Input.Search;
 const log    = require('debug')('components:PhpdocTree');
@@ -32,8 +32,8 @@ export { PhpdocTree };
 export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
     static displayName: string                    = 'PhpdocTree';
     static defaultProps: Partial<PhpdocTreeProps> = {};
-    static contextType                            = PhpdocManifestProvider.Context.Context;
-    context!: React.ContextType<typeof PhpdocManifestProvider.Context>;
+    static contextType                            = ManifestCtx;
+    context!: React.ContextType<typeof ManifestCtx>;
 
 
     private search: typeof Search;

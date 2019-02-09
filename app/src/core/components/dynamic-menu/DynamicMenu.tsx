@@ -13,7 +13,8 @@ import { hot } from 'decorators';
 import { MenuItem } from '@codex/api';
 import { lazyInject } from 'ioc';
 
-import './index.scss'
+import './index.scss';
+
 const log = require('debug')('components:DynamicMenu');
 
 export type MenuExpandBehaviourType = 'single-root' | 'multi-root'
@@ -34,9 +35,11 @@ interface State {
 
 export type DynamicMenuProps = DynamicMenuBaseProps & AntdMenuProps
 
+export {DynamicMenu}
+
 @hot(module)
 @observer
-export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
+export default class DynamicMenu extends React.Component<DynamicMenuProps, State> {
     static displayName                                                        = 'DynamicMenu';
     static defaultProps: Partial<DynamicMenuBaseProps & AntdMenuProps>        = {
         prefixCls          : 'c-dmenu',
@@ -107,7 +110,10 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
             rendered = React.cloneElement(rendered, { className });
             rendered = this.manager.rendered(rendered, item, this);
         }
-        return rendered;
+
+        // let r = React.cloneElement(rendered, { className: item.class });
+        // return r;
+        return React.cloneElement(rendered, { className: item.class });
     }
 
     render() {
@@ -138,4 +144,3 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
     }
 }
 
-export default DynamicMenu;

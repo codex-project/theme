@@ -73,7 +73,7 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 if ( item.docblock && item.docblock.tags !== undefined ) {
                     item.docblock.tags = new Tags(...item.docblock.tags);
                 }
-                return item;
+                return new PhpdocProperty(item);
             }));
         }
         if ( data.docblock && data.docblock.tags ) {
@@ -89,8 +89,8 @@ export interface PhpdocClassFile extends api.PhpdocClassFile {}
 
 export class PhpdocClassFile extends PhpdocBaseFile<api.PhpdocClassFile> {
     docblock: PhpdocDocblock;
-    methods: Methods;
-    properties: Properties;
+    methods: Methods<PhpdocMethod>;
+    properties: Properties<PhpdocProperty>;
 
     constructor(data) {
         super('class', data);
@@ -101,7 +101,7 @@ export interface PhpdocInterfaceFile extends api.PhpdocInterfaceFile {}
 
 export class PhpdocInterfaceFile extends PhpdocBaseFile<api.PhpdocInterfaceFile> {
     docblock: PhpdocDocblock;
-    methods: Methods;
+    methods: Methods<PhpdocMethod>;
 
     constructor(data) {
         super('interface', data);
@@ -112,8 +112,8 @@ export interface PhpdocTraitFile extends api.PhpdocTraitFile {}
 
 export class PhpdocTraitFile extends PhpdocBaseFile<api.PhpdocTraitFile> {
     docblock: PhpdocDocblock;
-    methods: Methods;
-    properties: Properties;
+    methods: Methods<PhpdocMethod>;
+    properties: Properties<PhpdocProperty>;
 
     constructor(data) {
         super('trait', data);
@@ -126,7 +126,23 @@ export class PhpdocMethod extends PhpdocBaseType<api.PhpdocMethod> {
     docblock: PhpdocDocblock;
     arguments: Arguments;
     fqns: FQNS;
+    type='method'
 
+    constructor(data) {
+        super(data);
+        if ( data.full_name ) {
+            this.fqns = FQNS.from(data.full_name);
+        }
+    }
+}
+
+
+export interface PhpdocProperty extends api.PhpdocProperty {}
+
+export class PhpdocProperty extends PhpdocBaseType<api.PhpdocProperty> {
+    docblock: PhpdocDocblock;
+    fqns: FQNS;
+    type='property'
     constructor(data) {
         super(data);
         if ( data.full_name ) {

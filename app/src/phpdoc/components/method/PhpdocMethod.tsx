@@ -12,6 +12,7 @@ import PhpdocTags from '../tags';
 import PhpdocType from '../type';
 import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
 import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile } from '../providers';
+import { FQNSComponent, FQNSComponentCtx, IFQNSComponentCtx } from '../base';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
@@ -56,7 +57,7 @@ const hasData = (what) => what !== undefined && what.length > 0;
 
 export { PhpdocMethod };
 
-@withPhpdocFile()
+@FQNSComponent()
 @observer
 export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     static displayName: string                      = 'PhpdocMethod';
@@ -71,20 +72,16 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     static Arguments: typeof PhpdocMethodArguments  = PhpdocMethodArguments;
     static Signature: typeof PhpdocMethodSignature  = PhpdocMethodSignature;
 
-    static contextType    = PhpdocFileProvider.Context.Context;
-    context!: React.ContextType<typeof PhpdocFileProvider.Context>;
-    state: { fqns: FQNS } = { fqns: null };
+    static contextType    = FQNSComponentCtx;
+    context!: React.ContextType<typeof FQNSComponentCtx>;
 
     @lazyInject('components') hc: HtmlComponents;
+
     @observable open: boolean = ! this.props.closed;
 
     toggleCollapse = () => runInAction(() => this.open = ! this.open);
 
-    get method(): Method {return this.context.file.entity.methods.get(this.state.fqns.memberName);};
-
-    static getDerivedStateFromProps(nextProps, prevState) {
-        return { fqns: FQNS.from(nextProps.fqns) };
-    }
+    get method(): Method {return this.context.file.entity.methods.get(this.context.fqns.memberName);};
 
     get tags(): PhpdocTag[] {
         if ( this.method && this.method.docblock.tags ) {
@@ -120,9 +117,8 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
 
     render() {
-
         const { innerRef, collapse, boxed, className, hide, signature,signatureProps, style } = this.props;
-        const { fqns }                                                         = this.state;
+        const { fqns }                                                         = this.context;
         const { file }                                                         = this.context;
         if ( ! file.entity.methods.has(fqns.memberName) ) {
             return <span>nomethod</span>;
@@ -199,7 +195,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
                         {/*{this.renderArguments(method)}*/}
                         <If condition={show.arguments}>
                             <div className="method-block-title">Arguments</div>
-                            <PhpdocMethodArguments fqns={this.state.fqns}>{null}</PhpdocMethodArguments>
+                            <PhpdocMethodArguments fqns={fqns}>{null}</PhpdocMethodArguments>
                         </If>
                         {/*{this.renderReturns(method)}*/}
                         <If condition={show.returns}>

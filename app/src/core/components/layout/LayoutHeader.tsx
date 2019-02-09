@@ -38,6 +38,9 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
             '/documentation/codex/master',
             '/documentation/codex/master/index',
             '/documentation/codex/master/getting-started/installation',
+            '/phpdoc/codex/master',
+            '/phpdoc-test',
+            '/phpdoc-mosaic'
         ];
         let toggleTooltip                                    = {
             left : `Click to ${left.collapsed ? 'open' : 'close'} the left menu`,

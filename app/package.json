@@ -10,7 +10,7 @@
         "dev:serve": "gulp dev:serve",
         "dev:dashboard": "gulp dev:dashboard",
         "dashboard": "webpack-dashboard",
-        "dev:browser": "cd dev && browser-sync start -s http://codex.local:3000 --ss .",
+        "dev:browser": "cd dev && browser-sync start -s http://codex.local:3000 --host codex.local --ss .",
         "prod:build": "gulp prod:build",
         "prod:watch": "gulp prod:watch",
         "prod:serve": "gulp prod:serve",

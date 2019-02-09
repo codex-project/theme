@@ -9,7 +9,9 @@ import InspireTree from 'inspire-tree';
 import PhpdocTree, { TreeBuilder } from './components/tree';
 import { action, observable } from 'mobx';
 import { hot } from 'react-hot-loader';
-import PhpdocApp from './components/app';
+import PhpdocMethod from './components/method';
+import { ManifestProvider } from './components/base';
+import PhpdocMemberList from './components/member-list';
 
 const { TabPane: Tab } = Tabs;
 const log              = require('debug')('pages:phpdoc');
@@ -27,7 +29,7 @@ class PhpdocTestPage extends React.Component<PhpdocTestPageProps & { routeState:
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
     @lazyInject('store') store: Store;
 
-    @observable fqns = '\\Codex\\Codex';
+    @observable fqns = '\\Codex\\Codex::get()';
 
     @action setFQNS(fqns) {this.fqns = fqns;}
 
@@ -37,70 +39,9 @@ class PhpdocTestPage extends React.Component<PhpdocTestPageProps & { routeState:
         return (
             <div id="phpdoc" {...props}>
                 <h3>PHPDOC Test Page</h3>
-                <PhpdocApp project="codex" revision="master" fqns={this.fqns}/>
-                {/*<PhpdocManifestProvider project="codex" revision="master">
-                <PhpdocMethod.Signature fqns="\Codex\Codex::get()"/>
-                    <PhpdocMethod fqns="\Codex\Codex::get()"/>
-                    <Row>
-                        <Col span={6}>
-                            <PhpdocManifestProvider.Context.Consumer>
-                                {context => context.manifest ? this.renderTree(context.manifest) : null}
-                            </PhpdocManifestProvider.Context.Consumer>
-                        </Col>
-                        <Col>
-                            <Tabs>
-                                <Tab key="entity" tab="Phpdoc Entity">
-                                    <PhpdocEntity fqns={this.fqns}/>
-                                </Tab>
-                                <Tab key="method-signature" tab="Phpdoc Method Signature">
-                                    <PhpdocMethodSignature fqns="\\Codex\\Codex::get()" hide={{
-                                        namespace: true,
-                                    }}/>
-                                </Tab>
-                                <Tab key="docblock" tab="Phpdoc Docblock">
-                                    <PhpdocFileProvider fqns={this.fqns}>
-                                        <PhpdocFileProvider.Context.Consumer>
-                                            {context => context.file ? (
-                                                <Fragment>
-                                                    <If condition={context.file.docblock}>
-                                                        <PhpdocDocblock
-                                                            key="docblock-docblock"
-                                                            docblock={context.file.docblock}
-                                                        />
-                                                    </If>
-                                                    <If condition={context.file.entity.methods}>
-                                                        <Tabs
-                                                            key="docblock-tabs"
-                                                            tabPosition="left"
-                                                            style={{ height: 500 }}
-                                                            size="small"
-                                                        >
-                                                            {context.file.entity.methods.filter(method => ! ! method.docblock).map((method, i) => {
-                                                                return (
-                                                                    <Tab
-                                                                        key={method.full_name + '.' + i}
-                                                                        tab={method.name}
-                                                                        // style={{ height: 200 }}
-                                                                    >
-                                                                        <PhpdocDocblock
-                                                                            key={method.full_name + '.' + i}
-                                                                            docblock={method.docblock}
-                                                                            withoutTags={[]}
-                                                                        />
-                                                                    </Tab>
-                                                                );
-                                                            })}
-                                                        </Tabs>
-                                                    </If>
-                                                </Fragment>
-                                            ) : null}
-                                        </PhpdocFileProvider.Context.Consumer>
-                                    </PhpdocFileProvider>
-                                </Tab>
-                            </Tabs>
-                        </Col>
-                    </Row>
-                </PhpdocManifestProvider>*/}
+                <ManifestProvider project="codex" revision="master">
+                    <PhpdocMemberList fqns={this.fqns}/>
+                </ManifestProvider>
             </div>
         );
     }

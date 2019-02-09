@@ -5,6 +5,8 @@ import { FQNS, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type/PhpdocType';
 import { classes } from 'typestyle';
 import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile, withPhpdocManifest } from '../providers';
+import { FQNSComponent, FQNSComponentCtx } from '../base';
+import { hot } from '@codex/core';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
@@ -35,8 +37,8 @@ export interface PhpdocMethodSignatureProps extends PhpdocFileProviderProps {
 
 export { PhpdocMethodSignature };
 
-@withPhpdocManifest()
-@withPhpdocFile()
+@hot(module)
+@FQNSComponent()
 @observer
 export default class PhpdocMethodSignature extends React.Component<PhpdocMethodSignatureProps> {
     static displayName: string                               = 'PhpdocMethodSignature';
@@ -46,9 +48,8 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
         size           : 14,
         hide           : {},
     };
-    static contextType                                       = PhpdocFileProvider.Context.Context;
-    context!: React.ContextType<typeof PhpdocFileProvider.Context>;
-    state: { fqns: FQNS }                                    = { fqns: null };
+    static contextType                                       = FQNSComponentCtx;
+    context!: React.ContextType<typeof FQNSComponentCtx>;
 
     className(...classNames: any[]) {
         const { prefixCls, link, innerClass, inline } = this.props;
@@ -62,15 +63,10 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
         return classes(...names);
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        return { fqns: FQNS.from(nextProps.fqns) };
-    }
-
     render() {
         window[ 'signature' ]  = this;
         const { link, inline } = this.props;
-        const { fqns }         = this.state;
-        const { file }         = this.context;
+        const { fqns,file }         = this.context;
         if ( ! file.entity.methods.has(fqns.memberName) ) {
             return <span>nomethod</span>;
         }

@@ -148,6 +148,8 @@ export interface Project {
 
     document_extensions?: Maybe<Assoc>;
 
+    auth?: Maybe<AuthConfig>;
+
     branching?: Maybe<BranchingConfig>;
 
     git?: Maybe<GitConfig>;
@@ -298,6 +300,8 @@ export interface MenuItem {
 
     type?: Maybe<string>;
 
+    class?: Maybe<string>;
+
     side?: Maybe<string>;
 
     target?: Maybe<string>;
@@ -443,6 +447,10 @@ export interface PhpdocConfig {
     layout?: Maybe<Layout>;
 
     default_class?: Maybe<string>;
+}
+
+export interface AuthConfig {
+    enabled?: Maybe<boolean>;
 }
 
 export interface BranchingConfig {
@@ -598,6 +606,8 @@ export interface PhpdocProperty {
 
     static?: Maybe<boolean>;
 
+    inherited_from?: Maybe<string>;
+
     type?: Maybe<string>;
 
     types?: Maybe<(Maybe<string>)[]>;
@@ -689,6 +699,14 @@ export interface CodexUrls {
     root?: Maybe<string>;
 
     documentation?: Maybe<string>;
+
+    auth_login_callback?: Maybe<string>;
+
+    auth_login?: Maybe<string>;
+
+    auth_logout?: Maybe<string>;
+
+    phpdoc?: Maybe<string>;
 }
 
 export interface HttpConfig {
@@ -699,6 +717,8 @@ export interface HttpConfig {
     documentation_prefix?: Maybe<string>;
 
     documentation_view?: Maybe<string>;
+
+    backend_data_url?: Maybe<string>;
 }
 
 export interface Config {

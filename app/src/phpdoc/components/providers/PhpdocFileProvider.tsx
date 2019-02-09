@@ -65,13 +65,21 @@ export function withPhpdocFile(consumer: boolean = true, provider: boolean = tru
     return function <T>(TargetComponent: T): T {
 
         class PhpdocFileHOC extends Component<any> {
+            static contextType=PhpdocFileContext.Context
+            context!:React.ContextType<typeof PhpdocFileContext.Context>
             render() {
-                const { children,...props } = this.props;
+                let { children,...props } = this.props as any;
+                if(!this.props.fqns && this.context.file){
+                    props.fqns = this.context.file.fqns
+                }
                 if ( consumer && provider ) {
+                    if(!this.props.fqns || (this.context.file && this.context.file.fqns.equals(this.props.fqns))){
+                        return React.createElement(TargetComponent as any, props , children)
+                    }
                     return (
                         <PhpdocFileProvider fqns={this.props.fqns}>
                             <PhpdocFileContext.Consumer>
-                                {context => context.file ? React.createElement(TargetComponent as any, { manifest: context.file, ...props }, children) : null}
+                                {context => context.file ? React.createElement(TargetComponent as any, { file: context.file, ...props }, children) : null}
                             </PhpdocFileContext.Consumer>
                         </PhpdocFileProvider>
                     );
@@ -79,11 +87,14 @@ export function withPhpdocFile(consumer: boolean = true, provider: boolean = tru
                 if ( consumer ) {
                     return (
                         <PhpdocFileContext.Consumer>
-                            {context => context.file ? React.createElement(TargetComponent as any, { manifest: context.file, ...props }, children) : null}
+                            {context => context.file ? React.createElement(TargetComponent as any, { file: context.file, ...props }, children) : null}
                         </PhpdocFileContext.Consumer>
                     );
                 }
                 if ( provider ) {
+                    if(!this.props.fqns || (this.context.file && this.context.file.fqns.equals(this.props.fqns))){
+                        return React.createElement(TargetComponent as any, props , children)
+                    }
                     return (
                         <PhpdocFileProvider fqns={this.props.fqns}>
                             {React.createElement(TargetComponent as any, props, children)}

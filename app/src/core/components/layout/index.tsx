@@ -24,7 +24,7 @@ export let Layout: LayoutComponent = loadable(() => loader().then(l=>l.Layout));
 
 export default Layout;
 
-Layout.Header      = loadable(() => loader().then(l => l.default.Header));
+Layout.Header      = loadable(() => loader().then(l => l.Layout.Header));
 Layout.Footer      = loadable(() => loader().then(l => l.Layout.Footer));
 Layout.Side        = loadable(() => loader().then(l => l.Layout.Side));
 Layout.Breadcrumbs = loadable(() => loader().then(l => l.Layout.Breadcrumbs));

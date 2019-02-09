@@ -8,6 +8,7 @@ import { PhpdocArgument } from '@codex/api';
 import PhpdocType from '../type';
 import { classes } from 'typestyle';
 import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile } from '../providers';
+import { FQNSComponent, FQNSComponentCtx } from '../base';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
@@ -27,7 +28,7 @@ export interface PhpdocMethodArgumentsProps extends PhpdocFileProviderProps {
 
 const argInArray = (name: string, arr: any[]) => arr.map(name => strEnsureLeft(name, '$')).includes(strEnsureLeft(name, '$'));
 
-@withPhpdocFile()
+@FQNSComponent()
 @observer
 export default class PhpdocMethodArguments extends React.Component<PhpdocMethodArgumentsProps> {
     static displayName: string                               = 'PhpdocMethodArguments';
@@ -35,15 +36,10 @@ export default class PhpdocMethodArguments extends React.Component<PhpdocMethodA
         prefixCls: 'phpdoc-method-arguments',
         hide     : {},
     };
-    static contextType                                       = PhpdocFileProvider.Context.Context;
-    context!: React.ContextType<typeof PhpdocFileProvider.Context>;
-    state: { fqns: FQNS }                                    = { fqns: null };
+    static contextType                                       = FQNSComponentCtx;
+    context!: React.ContextType<typeof FQNSComponentCtx>;
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        return { fqns: FQNS.from(nextProps.fqns) };
-    }
-
-    get method(): Method {return this.context.file.entity.methods.get(this.state.fqns.memberName);};
+    get method(): Method {return this.context.file.entity.methods.get(this.context.fqns.memberName);};
 
     get hide(): PhpdocMethodArgumentsProps['hide'] {return this.props.hide;}
 

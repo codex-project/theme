@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { hot } from '@codex/core';
 import './entity.scss';
 import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile } from '../providers';
+import { FQNSComponent, FQNSComponentCtx } from '../base';
 
 const log = require('debug')('components:PhpdocHeader');
 
@@ -26,15 +27,15 @@ export interface PhpdocEntityProps extends PhpdocEntityBaseProps, PhpdocFileProv
 export { PhpdocEntity };
 
 @hot(module)
-@withPhpdocFile()
+@FQNSComponent()
 @observer
 export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     static displayName: string                      = 'PhpdocEntity';
     static defaultProps: Partial<PhpdocEntityProps> = {
         prefixCls: 'phpdoc-entity',
     };
-    static contextType                              = PhpdocFileProvider.Context.Context;
-    context!: React.ContextType<typeof PhpdocFileProvider.Context>;
+    static contextType                              = FQNSComponentCtx;
+    context!: React.ContextType<typeof FQNSComponentCtx>;
 
     render() {
         let { fqns, size, style, className, titleStyle, prefixCls } = this.props;

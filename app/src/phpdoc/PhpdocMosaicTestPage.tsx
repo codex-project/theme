@@ -16,6 +16,9 @@ import { PhpdocManifestProvider } from './components/providers';
 import { classes } from 'typestyle';
 import PhpdocMethod from './components/method';
 import PhpdocEntity from './components/entity';
+import PhpdocMemberList from './components/member-list';
+import { debounce } from 'lodash-decorators';
+import { ManifestProvider } from './components/base';
 
 const { TabPane: Tab } = Tabs;
 const log              = require('debug')('pages:phpdoc');
@@ -59,14 +62,12 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
 
     renderEntity() {
         return (
-            <PhpdocEntity fqns={this.fqns}>Method</PhpdocEntity>
+            <PhpdocEntity fqns={this.fqns}/>
         );
     }
 
     renderMemberList() {
-        return (
-            <div>MemberList</div>
-        );
+        return (<PhpdocMemberList fqns={this.fqns}/>);
     }
 
     renderMethod() {
@@ -84,7 +85,7 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
     }
 
 
-    @observable mosaicValue: MosaicNode<ViewId> = {
+    mosaicValue: MosaicNode<ViewId> = {
         direction      : 'row',
         splitPercentage: 15,
         first          : 'tree',
@@ -120,9 +121,10 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
 
     @action toggleDragLock() {this.dragLock = ! this.dragLock;}
 
-    onMosaicChange = (value: MosaicNode<ViewId> | null) => {
+    @debounce(250, { trailing: true })
+    onMosaicChange(value: MosaicNode<ViewId> | null) {
         log('onMosaicChange', value);
-        runInAction(() => {this.mosaicValue = value;});
+        // runInAction(() => {this.mosaicValue = value;});
     };
 
     render() {
@@ -135,7 +137,7 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
             code      : this.renderCode(),
         };
         return (
-            <PhpdocManifestProvider project="codex" revision="master">
+            <ManifestProvider project="codex" revision="master">
                 <div key="phpdoc-mosaic" id="phpdoc-mosaic" className="phpdoc-mosaic" {...props}>
                     <Toolbar.Item side="right">
                         <Observer>{() =>
@@ -148,10 +150,9 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
                     <Mosaic<ViewId>
                         className="mosaic-codex-theme"
                         resize={this.resizeLock ? 'DISABLED' : { minimumPaneSizePercentage: 15 }}
-                        value={this.mosaicValue}
-                        onChange={this.onMosaicChange}
+                        initialValue={this.mosaicValue}
+                        onChange={e => this.onMosaicChange(e)}
                         renderTile={(id, path) => (
-                            <Observer>{() =>
                                 <MosaicWindow<ViewId>
                                     className={classes(this.windowClassName, 'mosaic-window-' + id)}
                                     draggable={! this.dragLock}
@@ -161,13 +162,13 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
                                     title=""
                                 >
                                     {CONTENT_MAP[ id ]}
-                                </MosaicWindow>}
-                            </Observer>
+                                </MosaicWindow>
+                            // <Observer>{() =>}                            </Observer>
                         )}
 
                     />
                 </div>
-            </PhpdocManifestProvider>
+            </ManifestProvider>
         );
     }
 

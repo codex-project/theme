@@ -10,7 +10,7 @@ export interface IPhpdocManifestContext {
     manifest: PhpdocManifest
 }
 
-const PhpdocManifestContext       = createObservableContext<IPhpdocManifestContext>({ manifest: null });
+export const PhpdocManifestContext       = createObservableContext<IPhpdocManifestContext>({ manifest: null });
 PhpdocManifestContext.displayName = 'PhpdocManifestContext';
 
 export interface PhpdocManifestProviderBaseProps {

@@ -7,7 +7,7 @@ import PhpdocType from '../type';
 import PhpdocEntity from '../entity';
 import PhpdocPopover from '../popover';
 import PhpdocMethod from '../method';
-import { PhpdocManifestProvider, withPhpdocManifest } from '../providers';
+import { ManifestCtx } from '../base';
 
 export { PhpdocLink };
 
@@ -25,9 +25,7 @@ export interface PhpdocLinkProps {
 }
 
 
-
 @hot(module)
-@withPhpdocManifest()
 @observer
 export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
     static displayName                            = 'PhpdocLink';
@@ -36,8 +34,8 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
         modifiers: [],
     };
 
-    static contextType = PhpdocManifestProvider.Context.Context;
-    context!: React.ContextType<typeof PhpdocManifestProvider.Context>;
+    static contextType = ManifestCtx;
+    context!: React.ContextType<typeof ManifestCtx>;
 
     @lazyInject('store.phpdoc') store: PhpdocStore;
 

@@ -5,6 +5,7 @@ import { app, Application, BasePlugin, Bind, Button, CLink, CodeHighlight, HtmlC
 import { generatePath, Redirect } from 'react-router';
 import React from 'react';
 import { Col, Modal, Popover, Row, Tooltip } from 'antd';
+import { ColorElement } from './elements';
 
 const log = require('debug')('documents');
 
@@ -58,7 +59,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
             });
         });
 
-        // customElements.define(ColorElement.TAG, ColorElement);
+        customElements.define(ColorElement.TAG, ColorElement);
     }
 
     protected registerRoutes(routes: RouteMap) {

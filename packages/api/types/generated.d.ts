@@ -83,6 +83,7 @@ export interface Project {
     allowed_revision_config_files?: Maybe<Assoc>;
     default_document?: Maybe<string>;
     document_extensions?: Maybe<Assoc>;
+    auth?: Maybe<AuthConfig>;
     branching?: Maybe<BranchingConfig>;
     git?: Maybe<GitConfig>;
     phpdoc?: Maybe<PhpdocConfig>;
@@ -165,6 +166,7 @@ export interface LayoutHeader {
 export interface MenuItem {
     id?: Maybe<string>;
     type?: Maybe<string>;
+    class?: Maybe<string>;
     side?: Maybe<string>;
     target?: Maybe<string>;
     href?: Maybe<string>;
@@ -245,6 +247,9 @@ export interface PhpdocConfig {
     view?: Maybe<string>;
     layout?: Maybe<Layout>;
     default_class?: Maybe<string>;
+}
+export interface AuthConfig {
+    enabled?: Maybe<boolean>;
 }
 export interface BranchingConfig {
     production?: Maybe<string>;
@@ -333,6 +338,7 @@ export interface PhpdocProperty {
     line?: Maybe<number>;
     visibility?: Maybe<string>;
     static?: Maybe<boolean>;
+    inherited_from?: Maybe<string>;
     type?: Maybe<string>;
     types?: Maybe<(Maybe<string>)[]>;
 }
@@ -384,12 +390,17 @@ export interface CodexUrls {
     api?: Maybe<string>;
     root?: Maybe<string>;
     documentation?: Maybe<string>;
+    auth_login_callback?: Maybe<string>;
+    auth_login?: Maybe<string>;
+    auth_logout?: Maybe<string>;
+    phpdoc?: Maybe<string>;
 }
 export interface HttpConfig {
     prefix?: Maybe<string>;
     api_prefix?: Maybe<string>;
     documentation_prefix?: Maybe<string>;
     documentation_view?: Maybe<string>;
+    backend_data_url?: Maybe<string>;
 }
 export interface Config {
     name: string;

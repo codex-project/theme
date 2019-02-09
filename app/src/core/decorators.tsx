@@ -5,11 +5,11 @@ import { RouteComponentProps, withRouter } from 'react-router';
 const log = require('debug')('decorators');
 
 
-export function hot<T>(module: NodeModule, hoist = false) {
+export function hot<T>(mod: NodeModule, hoist = false) {
     return (TargetComponent) => {
-        return TargetComponent;
+        // return TargetComponent;
         if ( DEV ) {
-            let decorator = require('react-hot-loader').hot(module);
+            let decorator = require('react-hot-loader').hot(mod);
             if ( ! hoist ) {
                 return decorator(TargetComponent);
             }
@@ -19,7 +19,7 @@ export function hot<T>(module: NodeModule, hoist = false) {
     };
 }
 
-export function cold<T>(module: NodeModule, hoist = false) {
+export function cold<T>(mod: NodeModule, hoist = false) {
     return (TargetComponent) => {
         if ( DEV ) {
             let {cold} = require('react-hot-loader')
