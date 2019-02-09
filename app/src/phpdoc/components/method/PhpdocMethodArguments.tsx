@@ -3,7 +3,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import './method.scss';
 import { strEnsureLeft } from '@codex/core';
-import { Arguments, FQNS, PhpdocMethod as Method } from '../../logic';
+import { Arguments, FQSEN, PhpdocMethod as Method } from '../../logic';
 import { PhpdocArgument } from '@codex/api';
 import PhpdocType from '../type';
 import { classes } from 'typestyle';
@@ -39,7 +39,7 @@ export default class PhpdocMethodArguments extends React.Component<PhpdocMethodA
     static contextType                                       = FQNSComponentCtx;
     context!: React.ContextType<typeof FQNSComponentCtx>;
 
-    get method(): Method {return this.context.file.entity.methods.get(this.context.fqns.memberName);};
+    get method(): Method {return this.context.file.entity.methods.get(this.context.fqsen.memberName);};
 
     get hide(): PhpdocMethodArgumentsProps['hide'] {return this.props.hide;}
 

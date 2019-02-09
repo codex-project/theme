@@ -34,9 +34,9 @@ export class PhpdocApp extends Component<PhpdocAppProps> {
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
     @lazyInject('store') store: Store;
 
-    @observable fqns = '\\Codex\\Codex';
+    @observable fqsen = '\\Codex\\Codex';
 
-    @action setFQNS(fqns) {this.fqns = fqns;}
+    @action setFQNS(fqsen) {this.fqsen = fqsen;}
 
     @action setTree(tree: InspireTree) {this.tree = tree;}
 
@@ -66,8 +66,8 @@ export class PhpdocApp extends Component<PhpdocAppProps> {
 
         return (
             <div id="phpdoc-app" className="phpdoc-app" {...props}>
-                {/*<PhpdocMethod.Signature fqns="\Codex\Codex::get()"/>*/}
-                {/*<PhpdocMethod fqns="\Codex\Codex::get()"/>*/}
+                {/*<PhpdocMethod.Signature fqsen="\Codex\Codex::get()"/>*/}
+                {/*<PhpdocMethod fqsen="\Codex\Codex::get()"/>*/}
                 <Row>
                     <Col span={6}>
                         <PhpdocManifestProvider.Context.Consumer>
@@ -77,15 +77,15 @@ export class PhpdocApp extends Component<PhpdocAppProps> {
                     <Col>
                         <Tabs>
                             <Tab key="entity" tab="Phpdoc Entity">
-                                <PhpdocEntity fqns={this.fqns}/>
+                                <PhpdocEntity fqsen={this.fqsen}/>
                             </Tab>
                             <Tab key="method-signature" tab="Phpdoc Method Signature">
-                                <PhpdocMethod.Signature fqns="\\Codex\\Codex::get()" hide={{
+                                <PhpdocMethod.Signature fqsen="\\Codex\\Codex::get()" hide={{
                                     namespace: true,
                                 }}/>
                             </Tab>
                             <Tab key="docblock" tab="Phpdoc Docblock">
-                                <PhpdocFileProvider fqns={this.fqns}>
+                                <PhpdocFileProvider fqsen={this.fqsen}>
                                     <PhpdocFileProvider.Context.Consumer>
                                         {context => context.file ? (
                                             <Fragment>

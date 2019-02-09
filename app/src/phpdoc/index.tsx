@@ -13,7 +13,7 @@ import PhpdocMosaicTestPage from './PhpdocMosaicTestPage';
 import { ManifestProvider } from './components/base';
 
 export * from './components';
-export * from './logic/FQNS';
+export * from './logic/FQSEN';
 export * from './logic/PhpdocStore';
 export * from './logic/Query';
 export * from './logic/Type';

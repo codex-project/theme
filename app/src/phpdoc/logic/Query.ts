@@ -1,6 +1,6 @@
 import { strEnsureLeft, strStripLeft } from '@codex/core';
 import { isBoolean, isString, isUndefined } from 'lodash';
-import { FQNS } from './FQNS';
+import { FQSEN } from './FQSEN';
 
 const log = require('debug')('phpdoc:logic:Query');
 
@@ -9,7 +9,7 @@ export type QueryMemberType = null | 'property' | 'method' | 'constant';
 export class Query {
     static prefix: string = '#!/';
 
-    fqns: FQNS;
+    fqsen: FQSEN;
     isValid: boolean;
 
     constructor(public fullName: string) {
@@ -17,7 +17,7 @@ export class Query {
     }
 
     protected reset() {
-        this.fqns    = null;
+        this.fqsen    = null;
         this.isValid = true;
     }
 
@@ -35,7 +35,7 @@ export class Query {
             return this;
         }
         fullName  = Query.stripPrefix(fullName);
-        this.fqns = FQNS.from(fullName);
+        this.fqsen = FQSEN.from(fullName);
         return this;
     }
 
@@ -60,8 +60,8 @@ export class Query {
     static from(entityName: string, memberSignature: string): Query
     static from(entityName: string, memberType: QueryMemberType, memberName: string): Query
     static from(...args: any[]): Query {
-        let fqns: FQNS = (FQNS.from as any)(...args);
-        return new Query(fqns.toString());
+        let fqsen: FQSEN = (FQSEN.from as any)(...args);
+        return new Query(fqsen.toString());
     }
 
     static fromHash(): Query { return Query.from(window.location.hash);}

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { hot, lazyInject, RouteLink, Trigger } from '@codex/core';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
-import { FQNS, PhpdocStore, Type } from '../../logic';
+import { FQSEN, PhpdocStore, Type } from '../../logic';
 import PhpdocType from '../type';
 import PhpdocEntity from '../entity';
 import PhpdocPopover from '../popover';
@@ -20,7 +20,7 @@ export interface PhpdocLinkProps {
     modifiers?: PhpdocLinkModifier[]
     query?: string
     icon?: boolean
-    fqns: string | FQNS
+    fqsen: string | FQSEN
 
 }
 
@@ -48,12 +48,12 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
         this.showDrawer = visible;
     };
 
-    fqns: FQNS;
+    fqsen: FQSEN;
     type: Type;
 
 
     renderLink() {
-        const { fqns, type, props }                 = this;
+        const { fqsen, type, props }                 = this;
         const { modifiers, action, children, icon } = props;
         const { manifest }                          = this.context;
         const { project, revision }                 = manifest;
@@ -61,7 +61,7 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
         if ( modifiers.includes('type') ) {
             return (
                 <PhpdocType
-                    type={fqns.fullName}
+                    type={fqsen.fullName}
                     linkToApi={action === 'navigate'}
                     onClick={action === 'drawer' ? () => this.setShowDrawer(true) : undefined}
                     showTooltip={false}
@@ -71,7 +71,7 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
         }
 
         let linkClassName = modifiers.includes('styling') ? `c-phpdoc-${type.type}-link` : null;
-        let linkChildren  = <Fragment>{modifiers.includes('icon') ? <i className={`c-phpdoc-${type.type}-icon`}/> : null} {children && children[ 'length' ] ? children : fqns.fullName} </Fragment>;
+        let linkChildren  = <Fragment>{modifiers.includes('icon') ? <i className={`c-phpdoc-${type.type}-icon`}/> : null} {children && children[ 'length' ] ? children : fqsen.fullName} </Fragment>;
         if ( action === 'navigate' ) {
             return (
                 <RouteLink
@@ -100,9 +100,9 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
 
     render() {
         const props = this.props;
-        if ( ! props.fqns ) return null;
-        this.fqns = FQNS.from(props.fqns);
-        this.type = new Type(this.context.manifest, this.fqns.fullName);
+        if ( ! props.fqsen ) return null;
+        this.fqsen = FQSEN.from(props.fqsen);
+        this.type = new Type(this.context.manifest, this.fqsen.fullName);
         let footerText;
         if ( props.action === 'drawer' ) {
             footerText = 'Click opens quick-preview';
@@ -118,8 +118,8 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
                      <Trigger listenTo={[ 'onMouseEnter', 'onMouseLeave', 'onClick' ]}>
                          {this.renderLink()}
                      </Trigger>
-                     {this.fqns.isEntity ? <PhpdocEntity fqns={this.fqns} style={{ marginBottom: 0 }} titleStyle={{ margin: 0 }}/> :
-                      this.fqns.isMethod ? <PhpdocMethod fqns={this.fqns} hide={{ namespace: true }}/> :
+                     {this.fqsen.isEntity ? <PhpdocEntity fqsen={this.fqsen} style={{ marginBottom: 0 }} titleStyle={{ margin: 0 }}/> :
+                      this.fqsen.isMethod ? <PhpdocMethod fqsen={this.fqsen} hide={{ namespace: true }}/> :
                       null}
                  </PhpdocPopover> :
                  this.renderLink()}

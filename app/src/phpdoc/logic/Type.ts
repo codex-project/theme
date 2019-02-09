@@ -11,12 +11,12 @@
 import { Query } from './Query';
 import { PhpdocManifest } from './PhpdocStore';
 import { PhpdocManifestFile } from '@codex/api';
-import { FQNS } from './FQNS';
+import { FQSEN } from './FQSEN';
 import { strStripRight } from '@codex/core';
 
 export class Type {
     static primitives    = [ 'boolean', 'integer', 'float', 'string', 'array', 'object', 'callable', 'iterable', 'resource', 'null', 'mixed', 'void' ];
-    fqns: FQNS;
+    fqsen: FQSEN;
     type: string;
     fullName: string;
     entityName: string;
@@ -33,11 +33,11 @@ export class Type {
         if ( this.isArray ) {
             fullName = strStripRight(fullName, '[]');
         }
-        this.fqns             = FQNS.from(fullName);
-        this.fullName         = this.fqns.fullName;
-        this.entityName       = this.fqns.entityName;
+        this.fqsen             = FQSEN.from(fullName);
+        this.fullName         = this.fqsen.fullName;
+        this.entityName       = this.fqsen.entityName;
         this.isPrimitive      = Type.primitives.includes(fullName);
-        this.isEntity         = this.isPrimitive ? false : this.fqns.isEntity;
+        this.isEntity         = this.isPrimitive ? false : this.fqsen.isEntity;
         this.type             = this.isPrimitive ? 'primitive' : 'class';
         this.isLocal          = false;
         this.isExternal       = false;

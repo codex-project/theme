@@ -9,7 +9,6 @@ import InspireTree from 'inspire-tree';
 import PhpdocTree, { TreeBuilder } from './components/tree';
 import { action, observable } from 'mobx';
 import { hot } from 'react-hot-loader';
-import PhpdocMethod from './components/method';
 import { ManifestProvider } from './components/base';
 import PhpdocMemberList from './components/member-list';
 
@@ -29,9 +28,12 @@ class PhpdocTestPage extends React.Component<PhpdocTestPageProps & { routeState:
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
     @lazyInject('store') store: Store;
 
-    @observable fqns = '\\Codex\\Codex::get()';
+    @observable fqsen = '\\Codex\\Codex::get()';
+    @observable show  = false;
 
-    @action setFQNS(fqns) {this.fqns = fqns;}
+    @action setFQNS(fqsen) {this.fqsen = fqsen;}
+
+    @action setShow(show: boolean) {this.show = show;}
 
     render() {
         const { revision, ...props } = this.props;
@@ -39,8 +41,13 @@ class PhpdocTestPage extends React.Component<PhpdocTestPageProps & { routeState:
         return (
             <div id="phpdoc" {...props}>
                 <h3>PHPDOC Test Page</h3>
+                <If condition={! this.show}>
+                    <a onClick={e => this.setShow(true)}>Show</a>
+                </If>
                 <ManifestProvider project="codex" revision="master">
-                    <PhpdocMemberList fqns={this.fqns}/>
+                    <If condition={this.show}>
+                        <PhpdocMemberList fqsen={this.fqsen}/>
+                    </If>
                 </ManifestProvider>
             </div>
         );

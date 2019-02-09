@@ -87,7 +87,7 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
         const content                                                                = types.map((type, numType) => {
             let line,
                 clickable    = noClick !== true || type.isLocal,
-                lineChildren = children ? children : showNamespace ? type.entityName : type.fqns.name,
+                lineChildren = children ? children : showNamespace ? type.entityName : type.fqsen.name,
                 suffix       = '',
                 lineProps    = {
                     style    : {

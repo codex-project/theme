@@ -1,4 +1,4 @@
-import { FQNS, PhpdocFile, PhpdocManifest, PhpdocStore } from '../../logic';
+import { FQSEN, PhpdocFile, PhpdocManifest, PhpdocStore } from '../../logic';
 import { lazyInject } from '@codex/core';
 import React, { Component } from 'react';
 
@@ -61,11 +61,11 @@ export class ManifestProvider extends Component<ManifestProviderProps> {
 export interface IFQNSComponentCtx {
     manifest: PhpdocManifest
     file: PhpdocFile
-    fqns: FQNS
+    fqsen: FQSEN
 }
 
 
-export const FQNSComponentCtx = React.createContext<IFQNSComponentCtx>({ manifest: null, file: null, fqns: null });
+export const FQNSComponentCtx = React.createContext<IFQNSComponentCtx>({ manifest: null, file: null, fqsen: null });
 
 
 export function FQNSComponent() {
@@ -76,14 +76,14 @@ export function FQNSComponent() {
             static contextType      = ManifestCtx;
             context!: React.ContextType<typeof ManifestCtx>;
 
-            state: { fqns: FQNS, file: PhpdocFile } = { fqns: null, file: null };
+            state: { fqsen: FQSEN, file: PhpdocFile } = { fqsen: null, file: null };
 
             static getDerivedStateFromProps(nextProps, prevState) {
-                return { fqns: FQNS.from(nextProps.fqns) };
+                return { fqsen: FQSEN.from(nextProps.fqsen) };
             }
 
             public componentDidMount(): void {
-                this.context.manifest.fetchFile(this.state.fqns.slashEntityName).then(file => {
+                this.context.manifest.fetchFile(this.state.fqsen.slashEntityName).then(file => {
                     this.setState({ file });
                 });
             }
@@ -91,7 +91,7 @@ export function FQNSComponent() {
             render() {
                 const { children, ...props } = this.props;
                 return (
-                    <FQNSComponentCtx.Provider value={{ manifest: this.context.manifest, file: this.state.file, fqns: this.state.fqns }}>
+                    <FQNSComponentCtx.Provider value={{ manifest: this.context.manifest, file: this.state.file, fqsen: this.state.fqsen }}>
                         <If condition={this.state.file}>
                             {React.createElement(TargetComponent as any, props, children)}
                         </If>

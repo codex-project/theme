@@ -38,9 +38,9 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
     @lazyInject('store') store: Store;
 
-    @observable fqns = '\\Codex\\Codex::get()';
+    @observable fqsen = '\\Codex\\Codex::get()';
 
-    @action setFQNS(fqns) {this.fqns = fqns;}
+    @action setFQNS(fqsen) {this.fqsen = fqsen;}
 
     public componentWillMount(): void {
         const { layout } = this.store;
@@ -62,18 +62,18 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
 
     renderEntity() {
         return (
-            <PhpdocEntity fqns={this.fqns}/>
+            <PhpdocEntity fqsen={this.fqsen}/>
         );
     }
 
     renderMemberList() {
-        return (<PhpdocMemberList fqns={this.fqns}/>);
+        return (<PhpdocMemberList fqsen={this.fqsen}/>);
     }
 
     renderMethod() {
         return (
             <Scrollbar>
-                <PhpdocMethod fqns={this.fqns} signatureProps={{ size: 12 }}>Method</PhpdocMethod>
+                <PhpdocMethod fqsen={this.fqsen} signatureProps={{ size: 12 }}>Method</PhpdocMethod>
             </Scrollbar>
         );
     }

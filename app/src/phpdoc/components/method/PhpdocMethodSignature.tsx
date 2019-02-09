@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import './method-signature.scss';
-import { FQNS, PhpdocMethod } from '../../logic';
+import { FQSEN, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type/PhpdocType';
 import { classes } from 'typestyle';
 import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile, withPhpdocManifest } from '../providers';
@@ -66,11 +66,11 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
     render() {
         window[ 'signature' ]  = this;
         const { link, inline } = this.props;
-        const { fqns,file }         = this.context;
-        if ( ! file.entity.methods.has(fqns.memberName) ) {
+        const { fqsen,file }         = this.context;
+        if ( ! file.entity.methods.has(fqsen.memberName) ) {
             return <span>nomethod</span>;
         }
-        const method = file.entity.methods.get(fqns.memberName);
+        const method = file.entity.methods.get(fqsen.memberName);
 
         return (
             <span style={{ fontSize: this.props.size, ...this.props.style }}>
@@ -91,7 +91,7 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
 
         let returns = method.returns;
         if ( returns.length && returns[ 0 ] === 'static' ) {
-            returns = [ method.fqns.entityName ];
+            returns = [ method.fqsen.entityName ];
         }
 
         return (

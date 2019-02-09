@@ -7,7 +7,7 @@ import PhpdocMethodArguments from './PhpdocMethodArguments';
 import { CodeHighlight, HtmlComponents, lazyInject } from '@codex/core';
 import { PhpdocTag } from '@codex/api';
 import { classes } from 'typestyle';
-import { FQNS, PhpdocMethod as Method } from '../../logic';
+import { FQSEN, PhpdocMethod as Method } from '../../logic';
 import PhpdocTags from '../tags';
 import PhpdocType from '../type';
 import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
@@ -81,7 +81,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
     toggleCollapse = () => runInAction(() => this.open = ! this.open);
 
-    get method(): Method {return this.context.file.entity.methods.get(this.context.fqns.memberName);};
+    get method(): Method {return this.context.file.entity.methods.get(this.context.fqsen.memberName);};
 
     get tags(): PhpdocTag[] {
         if ( this.method && this.method.docblock.tags ) {
@@ -118,12 +118,12 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
     render() {
         const { innerRef, collapse, boxed, className, hide, signature,signatureProps, style } = this.props;
-        const { fqns }                                                         = this.context;
+        const { fqsen }                                                         = this.context;
         const { file }                                                         = this.context;
-        if ( ! file.entity.methods.has(fqns.memberName) ) {
+        if ( ! file.entity.methods.has(fqsen.memberName) ) {
             return <span>nomethod</span>;
         }
-        const method = file.entity.methods.get(fqns.memberName);
+        const method = file.entity.methods.get(fqsen.memberName);
         let closed   = ! this.open;
 
         let show = {
@@ -146,7 +146,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
         if ( show.returns ) {
             returns = method.returns;
             if ( returns[ 0 ] === 'static' ) {
-                returns = method.fqns.entityName;
+                returns = method.fqsen.entityName;
             }
         }
 
@@ -159,7 +159,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
                 </If>
 
                 <If condition={! hide.signature && ! signature}>
-                    <PhpdocMethodSignature fqns={fqns} hide={hide} {...signatureProps}>
+                    <PhpdocMethodSignature fqsen={fqsen} hide={hide} {...signatureProps}>
                         <If condition={collapse}>
                             <a href="javascript:" onClick={this.toggleCollapse}
                                className={classes('method-collapse')} //, { closed })}
@@ -195,7 +195,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
                         {/*{this.renderArguments(method)}*/}
                         <If condition={show.arguments}>
                             <div className="method-block-title">Arguments</div>
-                            <PhpdocMethodArguments fqns={fqns}>{null}</PhpdocMethodArguments>
+                            <PhpdocMethodArguments fqsen={fqsen}>{null}</PhpdocMethodArguments>
                         </If>
                         {/*{this.renderReturns(method)}*/}
                         <If condition={show.returns}>
@@ -242,7 +242,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     //     return (
     //         <Fragment>
     //             <h4 className="method-block-title">Arguments</h4>
-    //             <PhpdocMethodArguments fqns={this.state.fqns}>{null}</PhpdocMethodArguments>
+    //             <PhpdocMethodArguments fqsen={this.state.fqsen}>{null}</PhpdocMethodArguments>
     //         </Fragment>
     //     );
     // }
@@ -263,7 +263,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     //     if ( ! this.has.returns || this.hide.returns ) return null;
     //     let returns: any = method.returns;
     //     if ( returns[ 0 ] === 'static' ) {
-    //         returns = method.fqns.entityName;
+    //         returns = method.fqsen.entityName;
     //     }
     //     return (
     //         <Fragment>

@@ -38,7 +38,7 @@ export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     context!: React.ContextType<typeof FQNSComponentCtx>;
 
     render() {
-        let { fqns, size, style, className, titleStyle, prefixCls } = this.props;
+        let { fqsen, size, style, className, titleStyle, prefixCls } = this.props;
         let { file }                                                = this.context;
         let classSize                                               = size ? size.class ? size.class : size : 14;
         let textSize                                                = size ? size.class ? size.class : size : 14;
@@ -47,7 +47,7 @@ export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
             <header style={style} className={classes(prefixCls, className)}>
                 <h3 style={titleStyle} className="header-title">
                     <i className={'mr-xs phpdoc-type-' + file.type}/>
-                    <span className={'phpdoc-type-' + file.type} style={{ fontSize: classSize }}>{file.fqns.entityName}</span>
+                    <span className={'phpdoc-type-' + file.type} style={{ fontSize: classSize }}>{file.fqsen.entityName}</span>
                     <If condition={file.entity.extends}>
                         <small className="pl-xs" style={{ fontSize: textSize }}>extends</small>
                         <PhpdocType className="pl-xs" style={{ fontSize: classSize }} type={file.entity.extends}/>

@@ -9,7 +9,7 @@ import './member-list.scss';
 import { PhpdocFileProviderProps } from '../providers';
 import { hot, Scrollbar, ucfirst } from '@codex/core';
 import PhpdocMethod from '../method';
-import { FQNS } from '../../logic';
+import { FQSEN } from '../../logic';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 import PhpdocMethodSignature from '../method/PhpdocMethodSignature';
 
@@ -131,8 +131,8 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         }
     }
 
-    public shouldComponentUpdate(nextProps: Readonly<PhpdocMemberListProps>, nextState: Readonly<{ fqns: FQNS }>, nextContext: any): boolean {
-        if ( ! FQNS.from(nextState.fqns).equals(FQNS.from(this.context.fqns)) ) {
+    public shouldComponentUpdate(nextProps: Readonly<PhpdocMemberListProps>, nextState: Readonly<{ fqsen: FQSEN }>, nextContext: any): boolean {
+        if ( ! FQSEN.from(nextState.fqsen).equals(FQSEN.from(this.context.fqsen)) ) {
             return true;
         }
         if ( nextContext.file.hash !== this.context.file.hash ) {
@@ -162,11 +162,11 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                 <Choose>
                     <When condition={props.selected}>
                         <PhpdocMethod
-                            fqns={item.fqns}
+                            fqsen={item.fqsen}
                             key={'_' + numItem}
                             signature={
                                 <PhpdocMethod.Signature
-                                    fqns={item.fqns}
+                                    fqsen={item.fqsen}
                                     size={12}
                                     className="ant-row-flex-space-between"
                                     hide={{ namespace: true }}>
@@ -179,7 +179,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                         <ListItem key={numItem} {...props} modifiers={props.selected ? false : undefined}>
                             <Tooltip key={numItem + 'tooltip'} title={item.visibility}> <i className={'phpdoc-visibility-' + item.visibility}/> </Tooltip>
                             <PhpdocMethodSignature
-                                fqns={item.fqns}
+                                fqsen={item.fqsen}
                                 key={numItem + 'sig'}
                                 inline={true}
                                 size={12}

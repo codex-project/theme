@@ -1,6 +1,6 @@
 import { api } from '@codex/api';
 import { Arguments, Methods, Properties, Tags } from './collections';
-import { FQNS } from './FQNS';
+import { FQSEN } from './FQSEN';
 
 export interface PhpdocDocblock extends api.PhpdocDocblock {
     tags: Tags
@@ -36,7 +36,7 @@ export class PhpdocFile {
 
     get entity(): PhpdocClassFile | PhpdocTraitFile | PhpdocInterfaceFile { return this[ this.type ]; }
 
-    get fqns(): FQNS { return this.entity.fqns; }
+    get fqsen(): FQSEN { return this.entity.fqsen; }
 }
 
 
@@ -47,10 +47,11 @@ export abstract class PhpdocBaseType<T extends any> {
 }
 
 export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
-    fqns: FQNS;
+    fqsen: FQSEN;
 
     constructor(public readonly type: 'class' | 'trait' | 'interface', data: T) {
         super(data);
+        this.fqsen = FQSEN.from(data.full_name);
         if ( data.methods ) {
             this[ 'methods' ] = new Methods(...data.methods.map(item => {
                 if ( item.docblock && item.docblock.tags !== undefined ) {
@@ -65,7 +66,7 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                     }
                     return argument;
                 }));
-                return new PhpdocMethod(item);
+                return new PhpdocMethod(item, this);
             }));
         }
         if ( data.properties ) {
@@ -73,14 +74,11 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 if ( item.docblock && item.docblock.tags !== undefined ) {
                     item.docblock.tags = new Tags(...item.docblock.tags);
                 }
-                return new PhpdocProperty(item);
+                return new PhpdocProperty(item, this);
             }));
         }
         if ( data.docblock && data.docblock.tags ) {
             this[ 'docblock' ][ 'tags' ] = new Tags(...data.docblock.tags);
-        }
-        if ( data.full_name ) {
-            this.fqns = FQNS.from(data.full_name);
         }
     }
 }
@@ -125,13 +123,15 @@ export interface PhpdocMethod extends api.PhpdocMethod {}
 export class PhpdocMethod extends PhpdocBaseType<api.PhpdocMethod> {
     docblock: PhpdocDocblock;
     arguments: Arguments;
-    fqns: FQNS;
+    fqsen: FQSEN;
+    original_fqsen: FQSEN;
     type='method'
 
-    constructor(data) {
+    constructor(data, parent:PhpdocBaseFile<any>) {
         super(data);
         if ( data.full_name ) {
-            this.fqns = FQNS.from(data.full_name);
+            this.original_fqsen = FQSEN.from(data.full_name);
+            this.fqsen = FQSEN.from(parent.fqsen.entityName, 'method', data.name);
         }
     }
 }
@@ -141,12 +141,14 @@ export interface PhpdocProperty extends api.PhpdocProperty {}
 
 export class PhpdocProperty extends PhpdocBaseType<api.PhpdocProperty> {
     docblock: PhpdocDocblock;
-    fqns: FQNS;
+    fqsen: FQSEN;
+    original_fqsen: FQSEN;
     type='property'
-    constructor(data) {
+    constructor(data, parent:PhpdocBaseFile<any>) {
         super(data);
         if ( data.full_name ) {
-            this.fqns = FQNS.from(data.full_name);
+            this.original_fqsen = FQSEN.from(data.full_name);
+            this.fqsen = FQSEN.from(parent.fqsen.entityName, 'property', data.name);
         }
     }
 }

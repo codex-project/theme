@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 import React, { Component } from 'react';
-import { FQNS, PhpdocFile, PhpdocStore } from '../../logic';
+import { FQSEN, PhpdocFile, PhpdocStore } from '../../logic';
 import { createObservableContext, lazyInject } from '@codex/core';
 import { action, observable } from 'mobx';
 import { PhpdocManifestProvider, withPhpdocManifest } from './PhpdocManifestProvider';
@@ -16,7 +16,7 @@ PhpdocFileContext.displayName = 'PhpdocFileContext';
 
 
 export interface PhpdocFileProviderProps {
-    fqns: string | FQNS
+    fqsen: string | FQSEN
 }
 
 // @withPhpdocManifest()
@@ -27,7 +27,7 @@ export class PhpdocFileProvider extends Component<PhpdocFileProviderProps> {
     static Context: typeof PhpdocFileContext              = PhpdocFileContext;
     static contextType                                    = PhpdocManifestProvider.Context.Context;
     context!: React.ContextType<typeof PhpdocManifestProvider.Context>;
-    state: { fqns: FQNS }                                 = { fqns: null };
+    state: { fqsen: FQSEN }                                = { fqsen: null };
     @lazyInject('store.phpdoc') store: PhpdocStore;
     @observable file: PhpdocFile                          = null;
 
@@ -35,16 +35,16 @@ export class PhpdocFileProvider extends Component<PhpdocFileProviderProps> {
 
     async update() {
         const { state, context } = this;
-        const { fqns }           = state;
+        const { fqsen }           = state;
         const { manifest }       = context;
 
-        const file = await manifest.fetchFile(fqns.fullName);
+        const file = await manifest.fetchFile(fqsen.fullName);
 
         this.setFile(file);
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        return { fqns: FQNS.from(nextProps.fqns) };
+        return { fqsen: FQSEN.from(nextProps.fqsen) };
     }
 
     public componentDidMount(): void {
@@ -69,15 +69,15 @@ export function withPhpdocFile(consumer: boolean = true, provider: boolean = tru
             context!:React.ContextType<typeof PhpdocFileContext.Context>
             render() {
                 let { children,...props } = this.props as any;
-                if(!this.props.fqns && this.context.file){
-                    props.fqns = this.context.file.fqns
+                if(!this.props.fqsen && this.context.file){
+                    props.fqsen = this.context.file.fqsen
                 }
                 if ( consumer && provider ) {
-                    if(!this.props.fqns || (this.context.file && this.context.file.fqns.equals(this.props.fqns))){
+                    if(!this.props.fqsen || (this.context.file && this.context.file.fqsen.equals(this.props.fqsen))){
                         return React.createElement(TargetComponent as any, props , children)
                     }
                     return (
-                        <PhpdocFileProvider fqns={this.props.fqns}>
+                        <PhpdocFileProvider fqsen={this.props.fqsen}>
                             <PhpdocFileContext.Consumer>
                                 {context => context.file ? React.createElement(TargetComponent as any, { file: context.file, ...props }, children) : null}
                             </PhpdocFileContext.Consumer>
@@ -92,11 +92,11 @@ export function withPhpdocFile(consumer: boolean = true, provider: boolean = tru
                     );
                 }
                 if ( provider ) {
-                    if(!this.props.fqns || (this.context.file && this.context.file.fqns.equals(this.props.fqns))){
+                    if(!this.props.fqsen || (this.context.file && this.context.file.fqsen.equals(this.props.fqsen))){
                         return React.createElement(TargetComponent as any, props , children)
                     }
                     return (
-                        <PhpdocFileProvider fqns={this.props.fqns}>
+                        <PhpdocFileProvider fqsen={this.props.fqsen}>
                             {React.createElement(TargetComponent as any, props, children)}
                         </PhpdocFileProvider>
                     );
