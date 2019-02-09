@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import './method-signature.scss';
-import { FQSEN, PhpdocMethod } from '../../logic';
-import { PhpdocType } from '../type/PhpdocType';
+import { PhpdocMethod } from '../../logic';
+import { PhpdocType } from '../type';
 import { classes } from 'typestyle';
-import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile, withPhpdocManifest } from '../providers';
+import { PhpdocFileProviderProps } from '../providers';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
-import { hot } from '@codex/core';
+import { hot } from 'react-hot-loader';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
@@ -34,8 +34,6 @@ export interface PhpdocMethodSignatureProps extends PhpdocFileProviderProps {
         typeTooltipClick?: boolean
     }
 }
-
-export { PhpdocMethodSignature };
 
 @hot(module)
 @FQNSComponent()
@@ -66,7 +64,7 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
     render() {
         window[ 'signature' ]  = this;
         const { link, inline } = this.props;
-        const { fqsen,file }         = this.context;
+        const { fqsen, file }  = this.context;
         if ( ! file.entity.methods.has(fqsen.memberName) ) {
             return <span>nomethod</span>;
         }
@@ -126,3 +124,5 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
     onClick          = () => { };
     onInheritedClick = () => {};
 }
+
+

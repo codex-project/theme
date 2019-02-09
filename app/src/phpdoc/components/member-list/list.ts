@@ -1,6 +1,6 @@
 import { isString } from 'lodash';
 
-import { action, observable, transaction } from 'mobx';
+import { action, computed, observable, transaction } from 'mobx';
 import { Methods, PhpdocFile, PhpdocMethod, PhpdocProperty, Properties } from '../../logic';
 
 export type Member = PhpdocMethod & PhpdocProperty | PhpdocMethod | PhpdocProperty
@@ -22,6 +22,9 @@ export class MemberList {
     @observable search: string               = null;
     @observable methods: PhpdocMethod[]      = [];
     @observable properties: PhpdocProperty[] = [];
+    @observable length: number               = 0;
+
+    @computed get items(): Member[] { return [].concat(this.properties, this.methods);}
 
     @observable filters: MemberListFilters = {
         public   : false,
@@ -49,6 +52,10 @@ export class MemberList {
         });
     }
 
+    map(cb: (item: PhpdocMethod | PhpdocProperty, index: number) => any) {
+        return [].concat(this.properties, this.methods).map(cb);
+    }
+
     @action setSelected(member: Member) { this.selected = member; }
 
     setSearch(search: string) {
@@ -71,6 +78,7 @@ export class MemberList {
         transaction(() => {
             this.filterMethods();
             this.filterProperties();
+            this.length = this.properties.length + this.methods.length;
         });
     }
 

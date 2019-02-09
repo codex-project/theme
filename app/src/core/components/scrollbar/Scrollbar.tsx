@@ -52,8 +52,9 @@ export interface ScrollbarProps extends BaseScrollbarProps {
 
 }
 
+export {Scrollbar}
 @hot(module)
-export class Scrollbar extends React.Component<ScrollbarProps> {
+export default class Scrollbar extends React.Component<ScrollbarProps> {
     scrollbars: Scrollbars;
 
     render() {

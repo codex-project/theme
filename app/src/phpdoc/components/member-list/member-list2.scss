@@ -1,8 +1,6 @@
 @import "../../styling/base";
 
-$prefix: phpdoc-member-list;
-
-.#{$prefix} {
+.phpdoc-member-list {
     @extend %phpdoc-component;
     background : $phpdoc-method-list-item-background;
 
@@ -26,25 +24,22 @@ $prefix: phpdoc-member-list;
         line-height   : 35px;
     }
 
-    &-inner {
+    ul.member-list {
         list-style-type : none;
         padding-left    : 0;
         margin          : 0;
         background      : $phpdoc-method-list-item-background;
-        &:focus {
-            outline: none;
-        }
     }
-    .c-scrollbar &-inner {
+    .c-scrollbar ul.member-list {
         padding-right : 6px;
     }
-    &-inner > .phpdoc-method {
+    ul.member-list > .phpdoc-method {
         border-top    : $phpdoc-boxed-border;
         border-bottom : $phpdoc-boxed-border;
         margin        : 0;
         background    : #fafafa;
     }
-    &-item {
+    ul.member-list > li {
         color         : $phpdoc-method-list-item-font-color;
         background    : $phpdoc-method-list-item-background;
         border        : $phpdoc-method-list-item-border;

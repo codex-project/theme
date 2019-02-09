@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react';
-import { observer } from 'mobx-react';
 import { classes } from 'typestyle';
 import { Popover } from 'antd';
 import { PhpdocStore, Type } from '../../logic';
 import { isArray, isString } from 'lodash';
-import { hot, lazyInject, strStripLeft, strStripRight } from '@codex/core';
+import { lazyInject, strStripLeft, strStripRight } from '@codex/core';
 import { Link } from 'react-router-dom';
 import './type.scss';
 import { ManifestCtx } from '../base';
+import { hot } from 'react-hot-loader';
 
 const log = require('debug')('components:PhpdocType');
 
@@ -28,10 +28,9 @@ export interface PhpdocTypeProps {
     onClick?: () => void
 }
 
-export { PhpdocType };
-@hot(module)
-@observer
-export default class PhpdocType extends React.Component<PhpdocTypeProps> {
+// export { PhpdocType };
+// @observer
+class PhpdocType extends React.PureComponent<PhpdocTypeProps> {
     static displayName: string                    = 'PhpdocType';
     static defaultProps: Partial<PhpdocTypeProps> = {
         seperator       : ' | ',
@@ -143,3 +142,5 @@ export default class PhpdocType extends React.Component<PhpdocTypeProps> {
     }
 
 }
+
+export default hot(module)(PhpdocType);

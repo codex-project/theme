@@ -1,4 +1,5 @@
 import React from 'react';
+import memo from 'memoize-one'
 import { Button, lazyInject, RouteState, Scrollbar, Store, Toolbar } from '@codex/core';
 import { api, Api } from '@codex/api';
 import { PhpdocStore } from './logic';
@@ -28,6 +29,19 @@ export interface PhpdocMosaicTestPageProps {
 }
 
 export type ViewId = 'tree' | 'entity' | 'memberList' | 'method' | 'code';
+
+const Method = memo(props => <PhpdocMethod fqsen={props.fqsen} signatureProps={{ size: 12 }} />)
+const Win = memo(props =>
+    <MosaicWindow<ViewId>
+        className={classes(props.className, 'mosaic-window-' + props.id)}
+        draggable={! props.dragLock}
+        path={props.path}
+        toolbarControls={[ <div key="null"/> ]}
+        createNode={() => 'method'}
+        title=""
+    >
+        {props.map[ props.id ]}
+    </MosaicWindow>)
 
 
 @observer
@@ -73,7 +87,7 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
     renderMethod() {
         return (
             <Scrollbar>
-                <PhpdocMethod fqsen={this.fqsen} signatureProps={{ size: 12 }}>Method</PhpdocMethod>
+                <PhpdocMethod fqsen={this.fqsen} signatureProps={{ size: 12 }} />
             </Scrollbar>
         );
     }
@@ -152,7 +166,7 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
                         resize={this.resizeLock ? 'DISABLED' : { minimumPaneSizePercentage: 15 }}
                         initialValue={this.mosaicValue}
                         onChange={e => this.onMosaicChange(e)}
-                        renderTile={(id, path) => (
+                        renderTile={(id, path) => (<Observer>{() =>
                                 <MosaicWindow<ViewId>
                                     className={classes(this.windowClassName, 'mosaic-window-' + id)}
                                     draggable={! this.dragLock}
@@ -162,7 +176,7 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
                                     title=""
                                 >
                                     {CONTENT_MAP[ id ]}
-                                </MosaicWindow>
+                                </MosaicWindow>}</Observer>
                             // <Observer>{() =>}                            </Observer>
                         )}
 

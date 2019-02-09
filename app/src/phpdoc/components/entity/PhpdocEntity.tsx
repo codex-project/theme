@@ -2,7 +2,7 @@ import React from 'react';
 import { classes } from 'typestyle';
 import { PhpdocType } from '../type';
 import { observer } from 'mobx-react';
-import { hot } from '@codex/core';
+import { hot } from 'react-hot-loader';
 import './entity.scss';
 import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile } from '../providers';
 import { FQNSComponent, FQNSComponentCtx } from '../base';

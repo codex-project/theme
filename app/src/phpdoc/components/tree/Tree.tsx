@@ -1,12 +1,12 @@
 import React from 'react';
 import InspireTree from 'inspire-tree';
-import {TreeNodes} from './TreeNodes';
-import { camelCase, isFunction, upperFirst } from 'lodash'
-import { hot } from '@codex/core';
+import { TreeNodes } from './TreeNodes';
+import { camelCase, isFunction, upperFirst } from 'lodash';
 import { classes, style, types } from 'typestyle';
 import { ITreeNode } from './interfaces';
+import '../../styling/vendor/inspire-tree/light.scss';
 
-const log = require('debug')('components:inspire-tree:Tree')
+const log = require('debug')('components:inspire-tree:Tree');
 
 export interface TreeProps {
     nodes?: any[]
@@ -40,38 +40,35 @@ export interface TreeProps {
 
 }
 
-import '../../styling/vendor/inspire-tree/light.scss'
-
-@hot(module)
 export class Tree extends React.Component<TreeProps> {
 
     // Initial state
     state = {
-        nodes: []
-    }
+        nodes: [],
+    };
 
     // Instance of the tree
-    tree: InspireTree = null
+    tree: InspireTree = null;
 
 
     // When this component mounts, instatiate inspire tree
     componentDidMount() {
         if ( this.props.tree ) {
-            this.tree = this.props.tree
+            this.tree = this.props.tree;
         } else {
             this.tree = new InspireTree({
-                data: this.props.nodes as any
+                data: this.props.nodes as any,
             });
         }
 
         // Set state once the tree has fully loaded our data
         this.tree.on('model.loaded', (...args) => {
             // log('model.loaded', args)
-            this.syncNodes()
+            this.syncNodes();
         });
         this.tree.on('changes.applied', (...args) => {
             // log('changes.applied', args)
-            this.syncNodes()
+            this.syncNodes();
         });
 
 
@@ -81,9 +78,9 @@ export class Tree extends React.Component<TreeProps> {
                 this.props[ name ](...args);
             }
             // log('event', event, args)
-        })
+        });
 
-        this.syncNodes()
+        this.syncNodes();
     }
 
     componentWillUnmount() {
@@ -94,7 +91,7 @@ export class Tree extends React.Component<TreeProps> {
     // Update the state when changes have been made to our nodes
     syncNodes() {
         this.setState({
-            nodes: this.tree.nodes()
+            nodes: this.tree.nodes(),
         });
     }
 

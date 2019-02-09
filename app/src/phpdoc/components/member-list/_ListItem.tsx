@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Member } from './list';
 import { iconTooltipDeprecated, iconTooltipGotoSource, iconTooltipInherited, iconTooltipStatic } from '../tooltips';
 import { Tooltip } from 'antd';
@@ -26,7 +26,7 @@ export interface ListItemProps {
 }
 
 @hot(module)
-export default class ListItem extends PureComponent<ListItemProps> {
+export default class ListItem extends Component<ListItemProps> {
     static displayName: string                  = 'ListItem';
     static defaultProps: Partial<ListItemProps> = {
         onClick          : () => null,
@@ -38,7 +38,7 @@ export default class ListItem extends PureComponent<ListItemProps> {
         const { innerRef, onClick, extras, className, style, children, selected } = this.props;
         let item                                                                  = this.props.item as PhpdocMethod;
         return (
-            <div key="list-item" ref={innerRef} className={classes('phpdoc-member-list-item', selected ? 'active' : null, className)} style={style}>
+            <li key="list-item" ref={innerRef} className={classes(selected ? 'active' : null, className)} style={style}>
                 <div
                     className="list-item-link"
                     onClick={() => {
@@ -49,7 +49,7 @@ export default class ListItem extends PureComponent<ListItemProps> {
                 </div>
                 {this.renderModifiers()}
                 {extras}
-            </div>
+            </li>
         );
     }
 

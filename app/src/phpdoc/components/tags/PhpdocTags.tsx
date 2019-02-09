@@ -1,12 +1,13 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
-import { CodeHighlight,getColor, hot, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
+import { CodeHighlight,getColor, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
 import { classes } from 'typestyle';
 
 import './tags.scss';
 import { Tags } from '../../logic';
 import { api } from '@codex/api';
 import { PhpdocType } from '../type';
+import { hot } from 'react-hot-loader';
 
 const log = require('debug')('components:PhpdocTags');
 
@@ -23,7 +24,7 @@ export interface PhpdocTagsProps {
     onlyTags?: string[]
 }
 
-export { PhpdocTags };
+
 @hot(module)
 @observer
 export default class PhpdocTags extends React.Component<PhpdocTagsProps> {

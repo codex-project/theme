@@ -11,7 +11,6 @@ import './ioc';
 import './init';
 import { app, lazyInject } from './ioc';
 import { containerModule } from './container-module';
-import Root from 'components/Root';
 
 app.load(containerModule);
 
@@ -41,6 +40,7 @@ export * from './utils/colors';
 export * from './utils/createObservableContext';
 // export * from './utils/event';
 export * from './utils/general';
+export * from './utils/getElementType';
 // export * from './utils/get-prism';
 export * from './utils/loadPolyfills';
 // export * from './utils/md5';
@@ -53,12 +53,3 @@ export * from './utils/scrollTo';
 export * from './utils/storage';
 
 export { app, lazyInject };
-
-//
-//
-// if(module.hot){
-//     module.hot.accept(['./components/Root'], updated => {
-//         console.log('module.hot.accept', {updated,Root})
-//         app.render(Root)
-//     })
-// }

@@ -1,31 +1,29 @@
-// import React, { ComponentType } from 'react';
-// import loadable from '@loadable/component';
-// import { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
-// import { loadStyling } from '../../loadStyling';
-// import { PhpdocMethodArgumentsProps } from './PhpdocMethodArguments';
-// import { PhpdocMethodProps } from './PhpdocMethod';
-//
-// const loader = () => Promise.all([
-//     import(
-//         /* webpackChunkName: "phpdoc.components.method" */
-//         // /* webpackPrefetch: true */
-//         './PhpdocMethod'
-//         ),
-//     loadStyling(),
-// ]).then(value => value[ 0 ]);
-// export type PhpdocMethodComponent = ComponentType<PhpdocMethodProps> & {
-//     Arguments?: ComponentType<PhpdocMethodArgumentsProps>
-//     Signature?: ComponentType<PhpdocMethodSignatureProps>
-// }
-//
-// export let PhpdocMethod: PhpdocMethodComponent = loadable(loader);
-//
-// export default PhpdocMethod;
-//
-// PhpdocMethod.Arguments = loadable(() => loader().then(m => m.PhpdocMethod.Arguments));
-// PhpdocMethod.Signature = loadable(() => loader().then(m => m.PhpdocMethod.Signature));
+import React, { ComponentType } from 'react';
+import loadable from '@loadable/component';
+import { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
+import { loadStyling } from '../../loadStyling';
+import { PhpdocMethodArgumentsProps } from './PhpdocMethodArguments';
+import { PhpdocMethodProps } from './PhpdocMethod';
+
+const loader = (name) => () => Promise.all([
+    import(
+        /* webpackChunkName: "phpdoc.components.method" */
+        `./${name}`
+        ),
+    loadStyling(),
+]).then(async value => value[ 0 ]);
 
 
-import {PhpdocMethod} from './PhpdocMethod'
-export {PhpdocMethod}
-export default PhpdocMethod
+export let PhpdocMethod: ComponentType<PhpdocMethodProps>                   = loadable(loader('PhpdocMethod'));
+export let PhpdocMethodSignature: ComponentType<PhpdocMethodSignatureProps> = loadable(loader('PhpdocMethodSignature'));
+export let PhpdocMethodArguments: ComponentType<PhpdocMethodArgumentsProps> = loadable(loader('PhpdocMethodArguments'));
+
+
+
+// export let PhpdocMethod: ComponentType<PhpdocMethodProps>                   = loadable(() => import('./PhpdocMethod'));
+// export let PhpdocMethodSignature: ComponentType<PhpdocMethodSignatureProps> = loadable(() => import('./PhpdocMethodSignature'));
+// export let PhpdocMethodArguments: ComponentType<PhpdocMethodArgumentsProps> = loadable(() => import('./PhpdocMethodArguments'));
+
+
+
+export default PhpdocMethod;

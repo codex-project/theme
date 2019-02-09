@@ -4,7 +4,8 @@ import { observer } from 'mobx-react';
 import { PopoverProps } from 'antd/es/popover';
 import { Popover } from 'antd';
 import './popover.scss'
-import { hot, Scrollbar } from '@codex/core';
+import { Scrollbar } from '@codex/core';
+import { hot } from 'react-hot-loader';
 
 const log = require('debug')('components:PhpdocPopover')
 

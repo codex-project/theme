@@ -41,8 +41,11 @@ export class PhpdocFile {
 
 
 export abstract class PhpdocBaseType<T extends any> {
+    toJS: () => T;
+
     constructor(data: T) {
         Object.assign(this, data);
+        this.toJS = () => data;
     }
 }
 
@@ -59,10 +62,10 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 }
                 item.arguments = new Arguments(...item.arguments.map(argument => {
                     if ( ! argument.type ) {
-                        argument.type  = 'mixed';
+                        argument.type = 'mixed';
                     }
                     if ( ! argument.types ) {
-                        argument.types  = argument.type.split('|')
+                        argument.types = argument.type.split('|');
                     }
                     return argument;
                 }));
@@ -125,13 +128,13 @@ export class PhpdocMethod extends PhpdocBaseType<api.PhpdocMethod> {
     arguments: Arguments;
     fqsen: FQSEN;
     original_fqsen: FQSEN;
-    type='method'
+    type = 'method';
 
-    constructor(data, parent:PhpdocBaseFile<any>) {
+    constructor(data, parent: PhpdocBaseFile<any>) {
         super(data);
         if ( data.full_name ) {
             this.original_fqsen = FQSEN.from(data.full_name);
-            this.fqsen = FQSEN.from(parent.fqsen.entityName, 'method', data.name);
+            this.fqsen          = FQSEN.from(parent.fqsen.entityName, 'method', data.name);
         }
     }
 }
@@ -143,12 +146,13 @@ export class PhpdocProperty extends PhpdocBaseType<api.PhpdocProperty> {
     docblock: PhpdocDocblock;
     fqsen: FQSEN;
     original_fqsen: FQSEN;
-    type='property'
-    constructor(data, parent:PhpdocBaseFile<any>) {
+    type = 'property';
+
+    constructor(data, parent: PhpdocBaseFile<any>) {
         super(data);
         if ( data.full_name ) {
             this.original_fqsen = FQSEN.from(data.full_name);
-            this.fqsen = FQSEN.from(parent.fqsen.entityName, 'property', data.name);
+            this.fqsen          = FQSEN.from(parent.fqsen.entityName, 'property', data.name);
         }
     }
 }
