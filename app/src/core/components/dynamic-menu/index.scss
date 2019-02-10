@@ -1,9 +1,9 @@
 @import "../../styling/base";
 
-$menu-prefix-cls: "#{$ant-prefix}-menu";
+$menu-prefix: c-menu;
+$ant-menu-prefix: "#{$ant-prefix}-menu";
 
-
-.c-dmenu {
+.#{$menu-prefix} {
     height: 100%;
 
     &-border-left,
@@ -33,11 +33,8 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
     }
 }
 
-.c-dmenu.ant-menu-horizontal {
 
-}
-
-.#{$menu-prefix-cls} {
+.#{$ant-menu-prefix} {
     &.ant-menu-horizontal > .ant-menu-item-divider {
         width: 1px;
         height: unset;
@@ -56,7 +53,7 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
         &-vertical,
         &-vertical-left,
         &-vertical-right {
-            > .#{$menu-prefix-cls}-submenu-title {
+            > .#{$menu-prefix}-submenu-title {
                 padding-right: 40px !important;
             }
         }

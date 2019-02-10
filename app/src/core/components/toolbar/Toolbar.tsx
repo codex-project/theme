@@ -8,11 +8,13 @@ import { classes } from 'typestyle';
 import { Tunnel, TunnelPlaceholder } from '../tunnel';
 import './toolbar.scss';
 import { strEnsureLeft } from 'utils/general';
+import { getClassNamer } from 'utils/getClassNamer';
 
 
 export type ToolbarSize = 'small' | 'default' | 'large';
 
 export interface ToolbarProps {
+    prefixCls?: string
     className?: string
     style?: React.CSSProperties
     size?: ToolbarSize
@@ -38,6 +40,7 @@ export class Toolbar extends React.Component<ToolbarProps> {
     static displayName                         = 'Toolbar';
     static defaultProps: Partial<ToolbarProps> = {
         size: 'default',
+        prefixCls: 'c-toolbar'
     };
     static Spacer: typeof Spacer               = Spacer;
     static Column: typeof Column               = Column;
@@ -46,12 +49,14 @@ export class Toolbar extends React.Component<ToolbarProps> {
     render() {
         let { children, className, style, size, left, right } = this.props;
 
+        const cls = getClassNamer(this);
+
         return (
             <Row
                 justify="space-between"
                 align="middle"
                 type="flex"
-                className={classes(prefixCls, classNames(size !== 'default' ? size === 'small' ? 'sm' : 'lg' : null), className)}
+                className={cls.root({ sm: size === 'small', lg: size === 'large' })()}
                 style={style}
             >
                 <Column>

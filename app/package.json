@@ -80,7 +80,8 @@
         "semantic-ui-react": "^0.83.0",
         "tapable": "^1.1.1",
         "typestyle": "^2.0.1",
-
+        "classnames": "^2.2.6",
+        "@types/classnames": "^2.2.6",
         "typestyled-components": "^1.0.0",
         "url-join": "^4.0.0"
     },

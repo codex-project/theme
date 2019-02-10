@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { classes } from 'typestyle';
 import { hot } from 'decorators';
 import { strEnsureLeft } from 'utils/general';
+import { api } from '@codex/api';
 
 const log = require('debug')('components:MenuItemIcon');
 

@@ -7,6 +7,8 @@ import { MenuType } from './MenuType';
 import { MenuManager } from './MenuManager';
 
 
+import './menus.scss'
+
 export interface MenuPluginOptions {
 }
 

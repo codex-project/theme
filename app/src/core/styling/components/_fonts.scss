@@ -22,49 +22,60 @@ $font-file-formats: eot woff2 ttf svg;
     font-style: normal;
 }
 
-@include font-face('Open Sans', $font-path + '/OpenSans/OpenSans-Regular', $font-file-formats){
-    font-weight: 400;
-    font-style: normal;
-}
-
-@include font-face('Raleway', $font-path + '/Raleway/Raleway-Regular', $font-file-formats){
-    font-weight: 400;
-    font-style: normal;
-}
-
 @include font-face('Hasklig', $font-path + '/Hasklig/Hasklig', eot woff ttf svg){
     font-weight: 400;
     font-style: normal;
 }
 
-@include font-face('Material Icons', $font-path + '/MaterialIcons/MaterialIcons-Regular', woff){
+
+
+@include font-face('Open Sans', $font-path + '/OpenSans/OpenSans-Light', $font-file-formats){
+    font-weight: 200;
+    font-style: normal;
+}
+@include font-face('Open Sans', $font-path + '/OpenSans/OpenSans-Regular', $font-file-formats){
     font-weight: 400;
     font-style: normal;
 }
 
-.material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
+
+
+@include font-face('Raleway', $font-path + '/Raleway/Raleway-Light', $font-file-formats){
+    font-weight: 200;
     font-style: normal;
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-    /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Support for IE. */
-    font-feature-settings: 'liga';
 }
+@include font-face('Raleway', $font-path + '/Raleway/Raleway-Regular', $font-file-formats){
+    font-weight: 400;
+    font-style: normal;
+}
+@include font-face('Raleway', $font-path + '/Raleway/Raleway-Bold', $font-file-formats){
+    font-weight: 700;
+    font-style: normal;
+}
+
+
+
+@include font-face('Roboto', $font-path + '/Roboto/Roboto-Thin', eot woff woff2 ttf){
+    font-weight: 100;
+    font-style: normal;
+}
+@include font-face('Roboto', $font-path + '/Roboto/Roboto-Light', eot woff woff2 ttf){
+    font-weight: 200;
+    font-style: normal;
+}
+@include font-face('Roboto', $font-path + '/Roboto/Roboto-Regular', eot woff woff2 ttf){
+    font-weight: 400;
+    font-style: normal;
+}
+@include font-face('Roboto', $font-path + '/Roboto/Roboto-Bold', eot woff woff2 ttf){
+    font-weight:  700;
+    font-style: normal;
+}
+
+
+
+
+
 
 
 pre, code { @include Monospace(!important) }

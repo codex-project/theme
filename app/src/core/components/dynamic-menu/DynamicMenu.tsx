@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Menu as AntdMenu } from 'antd';
 import { observer } from 'mobx-react';
 import { MenuProps as AntdMenuProps } from 'antd/es/menu';
-import { classes } from 'typestyle';
 import { ClickParam } from 'antd/lib/menu';
 import { transaction } from 'mobx';
 import { getColor } from 'utils/colors';
@@ -14,6 +13,7 @@ import { MenuItem } from '@codex/api';
 import { lazyInject } from 'ioc';
 
 import './index.scss';
+import { getClassNamer } from 'utils/getClassNamer';
 
 const log = require('debug')('components:DynamicMenu');
 
@@ -35,14 +35,14 @@ interface State {
 
 export type DynamicMenuProps = DynamicMenuBaseProps & AntdMenuProps
 
-export {DynamicMenu}
+export { DynamicMenu };
 
 @hot(module)
 @observer
 export default class DynamicMenu extends React.Component<DynamicMenuProps, State> {
     static displayName                                                        = 'DynamicMenu';
     static defaultProps: Partial<DynamicMenuBaseProps & AntdMenuProps>        = {
-        prefixCls          : 'c-dmenu',
+        prefixCls          : 'c-menu',
         mode               : 'horizontal',
         multiroot          : false,
         multiple           : false,
@@ -102,18 +102,15 @@ export default class DynamicMenu extends React.Component<DynamicMenuProps, State
 
     renderMenuItem(item: MenuItem, level?: number) {
         const { color, mode, items } = this.props;
-        const className              = `item-${item.type}`;
+        const cls                    = getClassNamer(this);
+        const className              = cls([ 'item', `item-${item.type}`, `renderer-${item.renderer}` ], [ item.class ]);
 
         let inner    = this.manager.renderInner(item, this);
         let rendered = this.manager.render(inner, item, this);
         if ( rendered ) {
-            rendered = React.cloneElement(rendered, { className });
             rendered = this.manager.rendered(rendered, item, this);
         }
-
-        // let r = React.cloneElement(rendered, { className: item.class });
-        // return r;
-        return React.cloneElement(rendered, { className: item.class });
+        return React.cloneElement(rendered, { ...rendered.props, className });
     }
 
     render() {
@@ -121,15 +118,14 @@ export default class DynamicMenu extends React.Component<DynamicMenuProps, State
         if ( typeof items.selected !== 'function' ) {
             return null;
         }
-        const menuClassName = classes(className, prefixCls,
-            `${prefixCls}-${mode}`,
-            `${prefixCls}-theme-${mode}`,
-        );
+        const cls = getClassNamer(this);
         return (
             <AntdMenu
                 mode={mode}
-                className={menuClassName}
+                className={cls.root(mode, 'theme-' + mode)()}
                 subMenuCloseDelay={0.6}
+
+
                 style={{ backgroundColor: getColor(color) }}
                 selectedKeys={items.selected().ids()}
                 openKeys={items.expanded().ids()}

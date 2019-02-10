@@ -9,7 +9,7 @@
  */
 import React from 'react';
 
-export  function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ReactType): React.ReactType<T> {
+export function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ReactType): React.ReactType<T> {
     const { defaultProps = {} } = Component;
 
     if ( props.as && props.as !== defaultProps.as ) {
@@ -21,8 +21,8 @@ export  function getElementType<T extends any>(Component: React.ComponentType<T>
         if ( computedDefault ) return computedDefault as any;
     }
 
-    if(defaultProps.as){
-        return defaultProps.as
+    if ( defaultProps.as ) {
+        return defaultProps.as;
     }
 
     if ( props.href ) {
@@ -31,5 +31,3 @@ export  function getElementType<T extends any>(Component: React.ComponentType<T>
 
     return 'div' as any;
 }
-
-

@@ -21,7 +21,7 @@ export class HeaderMenuRenderer extends MenuType {
     public render(inner,item: MenuItem) {
         let label = item.label;
         return (
-            <Item key={item.id}><MenuItemIcon item={item}/><span>{item.label}</span></Item>
+            <Item key={item.id} level={0}><MenuItemIcon item={item} /><span>{item.label}</span></Item>
         );
     }
 
