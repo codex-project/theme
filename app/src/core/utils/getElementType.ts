@@ -12,28 +12,24 @@ import React from 'react';
 export  function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ReactType): React.ReactType<T> {
     const { defaultProps = {} } = Component;
 
-    // ----------------------------------------
-    // user defined "as" element type
-
-    if ( props.as && props.as !== defaultProps.as ) return props.as;
-
-    // ----------------------------------------
-    // computed default element type
+    if ( props.as && props.as !== defaultProps.as ) {
+        return props.as;
+    }
 
     if ( getDefault ) {
         const computedDefault = getDefault();
         if ( computedDefault ) return computedDefault as any;
     }
 
-    // ----------------------------------------
-    // infer anchor links
+    if(defaultProps.as){
+        return defaultProps.as
+    }
 
-    if ( props.href ) return 'a' as any;
+    if ( props.href ) {
+        return 'a' as any;
+    }
 
-    // ----------------------------------------
-    // use defaultProp or 'div'
-
-    return defaultProps.as || 'div';
+    return 'div' as any;
 }
 
 

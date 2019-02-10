@@ -32,7 +32,7 @@ const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
-const minimize          = isProd;
+const minimize          = true; //isProd;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -103,13 +103,14 @@ export function addTsToRule(chain: Chain, ruleName: string, options: Partial<Typ
         } as any);
 }
 
+let assetLoader = isDev ? 'file-loader' : 'file-loader'
 export function addAssetsLoaderForEntry(chain: Chain, name: string, path: string) {
     let assetPath = _assetPath.replace('[entrypoint]', name);
     chain.module.rule('fonts-' + name)
         .test(/\.*\.(woff2?|woff|eot|ttf|otf)(\?.*)?$/)
         .include.add(path).end()
-        .use('file-loader')
-        .loader('file-loader')
+        .use(assetLoader)
+        .loader(assetLoader)
         .options({
             name      : '[name].[ext]',
             // publicPath: '/' + assetPath + '/fonts/',
@@ -118,8 +119,8 @@ export function addAssetsLoaderForEntry(chain: Chain, name: string, path: string
     chain.module.rule('images-' + name)
         .test(/\.*\.(png|jpe?g|gif|svg)(\?.*)?$/)
         .include.add(path).end()
-        .use('file-loader')
-        .loader('file-loader')
+        .use(assetLoader)
+        .loader(assetLoader)
         .options({
             name      : '[name].[ext]',
             // publicPath: '/' + assetPath + '/img/',
@@ -318,7 +319,6 @@ chain.when(isDev, chain => {
     chain.set('optimization', <webpack.Configuration['optimization']>{
         namedModules: true,
         namedChunks : true,
-        runtimeChunk: 'single',
         splitChunks : {
             name: true,
         },
@@ -449,8 +449,8 @@ addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.ts');
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
 addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
-addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
-addPluginEntry(chain, 'auth', chain.srcPath('auth'), 'index.tsx');
+// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
+// addPluginEntry(chain, 'auth', chain.srcPath('auth'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
 chain.resolve.alias.merge({
     'heading'            : chain.srcPath('core/styling/heading.less'),

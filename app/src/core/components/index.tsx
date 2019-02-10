@@ -10,7 +10,7 @@ export * from './layout';
 export * from './link';
 export * from './loading';
 export * from './observables';
-export * from './off-canvas';
+// export * from './off-canvas';
 export * from './responsive';
 export * from './scrollbar';
 export * from './spin';

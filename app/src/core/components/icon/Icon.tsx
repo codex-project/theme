@@ -4,10 +4,12 @@ import { classes } from 'typestyle';
 import { FontAwesomeIcon } from 'interfaces';
 import { hot } from 'decorators';
 import { strEnsureLeft } from 'utils/general';
+import { getElementType } from 'utils/getElementType';
 
 const log = require('debug')('components:Icon');
 
 export interface IconProps extends React.HTMLAttributes<HTMLElement> {
+    as?:React.ReactType
     name: FontAwesomeIcon
     style?: React.CSSProperties
     className?: string
@@ -28,7 +30,9 @@ interface State {}
 @hot(module)
 export class Icon extends React.PureComponent<IconProps, State> {
     static displayName                      = 'Icon';
-    static defaultProps: Partial<IconProps> = {};
+    static defaultProps: Partial<IconProps> = {
+        as:'i'
+    };
 
     render() {
         let {
@@ -56,7 +60,9 @@ export class Icon extends React.PureComponent<IconProps, State> {
             rotate && 'fa-rotate-' + rotate.toString(),
         ].filter(Boolean);
 
-        return <i className={classes(...classNames)} style={{ fontSize, ...style }} {...props} />;
+        const ElementType = getElementType(Icon, this.props);
+
+        return <ElementType className={classes(...classNames)} style={{ fontSize, ...style }} {...props} />;
     }
 
 }

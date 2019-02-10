@@ -5,12 +5,12 @@ import * as types from './logic/types';
 import { Application, BasePlugin, Bind, HtmlComponents, IsBound, MenuPlugin, Rebind, RouterPlugin, Unbind } from '@codex/core';
 import React from 'react';
 import { PhpdocStore } from './logic';
-import { PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMethod, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
+import {PhpdocMemberList, PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMethod, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
 import { PhpdocMenuType } from './PhpdocMenuType';
 import PhpdocTestPage from './PhpdocTestPage';
-import { PhpdocFileProvider } from './components/providers';
 import PhpdocMosaicTestPage from './PhpdocMosaicTestPage';
 import { ManifestProvider } from './components/base';
+import { PhpdocMethodArguments, PhpdocMethodSignature } from './components/method';
 
 export * from './components';
 export * from './logic/FQSEN';
@@ -38,15 +38,15 @@ export default class PhpdocPlugin extends BasePlugin {
                 'phpdoc-docblock'         : PhpdocDocblock,
                 'phpdoc-entity'           : PhpdocEntity,
                 'phpdoc-link'             : PhpdocLink,
+                'phpdoc-member-list'           : PhpdocMemberList,
                 'phpdoc-method'           : PhpdocMethod,
-                'phpdoc-method-arguments' : PhpdocMethod.Arguments,
-                'phpdoc-method-signature' : PhpdocMethod.Signature,
+                'phpdoc-method-arguments' : PhpdocMethodArguments,
+                'phpdoc-method-signature' : PhpdocMethodSignature,
                 'phpdoc-popover'          : PhpdocPopover,
                 'phpdoc-tags'             : PhpdocTags,
                 'phpdoc-tree'             : PhpdocTree,
                 'phpdoc-type'             : PhpdocType,
                 'phpdoc-manifest-provider': ManifestProvider,
-                'phpdoc-file-provider'    : PhpdocFileProvider,
                 // 'phpdoc-content'         : PhpdocContent,
                 // 'phpdoc-method-component': PhpdocMethodComponent,
                 // 'phpdoc-file-component'  : PhpdocFileComponent,

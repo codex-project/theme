@@ -6,11 +6,13 @@ import { hot } from 'decorators';
 import { lazyInject } from 'ioc';
 import { classes } from 'typestyle';
 import { strEnsureLeft } from 'utils/general';
+import { getElementType } from 'utils/getElementType';
 
 
 const log = require('debug')('components:TOC');
 
 export interface TOCListItemProps {
+    as?:React.ReactType
     href: string
     title: string
     className?: string
@@ -26,7 +28,9 @@ export type TOCListItemComponent = React.ComponentType<TOCListItemProps>
 @observer
 export class TOCListItem extends Component<TOCListItemProps> {
     static displayName: string                     = 'TOCListItem';
-    static defaultProps: Partial<TOCListItemProps> = {};
+    static defaultProps: Partial<TOCListItemProps> = {
+        as:'li'
+    };
 
     @lazyInject('history') protected history: History;
 
@@ -38,14 +42,14 @@ export class TOCListItem extends Component<TOCListItemProps> {
 
     render() {
         const { className, style, children, href, title } = this.props;
-
+        const ElementType = getElementType(TOCListItem, this.props);
         return (
-            <li style={style} className={classes('c-toc-list-item', className)}>
+            <ElementType style={style} className={classes('c-toc-list-item', className)}>
                 <a href={strEnsureLeft(href, '#')} onClick={this.onClick}>
                     <span className="title">{title}</span>
                 </a>
                 {children || null}
-            </li>
+            </ElementType>
         );
     }
 

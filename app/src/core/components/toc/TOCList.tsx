@@ -3,11 +3,13 @@ import { observer } from 'mobx-react';
 
 import { hot } from 'decorators';
 import { classes } from 'typestyle';
+import { getElementType } from 'utils/getElementType';
 
 
 const log = require('debug')('components:TOC');
 
 export interface TOCListProps {
+    as?: React.ReactType
     className?: string
     style?: React.CSSProperties
 }
@@ -22,15 +24,18 @@ export type TOCListComponent = React.ComponentType<TOCListProps>
 @observer
 export class TOCList extends Component<TOCListProps> {
     static displayName: string                 = 'TOCList';
-    static defaultProps: Partial<TOCListProps> = {};
+    static defaultProps: Partial<TOCListProps> = {
+        as: 'ul',
+    };
 
     render() {
         const { className, style, children } = this.props;
 
+        const ElementType = getElementType(TOCList, this.props);
         return (
-            <ul style={style} className={classes('c-toc-list', className)}>
+            <ElementType style={style} className={classes('c-toc-list', className)}>
                 {children}
-            </ul>
+            </ElementType>
         );
     }
 
