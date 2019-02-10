@@ -2,7 +2,7 @@ export * from './affix';
 export * from './button';
 export * from './centered';
 export * from './code-highlight';
-export * from './documents';
+// export * from './documents';
 export * from './dynamic-menu';
 export * from './errors';
 export * from './icon';

@@ -2,6 +2,7 @@ import { mixin, utils } from '@radic/build-tools';
 import { gulp, Gulpclass, GulpEnvMixin, Task } from '@radic/build-tools-gulp';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
+import serve,{Options as ServeOptions} from 'webpack-serve';
 import { Chain } from './build/chain';
 import { relative } from 'path';
 import { getFileSizeInfo } from '@radic/build-tools/dist/utils';
@@ -78,7 +79,27 @@ class Gulpfile {
         addAnalyzerPlugins(chain);
         return this.watch(chain);
     }
+    protected async serve4(chain: Chain, host: string = 'localhost', port: number = 8513) {
+        port      = await utils.choosePort(host, port);
+        const url = `http://${host}:${port}`;
+        chain.data.merge({ host, port, url });
 
+        chain.output.publicPath(url + '/');
+
+        let config             = chain.toConfig();
+        config.serve = {
+            config,
+            devMiddleware: {
+                publicPath: chain.output.get('publicPath'),
+                headers: {                    'Access-Control-Allow-Origin': '*'                },
+                writeToDisk:true
+            },
+            hotClient: {
+
+            }
+        }
+
+    }
     protected async serve(chain: Chain, host: string = 'localhost', port: number = 8513) {
         port      = await utils.choosePort(host, port);
         const url = `http://${host}:${port}`;
@@ -135,10 +156,12 @@ class Gulpfile {
                 },
             },
         };
+        config.devServer['writeToDisk']=true;
         WebpackDevServer.addDevServerEntrypoints(config, config.devServer);
         config         = smp.wrap(config) as any;
         const compiler = webpack(config);
         const server   = new WebpackDevServer(compiler, config.devServer);
+
 
         return new Promise((res, rej) => {
             const app = server.listen(port, host, (err: Error) => {

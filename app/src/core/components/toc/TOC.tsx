@@ -28,7 +28,6 @@ export class TOC extends Component<TOCProps> {
     static defaultProps: Partial<TOCProps> = {
         type: 'drawer',
     };
-
     state = { visible: false };
 
     setVisible = (visible: boolean = true) => {this.setState({ visible }); };
