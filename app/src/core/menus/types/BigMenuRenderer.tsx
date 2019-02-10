@@ -21,7 +21,7 @@ export class BigMenuRenderer extends MenuType {
     public renderInner(item: MenuItem) {
         const { icon, sublabel, label } = item;
         return (
-            <Row type="flex" justify="start" key={getRandomId(6)}>
+            <Row type="flex" justify="start" key={getRandomId(6)} className="inner">
                 {icon ? <Col order={1} className="icon-col"> <MenuItemIcon className="icon" item={item}/> </Col> : null}
                 <Col order={2} className="label-col">
                     <Row className="label">{label}</Row>

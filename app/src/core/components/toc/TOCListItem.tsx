@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-
 import {scrollTo} from 'utils/scrollTo'
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 import { lazyInject } from 'ioc';
 import { classes } from 'typestyle';
 import { strEnsureLeft } from 'utils/general';
 import { getElementType } from 'utils/getElementType';
-
+import './toc.scss'
 
 const log = require('debug')('components:TOC');
 
@@ -21,12 +20,9 @@ export interface TOCListItemProps {
 
 export type TOCListItemComponent = React.ComponentType<TOCListItemProps>
 
-/**
- * TOC component
- */
 @hot(module)
 @observer
-export class TOCListItem extends Component<TOCListItemProps> {
+export default class TOCListItem extends Component<TOCListItemProps> {
     static displayName: string                     = 'TOCListItem';
     static defaultProps: Partial<TOCListItemProps> = {
         as:'li'

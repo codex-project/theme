@@ -1,40 +1,13 @@
 import React from 'react';
-import { componentLoader } from 'utils/componentLoader'
+import loadable from '@loadable/component';
+import { TOCProps } from './TOC';
+import { TOCListProps } from './TOCList';
+import { TOCListItemProps } from './TOCListItem';
+import { TOCHeaderProps } from './TOCHeader';
 
 
-export const TOC = componentLoader(
-    {
-        Component: async () => (await import(/* webpackChunkName: "core.components.toc" */'./TOC')).TOC,
-        style    : async () => await import(/* webpackChunkName: "core.components.toc" */'./toc.scss'),
-    },
-    ({ Component }, props: any) => <Component {...props} />,
-    { delay: 1000 },
-);
-
-export const TOCList = componentLoader(
-    {
-        Component: async () => (await import(/* webpackChunkName: "core.components.toc" */'./TOCList')).TOCList,
-        style    : async () => await import(/* webpackChunkName: "core.components.toc" */'./toc.scss'),
-    },
-    ({ Component }, props: any) => <Component {...props} />,
-    { delay: 1000 },
-);
-
-export const TOCListItem = componentLoader(
-    {
-        Component: async () => (await import(/* webpackChunkName: "core.components.toc" */'./TOCListItem')).TOCListItem,
-        style    : async () => await import(/* webpackChunkName: "core.components.toc" */'./toc.scss'),
-    },
-    ({ Component }, props: any) => <Component {...props} />,
-    { delay: 1000 },
-);
-
-export const TOCHeader = componentLoader(
-    {
-        Component: async () => (await import(/* webpackChunkName: "core.components.toc" */'./TOCHeader')).TOCHeader,
-        style    : async () => await import(/* webpackChunkName: "core.components.toc" */'./toc.scss'),
-    },
-    ({ Component }, props: any) => <Component {...props} />,
-    { delay: 1000 },
-);
+export const TOC: React.ComponentType<TOCProps>                 = loadable(() => import(/* webpackChunkName: "core.components.toc" */'./TOC'));
+export const TOCList: React.ComponentType<TOCListProps>         = loadable(() => import(/* webpackChunkName: "core.components.toc" */'./TOCList'));
+export const TOCListItem: React.ComponentType<TOCListItemProps> = loadable(() => import(/* webpackChunkName: "core.components.toc" */'./TOCListItem'));
+export const TOCHeader: React.ComponentType<TOCHeaderProps>     = loadable(() => import(/* webpackChunkName: "core.components.toc" */'./TOCHeader'));
 

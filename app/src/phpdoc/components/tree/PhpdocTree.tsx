@@ -9,8 +9,7 @@ import InspireTree from 'inspire-tree';
 import { findDOMNode } from 'react-dom';
 import { debounce } from 'lodash-decorators';
 import { ITreeNode } from './interfaces';
-import {  Scrollbar, ucfirst } from '@codex/core';
-import { Scrollbar as ScrollbarClass } from '@codex/core/components/scrollbar/Scrollbar';
+import { Scrollbar, ucfirst } from '@codex/core';
 import { TreeBuilder } from './TreeBuilder';
 import { hot } from 'react-hot-loader';
 
@@ -38,7 +37,7 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
 
 
     private search: typeof Search;
-    private scrollbar: ScrollbarClass = React.createRef() as any;
+    private scrollbar: any = React.createRef() as any;
 
     get tree(): InspireTree {
         if ( this.props.tree ) {

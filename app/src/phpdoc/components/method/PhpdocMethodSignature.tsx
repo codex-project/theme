@@ -1,16 +1,18 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import './method-signature.scss';
-import { PhpdocMethod } from '../../logic';
+import { IFQSEN, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type';
 import { classes } from 'typestyle';
-import { PhpdocFileProviderProps } from '../providers';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 import { hot } from 'react-hot-loader';
+import { iconTooltipDeprecated, iconTooltipInherited } from '../tooltips';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
-export interface PhpdocMethodSignatureProps extends PhpdocFileProviderProps {
+export interface PhpdocMethodSignatureProps {
+    fqsen: IFQSEN
+
     style?: React.CSSProperties
     className?: string;
     prefixCls?: string
@@ -94,8 +96,8 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
 
         return (
             <Fragment>
-                {/*{! hide.deprecated && method.docblock.tags.has('deprecated') ? <a className="mr-md fs-15">{iconTooltipDeprecated(method)}</a> : null}*/}
-                {/*{! hide.inherited && method.inherited_from ? iconTooltipInherited(method, {}, { onClick: this.onInheritedClick }) : null}*/}
+                {! hide.deprecated && method.docblock.tags.has('deprecated') ? <a className="mr-md fs-15">{iconTooltipDeprecated(method)}</a> : null}
+                {! hide.inherited && method.inherited_from ? iconTooltipInherited(method, {}, { onClick: this.onInheritedClick }) : null}
                 {! hide.inherited && method.inherited_from ? ' ' : null}
 
                 {! hide.modifiers && method.static ? <span className="phpdoc-method-signature-modifier phpdoc-modifier-static">static </span> : null}

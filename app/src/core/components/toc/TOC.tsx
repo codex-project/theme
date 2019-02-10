@@ -1,11 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { Observer, observer } from 'mobx-react';
-
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 import { Drawer, Popover } from 'antd';
 import { Toolbar } from '../toolbar';
 import { Button } from '../button';
-
+import './toc.scss'
 
 const log = require('debug')('components:TOC');
 
@@ -18,20 +17,24 @@ export interface TOCProps {
 export type TOCComponent = React.ComponentType<TOCProps>
 
 
+
 /**
  * TOC component
  */
 @hot(module)
 @observer
-export class TOC extends Component<TOCProps> {
+export default class TOC extends Component<TOCProps> {
     static displayName: string             = 'TOC';
     static defaultProps: Partial<TOCProps> = {
         type: 'drawer',
     };
     state = { visible: false };
+ 
 
     setVisible = (visible: boolean = true) => {this.setState({ visible }); };
     showDrawer = () => { this.setVisible(true);};
+
+    
     hideDrawer = () => { this.setVisible(false);};
 
     render() {

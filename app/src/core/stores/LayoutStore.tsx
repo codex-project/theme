@@ -17,7 +17,7 @@ const colorKeys = Object.keys(colors);
 @injectable()
 export class LayoutStore {
 
-    // @lazyInject('menumanager') manager: MenuManager;
+    // @lazyInject('menumanager') manager: MenuManaer;
 
     public container: IStoreProxy<LayoutStoreContainer>;
     public left: IStoreProxy<LayoutStoreSide>;
@@ -207,7 +207,7 @@ export class LayoutStore {
         });
 
         // CookieStorage.has('layout.left.collapsed') && this.left.setCollapsed(parseBool(CookieStorage.get('layout.left.collapsed')));
-        // CookieStorage.has('layout.right.collapsed') && this.right.setCollapsed(parseBool(CookieStorage.get('layout.right.collapsed')));
+        // CookieStorage.has('layout.right.collapsed') && this.right.setCollapsed(parseBool(CookieStorage.get('layout.right.collapsed'))); 
     }
 
     toJS() {

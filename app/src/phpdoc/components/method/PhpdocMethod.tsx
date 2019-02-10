@@ -5,17 +5,17 @@ import PhpdocMethodArguments from './PhpdocMethodArguments';
 import { CodeHighlight, HtmlComponents, lazyInject } from '@codex/core';
 import { PhpdocTag } from '@codex/api';
 import { classes } from 'typestyle';
-import { PhpdocMethod as Method } from '../../logic';
+import { IFQSEN, PhpdocMethod as Method } from '../../logic';
 import PhpdocTags from '../tags';
 import PhpdocType from '../type';
 import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
-import { PhpdocFileProviderProps } from '../providers';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 import { hot } from 'react-hot-loader';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
-export interface PhpdocMethodBaseProps {
+export interface PhpdocMethodProps {
+    fqsen: IFQSEN
     style?: React.CSSProperties
     className?: string;
     withoutTags?: string[]
@@ -47,9 +47,6 @@ export interface PhpdocMethodBaseProps {
     }
 }
 
-export interface PhpdocMethodProps extends PhpdocMethodBaseProps, PhpdocFileProviderProps {
-
-}
 
 let renders   = 0;
 const hasData = (what) => what !== undefined && what.length > 0;

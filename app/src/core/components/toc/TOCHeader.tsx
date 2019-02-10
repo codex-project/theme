@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-
 import { classes } from 'typestyle';
-
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 import { strEnsureLeft } from 'utils/general';
+import './toc.scss'
 
 const log = require('debug')('components:TOC');
 
@@ -19,12 +18,9 @@ export interface TOCHeaderProps {
 
 export type TOCHeaderComponent = React.ComponentType<TOCHeaderProps>
 
-/**
- * TOC component
- */
 @hot(module)
 @observer
-export class TOCHeader extends Component<TOCHeaderProps> {
+export default class TOCHeader extends Component<TOCHeaderProps> {
     static displayName: string                   = 'TOCHeader';
     static defaultProps: Partial<TOCHeaderProps> = {
         linkClassName: 'c-toc-header-link',

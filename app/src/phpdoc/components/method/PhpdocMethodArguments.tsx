@@ -3,16 +3,16 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import './method.scss';
 import { strEnsureLeft } from '@codex/core';
-import { Arguments, FQSEN, PhpdocMethod as Method } from '../../logic';
+import { Arguments, IFQSEN, PhpdocMethod as Method } from '../../logic';
 import { PhpdocArgument } from '@codex/api';
 import PhpdocType from '../type';
 import { classes } from 'typestyle';
-import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile } from '../providers';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
-export interface PhpdocMethodArgumentsProps extends PhpdocFileProviderProps {
+export interface PhpdocMethodArgumentsProps {
+    fqsen: IFQSEN
     style?: React.CSSProperties
     className?: string;
     prefixCls?: string

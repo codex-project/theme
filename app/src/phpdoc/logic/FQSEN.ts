@@ -4,6 +4,7 @@ import { isBoolean, isString, isUndefined, last } from 'lodash';
 const log = require('debug')('phpdoc:logic:FQNS');
 
 export type FQNSMemberType = null | 'property' | 'method' | 'constant';
+export type IFQSEN = string|FQSEN;
 
 export class FQSEN {
     name: string;

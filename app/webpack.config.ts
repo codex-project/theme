@@ -1,24 +1,23 @@
 import { isAbsolute, join, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import webpack, { RuleSetRule } from 'webpack';
+import webpack, { DevtoolModuleFilenameTemplateInfo, RuleSetRule } from 'webpack';
 import FriendlyErrorsPlugin, { Options as FriendlyErrorsOptions } from 'friendly-errors-webpack-plugin';
 import BarPlugin, { Options as BarOptions } from 'webpackbar';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
-import WriteFilePlugin from 'write-file-webpack-plugin';
 import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CopyPlugin from 'copy-webpack-plugin';
 import HtmlPlugin from 'html-webpack-plugin';
 import { BabelLoaderOptions, Chain } from './build/chain';
 import AntdScssThemePlugin from './build/antd-scss-theme-plugin';
-// import AntdScssThemePlugin from 'antd-scss-theme-plugin';
 import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
 import WebappPlugin from 'webapp-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import TemplatedPathPlugin from './build/TemplatedPathPlugin';
+
 
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
@@ -217,10 +216,10 @@ chain.plugin('copy').use(CopyPlugin, [ [
 
 ].filter(Boolean) ]);
 chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
-    filename: 'index.html',
-    template: resolve(__dirname, 'index.html'),
-    inject  : 'head',
-
+    filename          : 'index.html',
+    template          : resolve(__dirname, 'index.html'),
+    inject            : 'head',
+    chunksSortMode    : 'dependency',
     templateParameters: {
         DEV : isDev,
         PROD: isProd,
@@ -234,7 +233,6 @@ chain.plugin('favicon').use(WebappPlugin, [ {
     prefix: isDev ? 'vendor/img' : 'vendor/codex_core/img',
     inject: true,
 } ]).after('html');
-
 chain.when(isProd, chain => {
     chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
         filename     : assetPath('css/[name].css?[hash]'),
@@ -279,41 +277,41 @@ chain.onToConfig(config => {
         ].filter(Boolean),
     }, {
         oneOf: [
-        //     {
-        //     test: path => {
-        //         if ( path.endsWith('antd/theme.scss') || path.endsWith('antd/mixins.scss') || path.endsWith('antd/_button-mixins.scss') ) {
-        //             return true;
-        //         }
-        //         if ( path.endsWith('_base.scss') ) {
-        //             return true;
-        //         }
-        //         return false;
-        //     },
-        //     use : [
-        //         isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-        //         { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
-        //         isProd && postCssLoader,
-        //         antdScssLoader,
-        //     ].filter(Boolean),
-        // },
+            //     {
+            //     test: path => {
+            //         if ( path.endsWith('antd/theme.scss') || path.endsWith('antd/mixins.scss') || path.endsWith('antd/_button-mixins.scss') ) {
+            //             return true;
+            //         }
+            //         if ( path.endsWith('_base.scss') ) {
+            //             return true;
+            //         }
+            //         return false;
+            //     },
+            //     use : [
+            //         isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+            //         { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
+            //         isProd && postCssLoader,
+            //         antdScssLoader,
+            //     ].filter(Boolean),
+            // },
             {
-            test: /\.(module\.scss|mscss)$/,
-            use : [
-                isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-                { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: false, modules: true, localIdentName: '[name]__[local]' } },
-                isProd && postCssLoader,
-                antdScssLoader,
-            ].filter(Boolean),
-        }, {
-            test   : /\.scss$/,
-            exclude: [ /\.module\.scss$/, /\.mscss$/ ],
-            use    : [
-                isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-                { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
-                isProd && postCssLoader,
-                antdScssLoader,
-            ].filter(Boolean),
-        } ],
+                test: /\.(module\.scss|mscss)$/,
+                use : [
+                    isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+                    { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: false, modules: true, localIdentName: '[name]__[local]' } },
+                    isProd && postCssLoader,
+                    antdScssLoader,
+                ].filter(Boolean),
+            }, {
+                test   : /\.scss$/,
+                exclude: [ /\.module\.scss$/, /\.mscss$/ ],
+                use    : [
+                    isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
+                    { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
+                    isProd && postCssLoader,
+                    antdScssLoader,
+                ].filter(Boolean),
+            } ],
     }, {
         test: /\.less$/,
         use : [
@@ -394,7 +392,7 @@ chain.when(isDev, chain => {
 chain
     .target('web')
     .cache(cache)
-    .devtool(isDev ? 'cheap-module-source-map' : false)
+    .devtool(isDev ? 'cheap-module-source-map' : false as any)
 ;
 chain.output
     .path(chain.outPath())
@@ -402,8 +400,14 @@ chain.output
     .publicPath('/')
     .library([ 'codex', '[name]' ] as any)
     .libraryTarget('window')
-    .filename(assetPath('js/[name].js'))
-    .chunkFilename(assetPath('js/chunk.[name].js'));
+    .filename(assetPath('js/[name].js?[hash]'))
+    .chunkFilename(assetPath('js/chunk.[name].js?[hash]'))
+    .sourceMapFilename('[file].map?[contenthash]')
+    .devtoolModuleFilenameTemplate((info: DevtoolModuleFilenameTemplateInfo) => {
+        // return 'file://' + resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
+        return resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
+    })
+;
 chain.resolve
     .symlinks(true)
     .extensions.merge([ '.js', '.vue', '.json', '.web.ts', '.ts', '.web.tsx', '.tsx', '.styl', '.less', '.scss', '.stylus', '.css', '.mjs', '.web.js', '.json', '.web.jsx', '.jsx' ]).end()
@@ -429,6 +433,8 @@ chain.node.merge({
     net          : 'empty',
     tls          : 'empty',
     child_process: 'empty',
+    module       : 'empty',
+    dns          : 'mock',
 });
 chain.performance
     .hints(false)
@@ -446,10 +452,11 @@ addBabelToRule(chain, 'js', {
     customize: require.resolve('babel-preset-react-app/webpack-overrides'),
 });
 addBabelToRule(chain, 'vendor-js', {
-    presets: [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
-    plugins: [
+    presets   : [ [ require.resolve('babel-preset-react-app/dependencies'), { helpers: true } ] ],
+    plugins   : [
         ...babelImportPlugins,
     ],
+    sourceMaps: false,
 });
 addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'api', packagesPath('api/src'), 'index.ts');

@@ -1,9 +1,8 @@
 import React, { HTMLAttributes } from 'react';
 import { Col, Input, Popover, Row, Tabs, Tooltip } from 'antd';
-import { PhpdocType } from './';
+import { PhpdocType } from './type';
 import { TooltipProps } from 'antd/es/tooltip';
 import { PopoverProps } from 'antd/es/popover';
-import { PhpdocMethod, PhpdocProperty } from '../logic';
 import { Member } from './member-list/list';
 
 const TabPane = Tabs.TabPane;

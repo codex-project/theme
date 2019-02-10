@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 import { classes } from 'typestyle';
 import { getElementType } from 'utils/getElementType';
-
+import './toc.scss'
 
 const log = require('debug')('components:TOC');
 
@@ -17,12 +16,10 @@ export interface TOCListProps {
 export type TOCListComponent = React.ComponentType<TOCListProps>
 
 
-/**
- * TOC component
- */
+
 @hot(module)
 @observer
-export class TOCList extends Component<TOCListProps> {
+export default class TOCList extends Component<TOCListProps> {
     static displayName: string                 = 'TOCList';
     static defaultProps: Partial<TOCListProps> = {
         as: 'ul',

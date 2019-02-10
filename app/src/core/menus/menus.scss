@@ -18,6 +18,9 @@ $ant-menu-prefix: "#{$ant-prefix}-menu";
 
     .#{$menu-prefix}-renderer {
         &-big {
+            .inner {
+                margin-bottom: 8px;
+            }
 
             .icon-col {
                 width: 50px
