@@ -460,9 +460,8 @@ addBabelToRule(chain, 'vendor-js', {
 });
 addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'api', packagesPath('api/src'), 'index.ts');
-// addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.ts');
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
-addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
+// addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
 addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
 addPluginEntry(chain, 'auth', chain.srcPath('auth'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();

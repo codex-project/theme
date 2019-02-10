@@ -6,6 +6,7 @@ import { PhpdocMemberListProps } from './PhpdocMemberList';
 const loader = () => Promise.all([
     import(
         /* webpackChunkName: "phpdoc.components.member-list" */
+        /* webpackPrefetch: true */
         './PhpdocMemberList'
         ),
     loadStyling(),

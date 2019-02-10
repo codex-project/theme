@@ -6,7 +6,7 @@ import { loadStyling } from '../../loadStyling';
 const loader = () => Promise.all([
     import(
         /* webpackChunkName: "phpdoc.components.link" */
-        // /* webpackPrefetch: true */
+        /* webpackPrefetch: true */
         './PhpdocLink'
         ),
     loadStyling(),

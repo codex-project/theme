@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { app, HtmlComponents, lazyInject, RouteState, Store } from '@codex/core';
 import { Api } from '@codex/api';
 import PropTypes from 'prop-types';
 import { BrowserRouter, RouteComponentProps } from 'react-router-dom';
@@ -7,6 +6,10 @@ import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
 import posed from 'react-pose';
 import { toJS } from 'mobx';
+import { RouteState } from 'router';
+import { app, lazyInject } from 'ioc';
+import { HtmlComponents } from 'classes/HtmlComponents';
+import { Store } from 'stores';
 
 const log = require('debug')('pages:DocumentPage');
 

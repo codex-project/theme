@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
-import { observer } from 'mobx-react';
 import './method-signature.scss';
-import { IFQSEN, PhpdocMethod } from '../../logic';
+import { IFQSEN, PhpdocMethod as Method, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type';
 import { classes } from 'typestyle';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
@@ -37,10 +36,9 @@ export interface PhpdocMethodSignatureProps {
     }
 }
 
-@hot(module)
+// @hot(module)
 @FQNSComponent()
-@observer
-export default class PhpdocMethodSignature extends React.Component<PhpdocMethodSignatureProps> {
+export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMethodSignatureProps> {
     static displayName: string                               = 'PhpdocMethodSignature';
     static defaultProps: Partial<PhpdocMethodSignatureProps> = {
         prefixCls      : 'phpdoc-method-signature',
@@ -50,6 +48,8 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
     };
     static contextType                                       = FQNSComponentCtx;
     context!: React.ContextType<typeof FQNSComponentCtx>;
+
+    get method(): Method {return this.context.file.entity.methods.get(this.context.fqsen.memberName);};
 
     className(...classNames: any[]) {
         const { prefixCls, link, innerClass, inline } = this.props;
@@ -67,10 +67,11 @@ export default class PhpdocMethodSignature extends React.Component<PhpdocMethodS
         window[ 'signature' ]  = this;
         const { link, inline } = this.props;
         const { fqsen, file }  = this.context;
-        if ( ! file.entity.methods.has(fqsen.memberName) ) {
+        const method           = this.method;
+        if ( ! method ) {
             return <span>nomethod</span>;
         }
-        const method = file.entity.methods.get(fqsen.memberName);
+
 
         return (
             <span style={{ fontSize: this.props.size, ...this.props.style }}>

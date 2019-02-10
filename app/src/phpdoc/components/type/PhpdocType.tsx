@@ -30,7 +30,7 @@ export interface PhpdocTypeProps {
 
 // export { PhpdocType };
 // @observer
-class PhpdocType extends React.PureComponent<PhpdocTypeProps> {
+export default class PhpdocType extends React.PureComponent<PhpdocTypeProps> {
     static displayName: string                    = 'PhpdocType';
     static defaultProps: Partial<PhpdocTypeProps> = {
         seperator       : ' | ',
@@ -143,4 +143,4 @@ class PhpdocType extends React.PureComponent<PhpdocTypeProps> {
 
 }
 
-export default hot(module)(PhpdocType);
+

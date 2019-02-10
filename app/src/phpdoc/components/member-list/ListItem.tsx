@@ -25,7 +25,7 @@ export interface ListItemProps {
 
 }
 
-@hot(module)
+// @hot(module)
 export default class ListItem extends PureComponent<ListItemProps> {
     static displayName: string                  = 'ListItem';
     static defaultProps: Partial<ListItemProps> = {

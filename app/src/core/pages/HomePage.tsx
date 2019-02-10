@@ -1,10 +1,11 @@
 import React from 'react';
-import { hot, lazyInject, RouteState, Store } from '@codex/core';
 import { RouteComponentProps } from 'react-router';
+import { RouteState } from 'router';
+import { lazyInject } from 'ioc';
+import { Store } from 'stores';
 
 const log = require('debug')('pages:home');
 
-@hot(module)
 export default class HomePage extends React.Component<{ routeState: RouteState, data?: any } & RouteComponentProps> {
     static displayName = 'HomePage';
     @lazyInject('store') store: Store;

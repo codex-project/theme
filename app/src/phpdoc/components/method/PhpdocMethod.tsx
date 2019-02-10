@@ -53,7 +53,7 @@ const hasData = (what) => what !== undefined && what.length > 0;
 
 // export { PhpdocMethod };
 
-@hot(module)
+// @hot(module)
 @FQNSComponent()
 export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     static displayName: string                      = 'PhpdocMethod';

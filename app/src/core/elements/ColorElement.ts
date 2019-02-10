@@ -1,7 +1,8 @@
-import { getColor, colorKeys } from '@codex/core'
 
 // const colorKeys = Object.keys(_colors);
-const log       = require('debug')('elements:ColorElement');
+import { colorKeys, getColor } from 'utils/colors';
+
+const log = require('debug')('elements:ColorElement');
 
 export class ColorElement extends HTMLElement {
     static TAG = 'c-c';

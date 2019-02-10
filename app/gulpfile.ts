@@ -112,7 +112,7 @@ class Gulpfile {
             .historyApiFallback({
                 disableDotRule: true,
             })
-            .hot(true)
+            .hot(chain.plugins.has('hmr'))
             .inline(true)
             .progress(true)
             .quiet(true)

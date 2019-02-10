@@ -38,7 +38,7 @@ class PhpdocTestPage extends React.Component<PhpdocTestPageProps & { routeState:
             <div id="phpdoc" {...props}>
                 <h3>PHPDOC Test Page</h3>
                 <ManifestProvider project="codex" revision="master">
-                    {/*<PhpdocMemberList fqsen={this.fqsen}/>*/}
+                    <PhpdocMemberList fqsen={this.fqsen}/>
                     <PhpdocMethodSignature fqsen={this.fqsen}/>
                 </ManifestProvider>
             </div>

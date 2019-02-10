@@ -4,13 +4,14 @@ import { PhpdocType } from '../type';
 import { observer } from 'mobx-react';
 import { hot } from 'react-hot-loader';
 import './entity.scss';
-import { PhpdocFileProvider, PhpdocFileProviderProps, withPhpdocFile } from '../providers';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
+import { IFQSEN } from '../../logic';
 
 const log = require('debug')('components:PhpdocHeader');
 
 
-export interface PhpdocEntityBaseProps {
+export interface PhpdocEntityProps{
+    fqsen:IFQSEN
     /** Optional CSSProperties with nesting support (using typestyle) */
     style?: React.CSSProperties
     /** Optional CSSProperties with nesting support (using typestyle) */
@@ -22,9 +23,7 @@ export interface PhpdocEntityBaseProps {
     size?: { class?: string | number, text?: string | number } & string & number
 }
 
-export interface PhpdocEntityProps extends PhpdocEntityBaseProps, PhpdocFileProviderProps {}
 
-export { PhpdocEntity };
 
 @hot(module)
 @FQNSComponent()

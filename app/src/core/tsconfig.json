@@ -6,6 +6,8 @@
             "*": ["*"],
             "assets": ["assets"],
             "assets/*": ["assets/*"],
+            "elements": ["elements"],
+            "elements/*": ["elements/*"],
             "classes/*": ["classes/*"],
             "collections/*": ["collections/*"],
             "components/*": ["components/*"],
