@@ -7,7 +7,6 @@ import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
 import posed from 'react-pose';
 import { toJS } from 'mobx';
-import { hot } from 'react-hot-loader';
 
 const log = require('debug')('pages:DocumentPage');
 
@@ -39,7 +38,7 @@ const DocumentContainer = posed.div({
     },
 });
 @observer
-export class DocumentPage extends React.Component<DocumentPageProps & RouteComponentProps> {
+export default class DocumentPage extends React.Component<DocumentPageProps & RouteComponentProps> {
     @lazyInject('api') api: Api;
     @lazyInject('components') hc: HtmlComponents;
     @lazyInject('store') store: Store;
@@ -61,8 +60,8 @@ export class DocumentPage extends React.Component<DocumentPageProps & RouteCompo
 
     async fetch() {
         const { project, revision, document } = this.props;
-        if(!this.store.document || this.store.document.key !== document) {
-            this.store.setDocument(null)
+        if ( ! this.store.isDocument(project, revision, document) ) {
+            this.store.setDocument(null);
             this.store.fetchDocument(project, revision, document);
         }
     }
@@ -82,10 +81,10 @@ export class DocumentPage extends React.Component<DocumentPageProps & RouteCompo
         ! document && log('render', 'NO DOCUMENT', { document, props });
         document && log('render', 'WITH DOCUMENT', document.key, { document, props });
         let content = null;
-        if(document){
+        if ( document ) {
             try {
                 content = this.hc.parse(document.content);
-            } catch(e){
+            } catch ( e ) {
                 console.warn(e);
             }
         }
@@ -102,4 +101,3 @@ export class DocumentPage extends React.Component<DocumentPageProps & RouteCompo
     }
 }
 
-export default hot(module)(DocumentPage);

@@ -1,7 +1,7 @@
 ///<reference path="../modules.d.ts"/>
 ///<reference path="../globals.d.ts"/>
 
-import { app, Application, BasePlugin, Bind, Button, CLink, CodeHighlight, HtmlComponents, Icon, IsBound, Rebind, RouteLink, RouteMap, TOC, TOCHeader, TOCList, TOCListItem, Trigger, Unbind } from '@codex/core';
+import { app, Application, BasePlugin, Bind, Button, CLink, CodeHighlight, ErrorPage, Icon, IsBound, Rebind, RouteLink, RouteMap, TOC, TOCHeader, TOCList, TOCListItem, Trigger, Unbind } from '@codex/core';
 import { generatePath, Redirect } from 'react-router';
 import React from 'react';
 import { Col, Modal, Popover, Row, Tooltip } from 'antd';
@@ -17,7 +17,6 @@ export * from './elements';
 export interface DocumentsPluginOptions {
 
 }
-
 
 
 export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
@@ -89,12 +88,7 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     let params  = { project: routeState.params.project, revision: 'master' };
                     let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                     if ( ! project ) {
-                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
-                            ...props,
-                            routeState,
-                            title  : 'Project not found',
-                            message: <p>Could not find the project using project id: [{params.project}]</p>,
-                        });
+                        return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
                     }
                     let to = generatePath(routes.get('documentation.revision').path, params);
                     return <Redirect to={to}/>;
@@ -107,21 +101,11 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                     let params  = { project: routeState.params.project, revision: routeState.params.revision, document: 'index' };
                     let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                     if ( ! project ) {
-                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
-                            ...props,
-                            routeState,
-                            title  : 'Project not found',
-                            message: <p>Could not find the project [{params.project}]</p>,
-                        });
+                        return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
                     }
                     let revision = project.revisions.find(r => r.key === params.revision);
                     if ( ! revision ) {
-                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
-                            ...props,
-                            routeState,
-                            title  : 'Revision not found',
-                            message: <p>Could not find revision [{params.revision}] in project [{project.key}]</p>,
-                        });
+                        return <ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>;
                     }
                     let to = generatePath(routes.get('documentation.document').path, params);
                     return <Redirect to={to}/>;
@@ -131,42 +115,26 @@ export class DocumentsPlugin extends BasePlugin<DocumentsPluginOptions> {
                 name  : 'documentation.document',
                 path  : '/documentation/:project/:revision/:document+',
                 action: async (props, routeState) => {
-
                     let params  = routeState.params;
                     let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                     if ( ! project ) {
-                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
-                            ...props,
-                            routeState,
-                            title  : 'Project not found',
-                            message: <p>Could not find the project [{params.project}]</p>,
-                        });
+                        return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
                     }
                     let revision = project.revisions.find(r => r.key === params.revision);
                     if ( ! revision ) {
-                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
-                            ...props,
-                            routeState,
-                            title  : 'Revision not found',
-                            message: <p>Could not find revision [{params.revision}] in project [{project.key}]</p>,
-                        });
+                        return <ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>;
                     }
+
                     log('documentation.document', 'FETCH', params);
                     let document, Component;
                     try {
                         // app.store.fetchDocument(params.project, params.revision, params.document);
-                        let ComponentPromise = import(/* webpackChunkName: "documents.pages.document" */'./pages/DocumentPage').then(val => val.default);
-                        Component = await ComponentPromise
+                        Component            = (await import(/* webpackChunkName: "documents.pages.document" */'./pages/DocumentPage')).default;
                         log('documentation.document', 'FETCHING', params, app.store.document, Component);
                         return <Component {...props} routeState={routeState} project={params.project} revision={params.revision} document={params.document}/>;
                     } catch ( error ) {
                         console.warn('documentation.document', 'FETCH_ERROR', { e: error, params, document, Component });
-                        return React.createElement((await import(/* webpackChunkName: "documents.pages.error" */'./pages/ErrorPage')).default, {
-                            ...props,
-                            routeState,
-                            title  : error.name,
-                            message: <p>{error.message || ''}</p>,
-                        });
+                        return <ErrorPage {...props}  routeState={routeState} title={error.name} message={<p>{error.message || ''}</p>}/>
                     }
                 },
             },

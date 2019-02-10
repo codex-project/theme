@@ -32,6 +32,7 @@ export * from './components';
 export * from './menus';
 export * from './router';
 export * from './stores';
+export * from './pages';
 
 // export * from './utils/box';
 export * from './utils/breakpoints';

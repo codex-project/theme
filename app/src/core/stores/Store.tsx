@@ -45,7 +45,7 @@ export class Store {
         fetched: new SyncHook<BuildQueryReturn>([ 'result' ]),
     };
 
-    @lazyInject('api') api:Api;
+    @lazyInject('api') api: Api;
     @lazyInject('fetched') fetched: Fetched;
     @lazyInject('store.layout') layout: LayoutStore;
 
@@ -127,6 +127,12 @@ export class Store {
         };
     }
 
+    isProject(project: string) { return this.project && this.project.key === project; }
+
+    isRevision(project: string, revision: string) { return this.isProject(project) && this.revision && this.revision.key === revision; }
+
+    isDocument(project: string, revision: string, document: string) { return this.isRevision(project, revision) && this.document && this.document.key === document; }
+
     @observable project: api.Project   = null;
     @observable revision: api.Revision = null;
     @observable document: api.Document = null;
@@ -154,10 +160,10 @@ export class Store {
     }
 
     async fetchDocument(projectKey: string, revisionKey: string, documentKey: string) {
-        if (
-            (projectKey && this.project && this.project.key === projectKey)
-            && (revisionKey && this.revision && this.revision.key === revisionKey)
-            && (documentKey && this.document && this.document.key === documentKey)
+        if ( this.isDocument(projectKey,revisionKey,documentKey)
+            // (projectKey && this.project && this.project.key === projectKey)
+            // && (revisionKey && this.revision && this.revision.key === revisionKey)
+            // && (documentKey && this.document && this.document.key === documentKey)
         ) {
             return this.document;
         }
@@ -227,7 +233,7 @@ export class Store {
             }
         });
 
-        log('fetched', {result})
+        log('fetched', { result });
         this.fetching = false;
         // this.hooks.fetched.call(result);
         return result;
