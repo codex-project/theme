@@ -25,14 +25,14 @@ const chain             = new Chain({
     outputDir: resolve(__dirname, process.env.NODE_ENV === 'development' ? 'dev' : 'dist'),
 });
 const { isDev, isProd } = chain;
-const cache             = true;
+const cache             = false;
 // const _assetPath        = 'vendor';
 const _assetPath        = isDev ? 'vendor' : 'vendor/codex_[entrypoint]';
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
-const minimize          = isProd; //isProd;
+const minimize          = false; //isProd;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -182,7 +182,6 @@ export function addPackage(chain: Chain, name: string, umdName?: string) {
 //endregion
 
 //region: Plugins
-// chain.plugin('write-file').use(WriteFilePlugin, [ { useHashIndex: false } ]);
 chain.plugin('clean').use(CleanWebpackPlugin, [
     [ 'js/', 'css/', '*.hot-update.js', '*.hot-update.js.map', '*.hot-update.json', 'assets/', 'vendor/' ],
     <CleanWebpackPlugin.Options>{ root: chain.outPath(), verbose: false },
@@ -219,7 +218,7 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     filename          : 'index.html',
     template          : resolve(__dirname, 'index.html'),
     inject            : 'head',
-    chunksSortMode    : 'dependency',
+    chunksSortMode    : isDev ? 'dependency' : 'auto',
     templateParameters: {
         DEV : isDev,
         PROD: isProd,
@@ -234,6 +233,7 @@ chain.plugin('favicon').use(WebappPlugin, [ {
     inject: true,
 } ]).after('html');
 chain.when(isProd, chain => {
+    chain.plugin('write-file').use(require('write-file-webpack-plugin'), [ { useHashIndex: false } ]);
     chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
         filename     : assetPath('css/[name].css?[hash]'),
         chunkFilename: assetPath('css/[name].chunk.css?[chunkhash]'),
@@ -400,14 +400,18 @@ chain.output
     .publicPath('/')
     .library([ 'codex', '[name]' ] as any)
     .libraryTarget('window')
+    .filename(assetPath('js/[name].js'))
+    .chunkFilename(assetPath('js/chunk.[name].js'));
+
+chain.output.when(isDev, chain => chain
     .filename(assetPath('js/[name].js?[hash]'))
     .chunkFilename(assetPath('js/chunk.[name].js?[hash]'))
     .sourceMapFilename('[file].map?[contenthash]')
     .devtoolModuleFilenameTemplate((info: DevtoolModuleFilenameTemplateInfo) => {
         // return 'file://' + resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
         return resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
-    })
-;
+    }),
+);
 chain.resolve
     .symlinks(true)
     .extensions.merge([ '.js', '.vue', '.json', '.web.ts', '.ts', '.web.tsx', '.tsx', '.styl', '.less', '.scss', '.stylus', '.css', '.mjs', '.web.js', '.json', '.web.jsx', '.jsx' ]).end()
@@ -433,8 +437,8 @@ chain.node.merge({
     net          : 'empty',
     tls          : 'empty',
     child_process: 'empty',
-    module       : 'empty',
-    dns          : 'mock',
+    // module       : 'empty',
+    // dns          : 'mock',
 });
 chain.performance
     .hints(false)
@@ -463,7 +467,7 @@ addPackage(chain, 'api', '@codex/api');
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
 // addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
 addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
-addPluginEntry(chain, 'auth', chain.srcPath('auth'), 'index.tsx');
+// addPluginEntry(chain, 'auth', chain.srcPath('auth'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
 chain.resolve.alias.merge({
     'heading'            : chain.srcPath('core/styling/heading.less'),

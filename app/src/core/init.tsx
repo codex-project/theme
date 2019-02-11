@@ -41,7 +41,7 @@ routerPlugin.hooks.registered.tap('CORE', routes => {
             action: async (props, routeState) => {
                 let promise    = new Promise((resolve, reject) => setTimeout(() => resolve({ home: 'ok' }), 500));
                 let result     = await promise;
-                const HomePage = (await import(/* webpackChunkName: "documents.pages.home" */'./pages/HomePage')).default;
+                const HomePage = (await import(/* webpackChunkName: "core.pages.home" */'./pages/HomePage')).default;
                 return <HomePage {...props} {...result} />;
             },
         },
@@ -101,7 +101,7 @@ routerPlugin.hooks.registered.tap('CORE', routes => {
                 let document, Component;
                 try {
                     // app.store.fetchDocument(params.project, params.revision, params.document);
-                    Component = (await import(/* webpackChunkName: "documents.pages.document" */'./pages/DocumentPage')).default;
+                    Component = (await import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage')).default;
                     log('documentation.document', 'FETCHING', params, app.store.document, Component);
                     return <Component {...props} routeState={routeState} project={params.project} revision={params.revision} document={params.document}/>;
                 } catch ( error ) {

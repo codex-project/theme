@@ -77,7 +77,6 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
     @observable scrollTop: number                       = 0;
     @observable searchFocus: boolean                    = false;
 
-
     constructor(props: PhpdocMemberListProps, context: any) {
         super(props, context);
         this.setListFromFile(context.file, props.selected);
@@ -103,7 +102,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         this.props.onSearch(value);
     };
 
-    handleItemClick = (item: Member, row: ListRowProps) => {
+    handleListItemClick = (item: Member, row: ListRowProps) => {
         log('onItemClick', { item });
         if ( this.props.selectable ) {
             if ( this.list.selected === item ) {
@@ -126,11 +125,9 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         this.list.setFilter(e.target.name as any, e.target.checked === false);
     };
 
-    handleScroll = ({ target }) => {
+    handleListScroll = ({ target }) => {
         const { scrollTop, scrollLeft } = target;
-
         const { Grid: grid } = this.listRef;
-
         grid.handleScrollEvent({ scrollTop, scrollLeft });
     };
 
@@ -149,7 +146,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
             item,
             row,
             selected: this.list.selected && this.list.selected.type === item.type && this.list.selected.name === item.name,
-            onClick : this.handleItemClick,
+            onClick : this.handleListItemClick,
             gotoSource,
             clickableInherits,
             onInheritedClick,
@@ -273,9 +270,9 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                     {({ width, height }) => {
                         return (
                             <Observer>{() => {
-                                let showList   = true;
-                                let showMethod = this.props.selectable && this.list.selected && this.list.selected.type === 'method';
-                                showList       = ! showMethod;
+                                let showMethod   = this.props.selectable && this.list.selected && this.list.selected.type === 'method';
+                                let showProperty = this.props.selectable && this.list.selected && this.list.selected.type === 'property';
+                                let showList     = ! showMethod && ! showProperty;
                                 return (
                                     <Fragment>
                                         <If condition={showList}>
@@ -301,7 +298,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                                         </If>
                                         <Scrollbar
                                             style={{ height, width, display: showList ? 'block' : 'none' }}
-                                            onScroll={this.handleScroll}
+                                            onScroll={this.handleListScroll}
                                         >
                                             <List
                                                 className="phpdoc-member-list-inner"
@@ -312,14 +309,6 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                                                 rowRenderer={this.renderRow}
                                                 style={{ overflowX: 'visible', overflowY: 'visible' }}
                                                 rowHeight={26}
-                                                // rowHeight={info => {
-                                                //     let height=26;
-                                                //     let item=this.list.items[info.index];
-                                                //     if(this.props.selectable && item.type === 'method' && item === this.list.selected){
-                                                //         height=300;
-                                                //     }
-                                                //     return height;
-                                                // }}
                                             >
 
                                             </List>

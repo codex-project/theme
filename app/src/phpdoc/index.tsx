@@ -72,7 +72,7 @@ export default class PhpdocPlugin extends BasePlugin {
                         });
                     },
                 });
-                routeMap.set('phpdoc.test', {
+                DEV && routeMap.set('phpdoc.test', {
                     name     : 'phpdoc.test',
                     path     : app.url.root('phpdoc-test'),
                     action: async(props,routeState) => {
@@ -80,7 +80,7 @@ export default class PhpdocPlugin extends BasePlugin {
                         return <PhpdocTestPage {...props} routeState={routeState} />
                     }
                 });
-                routeMap.set('phpdoc.mosaic.test', {
+                DEV && routeMap.set('phpdoc.mosaic.test', {
                     name     : 'phpdoc.mosaic.test',
                     path     : app.url.root('phpdoc-mosaic'),
                     component: PhpdocMosaicTestPage,

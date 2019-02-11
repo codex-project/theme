@@ -7,7 +7,7 @@ import { loadStyling } from '../../loadStyling';
 const loader = () => Promise.all([
     import(
         /* webpackChunkName: "phpdoc.components.popover" */
-        /* webpackPrefetch: true */
+      // /* webpackPrefetch: true */
         './PhpdocPopover'
         ),
     loadStyling(),

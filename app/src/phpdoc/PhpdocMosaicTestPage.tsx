@@ -13,7 +13,6 @@ import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import './styling/vendor/react-mosaic-component/index.scss';
 import './phpdoc-mosaic.scss';
 import { PhpdocTree } from './components/tree';
-import { PhpdocManifestProvider } from './components/providers';
 import { classes } from 'typestyle';
 import PhpdocMethod from './components/method';
 import PhpdocEntity from './components/entity';

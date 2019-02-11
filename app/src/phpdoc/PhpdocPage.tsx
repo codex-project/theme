@@ -3,7 +3,7 @@ import { lazyInject, RouteState } from '@codex/core';
 import { api, Api } from '@codex/api';
 import { PhpdocManifest, PhpdocStore } from './logic/PhpdocStore';
 import { PhpdocTree, TreeBuilder } from './components/tree';
-import InspireTree from 'inspire-tree';
+import {InspireTree} from './components/tree/InspireTree';
 import { RouteComponentProps } from 'react-router';
 
 const log = require('debug')('pages:phpdoc');

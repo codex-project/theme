@@ -8,7 +8,7 @@ import { PhpdocMethodProps } from './PhpdocMethod';
 const loader = (name) => () => Promise.all([
     import(
         /* webpackChunkName: "phpdoc.components.method" */
-        /* webpackPrefetch: true */
+      // /* webpackPrefetch: true */
         `./${name}`
         ),
     loadStyling(),
