@@ -47,7 +47,7 @@ export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
                 <h3 style={titleStyle} className="header-title">
                     <i className={'mr-xs phpdoc-type-' + file.type}/>
                     <span className={'phpdoc-type-' + file.type} style={{ fontSize: classSize }}>{file.fqsen.entityName}</span>
-                    <If condition={file.entity.extends}>
+                    <If condition={file.entity.extends && file.entity.extends.length}>
                         <small className="pl-xs" style={{ fontSize: textSize }}>extends</small>
                         <PhpdocType className="pl-xs" style={{ fontSize: classSize }} type={file.entity.extends}/>
                     </If>

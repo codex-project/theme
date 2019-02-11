@@ -7,6 +7,8 @@ import { PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type';
 import { PopoverProps } from 'antd/es/popover';
 import { hot } from 'react-hot-loader';
+import { observer } from 'mobx-react';
+import { ListRowProps } from 'react-virtualized';
 
 const log = require('debug')('components:ListItem');
 
@@ -14,12 +16,13 @@ export interface ListItemProps {
     style?: React.CSSProperties
     className?: string
     item: Member
+    row: ListRowProps
     innerRef?: any
     selected?: boolean
     modifiers?: boolean | React.ReactNode
     extras?: React.ReactNode
 
-    onClick?: (item: Member) => any
+    onClick?: (item: Member,row: ListRowProps) => any
     onInheritedClick?: (item: Member) => any
     onGotoSourceClick?: (item: Member) => any
     gotoSource?: boolean
@@ -41,20 +44,20 @@ export default class ListItem extends PureComponent<ListItemProps> {
     };
 
     render() {
-        const { innerRef, onClick, extras, className, style, children, selected } = this.props;
+        const { innerRef, onClick,row, extras, className, style, children, selected } = this.props;
         let item                                                                  = this.props.item as PhpdocMethod;
         return (
-            <div key="list-item" ref={innerRef} className={classes('phpdoc-member-list-item', selected ? 'active' : null, className)} style={style}>
+            <div key="list-item" ref={innerRef} className={classes('phpdoc-member-list-item',`phpdoc-member-list-item-${item.type}`, selected ? 'active' : null, className)} style={style}>
                 <div
                     className="list-item-link"
                     onClick={() => {
                         log('onClick', item);
-                        onClick(item);
+                        onClick(item,row);
                     }}>
                     {children}
                 </div>
-                {this.renderModifiers()}
                 {extras}
+                {this.renderModifiers()}
             </div>
         );
     }

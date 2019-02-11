@@ -155,6 +155,12 @@ export class PhpdocProperty extends PhpdocBaseType<api.PhpdocProperty> {
             this.fqsen          = FQSEN.from(parent.fqsen.entityName, 'property', data.name);
             this.inherited_from = this.original_fqsen.entityName !== parent.fqsen.entityName ? this.original_fqsen.entityName : null;
         }
+        if ( this.docblock.tags.has('var') ) {
+            this.types = this.docblock.tags.get('var').types;
+        }
+        if ( ! this.types ) {
+            this.types = [ 'mixed' ];
+        }
     }
 }
 

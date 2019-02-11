@@ -173,6 +173,13 @@ $prefix: phpdoc-member-list;
 
     }
 
+    &-item-property {}
+    &-item-property-type {
+        margin-left: 10px;
+        font-size: 0.8em;
+    }
+    &-item-method {}
+
     .hover-filters {
         text-align: right;
         padding: 2px;

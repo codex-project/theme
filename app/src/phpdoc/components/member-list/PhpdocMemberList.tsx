@@ -9,9 +9,10 @@ import { Button, Scrollbar, ucfirst } from '@codex/core';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 import { AutoSizer, List, ListRowProps } from 'react-virtualized';
 import PhpdocMethod, { PhpdocMethodSignature } from '../method';
-import { IFQSEN } from '../../logic';
+import { IFQSEN, PhpdocFile, PhpdocMethod as PhpdocMethodClass, PhpdocProperty } from '../../logic';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Observer, observer } from 'mobx-react';
+import PhpdocType from '../type';
 
 const TabPane = Tabs.TabPane;
 const Search  = Input.Search;
@@ -27,8 +28,6 @@ export interface PhpdocMemberListProps {
 
     scroll?: boolean
     height?: number | false
-
-    tabbed?: boolean
 
     onItemClick?: (item: Member) => any
 
@@ -81,15 +80,21 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
 
     constructor(props: PhpdocMemberListProps, context: any) {
         super(props, context);
-        runInAction(() => {
-            this.list = new MemberList(this.context.file);
-            this.list.setSelected(this.props.selected);
-        });
+        this.setListFromFile(context.file, props.selected);
     }
+
+    setListFromFile = (file: PhpdocFile, selected?: Member) => {
+        runInAction(() => {
+            this.list = new MemberList(file);
+            if ( selected ) {
+                this.list.setSelected(selected);
+            }
+        });
+    };
 
     setSearchFocus = (focus: boolean) => runInAction(() => this.searchFocus = focus);
 
-    onSearch = (value: string) => {
+    handleSearch = (value: string) => {
         log('onSearch', value);
         if ( ! this.props.searchable ) {
             return;
@@ -98,7 +103,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         this.props.onSearch(value);
     };
 
-    onItemClick = (item: Member) => {
+    handleItemClick = (item: Member, row: ListRowProps) => {
         log('onItemClick', { item });
         if ( this.props.selectable ) {
             if ( this.list.selected === item ) {
@@ -110,69 +115,15 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
             }
         }
         this.props.onItemClick(item);
+        if ( this.props.selectable ) {
+            this.forceUpdate();
+            //     this.listRef.recomputeRowHeights(row.index-1)
+        }
     };
 
-    onFilterChange = (e: CheckboxChangeEvent) => {
+    handleFilterChange = (e: CheckboxChangeEvent) => {
         log('onSettingChange', { e });
-        e.preventDefault();
-        this.list.mergeFilters({ [ e.target.name ]: e.target.checked === false });
-    };
-
-    renderRow = (row: ListRowProps) => {
-        let item  = this.list.items[ row.index ];
-        let props = this.getListItemProps(item);
-
-        return (
-            <Fragment key={row.key}>
-                <If condition={item.type === 'property'}>
-                    <ListItem {...props} key={row.key} style={row.style}>
-                        <Tooltip title={item.visibility}> <i className={'phpdoc-visibility-' + item.visibility}/> </Tooltip>
-                        <span className="token property">{item.name}</span>
-                    </ListItem>
-                </If>
-                <If condition={item.type === 'method'}>
-                    <Choose>
-                        <When condition={props.selected}>
-                            <PhpdocMethod
-                                fqsen={item.fqsen}
-                                key={'_' + row.key}
-                                signature={
-                                    <PhpdocMethodSignature
-                                        fqsen={item.fqsen}
-                                        size={12}
-                                        className="ant-row-flex-space-between"
-                                        hide={{ namespace: true }}>
-                                        <Button size="small" icon="close" onClick={() => this.list.setSelected(null)}/>
-                                    </PhpdocMethodSignature>
-                                }
-                            />
-                        </When>
-                        <Otherwise>
-                            <ListItem {...props} key={row.key} style={row.style} modifiers={props.selected ? false : undefined}>
-                                <Tooltip title={item.visibility}> <i className={'phpdoc-visibility-' + item.visibility}/> </Tooltip>
-                                <PhpdocMethodSignature
-                                    fqsen={item.fqsen}
-                                    key={row.key}
-                                    inline={true}
-                                    size={12}
-                                    noClick={true}
-                                    hide={{
-                                        deprecated      : true,
-                                        inherited       : true,
-                                        modifiers       : true,
-                                        argumentDefaults: true,
-                                        namespace       : true,
-                                        argumentTypes   : true,
-                                        typeTooltip     : true,
-                                        returns         : true,
-                                    }}
-                                />
-                            </ListItem>
-                        </Otherwise>
-                    </Choose>
-                </If>
-            </Fragment>
-        );
+        this.list.setFilter(e.target.name as any, e.target.checked === false);
     };
 
     handleScroll = ({ target }) => {
@@ -187,20 +138,77 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         if ( this.context.file && this.props.selected && this.props.selected.full_name !== this.list.selected.full_name ) {
             this.list.setSelected(this.props.selected);
         }
+        if ( this.context.file.fqsen.entityName !== this.list.file.fqsen.entityName ) {
+            this.setListFromFile(this.context.file, this.props.selected);
+        }
     }
 
-    getListItemProps(item: Member) {
+    getListItemProps(item: Member, row: ListRowProps) {
         let { onItemClick, gotoSource, clickableInherits, onInheritedClick, onGotoSourceClick } = this.props;
         return {
             item,
+            row,
             selected: this.list.selected && this.list.selected.type === item.type && this.list.selected.name === item.name,
-            // onClick : this.onItemClick,
+            onClick : this.handleItemClick,
             gotoSource,
             clickableInherits,
             onInheritedClick,
             onGotoSourceClick,
         } as ListItemProps;
     }
+
+    renderMethodRow(row: ListRowProps, item: PhpdocMethodClass, props: ListItemProps) {
+        //modifiers={props.selected ? false : undefined}
+        return (
+            <ListItem {...props} key={row.key} style={row.style}>
+                <Tooltip title={item.visibility}> <i className={'phpdoc-visibility-' + item.visibility}/> </Tooltip>
+                <PhpdocMethodSignature
+                    fqsen={item.fqsen}
+                    key={row.key}
+                    inline={true}
+                    size={12}
+                    noClick={true}
+                    hide={{
+                        deprecated      : true,
+                        inherited       : true,
+                        modifiers       : true,
+                        argumentDefaults: ! props.selected, //true,
+                        namespace       : true,
+                        argumentTypes   : ! props.selected, //true,
+                        typeTooltip     : true,
+                        returns         : ! props.selected, //true,
+                    }}
+                />
+            </ListItem>
+        );
+    }
+
+    renderPropertyRow(row: ListRowProps, item: PhpdocProperty, props: ListItemProps) {
+        const extras = item.types ? <PhpdocType className='phpdoc-member-list-item-property-type' type={item.types}/> : null;
+        return (
+            <ListItem {...props} key={row.key} style={row.style}>
+                <Tooltip title={item.visibility}> <i className={'phpdoc-visibility-' + item.visibility}/> </Tooltip>
+                <span className="token property">{item.name}</span>
+                {extras}
+            </ListItem>
+        );
+    }
+
+    renderRow = (row: ListRowProps) => {
+        let item  = this.list.items[ row.index ];
+        let props = this.getListItemProps(item, row);
+
+        return (
+            <Fragment key={row.key}>
+                <If condition={item.type === 'property'}>
+                    {this.renderPropertyRow(row, item, props)}
+                </If>
+                <If condition={item.type === 'method'}>
+                    {this.renderMethodRow(row, item as any, props)}
+                </If>
+            </Fragment>
+        );
+    };
 
     renderFilters() {
         const { searchable, filterable } = this.props;
@@ -214,8 +222,8 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                         className={'phpdoc-member-list-search' + (this.searchFocus ? ' focus' : '')}
                         onFocus={() => this.setSearchFocus(true)}
                         onBlur={() => this.setSearchFocus(false)}
-                        onSearch={this.onSearch}
-                        onChange={e => this.onSearch(e.target.value)}
+                        onSearch={this.handleSearch}
+                        onChange={e => this.handleSearch(e.target.value)}
                         value={this.list.search}
                     />
                     <If condition={this.list.search && this.list.search.length}>
@@ -228,13 +236,19 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                         key="filters-button"
                         content={
                             [ 'public', 'protected', 'private', 'static', 'abstract', 'final', 'inherited' ].map(prop => (
-                                <Checkbox
-                                    key={prop}
-                                    name={prop}
-                                    checked={this.list.filters[ prop ] === false}
-                                    style={{ display: 'block', marginLeft: 0 }}
-                                    onChange={this.onFilterChange}
-                                >{ucfirst(prop)}</Checkbox>
+                                <Observer key={prop}>{() =>
+                                    <Checkbox
+                                        key={prop}
+                                        name={prop}
+                                        defaultChecked={this.list.filters[ prop ] === false}
+                                        style={{ display: 'block', marginLeft: 0 }}
+                                        onChange={e => {
+                                            this.handleFilterChange(e);
+                                            log('checkbox onChange', prop, e.target, this.list.filters[ prop ] === false, '  list.filters[prop]: ', this.list.filters[ prop ]);
+                                            // this.
+                                        }}
+                                    >{ucfirst(prop)}</Checkbox>
+                                }</Observer>
                             ))
                         }>
                         <Button icon="filter" size="small" style={{ marginLeft: 3 }}/>
@@ -246,7 +260,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
 
     render() {
         window[ 'memberlist' ] = this;
-        const { tabbed }       = this.props;
+        const {}               = this.props;
         if ( ! this.list ) return null;
         let style = {
             height: this.props.height || '100%',
@@ -258,28 +272,61 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                 <AutoSizer style={{ width: '100%' }}>
                     {({ width, height }) => {
                         return (
-                            <Observer>{() =>
-                                <Fragment>
-                                    <div key="filters" className="hover-filters">{this.renderFilters()}</div>
-                                    <Scrollbar
-                                        style={{ height, width }}
-                                        onScroll={this.handleScroll}
-                                    >
-                                        <List
-                                            className="phpdoc-member-list-inner"
-                                            ref={instance => this.listRef = instance}
-                                            height={height}
-                                            width={width}
-                                            rowCount={this.list.length}
-                                            rowHeight={26}
-                                            rowRenderer={this.renderRow}
-                                            style={{ overflowX: 'visible', overflowY: 'visible' }}
-                                        >
+                            <Observer>{() => {
+                                let showList   = true;
+                                let showMethod = this.props.selectable && this.list.selected && this.list.selected.type === 'method';
+                                showList       = ! showMethod;
+                                return (
+                                    <Fragment>
+                                        <If condition={showList}>
+                                            <div key="filters" className="hover-filters">{this.renderFilters()}</div>
+                                        </If>
 
-                                        </List>
-                                    </Scrollbar>
-                                </Fragment>
-                            }</Observer>
+                                        <If condition={showMethod}>
+                                            <Scrollbar style={{ height, width }}>
+                                                <PhpdocMethod
+                                                    fqsen={this.list.selected.fqsen}
+                                                    style={{ height, width }}
+                                                    signature={
+                                                        <PhpdocMethodSignature
+                                                            fqsen={this.list.selected.fqsen}
+                                                            size={12}
+                                                            className="ant-row-flex-space-between"
+                                                            hide={{ namespace: true }}>
+                                                            <Button size="small" icon="close" onClick={() => this.list.setSelected(null)}/>
+                                                        </PhpdocMethodSignature>
+                                                    }
+                                                />
+                                            </Scrollbar>
+                                        </If>
+                                        <Scrollbar
+                                            style={{ height, width, display: showList ? 'block' : 'none' }}
+                                            onScroll={this.handleScroll}
+                                        >
+                                            <List
+                                                className="phpdoc-member-list-inner"
+                                                ref={instance => this.listRef = instance}
+                                                height={height}
+                                                width={width}
+                                                rowCount={this.list.length}
+                                                rowRenderer={this.renderRow}
+                                                style={{ overflowX: 'visible', overflowY: 'visible' }}
+                                                rowHeight={26}
+                                                // rowHeight={info => {
+                                                //     let height=26;
+                                                //     let item=this.list.items[info.index];
+                                                //     if(this.props.selectable && item.type === 'method' && item === this.list.selected){
+                                                //         height=300;
+                                                //     }
+                                                //     return height;
+                                                // }}
+                                            >
+
+                                            </List>
+                                        </Scrollbar>
+                                    </Fragment>
+                                );
+                            }}</Observer>
                         );
                     }}
                 </AutoSizer>

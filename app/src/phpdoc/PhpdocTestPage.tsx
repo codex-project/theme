@@ -83,13 +83,26 @@ export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps 
                 <h3>PHPDOC Test Page</h3>
                 <ManifestProvider project="codex" revision="master">
                     <PhpdocEntity fqsen={this.fqsen}/>
-                    <PhpdocTree
-                        searchable filterable scrollToSelected
-                        style={{ height: 300 }}
-                        onNodeClick={node => this.setFQNS(node.fullName)}
-                        getTree={this.setTree}
-                        ref={this.treeRef}
-                    />
+                    <Row type="flex">
+                        <Col span={6}>
+                            <PhpdocTree
+                                searchable filterable scrollToSelected
+                                style={{ height: 300 }}
+                                onNodeClick={node => this.setFQNS(node.fullName)}
+                                getTree={this.setTree}
+                                ref={this.treeRef}
+                            />
+                        </Col>
+                        <Col span={18}>
+                            <PhpdocMemberList
+                                searchable filterable selectable
+                                fqsen={this.fqsen}
+                            />
+                        </Col>
+                    </Row>
+                    <Row type="flex" style={{background: '#aa2337', height: 10, width: '100%'}}>
+                        a
+                    </Row>
                 </ManifestProvider>
             </div>
         );

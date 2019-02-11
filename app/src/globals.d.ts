@@ -59,11 +59,11 @@ declare interface IfProps {
 }
 declare function If(props:IfProps);
 
-declare function Choose();
+declare function Choose(__ignore:any);
 
 declare function When({ condition }: { condition: boolean });
 
-declare function Otherwise();
+declare function Otherwise(__ignore:any):any;
 
 declare function With(props: { [ id: string ]: any });
 

@@ -39,7 +39,7 @@ export class MemberList {
 
     get _exclude() { return isString(this.exclude) ? (this.exclude as string).split(',').map(filter => filter.trim()) : this.exclude; }
 
-    constructor(protected file: PhpdocFile) {
+    constructor(public readonly file: PhpdocFile) {
         this.filter();
     }
 
@@ -70,6 +70,11 @@ export class MemberList {
             this.filters = filters;
             this.filter();
         });
+    }
+
+    @action setFilter(name: keyof MemberListFilters, value: any) {
+        this.filters[ name ] = value;
+        this.filter();
     }
 
     @action mergeFilters(filters: MemberListFilters) { this.setFilters({ ...this.filters, ...filters }); }

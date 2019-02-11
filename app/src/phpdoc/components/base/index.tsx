@@ -75,17 +75,27 @@ export function FQNSComponent() {
             static WrappedComponent = TargetComponent;
             static contextType      = ManifestCtx;
             context!: React.ContextType<typeof ManifestCtx>;
-
             state: { fqsen: FQSEN, file: PhpdocFile } = { fqsen: null, file: null };
 
-            static getDerivedStateFromProps(nextProps, prevState) {
-                return { fqsen: FQSEN.from(nextProps.fqsen) };
+            constructor(props: any, context: any) {
+                super(props, context);
+                this.state.fqsen = FQSEN.from(props.fqsen);
             }
 
-            public componentDidMount(): void {
+            updateFile() {
                 this.context.manifest.fetchFile(this.state.fqsen.slashEntityName).then(file => {
                     this.setState({ file });
                 });
+            }
+
+            componentDidMount(): void {
+                this.updateFile();
+            }
+
+            componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<{ fqsen: FQSEN, file: PhpdocFile }>, snapshot?: any): void {
+                if ( ! prevState.fqsen.equals(this.props.fqsen) ) {
+                    this.setState({ fqsen: FQSEN.from(this.props.fqsen) }, () => this.updateFile());
+                }
             }
 
             render() {
