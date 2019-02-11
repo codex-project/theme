@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Member } from './list';
-import { iconTooltipDeprecated, iconTooltipGotoSource, iconTooltipInherited, iconTooltipStatic } from '../tooltips';
-import { Tooltip } from 'antd';
+import { iconTooltipDeprecated, iconTooltipGotoSource, iconTooltipStatic } from '../tooltips';
+import { Popover, Tooltip } from 'antd';
 import { classes } from 'typestyle';
 import { PhpdocMethod } from '../../logic';
+import { PhpdocType } from '../type';
+import { PopoverProps } from 'antd/es/popover';
 import { hot } from 'react-hot-loader';
 
 const log = require('debug')('components:ListItem');
@@ -25,7 +27,11 @@ export interface ListItemProps {
 
 }
 
-// @hot(module)
+const basePopoverProps: PopoverProps = {
+    overlayClassName  : 'phpdoc-tooltip phpdoc-member-list-tooltip',
+};
+
+@hot(module)
 export default class ListItem extends PureComponent<ListItemProps> {
     static displayName: string                  = 'ListItem';
     static defaultProps: Partial<ListItemProps> = {
@@ -76,26 +82,36 @@ export default class ListItem extends PureComponent<ListItemProps> {
 
     renderModifierStatic(item: Member) {
         if ( ! item.static ) return null;
-        return <a className="list-col-auto no-click modifier">{iconTooltipStatic()}</a>;
+        return <a className="list-col-auto no-click modifier">{iconTooltipStatic({ placement: 'top' })}</a>;
     }
 
     renderModifierGotoSource(item: Member) {
         if ( ! this.props.gotoSource || item.inherited_from ) return;
-        return <a className="list-col-auto modifier" onClick={() => this.props.onGotoSourceClick(item)}>{iconTooltipGotoSource()}</a>;
+        return <a className="list-col-auto modifier" onClick={() => this.props.onGotoSourceClick(item)}>{iconTooltipGotoSource({ placement: 'left' })}</a>;
     }
 
     renderModifierInherited(item: Member) {
         if ( ! item.inherited_from ) return null;
-        let props: any = {
-            className: 'list-col-auto modifier ' + (this.props.clickableInherits ? '' : 'no-click'),
-            onClick  : () => this.props.clickableInherits ? this.props.onInheritedClick(item) : null,
-        };
-        return <a {...props}>{iconTooltipInherited(item)}</a>;
+        return (
+            <Popover
+                {...basePopoverProps}
+                content={<div>Inherited From:<br/> <PhpdocType type={item.inherited_from} showNamespace={true} showTooltip={false}/></div>}
+                align={{
+                    points: ['cr', 'cl']
+                }}
+            >
+                <a className={'modifier' + (this.props.clickableInherits ? '' : ' no-click')}
+                   onClick={() => this.props.clickableInherits ? this.props.onInheritedClick(item) : null}
+                >
+                    <i className="phpdoc-modifier-inherited"/>
+                </a>
+            </Popover>
+        );
     }
 
     renderModifierDeprecated(item: Member) {
         if ( ! item.docblock.tags.has('deprecated') ) return null;
-        return <a className="list-col-auto no-click modifier">{iconTooltipDeprecated(item)}</a>;
+        return <a className="list-col-auto no-click modifier">{iconTooltipDeprecated(item, { placement: 'left' })}</a>;
     }
 }
 

@@ -153,6 +153,7 @@ export class PhpdocProperty extends PhpdocBaseType<api.PhpdocProperty> {
         if ( data.full_name ) {
             this.original_fqsen = FQSEN.from(data.full_name);
             this.fqsen          = FQSEN.from(parent.fqsen.entityName, 'property', data.name);
+            this.inherited_from = this.original_fqsen.entityName !== parent.fqsen.entityName ? this.original_fqsen.entityName : null;
         }
     }
 }

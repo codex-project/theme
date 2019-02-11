@@ -1,7 +1,7 @@
 import Scrollbars, { ScrollbarProps as BaseScrollbarProps } from 'react-custom-scrollbars';
-import React from 'react';
+import React, { Ref } from 'react';
 
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 
 const log = require('debug')('components:app:Scrollbar');
 
@@ -49,21 +49,20 @@ function renderThumbVertical({ style, ...props }) {
 }
 
 export interface ScrollbarProps extends BaseScrollbarProps {
-
+    innerRef?:Ref<Scrollbars>
 }
 
-export {Scrollbar}
 @hot(module)
 export default class Scrollbar extends React.Component<ScrollbarProps> {
-    scrollbars: Scrollbars;
 
     render() {
         // https://github.com/malte-wessel/react-custom-scrollbars/blob/master/src/Scrollbars/defaultRenderElements.js
+        const {innerRef,...props} = this.props
         return (
             <Scrollbars
                 className="c-scrollbar"
                 hideTracksWhenNotNeeded
-                ref={ref => this.scrollbars = ref}
+                ref={innerRef}
                 // renderThumbVertical={this.renderThumb}
                 // renderTrackVertical={this.renderTrack}
                 // renderThumbHorizontal={this.renderThumb}
@@ -73,7 +72,7 @@ export default class Scrollbar extends React.Component<ScrollbarProps> {
                 renderThumbHorizontal={renderThumbHorizontal}
                 renderThumbVertical={renderThumbVertical}
 
-                {...this.props}
+                {...props}
             />
         );
     }

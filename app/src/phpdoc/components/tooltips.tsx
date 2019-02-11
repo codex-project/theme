@@ -10,10 +10,14 @@ const Search  = Input.Search;
 
 const log = require('debug')('phpdoc:components:tooltips');
 
+const baseProps:PopoverProps = {
+    autoAdjustOverflow:true,
+    overlayClassName:'phpdoc-tooltip phpdoc-member-list-tooltip'
+}
 
 export function iconTooltipStatic(props: TooltipProps = {}, iconProps: HTMLAttributes<any> = {}) {
     return (
-        <Tooltip title="Static" overlayClassName="phpdoc-tooltip phpdoc-member-list-tooltip" {...props}>
+        <Tooltip title="Static" {...baseProps} {...props}>
             <i className="phpdoc-modifier-static" {...iconProps}/>
         </Tooltip>
     );
@@ -21,7 +25,7 @@ export function iconTooltipStatic(props: TooltipProps = {}, iconProps: HTMLAttri
 
 export function iconTooltipGotoSource(props: TooltipProps = {}, iconProps: HTMLAttributes<any> = {}) {
     return (
-        <Tooltip title="Goto source" overlayClassName="phpdoc-tooltip phpdoc-member-list-tooltip" {...props}>
+        <Tooltip title="Goto source" {...baseProps} {...props}>
             <i className="fa fa-eye" {...iconProps}/>
         </Tooltip>
     );
@@ -32,7 +36,7 @@ export function iconTooltipInherited(item: Member, props: PopoverProps = {}, ico
     return (
         <Popover
             content={<div>Inherited From:<br/> <PhpdocType type={item.inherited_from} showNamespace={true}/></div>}
-            overlayClassName="phpdoc-tooltip phpdoc-member-list-tooltip"
+            {...baseProps}
             {...props}
         >
             <i className="phpdoc-modifier-inherited" {...iconProps}/>
@@ -44,7 +48,6 @@ export function iconTooltipDeprecated(item: Member, props: PopoverProps = {}, ic
     if ( ! item.docblock.tags.has('deprecated') ) return null;
     return (
         <Popover
-            overlayClassName="phpdoc-tooltip phpdoc-member-list-tooltip"
             content={
                 <Row type="flex">
                     <Col className="fs-25 pl-sm pr-lg"><i className="phpdoc-modifier-deprecated"/></Col>
@@ -54,6 +57,7 @@ export function iconTooltipDeprecated(item: Member, props: PopoverProps = {}, ic
                     </Col>
                 </Row>
             }
+            {...baseProps}
             {...props}
         >
             <i className="phpdoc-modifier-deprecated" {...iconProps}/>

@@ -1,8 +1,9 @@
 import debug from 'debug';
 import { cloneDeep } from 'lodash'
-import InspireTree, { Config, TreeNode } from 'inspire-tree';
+import { Config, TreeNode } from 'inspire-tree';
 import { ClassTree, ClassTreeLeaf, ClassTreeNode, TreeNodeData } from './interfaces';
 import sorter from './sorter';
+import { InspireTree } from './InspireTree';
 
 const log = debug('phpdoc:tree-builder')
 

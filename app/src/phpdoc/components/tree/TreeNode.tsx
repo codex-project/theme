@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import {TreeNodes} from './TreeNodes';
 import { clone, each, isArray, isEmpty, isFunction, isString } from 'lodash';
 import {TreeNodeAnchor} from './TreeNodeAnchor';
-import { ITreeNode } from './interfaces';
 import { hot } from '@codex/core';
-
+import {TreeNode as TreeNodeNode} from 'inspire-tree'
 // @hot(module)
-export class TreeNode extends React.Component<{ node: ITreeNode }> {
+export class TreeNode extends React.Component<{ node: TreeNodeNode }> {
     renderToggle(node) {
         if ( node.children ) {
             return <a className={'toggle icon ' + (node.expanded() ? 'icon-collapse' : 'icon-expand')} onClick={e => node.toggleCollapse()}></a>

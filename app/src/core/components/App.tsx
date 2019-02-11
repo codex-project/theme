@@ -10,7 +10,7 @@ import Layout from 'components/layout';
 import { History, RouteGroup, RouteMap } from 'router';
 import { Router } from 'react-router';
 import { WithRouter, WithRouterProps } from 'decorators';
-import { StoreControl } from 'components/store-control';
+import { DevDialog, StoreControl } from 'components/store-control';
 
 const log = require('debug')('App');
 
@@ -47,6 +47,8 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
         props.history.listen((location, action) => {
             log('location', action, location);
         });
+
+
     }
 
     render() {

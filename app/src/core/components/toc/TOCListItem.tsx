@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import {scrollTo} from 'utils/scrollTo'
+import {scrollTo} from 'utils/scroll'
 import { hot } from 'react-hot-loader';
 import { lazyInject } from 'ioc';
 import { classes } from 'typestyle';

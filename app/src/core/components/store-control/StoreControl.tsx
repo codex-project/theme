@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 import { app } from 'ioc';
 import { observer } from 'mobx-react';
 import { OffCanvas, Position, PositionHelper } from '../off-canvas';
@@ -9,6 +9,7 @@ import { Checkbox, Collapse, Form, Input, InputNumber, Select, Tree } from 'antd
 import { get } from 'lodash';
 import { observable } from 'mobx';
 import { _colors } from 'utils/colors';
+import { Button } from 'components/button';
 
 const log      = require('debug')('components:store-control');
 const FormItem = Form.Item;
@@ -29,7 +30,7 @@ export interface StoreControlProps {
 
 @hot(module)
 @observer
-export class StoreControl extends React.Component<StoreControlProps> {
+export default class StoreControl extends React.Component<StoreControlProps> {
     static displayName                              = 'StoreControl';
     static defaultProps: Partial<StoreControlProps> = {};
     @observable position                            = Position.RIGHT;

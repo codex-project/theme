@@ -9,10 +9,9 @@ import { Button, Scrollbar, ucfirst } from '@codex/core';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 import { AutoSizer, List, ListRowProps } from 'react-virtualized';
 import PhpdocMethod, { PhpdocMethodSignature } from '../method';
-import { hot } from 'react-hot-loader';
 import { IFQSEN } from '../../logic';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
 
 const TabPane = Tabs.TabPane;
 const Search  = Input.Search;
@@ -75,13 +74,17 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
     static contextType                                  = FQNSComponentCtx;
     context!: React.ContextType<typeof FQNSComponentCtx>;
     listRef: List                                       = null;
+    @observable list: MemberList                        = null;
     @observable scrollTop: number                       = 0;
     @observable searchFocus: boolean                    = false;
 
-    get list(): MemberList {
-        let list = new MemberList(this.context.file);
-        list.setSelected(this.props.selected);
-        return list;
+
+    constructor(props: PhpdocMemberListProps, context: any) {
+        super(props, context);
+        runInAction(() => {
+            this.list = new MemberList(this.context.file);
+            this.list.setSelected(this.props.selected);
+        });
     }
 
     setSearchFocus = (focus: boolean) => runInAction(() => this.searchFocus = focus);
@@ -122,7 +125,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         return (
             <Fragment key={row.key}>
                 <If condition={item.type === 'property'}>
-                    <ListItem {...props} key={row.key} style={row.style} >
+                    <ListItem {...props} key={row.key} style={row.style}>
                         <Tooltip title={item.visibility}> <i className={'phpdoc-visibility-' + item.visibility}/> </Tooltip>
                         <span className="token property">{item.name}</span>
                     </ListItem>
@@ -154,10 +157,11 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                                     size={12}
                                     noClick={true}
                                     hide={{
+                                        deprecated      : true,
+                                        inherited       : true,
                                         modifiers       : true,
                                         argumentDefaults: true,
                                         namespace       : true,
-                                        deprecated      : true,
                                         argumentTypes   : true,
                                         typeTooltip     : true,
                                         returns         : true,
@@ -214,7 +218,9 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                         onChange={e => this.onSearch(e.target.value)}
                         value={this.list.search}
                     />
-                    <Tooltip title="Clear search" key="search-clean"> <Button icon="close-circle-o" size="small" onClick={() => this.list.setSearch(null)}/> </Tooltip>
+                    <If condition={this.list.search && this.list.search.length}>
+                        <Tooltip title="Clear search" key="search-clean"> <Button icon="close" size="small" onClick={() => this.list.setSearch(null)}/> </Tooltip>
+                    </If>
                 </If>
                 <If condition={filterable}>
                     <Popover
@@ -249,27 +255,31 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         };
         return (
             <div className={'phpdoc-member-list'} style={style}>
-                <div key="filters" className="hover-filters">{this.renderFilters()}</div>
                 <AutoSizer style={{ width: '100%' }}>
                     {({ width, height }) => {
                         return (
-                            <Scrollbar
-                                style={{ height, width }}
-                                onScroll={this.handleScroll}
-                            >
-                                <List
-                                    className="phpdoc-member-list-inner"
-                                    ref={instance => this.listRef = instance}
-                                    height={height}
-                                    width={width}
-                                    rowCount={this.list.length}
-                                    rowHeight={26}
-                                    rowRenderer={this.renderRow}
-                                    style={{ overflowX: 'visible', overflowY: 'visible' }}
-                                >
+                            <Observer>{() =>
+                                <Fragment>
+                                    <div key="filters" className="hover-filters">{this.renderFilters()}</div>
+                                    <Scrollbar
+                                        style={{ height, width }}
+                                        onScroll={this.handleScroll}
+                                    >
+                                        <List
+                                            className="phpdoc-member-list-inner"
+                                            ref={instance => this.listRef = instance}
+                                            height={height}
+                                            width={width}
+                                            rowCount={this.list.length}
+                                            rowHeight={26}
+                                            rowRenderer={this.renderRow}
+                                            style={{ overflowX: 'visible', overflowY: 'visible' }}
+                                        >
 
-                                </List>
-                            </Scrollbar>
+                                        </List>
+                                    </Scrollbar>
+                                </Fragment>
+                            }</Observer>
                         );
                     }}
                 </AutoSizer>

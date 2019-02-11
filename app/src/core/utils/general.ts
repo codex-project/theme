@@ -93,7 +93,7 @@ export function getElementHeight(element) {
     return 0;
 }
 
-export function listen(target: any, eventType: any, callback: any) {
+export function listen<T extends EventTarget>(target: T, eventType: string, callback: any) {
     if ( target.addEventListener ) {
         target.addEventListener(eventType, callback, false);
         return {
@@ -101,11 +101,12 @@ export function listen(target: any, eventType: any, callback: any) {
                 target.removeEventListener(eventType, callback, false);
             }
         };
-    } else if ( target.attachEvent ) {
-        target.attachEvent(`on${eventType}`, callback);
+    }
+    if ( target['attachEvent'] ) {
+        target['attachEvent'](`on${eventType}`, callback);
         return {
             remove() {
-                target.detachEvent(`on${eventType}`, callback);
+                target['detachEvent'](`on${eventType}`, callback);
             }
         };
     }

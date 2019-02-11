@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { classes, style } from 'typestyle';
-import { Button, Checkbox, Input, Popover, Tooltip } from 'antd';
+import { Checkbox, Input, Popover, Tooltip } from 'antd';
 
-import { Tree, TreeProps } from './Tree';
+import Tree, { TreeProps } from './Tree';
 import { action, observable, runInAction } from 'mobx';
-import InspireTree from 'inspire-tree';
-import { findDOMNode } from 'react-dom';
+import { InspireTree } from './InspireTree';
 import { debounce } from 'lodash-decorators';
-import { ITreeNode } from './interfaces';
-import { Scrollbar, ucfirst } from '@codex/core';
+import { Button, scroll, Scrollbar, ucfirst } from '@codex/core';
 import { TreeBuilder } from './TreeBuilder';
 import { hot } from 'react-hot-loader';
 
 import './PhpdocTree.scss';
 import { ManifestCtx } from '../base';
+import Scrollbars from 'react-custom-scrollbars';
+import { TreeNode, TreeNodes } from 'inspire-tree';
 
 const Search = Input.Search;
 const log    = require('debug')('components:PhpdocTree');
@@ -24,6 +24,8 @@ export interface PhpdocTreeProps extends TreeProps {
     filterable?: boolean
     scrollToSelected?: boolean
     tree?: InspireTree
+    ref?: any
+    getTree?: (tree: InspireTree) => void
 }
 
 
@@ -31,21 +33,28 @@ export interface PhpdocTreeProps extends TreeProps {
 @observer
 export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
     static displayName: string                    = 'PhpdocTree';
-    static defaultProps: Partial<PhpdocTreeProps> = {};
+    static defaultProps: Partial<PhpdocTreeProps> = {
+        getTree: () => null,
+    };
     static contextType                            = ManifestCtx;
     context!: React.ContextType<typeof ManifestCtx>;
 
+    search: typeof Search;
+    scrollbar = React.createRef<Scrollbars>();
+    tree: InspireTree;
 
-    private search: typeof Search;
-    private scrollbar: any = React.createRef() as any;
 
-    get tree(): InspireTree {
-        if ( this.props.tree ) {
-            return this.props.tree;
+    constructor(props: PhpdocTreeProps, context: any) {
+        super(props, context);
+        if ( props.tree ) {
+            this.tree = props.tree;
+        } else {
+            let builder = new TreeBuilder(context.manifest.files.keyBy('name'), {
+                manifest: context.manifest,
+            });
+            this.tree   = builder.build();
         }
-        let builder = new TreeBuilder(this.context.manifest.files.keyBy('name'), {});
-        let tree    = builder.build();
-        return tree;
+        props.getTree(this.tree);
     }
 
     @observable treeFilters: {
@@ -57,10 +66,16 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
 
     @action setTreeFilter(name: 'class' | 'trait' | 'interface', value: boolean) {
         this.treeFilters[ name ] = value;
-        this.tree.search((node: ITreeNode) => {
-            if ( ! [ 'class', 'trait', 'interface' ].includes(node.type) ) return true;
-            return this.treeFilters[ node.type ] === false;
+        this.updateTreeFilter();
+    }
+
+    updateTreeFilter() {
+        this.tree.setSyncable(false);
+        this.tree.visible().filterBy(node => this.treeFilters[ node.type ]).hide().each(node => {
+            node.getParent().hasVisibleChildren() ? node.getParent().show() : node.getParent().hide();
         });
+        this.tree.hidden().filterBy(node => ! this.treeFilters[ node.type ]).show().filterBy(node => node.hasChildren() && ! node.hasVisibleChildren()).hide();
+        this.tree.setSyncable(true).sync();
     }
 
     @debounce(400)
@@ -73,7 +88,7 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
         }
         log('searchInTree', { search, selected: this.tree.selected(), lastSelectedNode: this.tree.lastSelectedNode() });
         if ( search === null && this.tree.selected().length > 0 ) {
-            let selected = this.tree.selected().get(0) as ITreeNode;
+            let selected = this.tree.selected().get(0) as TreeNode;
             // this.tree.lastSelectedNode()
             this.tree
                 .clearSearch() // clear search, collapses all
@@ -81,28 +96,61 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
                 .expandParents(); // expand parents
             return;
         }
+        this.tree.setSyncable(false);
         this.tree.search(search);
+        this.updateTreeFilter()
+
+    }
+
+    scrollToNode(node: TreeNode) {
+        let $li = $(`li[data-uid="${node.id}"]`);
+        if ( $li.length === 1 ) {
+            let offsetTop = $li.get(0).offsetTop;
+            scroll.animScrollToFn(
+                () => this.scrollbar.current.getScrollTop(),
+                (top) => this.scrollbar.current.scrollTop(top),
+                offsetTop,
+                600,
+            );
+            log('scrollTop offsetTop', offsetTop);
+        }
     }
 
     componentDidMount() {
-        this.tree.on('node.selected', (node: ITreeNode) => {
+        this.tree.on('node.selected', (node: TreeNode) => {
             if ( this.props.scrollToSelected ) {
-                let $li = $(`li[data-uid="${node.id}"]`);
-                if ( $li.length === 1 ) {
-                    let el = findDOMNode(this) as HTMLElement;
-                    let li = $li.get(0);
-                    let of = li.offsetTop - (el.offsetHeight / 2); // scrolls to element, puts it vertical middle
-                    log('selected offset top', { offsetTop: li.offsetTop, $li, el, of });
-                    this.scrollbar.scrollbars.scrollTop(of);
-                }
+                this.scrollToNode(node);
             }
         });
+        if ( this.tree.selected().length ) {
+            this.scrollToNode(this.tree.selected().get(0));
+        }
     }
 
     render() {
+        window[ 'phpdoctree' ]                                                  = this;
         const { nodes, searchable, filterable, style, className, ...treeProps } = this.props;
         return (
             <div className={this.getClassName()}>
+                {this.renderControls()}
+                <Scrollbar innerRef={this.scrollbar as any}>
+                    <Tree
+                        tree={this.tree}
+                        {...treeProps}
+                        style={{
+                            marginRight  : 8,
+                            paddingBottom: 40, // @todo this is a workaround for a unfixed bug: if this is removed, the scroll area does not scroll all the way to the bottom. this is caused by the search/filter div
+                        }}
+                    />
+                </Scrollbar>
+            </div>
+        );
+    }
+
+    renderControls() {
+        const { nodes, searchable, filterable, style, className, ...treeProps } = this.props;
+        return (
+            <Fragment>
                 <If condition={searchable && filterable}>
                     <div style={{ padding: 5, textAlign: 'right', borderBottom: '1px solid rgba(0, 0, 0, 0.2)', marginBottom: 5, display: 'flex' }}>
                         <If condition={searchable}>
@@ -120,7 +168,7 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
                                 value={this.treeFilters.search}
                             />
                             <Tooltip title="Clear search" key="search-clean">
-                                <Button icon="close-circle-o" size="small" onClick={() => this.searchInTree(null)}/>
+                                <Button icon="close" size="small" onClick={() => this.searchInTree(null)}/>
                             </Tooltip>
                         </If>
                         <If condition={filterable}>
@@ -138,18 +186,7 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
                         </If>
                     </div>
                 </If>
-                <Scrollbar ref={this.scrollbar as any}>
-                    <Tree
-
-                        tree={this.tree}
-                        {...treeProps}
-                        style={{
-                            marginRight  : 8,
-                            paddingBottom: 40, // @todo this is a workaround for a unfixed bug: if this is removed, the scroll area does not scroll all the way to the bottom. this is caused by the search/filter div
-                        }}
-                    />
-                </Scrollbar>
-            </div>
+            </Fragment>
         );
     }
 

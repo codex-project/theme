@@ -8,8 +8,8 @@ import { classes } from 'typestyle';
 
 
 import './index.scss';
-import { hot } from 'decorators';
-import { FontAwesomeIcon, Omit } from 'interfaces';
+import { hot } from '../../decorators';
+import { FontAwesomeIcon, Omit } from '../../interfaces';
 
 
 export type ButtonType = AntdButtonType | 'codex' | 'codex-alt' | 'toolbar';

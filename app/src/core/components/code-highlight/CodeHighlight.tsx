@@ -3,11 +3,11 @@ import { findDOMNode } from 'react-dom';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import { classes } from 'typestyle';
-import { hot } from 'decorators';
-import { defer, Deferred } from 'utils/promise';
+import { hot } from 'react-hot-loader';
+import { defer, Deferred, resolve } from 'utils/promise';
 import { Prism as PrismInstance } from 'interfaces';
 import { getPrism } from 'utils/get-prism';
-import { ZeptoMap } from 'utils/scroll';
+import { ZeptoMap,scrollTo } from 'utils/scroll';
 declare const Prism: PrismInstance;
 const log = require('debug')('components:CodeHighlight');
 
