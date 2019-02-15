@@ -92,8 +92,10 @@ export function getElementHeight(element) {
     // Return zeros for disconnected and hidden elements (gh-2310)
     return 0;
 }
-
-export function listen<T extends EventTarget>(target: T, eventType: string, callback: any) {
+export interface Listener {
+    remove();
+}
+export function listen<T extends EventTarget>(target: T, eventType: string, callback: any):Listener {
     if ( target.addEventListener ) {
         target.addEventListener(eventType, callback, false);
         return {

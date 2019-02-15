@@ -52,7 +52,7 @@ export { default as Platform } from './utils/platform';
 export * from './utils/scroll';
 export * from './utils/scrollTo';
 export * from './utils/storage';
+export * from './utils/styled';
 import * as scroll from './utils/scroll';
-export {dialog} from './components/store-control';
 
 export { app, lazyInject,scroll };

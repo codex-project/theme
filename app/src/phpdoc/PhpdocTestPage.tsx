@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { animScrollToFn, dialog, lazyInject, RouteState, Store } from '@codex/core';
+import { dialog, lazyInject, RouteState, Store } from '@codex/core';
 import { api, Api } from '@codex/api';
 import { PhpdocManifest, PhpdocStore } from './logic';
 import { RouteComponentProps } from 'react-router';
@@ -46,24 +46,24 @@ export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps 
 
     inited = false;
 
-    public componentDidMount(): void {
-
-        this.devDialog = dialog.bindToKey('d', {
-            type : 'button',
-            props: {
-                children: 'asf',
-                onClick : () => {
-                },
-            },
-        });
-    }
-
-    public componentWillUnmount(): void {
-        if ( this.devDialog ) {
-            this.devDialog.remove();
-            this.devDialog = null;
-        }
-    }
+    // public componentDidMount(): void {
+    //
+    //     this.devDialog = dialog.bindToKey('d', {
+    //         type : 'button',
+    //         props: {
+    //             children: 'asf',
+    //             onClick : () => {
+    //             },
+    //         },
+    //     });
+    // }
+    //
+    // public componentWillUnmount(): void {
+    //     if ( this.devDialog ) {
+    //         this.devDialog.remove();
+    //         this.devDialog = null;
+    //     }
+    // }
 
     public init(): void {
         if ( ! this.tree || this.inited ) return;
@@ -100,7 +100,7 @@ export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps 
                             />
                         </Col>
                     </Row>
-                    <Row type="flex" style={{background: '#aa2337', height: 10, width: '100%'}}>
+                    <Row type="flex" style={{ background: '#aa2337', height: 10, width: '100%' }}>
                         a
                     </Row>
                 </ManifestProvider>

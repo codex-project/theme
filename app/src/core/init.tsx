@@ -8,6 +8,7 @@ import Root from 'components/Root';
 import { ColorElement } from 'elements';
 import { generatePath, Redirect } from 'react-router';
 import { ErrorPage } from 'pages/index';
+import TestPage from 'pages/TestPage';
 
 const log = require('debug')('site:index');
 
@@ -20,7 +21,7 @@ const menuPlugin   = new MenuPlugin();
 const routerPlugin = new RouterPlugin({
     defaultRoute: 'documentation',
 });
-app.Component = Root;
+app.Component      = Root;
 app
     .plugin(menuPlugin)
     .plugin(routerPlugin);
@@ -43,6 +44,13 @@ routerPlugin.hooks.registered.tap('CORE', routes => {
                 let result     = await promise;
                 const HomePage = (await import(/* webpackChunkName: "core.pages.home" */'./pages/HomePage')).default;
                 return <HomePage {...props} {...result} />;
+            },
+        }, {
+            name  : 'test',
+            path  : '/test',
+            action: async (props, routeState) => {
+                const TestPage = (await import('./pages/TestPage')).default;
+                return <TestPage {...props} />;
             },
         },
         {

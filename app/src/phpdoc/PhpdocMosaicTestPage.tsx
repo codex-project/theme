@@ -42,9 +42,9 @@ const Win = memo(props =>
         {props.map[ props.id ]}
     </MosaicWindow>)
 
-
+@hot(module)
 @observer
-class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: RouteState } & RouteComponentProps> {
+export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: RouteState } & RouteComponentProps> {
     static displayName = 'PhpdocMosaicTestPage';
 
     @lazyInject('api') api: Api;
@@ -186,5 +186,3 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
     }
 
 }
-
-export default hot(module)(PhpdocMosaicTestPage) as typeof PhpdocMosaicTestPage;

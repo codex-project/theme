@@ -10,7 +10,7 @@
 import React from 'react';
 
 export function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ReactType): React.ReactType<T> {
-    const { defaultProps = {} } = Component;
+    const { defaultProps = {} as any } = Component;
 
     if ( props.as && props.as !== defaultProps.as ) {
         return props.as;

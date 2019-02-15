@@ -25,7 +25,7 @@ const chain             = new Chain({
     outputDir: resolve(__dirname, process.env.NODE_ENV === 'development' ? 'dev' : 'dist'),
 });
 const { isDev, isProd } = chain;
-const cache             = false;
+const cache             = isDev;
 // const _assetPath        = 'vendor';
 const _assetPath        = isDev ? 'vendor' : 'vendor/codex_[entrypoint]';
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);

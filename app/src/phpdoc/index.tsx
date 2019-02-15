@@ -7,8 +7,6 @@ import React from 'react';
 import { PhpdocStore } from './logic';
 import {PhpdocMemberList, PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMethod, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
 import { PhpdocMenuType } from './PhpdocMenuType';
-import PhpdocTestPage from './PhpdocTestPage';
-import PhpdocMosaicTestPage from './PhpdocMosaicTestPage';
 import { ManifestProvider } from './components/base';
 import { PhpdocMethodArguments, PhpdocMethodSignature } from './components/method';
 
@@ -83,7 +81,10 @@ export default class PhpdocPlugin extends BasePlugin {
                 DEV && routeMap.set('phpdoc.mosaic.test', {
                     name     : 'phpdoc.mosaic.test',
                     path     : app.url.root('phpdoc-mosaic'),
-                    component: PhpdocMosaicTestPage,
+                    action: async(props,routeState) => {
+                        const PhpdocMosaicTestPage = (await import('./PhpdocMosaicTestPage')).default;
+                        return <PhpdocMosaicTestPage {...props} routeState={routeState} />
+                    }
                 });
             });
         }
