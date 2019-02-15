@@ -58,7 +58,7 @@ const hasData = (what) => what !== undefined && what.length > 0;
 export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     static displayName: string                      = 'PhpdocMethod';
     static defaultProps: Partial<PhpdocMethodProps> = {
-        withoutTags   : [ 'param', 'example', 'return' ],
+        withoutTags   : [ 'param', 'example', 'return', 'inherited_from' ],
         hide          : {
             namespace: true,
         },

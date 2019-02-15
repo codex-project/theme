@@ -25,6 +25,8 @@
         "@types/url-join": "^4.0.0",
         "@types/react-virtualized": "^9.18.12",
         "@types/memoize-one": "^4.1.0",
+        "immutable": "^3.8.2",
+        "@types/immutable": "^3.8.7",
         "react-dnd": "^7.0.2",
         "react-dnd-html5-backend": "^7.0.2",
         "react-virtualized": "^9.21.0",

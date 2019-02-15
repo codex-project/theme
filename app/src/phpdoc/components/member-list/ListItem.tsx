@@ -16,13 +16,12 @@ export interface ListItemProps {
     style?: React.CSSProperties
     className?: string
     item: Member
-    row: ListRowProps
     innerRef?: any
     selected?: boolean
     modifiers?: boolean | React.ReactNode
     extras?: React.ReactNode
 
-    onClick?: (item: Member,row: ListRowProps) => any
+    onClick?: (item: Member) => any
     onInheritedClick?: (item: Member) => any
     onGotoSourceClick?: (item: Member) => any
     gotoSource?: boolean
@@ -44,7 +43,7 @@ export default class ListItem extends PureComponent<ListItemProps> {
     };
 
     render() {
-        const { innerRef, onClick,row, extras, className, style, children, selected } = this.props;
+        const { innerRef, onClick, extras, className, style, children, selected } = this.props;
         let item                                                                  = this.props.item as PhpdocMethod;
         return (
             <div key="list-item" ref={innerRef} className={classes('phpdoc-member-list-item',`phpdoc-member-list-item-${item.type}`, selected ? 'active' : null, className)} style={style}>
@@ -52,7 +51,7 @@ export default class ListItem extends PureComponent<ListItemProps> {
                     className="list-item-link"
                     onClick={() => {
                         log('onClick', item);
-                        onClick(item,row);
+                        onClick(item);
                     }}>
                     {children}
                 </div>

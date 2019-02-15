@@ -1,5 +1,7 @@
 import { api } from '@codex/api';
 import { PhpdocMethod } from './types';
+// noinspection ES6UnusedImports
+import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
 export class Collection<T> extends Array<T> implements Array<T> {
 
@@ -53,6 +55,14 @@ export class Collection<T> extends Array<T> implements Array<T> {
         });
         return result as any;
     }
+
+    getValues(): T[] {
+        return Array.from(this.values());
+    }
+
+    toList(): ImmutableList<T> {
+        return ImmutableList(this.getValues());
+    }
 }
 
 export class NamedCollection<T> extends Collection<T> {
@@ -63,8 +73,8 @@ export class NamedCollection<T> extends Collection<T> {
         Object.setPrototypeOf(this, NamedCollection.prototype);
     }
 
-    get(key) {
-        return this.findBy(this.KEYNAME as any, key);
+    get(keyValue) {
+        return this.findBy(this.KEYNAME as any, keyValue);
     }
 
     has(key) {
@@ -75,12 +85,21 @@ export class NamedCollection<T> extends Collection<T> {
         return this.map(item => item[ this.KEYNAME ]);
     }
 
+    getIndex(keyValue) {
+        return this.findIndex(item => item[ this.KEYNAME ] === keyValue);
+    }
+
     only(keys: string[]) {
         return this.whereIn(this.KEYNAME as any, keys);
     }
 
     without(keys: string[]) {
         return this.whereNotIn(this.KEYNAME as any, keys);
+    }
+
+    toMap(keyName = this.KEYNAME): ImmutableMap<string, T> {
+        let map = this.mapKeyBy(keyName as any);
+        return ImmutableMap(map);
     }
 }
 

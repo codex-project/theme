@@ -22,8 +22,8 @@ export class MemberList {
     protected exclude: string | string[]     = [];
     @observable selected: Member             = null;
     @observable search: string               = null;
-    @observable methods: PhpdocMethod[]      = [];
-    @observable properties: PhpdocProperty[] = [];
+    @observable methods: Methods      = new Methods();
+    @observable properties: Properties = new Properties();
     @observable length: number               = 0;
 
     @computed get items(): Member[] { return [].concat(this.properties, this.methods);}
@@ -47,8 +47,8 @@ export class MemberList {
 
     reset() {
         transaction(() => {
-            this.properties = [];
-            this.methods    = [];
+            this.methods    = new Methods();
+            this.properties = new Properties();
             this.selected   = null;
             this.search     = null;
         });
@@ -115,7 +115,6 @@ export class MemberList {
         if ( this.filters.inherited ) filter(property => ! property.inherited_from || property.inherited_from.length === 0);
         if ( this.search && this.search.length > 0 ) filter(property => property.name.toLowerCase().indexOf(this.search.toLowerCase()) > - 1);
         this.properties = properties as any;
-
     }
 
 }

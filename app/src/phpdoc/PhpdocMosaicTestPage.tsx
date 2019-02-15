@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import memo from 'memoize-one';
-import { Button, lazyInject, Pane, Panes, RouteState, Scrollbar, Store, Toolbar } from '@codex/core';
+import { Button, lazyInject, RouteState, Store, Toolbar } from '@codex/core';
 import { api, Api } from '@codex/api';
-import { PhpdocStore } from './logic';
+import { FQSEN, PhpdocStore } from './logic';
 import { RouteComponentProps } from 'react-router';
 import { Observer, observer } from 'mobx-react';
 import { Tabs } from 'antd';
@@ -27,7 +27,7 @@ export interface PhpdocMosaicTestPageProps {
     revision?: api.Revision
 }
 
-export type ViewId = 'tree' | 'entity' | 'memberList' | 'method' | 'code';
+export type ViewId = 'tree' | 'entity' | 'code';
 
 const Method = memo(props => <PhpdocMethod fqsen={props.fqsen} signatureProps={{ size: 12 }}/>);
 const Win    = memo(props =>
@@ -36,7 +36,7 @@ const Win    = memo(props =>
         draggable={! props.dragLock}
         path={props.path}
         toolbarControls={[ <div key="null"/> ]}
-        createNode={() => 'method'}
+        createNode={() => 'entity'}
         title=""
     >
         {props.map[ props.id ]}
@@ -51,9 +51,11 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
     @lazyInject('store') store: Store;
 
-    @observable fqsen = '\\Codex\\Codex::get()';
+    @observable _fqsen = '\\Codex\\Codex::get()';
 
-    @action setFQNS(fqsen) {this.fqsen = fqsen;}
+    @action setFQNS(fqsen) {this._fqsen = fqsen;}
+
+    @computed get fqsen(): FQSEN {return FQSEN.from(this._fqsen);}
 
     public componentWillMount(): void {
         const { layout } = this.store;
@@ -75,19 +77,15 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
 
     renderEntity() {
         return (
-            <PhpdocEntity fqsen={this.fqsen}/>
-        );
-    }
-
-    renderMemberList() {
-        return (<PhpdocMemberList fqsen={this.fqsen}/>);
-    }
-
-    renderMethod() {
-        return (
-            <Scrollbar>
-                <PhpdocMethod fqsen={this.fqsen} signatureProps={{ size: 12 }}/>
-            </Scrollbar>
+            <Fragment>
+                <PhpdocEntity fqsen={this.fqsen}/>
+                <PhpdocMemberList
+                    fqsen={this.fqsen}
+                    selectable
+                    searchable
+                    filterable
+                />
+            </Fragment>
         );
     }
 
@@ -103,20 +101,10 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
         splitPercentage: 15,
         first          : 'tree',
         second         : {
-            direction      : 'row',
-            splitPercentage: 35,
-            first          : {
-                direction      : 'column',
-                splitPercentage: 70,
-                first          : {
-                    direction      : 'column',
-                    splitPercentage: 15,
-                    first          : 'entity',
-                    second         : 'memberList',
-                },
-                second         : 'code',
-            },
-            second         : 'method',
+            direction      : 'column',
+            splitPercentage: 70,
+            first          : 'entity',
+            second         : 'code',
         },
     };
 
@@ -147,7 +135,7 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
                     draggable={! this.dragLock}
                     path={path}
                     toolbarControls={[ <div key="null"/> ]}
-                    createNode={() => 'method'}
+                    createNode={() => 'entity'}
                     title=""
                 >
                     {children}
@@ -158,11 +146,9 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
 
 
     CONTENT_MAP: Record<ViewId, (path) => React.ReactElement<any>> = {
-        tree      : memo(path => this.renderTile('tree', path, this.renderTree())),
-        entity    : memo(path => this.renderTile('entity', path, this.renderEntity())),
-        memberList: memo(path => this.renderTile('memberList', path, this.renderMemberList())),
-        method    : memo(path => this.renderTile('method', path, this.renderMethod())),
-        code      : memo(path => this.renderTile('code', path, this.renderCode())),
+        tree  : memo(path => this.renderTile('tree', path, this.renderTree())),
+        entity: memo(path => this.renderTile('entity', path, this.renderEntity())),
+        code  : memo(path => this.renderTile('code', path, this.renderCode())),
     };
 
     render() {
