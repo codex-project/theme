@@ -1,4 +1,4 @@
-import { FQSEN, PhpdocFile, PhpdocManifest, PhpdocStore } from '../../logic';
+import { FQSEN, IFQSEN, PhpdocFile, PhpdocManifest, PhpdocStore } from '../../logic';
 import { lazyInject } from '@codex/core';
 import React, { Component } from 'react';
 
@@ -67,22 +67,34 @@ export interface IFQNSComponentCtx {
 
 export const FQNSComponentCtx = React.createContext<IFQNSComponentCtx>({ manifest: null, file: null, fqsen: null });
 
+export interface FQNSComponentProps {
+    fqsen:IFQSEN
+    file?:PhpdocFile
+}
 
-export function FQNSComponent() {
+export function FQNSComponent(contextual: boolean = false) {
     return function <T>(TargetComponent: T): T {
-        class HOC extends Component<any> {
-            static displayName      = 'FQNSHOC';
-            static WrappedComponent = TargetComponent;
-            static contextType      = ManifestCtx;
+        class HOC extends Component<FQNSComponentProps> {
+            static displayName                        = 'FQNSHOC';
+            static WrappedComponent                   = TargetComponent;
+            static contextType                        = ManifestCtx;
             context!: React.ContextType<typeof ManifestCtx>;
             state: { fqsen: FQSEN, file: PhpdocFile } = { fqsen: null, file: null };
 
             constructor(props: any, context: any) {
                 super(props, context);
-                this.state.fqsen = FQSEN.from(props.fqsen);
+                if ( props.fqsen ) {
+                    this.state.fqsen = FQSEN.from(props.fqsen);
+                }
+                if ( props.file ) {
+                    this.state.file = props.file;
+                }
             }
 
             updateFile() {
+                if ( this.props.file ) {
+                    return this.setState({ file: this.props.file });
+                }
                 this.context.manifest.fetchFile(this.state.fqsen.slashEntityName).then(file => {
                     this.setState({ file });
                 });
@@ -93,6 +105,9 @@ export function FQNSComponent() {
             }
 
             componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<{ fqsen: FQSEN, file: PhpdocFile }>, snapshot?: any): void {
+                if ( prevProps.file && prevProps.file.hash !== this.props.file.hash ) {
+                    this.updateFile();
+                }
                 if ( ! prevState.fqsen.equals(this.props.fqsen) ) {
                     this.setState({ fqsen: FQSEN.from(this.props.fqsen) }, () => this.updateFile());
                 }

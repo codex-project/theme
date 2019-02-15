@@ -161,6 +161,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                 <Tooltip title={item.visibility}> <i className={'phpdoc-visibility-' + item.visibility}/> </Tooltip>
                 <PhpdocMethodSignature
                     fqsen={item.fqsen}
+                    file={this.context.file}
                     key={row.key}
                     inline={true}
                     size={12}
@@ -194,6 +195,8 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
     renderRow = (row: ListRowProps) => {
         let item  = this.list.items[ row.index ];
         let props = this.getListItemProps(item, row);
+
+        log('renderRow', row.key, item.fqsen.toString())
 
         return (
             <Fragment key={row.key}>
@@ -264,6 +267,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
             width : '100%',
             ...this.props.style,
         };
+        log('render')
         return (
             <div className={'phpdoc-member-list'} style={style}>
                 <AutoSizer style={{ width: '100%' }}>
@@ -283,10 +287,12 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
                                             <Scrollbar style={{ height, width }}>
                                                 <PhpdocMethod
                                                     fqsen={this.list.selected.fqsen}
+                                                    file={this.context.file}
                                                     style={{ height, width }}
                                                     signature={
                                                         <PhpdocMethodSignature
                                                             fqsen={this.list.selected.fqsen}
+                                                            file={this.context.file}
                                                             size={12}
                                                             className="ant-row-flex-space-between"
                                                             hide={{ namespace: true }}>

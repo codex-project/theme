@@ -16,6 +16,8 @@ export interface MemberListFilters {
     name?: string
 }
 
+
+
 export class MemberList {
     protected exclude: string | string[]     = [];
     @observable selected: Member             = null;

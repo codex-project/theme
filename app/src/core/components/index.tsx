@@ -11,6 +11,7 @@ export * from './link';
 export * from './loading';
 export * from './observables';
 // export * from './off-canvas';
+export * from './panes';
 export * from './responsive';
 export * from './scrollbar';
 export * from './spin';

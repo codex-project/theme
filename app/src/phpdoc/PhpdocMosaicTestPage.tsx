@@ -1,12 +1,12 @@
 import React from 'react';
-import memo from 'memoize-one'
-import { Button, lazyInject, RouteState, Scrollbar, Store, Toolbar } from '@codex/core';
+import memo from 'memoize-one';
+import { Button, lazyInject, Pane, Panes, RouteState, Scrollbar, Store, Toolbar } from '@codex/core';
 import { api, Api } from '@codex/api';
 import { PhpdocStore } from './logic';
 import { RouteComponentProps } from 'react-router';
 import { Observer, observer } from 'mobx-react';
 import { Tabs } from 'antd';
-import { action, computed, observable, runInAction } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import { hot } from 'react-hot-loader';
 import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 
@@ -29,8 +29,8 @@ export interface PhpdocMosaicTestPageProps {
 
 export type ViewId = 'tree' | 'entity' | 'memberList' | 'method' | 'code';
 
-const Method = memo(props => <PhpdocMethod fqsen={props.fqsen} signatureProps={{ size: 12 }} />)
-const Win = memo(props =>
+const Method = memo(props => <PhpdocMethod fqsen={props.fqsen} signatureProps={{ size: 12 }}/>);
+const Win    = memo(props =>
     <MosaicWindow<ViewId>
         className={classes(props.className, 'mosaic-window-' + props.id)}
         draggable={! props.dragLock}
@@ -40,7 +40,7 @@ const Win = memo(props =>
         title=""
     >
         {props.map[ props.id ]}
-    </MosaicWindow>)
+    </MosaicWindow>);
 
 @hot(module)
 @observer
@@ -86,7 +86,7 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
     renderMethod() {
         return (
             <Scrollbar>
-                <PhpdocMethod fqsen={this.fqsen} signatureProps={{ size: 12 }} />
+                <PhpdocMethod fqsen={this.fqsen} signatureProps={{ size: 12 }}/>
             </Scrollbar>
         );
     }
@@ -120,7 +120,7 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
         },
     };
 
-    @observable resizeLock: boolean = true;
+    @observable resizeLock: boolean = false;
     @observable dragLock: boolean   = true;
 
     @computed get windowClassName() {
@@ -140,15 +140,34 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
         // runInAction(() => {this.mosaicValue = value;});
     };
 
+    renderTile = (id, path, children) => {
+        return (<Observer>{() =>
+                <MosaicWindow<ViewId>
+                    className={classes(this.windowClassName, 'mosaic-window-' + id)}
+                    draggable={! this.dragLock}
+                    path={path}
+                    toolbarControls={[ <div key="null"/> ]}
+                    createNode={() => 'method'}
+                    title=""
+                >
+                    {children}
+                </MosaicWindow>}</Observer>
+            // <Observer>{() =>}                            </Observer>
+        );
+    };
+
+
+    CONTENT_MAP: Record<ViewId, (path) => React.ReactElement<any>> = {
+        tree      : memo(path => this.renderTile('tree', path, this.renderTree())),
+        entity    : memo(path => this.renderTile('entity', path, this.renderEntity())),
+        memberList: memo(path => this.renderTile('memberList', path, this.renderMemberList())),
+        method    : memo(path => this.renderTile('method', path, this.renderMethod())),
+        code      : memo(path => this.renderTile('code', path, this.renderCode())),
+    };
+
     render() {
-        const { revision, ...props }                       = this.props;
-        const CONTENT_MAP: Record<ViewId, React.ReactNode> = {
-            tree      : this.renderTree(),
-            entity    : this.renderEntity(),
-            memberList: this.renderMemberList(),
-            method    : this.renderMethod(),
-            code      : this.renderCode(),
-        };
+        const { children, revision, history, location, staticContext, match, routeState, ...props } = this.props;
+
         return (
             <ManifestProvider project="codex" revision="master">
                 <div key="phpdoc-mosaic" id="phpdoc-mosaic" className="phpdoc-mosaic" {...props}>
@@ -165,19 +184,23 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
                         resize={this.resizeLock ? 'DISABLED' : { minimumPaneSizePercentage: 15 }}
                         initialValue={this.mosaicValue}
                         onChange={e => this.onMosaicChange(e)}
-                        renderTile={(id, path) => (<Observer>{() =>
-                                <MosaicWindow<ViewId>
-                                    className={classes(this.windowClassName, 'mosaic-window-' + id)}
-                                    draggable={! this.dragLock}
-                                    path={path}
-                                    toolbarControls={[ <div key="null"/> ]}
-                                    createNode={() => 'method'}
-                                    title=""
-                                >
-                                    {CONTENT_MAP[ id ]}
-                                </MosaicWindow>}</Observer>
-                            // <Observer>{() =>}                            </Observer>
-                        )}
+                        renderTile={(id, path) => {
+                            return this.CONTENT_MAP[ id ](path);
+
+                            // (<Observer>{() =>
+                            //         <MosaicWindow<ViewId>
+                            //             className={classes(this.windowClassName, 'mosaic-window-' + id)}
+                            //             draggable={! this.dragLock}
+                            //             path={path}
+                            //             toolbarControls={[ <div key="null"/> ]}
+                            //             createNode={() => 'method'}
+                            //             title=""
+                            //         >
+                            //             {this.CONTENT_MAP[ id ]}
+                            //         </MosaicWindow>}</Observer>,
+                            //     // <Observer>{() =>}                            </Observer>
+                            // );
+                        }}
 
                     />
                 </div>

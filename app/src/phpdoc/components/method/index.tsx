@@ -8,7 +8,7 @@ import { PhpdocMethodProps } from './PhpdocMethod';
 const loader = (name) => () => Promise.all([
     import(
         /* webpackChunkName: "phpdoc.components.method" */
-      // /* webpackPrefetch: true */
+        /* webpackPrefetch: true */
         `./${name}`
         ),
     loadStyling(),
@@ -20,11 +20,9 @@ export let PhpdocMethodSignature: ComponentType<PhpdocMethodSignatureProps> = lo
 export let PhpdocMethodArguments: ComponentType<PhpdocMethodArgumentsProps> = loadable(loader('PhpdocMethodArguments'));
 
 
-
 // export let PhpdocMethod: ComponentType<PhpdocMethodProps>                   = loadable(() => import('./PhpdocMethod'));
 // export let PhpdocMethodSignature: ComponentType<PhpdocMethodSignatureProps> = loadable(() => import('./PhpdocMethodSignature'));
 // export let PhpdocMethodArguments: ComponentType<PhpdocMethodArgumentsProps> = loadable(() => import('./PhpdocMethodArguments'));
-
 
 
 export default PhpdocMethod;

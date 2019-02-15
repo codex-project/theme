@@ -1,17 +1,14 @@
 import React, { Fragment } from 'react';
 import './method-signature.scss';
-import { IFQSEN, PhpdocMethod as Method, PhpdocMethod } from '../../logic';
+import { PhpdocMethod as Method, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type';
 import { classes } from 'typestyle';
-import { FQNSComponent, FQNSComponentCtx } from '../base';
-import { hot } from 'react-hot-loader';
+import { FQNSComponent, FQNSComponentCtx, FQNSComponentProps } from '../base';
 import { iconTooltipDeprecated, iconTooltipInherited } from '../tooltips';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
-export interface PhpdocMethodSignatureProps {
-    fqsen: IFQSEN
-
+export interface PhpdocMethodSignatureProps extends FQNSComponentProps {
     style?: React.CSSProperties
     className?: string;
     prefixCls?: string
