@@ -67,6 +67,7 @@ export default class ListItem extends PureComponent<ListItemProps> {
             return null;
         }
         if ( this.props.modifiers === undefined ) {
+            return null;
             return (
                 <React.Fragment>
                     {this.renderModifierDeprecated(item)}

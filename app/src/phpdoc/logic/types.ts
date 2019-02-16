@@ -75,7 +75,7 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 }));
                 return new PhpdocMethod(item, this);
             }));
-            this[ 'methods' ].getValues().forEach(value => this.members.set(value.name, value));
+            this[ 'methods' ].getValues().forEach(value => this.members = this.members.set(value.name, value));
         }
         if ( data.properties ) {
             this[ 'properties' ] = new Properties(...data.properties.map(item => {
@@ -84,7 +84,7 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 }
                 return new PhpdocProperty(item, this);
             }));
-            this[ 'properties' ].getValues().forEach(value => this.members.set(value.name, value));
+            this[ 'properties' ].getValues().forEach(value => this.members = this.members.set(value.name, value));
         }
         if ( data.docblock && data.docblock.tags ) {
             this[ 'docblock' ][ 'tags' ] = new Tags(...data.docblock.tags);

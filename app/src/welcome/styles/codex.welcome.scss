@@ -1,0 +1,187 @@
+@import "base";
+
+//formatter:off
+@import '../../core/themes/_base.styl'
+@import 'variables.styl'
+@import '../../animate-stylus/fadeIn.styl'
+@import '../../animate-stylus/slideInUp.styl'
+@import 'component.section.mat.styl'
+
+
+carousel-slide($slideName, $slideExt)
+    $prefix = '/assets/welcome/img/slides/slide-'
+    background-image url($prefix + $slideName + '-576.' + $slideExt)
+    @media (min-width $breakpoint-sm-min)
+        background-image url($prefix + $slideName + '-768.' + $slideExt)
+    @media (min-width $breakpoint-md-min)
+        background-image url($prefix + $slideName + '-922.' + $slideExt)
+    @media (min-width $breakpoint-lg-min)
+        background-image url($prefix + $slideName + '-1200.' + $slideExt)
+    @media (min-width $breakpoint-xl-min)
+        background-image url($prefix + $slideName + '-2000.' + $slideExt)
+
+
+
+.btn-big
+    display block
+    height 100px
+    width 100%
+    padding-top 30px
+    font-size 30px
+
+.page-welcome
+    .c-header,
+    .c-header .q-toolbar,
+    .c-header .q-tabs
+        padding-top 0
+        padding-bottom 0
+        .q-tabs-head
+            min-height 50px
+
+        .c-tab-special:not(.q-tab-top-label)
+            color: #FF5722;
+            font-weight: bold
+            font-family: Raleway;
+
+
+
+    .c-header-menu.c-header-menu-tabs .q-tab
+        border-radius 0
+
+    .c-page
+        padding 0
+
+        h3
+            font-size 2.28rem
+        h4
+            font-size 2rem
+        @media (min-width $breakpoint-md-min)
+            margin 0
+
+        h2
+            font-weight normal
+            margin-top 1.5rem
+
+        .col-lg-4
+            margin-bottom 1.5rem
+            text-align center
+
+        .col-lg-4 p
+            margin-right .75rem
+            margin-left .75rem
+
+        .awesome
+            text-align center
+
+            h2
+                fadeIn()
+                font-size 3rem
+                color $blue-grey-2
+                margin 0 0 5px 0
+
+            p
+                fadeIn(1,2s)
+
+            .awesome-divider
+                fadeIn(1, 2s)
+                font-family $font-family-headers
+                height 1px
+                width 200px
+                margin 10px auto
+                background-color $blue-grey-2
+
+
+    .c-footer
+        height auto
+        padding-top 30px
+
+        section-title
+
+        section-variant($blue-grey-9, $blue-grey-2)
+
+        .section-title
+            text-align left
+        .section-title-divider
+            width 100%
+            border-top none
+
+
+        p
+            font-size 1rem
+
+        .copyright
+            margin-top 20px
+            background-color #1e282d
+            p
+                margin 0
+                padding 3px 20px
+                font-size 0.8rem
+
+
+#welcome-carousel
+    .slide-html
+        carousel-slide('html', 'png')
+    .slide-typewriter
+        carousel-slide('typewriter', 'jpg')
+
+    .q-carousel-left-button,
+    .q-carousel-right-button
+        > i
+            height 100%
+            width 100%
+            display block
+            font-size 70px
+            background none
+
+    .carousel-slide,
+    .carousel-slide p
+        text-shadow 2px 2px 5px rgba(0, 0, 0, 0.6)
+        font-size 2.2rem
+
+#addons-carousel
+    width 100%
+    height 400px
+    border 7px solid lighten($section-variant-dark-bg, 10)
+    .c-section-light &
+        border 7px solid darken($section-variant-light-bg, 10)
+
+    .slide-git
+        background-image url('/assets/welcome/img/ss-codex-document.png')
+
+    .slide-phpdoc
+        background-image url('/assets/welcome/img/ss-api-page.png')
+        background-position 12% 82%
+        background-size 110%
+
+    .slide-auth
+        background-image url('/assets/welcome/img/ss-code-highlight.png')
+        background-position 12% 82%
+        background-size 110%
+
+    .carousel-text
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        background-color: rgba(0,0,0, 0.5);
+        padding: 10px;
+        font-size: 1.2rem;
+    .q-carousel-toolbar
+        padding 0
+    .q-carousel-toolbar i
+        font-size 3rem
+        padding 0
+        &:hover
+            color white
+
+
+#features
+    padding-left 4rem
+#overview
+    padding-left 4rem
+#getting-started
+    padding-left 4rem
+
+
+.zoom-in:hover {
+    cursor: zoom-in;
+}

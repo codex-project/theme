@@ -4,7 +4,7 @@ import { merge, uniq } from 'lodash';
 // import { Api, api, FetchResult } from '@codex/api';
 import { SyncHook } from 'tapable';
 import { Fetched } from './Fetched';
-import { FetchResult } from '@codex/api';
+import { Api, FetchResult } from '@codex/api';
 
 const log = require('debug')('BuildQuery');
 
@@ -24,7 +24,7 @@ type Fields = Record<string, string>
 
 @injectable()
 export class QueryBuilder {
-    @lazyInject('api') api;
+    @lazyInject('api') api:Api;
     @lazyInject('fetched') fetched: Fetched;
 
     public readonly hooks = {

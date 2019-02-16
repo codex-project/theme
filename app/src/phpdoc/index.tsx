@@ -5,7 +5,7 @@ import * as types from './logic/types';
 import { Application, BasePlugin, Bind, HtmlComponents, IsBound, MenuPlugin, Rebind, RouterPlugin, Unbind } from '@codex/core';
 import React from 'react';
 import { PhpdocStore } from './logic';
-import {PhpdocMemberList, PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMethod, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
+import { PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMemberList, PhpdocMethod, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
 import { PhpdocMenuType } from './PhpdocMenuType';
 import { ManifestProvider } from './components/base';
 import { PhpdocMethodArguments, PhpdocMethodSignature } from './components/method';
@@ -36,7 +36,7 @@ export default class PhpdocPlugin extends BasePlugin {
                 'phpdoc-docblock'         : PhpdocDocblock,
                 'phpdoc-entity'           : PhpdocEntity,
                 'phpdoc-link'             : PhpdocLink,
-                'phpdoc-member-list'           : PhpdocMemberList,
+                'phpdoc-member-list'      : PhpdocMemberList,
                 'phpdoc-method'           : PhpdocMethod,
                 'phpdoc-method-arguments' : PhpdocMethodArguments,
                 'phpdoc-method-signature' : PhpdocMethodSignature,
@@ -71,20 +71,17 @@ export default class PhpdocPlugin extends BasePlugin {
                     },
                 });
                 DEV && routeMap.set('phpdoc.test', {
-                    name     : 'phpdoc.test',
-                    path     : app.url.root('phpdoc-test'),
-                    action: async(props,routeState) => {
+                    name  : 'phpdoc.test',
+                    path  : app.url.root('phpdoc-test'),
+                    action: async (props, routeState) => {
                         const PhpdocTestPage = (await import('./PhpdocTestPage')).default;
-                        return <PhpdocTestPage {...props} routeState={routeState} />
-                    }
+                        return <PhpdocTestPage {...props} routeState={routeState}/>;
+                    },
                 });
                 DEV && routeMap.set('phpdoc.mosaic.test', {
                     name     : 'phpdoc.mosaic.test',
                     path     : app.url.root('phpdoc-mosaic'),
-                    action: async(props,routeState) => {
-                        const PhpdocMosaicTestPage = (await import('./PhpdocMosaicTestPage')).default;
-                        return <PhpdocMosaicTestPage {...props} routeState={routeState} />
-                    }
+                    component: require('./PhpdocMosaicTestPage').default,
                 });
             });
         }

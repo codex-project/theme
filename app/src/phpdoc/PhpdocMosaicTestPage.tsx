@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import memo from 'memoize-one';
-import { Button, lazyInject, RouteState, Store, Toolbar } from '@codex/core';
+import { Button, CodeHighlight, lazyInject, RouteState, Scrollbar, Store, Toolbar } from '@codex/core';
 import { api, Api } from '@codex/api';
-import { FQSEN, PhpdocStore } from './logic';
+import { FQSEN, PhpdocFile, PhpdocStore } from './logic';
 import { RouteComponentProps } from 'react-router';
 import { Observer, observer } from 'mobx-react';
 import { Tabs } from 'antd';
@@ -19,6 +19,8 @@ import PhpdocEntity from './components/entity';
 import PhpdocMemberList from './components/member-list';
 import { debounce } from 'lodash-decorators';
 import { ManifestProvider } from './components/base';
+import { InspireTree } from './components/tree/InspireTree';
+import PhpdocDocblock from './components/docblock';
 
 const { TabPane: Tab } = Tabs;
 const log              = require('debug')('pages:phpdoc');
@@ -42,20 +44,26 @@ const Win    = memo(props =>
         {props.map[ props.id ]}
     </MosaicWindow>);
 
-@hot(module)
+
 @observer
-export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: RouteState } & RouteComponentProps> {
+class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: RouteState } & RouteComponentProps> {
     static displayName = 'PhpdocMosaicTestPage';
 
     @lazyInject('api') api: Api;
     @lazyInject('store.phpdoc') phpdoc: PhpdocStore;
     @lazyInject('store') store: Store;
 
-    @observable _fqsen = '\\Codex\\Codex::get()';
+    @observable _fqsen               = '\\Codex\\Codex::get()';
+    @observable file: PhpdocFile     = null;
+    @observable entityHeight: number = null;
+    @observable showMemberList       = false;
 
     @action setFQNS(fqsen) {this._fqsen = fqsen;}
 
     @computed get fqsen(): FQSEN {return FQSEN.from(this._fqsen);}
+
+    entityTop: HTMLElement;
+    codeRef: CodeHighlight;
 
     public componentWillMount(): void {
         const { layout } = this.store;
@@ -67,10 +75,10 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
     renderTree() {
         return (
             <PhpdocTree
-                searchable
+                searchable filterable scrollToSelected
                 style={{ height: '100%' }}
                 onNodeClick={node => this.setFQNS(node.fullName)}
-
+                getTree={(tree: InspireTree) => tree.manifest().fetchFile(this.fqsen.slashEntityName).then(file => this.file = file)}
             />
         );
     }
@@ -78,20 +86,47 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
     renderEntity() {
         return (
             <Fragment>
-                <PhpdocEntity fqsen={this.fqsen}/>
-                <PhpdocMemberList
-                    fqsen={this.fqsen}
-                    selectable
-                    searchable
-                    filterable
-                />
+                <div ref={ref => {
+                    if ( ref && ! this.entityTop ) {
+                        this.entityTop = ref;
+                    }
+                    this.entityHeight = this.entityTop.getBoundingClientRect().height;
+                }}>
+                    <PhpdocEntity fqsen={this.fqsen}/>
+                    <If condition={this.file}>
+                        <PhpdocDocblock docblock={this.file.entity.docblock}/>
+                    </If>
+                </div>
+                <If condition={this.entityHeight}>
+                    <If condition={! this.showMemberList}>
+                        <Button onClick={e => this.showMemberList = true}>show</Button>
+                    </If>
+                    <If condition={this.showMemberList}>
+                        <PhpdocMemberList
+                            height={`calc(100% - ${this.entityHeight}px`}
+                            fqsen={this.fqsen}
+                            selectable
+                            searchable
+                            filterable
+                        />
+                    </If>
+                </If>
             </Fragment>
         );
     }
 
     renderCode() {
+        if ( ! this.file || ! this.file.source ) return null;
         return (
-            <div>CodeView</div>
+            <Scrollbar style={{ height: '100%' }}>
+                <CodeHighlight
+                    withLineNumbers
+                    ref={ref => this.codeRef = ref}
+                    code={this.file.source}
+                    language="php"
+                    preClassName="no-border"
+                />
+            </Scrollbar>
         );
     }
 
@@ -140,18 +175,18 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
                 >
                     {children}
                 </MosaicWindow>}</Observer>
-            // <Observer>{() =>}                            </Observer>
         );
     };
 
 
     CONTENT_MAP: Record<ViewId, (path) => React.ReactElement<any>> = {
-        tree  : memo(path => this.renderTile('tree', path, this.renderTree())),
-        entity: memo(path => this.renderTile('entity', path, this.renderEntity())),
-        code  : memo(path => this.renderTile('code', path, this.renderCode())),
+        tree  : memo(path => this.renderTile('tree', path, <Observer>{() => this.renderTree()}</Observer>)),
+        entity: memo(path => this.renderTile('entity', path, <Observer>{() => this.renderEntity()}</Observer>)),
+        code  : memo(path => this.renderTile('code', path, <Observer>{() => this.renderCode()}</Observer>)),
     };
 
     render() {
+        window[ 'phpdocmosaic' ]                                                                    = this;
         const { children, revision, history, location, staticContext, match, routeState, ...props } = this.props;
 
         return (
@@ -170,24 +205,7 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
                         resize={this.resizeLock ? 'DISABLED' : { minimumPaneSizePercentage: 15 }}
                         initialValue={this.mosaicValue}
                         onChange={e => this.onMosaicChange(e)}
-                        renderTile={(id, path) => {
-                            return this.CONTENT_MAP[ id ](path);
-
-                            // (<Observer>{() =>
-                            //         <MosaicWindow<ViewId>
-                            //             className={classes(this.windowClassName, 'mosaic-window-' + id)}
-                            //             draggable={! this.dragLock}
-                            //             path={path}
-                            //             toolbarControls={[ <div key="null"/> ]}
-                            //             createNode={() => 'method'}
-                            //             title=""
-                            //         >
-                            //             {this.CONTENT_MAP[ id ]}
-                            //         </MosaicWindow>}</Observer>,
-                            //     // <Observer>{() =>}                            </Observer>
-                            // );
-                        }}
-
+                        renderTile={(id, path) => this.CONTENT_MAP[ id ](path)}
                     />
                 </div>
             </ManifestProvider>
@@ -195,3 +213,5 @@ export default class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTe
     }
 
 }
+
+export default hot(module)(PhpdocMosaicTestPage);

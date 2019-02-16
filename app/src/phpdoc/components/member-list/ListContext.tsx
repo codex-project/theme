@@ -1,13 +1,13 @@
-import { Methods, NamedCollection, PhpdocMethod, PhpdocProperty, Properties } from '../../logic';
+import { FQSEN, Methods, PhpdocFile, PhpdocManifest, PhpdocMethod, PhpdocProperty, Properties } from '../../logic';
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { FQNSComponent, FQNSComponentCtx, FQNSComponentProps } from '../base';
 import { api } from '@codex/api';
-import { PhpdocMemberListProps } from './PhpdocMemberList';
-import { Map } from 'immutable';
+import { List, Map } from 'immutable';
 
 export type IListItem = PhpdocProperty | PhpdocMethod
-export type IListItems = Map<string, IListItem>
+export type IListMap = Map<string, IListItem>
+export type IListList = List<IListItem>
 
 export interface IListFilters {
     public: boolean,
@@ -21,33 +21,38 @@ export interface IListFilters {
 }
 
 export interface IList {
-    items: IListItems
-    filtered: IListItems
+    items: IListList
+    filtered: number[]
     search: string
-    selected: string
+    selected: IListItem
     isSelected: (item: string | IListItem) => boolean
     setSelected: (item: string | IListItem) => any
     setSearch: (search: string) => any
     setFilter: <N extends keyof IListFilters>(name: N, value: IListFilters[N]) => any
     resetFilters: () => any
     filters: IListFilters
+    filter: () => any
 }
 
 export interface ListContextValue {
-    list?: IList
+    manifest: PhpdocManifest
+    file: PhpdocFile
+    fqsen: FQSEN
+    list: IList
 }
 
-export const ListContext = React.createContext<ListContextValue>({ list: null });
+export const ListContext = React.createContext<ListContextValue>({ manifest: null, file: null, fqsen: null, list: null });
 
 export interface ListContextProviderProps extends FQNSComponentProps {}
 
 
 interface State {
-    items: IListItems
-    filtered: string[],
+    items: IListList
+    filtered: number[],
     search: string,
     selected: string,
     filters: IListFilters
+    // onFiltered: ()
 }
 
 export { ListContextProvider };
@@ -77,16 +82,16 @@ export default class ListContextProvider extends Component<ListContextProviderPr
         },
     };
 
-    constructor(props: PhpdocMemberListProps, context: React.ContextType<typeof FQNSComponentCtx>) {
+    constructor(props: ListContextProviderProps, context: React.ContextType<typeof FQNSComponentCtx>) {
         super(props, context);
-        this.state.items    = context.file.entity.members;
+        this.state.items    = context.file.entity.members.toList();
         this.state.filtered = this.state.items.keySeq().toArray();
         this.state.search   = null;
     }
 
     resetFilters = () => {
         this.setState(state => ({
-            filtered: state.items.keySeq().toArray(),
+            filtered: this.state.items.keySeq().toArray(),
             search  : null,
         }));
     };
@@ -114,10 +119,11 @@ export default class ListContextProvider extends Component<ListContextProviderPr
 
     isSelected = (item: string | IListItem) => item && typeof item === 'object' && item.name && this.state.selected === item.name;
 
-    filter() {
+    filter = () => {
         this.setState(state => {
-            const toNames            = (members: NamedCollection<any>): number[] => members.map(member => member.name);
-            const getFilteredMethods = (): Methods => {
+            const toIndexes = (members: IListItem[]): number[] => members.map(member => state.items.findIndex(item => item.name === member.name));
+
+            const getFilteredMethods = (): PhpdocMethod[] => {
                 let methods  = this.context.file.entity.methods as Methods;
                 const filter = (filter: (method: api.PhpdocMethod) => boolean) => methods = methods.newInstance(...methods.filter(filter)) as any;
                 if ( state.filters.public ) filter((method) => method.visibility !== 'public');
@@ -128,10 +134,10 @@ export default class ListContextProvider extends Component<ListContextProviderPr
                 if ( state.filters.final ) filter((method) => ! method.final);
                 if ( state.filters.inherited ) filter((method) => ! method.inherited_from || method.inherited_from.length === 0);
                 if ( state.search && state.search.length > 0 ) filter((method) => method.name.toLowerCase().indexOf(state.search.toLowerCase()) > - 1);
-                return methods;
+                return methods.getValues();
             };
 
-            const getFilteredProperties = (): Properties => {
+            const getFilteredProperties = (): PhpdocProperty[] => {
                 let properties = this.context.file.entity.properties as Properties;
                 const filter   = (filter: (property: api.PhpdocProperty) => boolean) => properties = properties.newInstance(...properties.filter(filter)) as any;
 
@@ -141,32 +147,34 @@ export default class ListContextProvider extends Component<ListContextProviderPr
                 if ( state.filters.static ) filter(property => ! property.static);
                 if ( state.filters.inherited ) filter(property => ! property.inherited_from || property.inherited_from.length === 0);
                 if ( state.search && state.search.length > 0 ) filter(property => property.name.toLowerCase().indexOf(state.search.toLowerCase()) > - 1);
-                return properties;
+                return properties.getValues();
             };
 
-            return {
-                filtered: [].concat(
-                    toNames(getFilteredProperties()),
-                    toNames(getFilteredMethods()),
-                ),
-            };
+            let members  = [].concat(
+                getFilteredProperties(),
+                getFilteredMethods(),
+            );
+            let filtered = toIndexes(members);
+            return { filtered };
         });
-    }
+    };
 
     getList(): IList {
-        const { items, filters, filtered, selected, search }                  = this.state;
-        const { setFilter, isSelected, setSearch, setSelected, resetFilters } = this;
+        const { items, filters, filtered, selected, search }                          = this.state;
+        const { setFilter, isSelected, setSearch, setSelected, resetFilters, filter } = this;
         return {
-            filters, search, selected, items,
-            setFilter, isSelected, setSearch, setSelected, resetFilters,
-            filtered: items.filter(item => filtered.includes(item.name)).toMap(),
+            filters, filtered, search, items,
+            setFilter, isSelected, setSearch, setSelected, resetFilters, filter,
+            selected: selected ? items.find(item => item.name === selected) : null,
+
         };
     }
 
     render() {
-        const { children, ...props } = this.props;
+        const { children, ...props }    = this.props;
+        const { manifest, file, fqsen } = this.context;
         return (
-            <ListContext.Provider value={{ list: this.getList() }}>
+            <ListContext.Provider value={{ manifest, file, fqsen, list: this.getList() }}>
                 {children}
             </ListContext.Provider>
         );
@@ -176,8 +184,8 @@ export default class ListContextProvider extends Component<ListContextProviderPr
 
 export interface ListComponentHOCProps extends FQNSComponentProps {}
 
-export function listComponent<T>() {
-    return function (TargetComponent: T): T {
+export function listComponent() {
+    return function <T>(TargetComponent: T): T {
         class ListComponentHOC extends Component<ListComponentHOCProps> {
             static displayName = 'ListComponentHOC';
 

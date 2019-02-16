@@ -1,0 +1,24 @@
+$prefix: c-notification;
+$ant-notification-prefix: ant-notification;
+
+.#{$ant-notification-prefix} .#{$prefix} {
+    .#{$ant-notification-prefix} {
+        &-notice {
+            &-icon {
+                padding-top: 3px;
+            }
+
+            &-message {
+                font-size: 13px;
+                padding-top: 3px;
+            }
+
+            &-close {
+                top: 22px;
+            }
+
+            &-description {
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+
+
+.test-css-module {
+    background-color: #0a6aa1;
+    color: #2c662d;
+    button {
+
+    }
+
+    p {
+        font-size: 8px;
+        a {
+            font-size: 30px;
+            &:hover {
+                color: #2c662d;
+            }
+        }
+    }
+}

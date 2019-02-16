@@ -160,10 +160,10 @@ export class Store {
     }
 
     async fetchDocument(projectKey: string, revisionKey: string, documentKey: string) {
-        if ( this.isDocument(projectKey,revisionKey,documentKey)
-            // (projectKey && this.project && this.project.key === projectKey)
-            // && (revisionKey && this.revision && this.revision.key === revisionKey)
-            // && (documentKey && this.document && this.document.key === documentKey)
+        if ( this.isDocument(projectKey, revisionKey, documentKey)
+        // (projectKey && this.project && this.project.key === projectKey)
+        // && (revisionKey && this.revision && this.revision.key === revisionKey)
+        // && (documentKey && this.document && this.document.key === documentKey)
         ) {
             return this.document;
         }
@@ -202,9 +202,7 @@ export class Store {
             .addDocumentFields('key', 'content');
 
         // query      = this.hooks.fetch.call(query);
-
         let result = await query.get();
-
         transaction(() => {
             let layout;
             if ( projectKey && (! this.project || this.project.key !== projectKey) ) {

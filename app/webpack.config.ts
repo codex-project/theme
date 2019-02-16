@@ -32,7 +32,7 @@ const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
-const minimize          = false; //isProd;
+const minimize          = isProd; //isProd;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -341,6 +341,9 @@ chain.when(isDev, chain => {
         namedModules: true,
         namedChunks : true,
         splitChunks : {
+            maxInitialRequests:Infinity,
+            maxAsyncRequests:Infinity,
+            maxSize:Infinity,
             name: true,
         },
         // occurrenceOrder: true,

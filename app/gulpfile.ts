@@ -42,7 +42,7 @@ class Gulpfile {
     async devServe() {
         this.dev();
         const { chain, addAnalyzerPlugins, addHMR } = require('./webpack.config');
-        // addHMR(chain, true);
+        addHMR(chain, true);
         return this.serve(chain);
     }
 

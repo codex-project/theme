@@ -8,7 +8,7 @@ $tags-gutter: 0;
     @include make-container();
 
     &-tag {
-        @include flex-grid-row;
+        @include flex-grid-row(nest);
     }
 
     &-tag-left {

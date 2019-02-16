@@ -11,21 +11,21 @@ import { History } from 'history';
 import { CssVariables } from './CssVariables';
 import { Breakpoints } from '../utils/breakpoints';
 import { CookieStorage, LocalStorage, SessionStorage } from '../utils/storage';
-import { app } from '../ioc';
 import ReactDOM from 'react-dom';
 import { IUrl, url } from './Url';
 import { Plugin } from './Plugin';
-import { notification } from 'antd';
 import { NotificationApi } from 'antd/lib/notification';
 import { MenuManager } from '../menus';
 import { RouteMap } from '../router';
 import { Store } from '../stores';
+import { createNotificationApi } from 'utils/createNotificationApi';
 
 const log = require('debug')('classes:Application');
 
 interface PluginMap extends Map<string, Plugin> {
     get<P extends Plugin = Plugin>(key: string): P | undefined;
 }
+
 type PluginMapProxy = PluginMap & Record<string, Plugin>
 
 function createPluginMapProxy<T extends Map<string, Plugin> = Map<string, Plugin>>(target: T): PluginMapProxy {
@@ -50,7 +50,7 @@ function createPluginMapProxy<T extends Map<string, Plugin> = Map<string, Plugin
 
 export class Application extends Container {
     public readonly plugins: PluginMapProxy       = createPluginMapProxy(new Map());
-    public readonly notification: NotificationApi = notification;
+    public readonly notification: NotificationApi = createNotificationApi();
 
     protected registered            = false;
     protected booted                = false;
@@ -70,7 +70,7 @@ export class Application extends Container {
 
     constructor(containerOptions: interfaces.ContainerOptions) {
         super(containerOptions);
-        log('constructor',this)
+        log('constructor', this);
         this.bind('app').toConstantValue(this);
         this.bind('events').to(Dispatcher).inSingletonScope();
         this.bind('config').toConstantValue(config);
@@ -157,8 +157,8 @@ export class Application extends Container {
     renderWrappers = new Set([]);
 
     render(Component?: ComponentType, cb?: () => void): this {
-        Component           = Component || this.Component;
-        const el = document.getElementById(this.config.rootID);
+        Component = Component || this.Component;
+        const el  = document.getElementById(this.config.rootID);
         ReactDOM.render(React.createElement(Component), el, cb);
         return this;
     }

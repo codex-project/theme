@@ -10,8 +10,8 @@ import { IFQSEN } from '../../logic';
 const log = require('debug')('components:PhpdocHeader');
 
 
-export interface PhpdocEntityProps{
-    fqsen:IFQSEN
+export interface PhpdocEntityProps {
+    fqsen: IFQSEN
     /** Optional CSSProperties with nesting support (using typestyle) */
     style?: React.CSSProperties
     /** Optional CSSProperties with nesting support (using typestyle) */
@@ -21,8 +21,8 @@ export interface PhpdocEntityProps{
     prefixCls?: string
 
     size?: { class?: string | number, text?: string | number } & string & number
+    innerRef?: (ref: HTMLElement) => any
 }
-
 
 
 @hot(module)
@@ -32,18 +32,21 @@ export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     static displayName: string                      = 'PhpdocEntity';
     static defaultProps: Partial<PhpdocEntityProps> = {
         prefixCls: 'phpdoc-entity',
+        innerRef : (ref: HTMLElement) => ref,
     };
     static contextType                              = FQNSComponentCtx;
     context!: React.ContextType<typeof FQNSComponentCtx>;
 
+    setInnerRef = ref => this.props.innerRef(ref);
+
     render() {
-        let { fqsen, size, style, className, titleStyle, prefixCls } = this.props;
-        let { file }                                                = this.context;
-        let classSize                                               = size ? size.class ? size.class : size : 14;
-        let textSize                                                = size ? size.class ? size.class : size : 14;
+        let { fqsen, size, style, className, titleStyle, prefixCls, innerRef } = this.props;
+        let { file }                                                           = this.context;
+        let classSize                                                          = size ? size.class ? size.class : size : 14;
+        let textSize                                                           = size ? size.class ? size.class : size : 14;
 
         return (
-            <header style={style} className={classes(prefixCls, className)}>
+            <header ref={this.setInnerRef} style={style} className={classes(prefixCls, className)}>
                 <h3 style={titleStyle} className="header-title">
                     <i className={'mr-xs phpdoc-type-' + file.type}/>
                     <span className={'phpdoc-type-' + file.type} style={{ fontSize: classSize }}>{file.fqsen.entityName}</span>

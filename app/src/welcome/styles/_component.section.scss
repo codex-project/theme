@@ -1,0 +1,131 @@
+@mixin section-variant($bg-color, $fg-color) {
+    background: $bg-color;
+    color: $fg-color;;
+    > .container > header hr,
+    .section-title-divider {
+        border-color: $fg-color;
+    }
+    .section-title {
+        color: $fg-color;
+    }
+    .section-divider {
+        border-top: inset $fg-color;
+    }
+    .feature-heading {
+        color: $fg-color;
+
+        small {
+            color: darken($fg-color, 10);
+        }
+    }
+    .feature-image {
+        border: 1px solid lighten($bg-color, 10);
+    }
+    .feature-image-lightbox {
+        border: 7px solid lighten($bg-color, 10);
+    }
+    .feature-image,
+    .feature-image-lightbox {
+        &:not(.no-hover):hover {
+            border-color: lighten($bg-color, 20);
+        }
+    }
+    blockquote {
+        border-color: $fg-color;
+        background: lighten($bg-color, 10);
+    }
+    blockquote > h4 {
+        color: $fg-color;
+    }
+}
+
+
+.c-section {
+    padding-left: 4rem;
+    padding-right: 4rem;
+
+    p {
+        font-family: $font-family-headers
+    }
+
+    > .container {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    > header,
+    > .container > header {
+        margin-bottom: 5rem;
+    }
+
+    > .container > header hr,
+    .section-title-divider {
+        width: 120px;
+        border: 1px dashed #000000;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-top: 0;
+
+        &:after {
+            content: '.';
+            font-weight: bold;
+            color: $primary;
+            margin-left: 2px;
+        }
+    }
+
+    .section-divider {
+        margin: 5rem 0;
+    }
+
+    .feature-column {
+        .feature-heading {
+            margin-top: 10px;
+
+            small {
+                font-size: 50%;
+            }
+        }
+
+        .feature-image {
+            height: 140px;
+            width: 140px;
+        }
+    }
+
+    .feature-row {
+        .feature-heading {
+            font-weight: 300;
+            line-height: 1;
+            letter-spacing: -.05rem;
+
+            .feature-image-lightbox {
+                cursor: pointer;
+            }
+        }
+    }
+
+    blockquote > p {
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .c-page & blockquote > h4 {
+        font-size: 1.3rem;
+        margin: 0 0 5px 0;
+        border-bottom: 1px solid #9E9E9E;
+        padding-bottom: 5px;
+        border-bottom-style: dashed;
+    }
+
+
+    &.c-section-light {
+        @include section-variant($section-variant-light-bg, $section-variant-light-fg);
+    }
+
+    &.c-section-dark {
+        @include section-variant($section-variant-dark-bg, $section-variant-dark-fg);
+    }
+}

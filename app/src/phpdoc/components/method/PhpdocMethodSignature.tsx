@@ -94,8 +94,8 @@ export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMet
 
         return (
             <Fragment>
-                {! hide.deprecated && method.docblock.tags.has('deprecated') ? <a className="mr-md fs-15">{iconTooltipDeprecated(method)}</a> : null}
-                {! hide.inherited && method.inherited_from ? iconTooltipInherited(method, {}, { onClick: this.onInheritedClick }) : null}
+                {/*{! hide.deprecated && method.docblock.tags.has('deprecated') ? <a className="mr-md fs-15">{iconTooltipDeprecated(method)}</a> : null}*/}
+                {/*{! hide.inherited && method.inherited_from ? iconTooltipInherited(method, {}, { onClick: this.onInheritedClick }) : null}*/}
                 {! hide.inherited && method.inherited_from ? ' ' : null}
 
                 {! hide.modifiers && method.static ? <span className="phpdoc-method-signature-modifier phpdoc-modifier-static">static </span> : null}
@@ -107,7 +107,7 @@ export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMet
                 {! hide.arguments ? method.arguments.map((argument, argumentIndex) => (
                     <Fragment key={argumentIndex}>
                         {argumentIndex > 0 ? <span className="phpdoc-method-signature-punctuation">, </span> : null}
-                        {! hide.argumentTypes && argument[ 'type' ] ? <PhpdocType type={argument[ 'type' ]} seperator="|" noClick={noClick} showNamespace={! hide.namespace} showTooltip={! hide.typeTooltip} showTooltipClick={! hide.typeTooltipClick}/> : null}
+                        {/*{! hide.argumentTypes && argument[ 'type' ] ? <PhpdocType type={argument[ 'type' ]} seperator="|" noClick={noClick} showNamespace={! hide.namespace} showTooltip={! hide.typeTooltip} showTooltipClick={! hide.typeTooltipClick}/> : null}*/}
                         {! hide.argumentTypes && argument[ 'type' ] ? ' ' : null}
                         <span className="phpdoc-method-signature-argument">{argument.name}</span>
                         {! hide.argumentDefaults && argument.default ? <span className="phpdoc-method-signature-argument-default">={argument.default}</span> : null}
@@ -115,7 +115,7 @@ export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMet
                 )) : null}
                 <span className="phpdoc-method-signature-punctuation">)</span>
                 {! hide.returns && returns ? <span className="phpdoc-method-signature-return-character"> {this.props.returnCharacter} </span> : null}
-                {! hide.returns && returns ? <PhpdocType type={returns} noClick={noClick} showNamespace={! hide.namespace} showTooltip={! hide.typeTooltip} showTooltipClick={! hide.typeTooltipClick}/> : null}
+                {/*{! hide.returns && returns ? <PhpdocType type={returns} noClick={noClick} showNamespace={! hide.namespace} showTooltip={! hide.typeTooltip} showTooltipClick={! hide.typeTooltipClick}/> : null}*/}
             </Fragment>
         );
     }

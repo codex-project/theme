@@ -23,23 +23,23 @@ interface State {
 
 const log = require('debug')('components:ErrorBoundary');
 
-const Title = (props) => <h4 style={{ textAlign: 'center' }} {...props}/>
+const Title = (props) => <h4 style={{ textAlign: 'center' }} {...props}/>;
 
-const Message = (props) => <p style={{ textAlign: 'center', color: colors[ 'red-7' ] }} {...props}/>
+const Message = (props) => <p style={{ textAlign: 'center', color: colors[ 'red-7' ] }} {...props}/>;
 
 const Stack = (props: { children: any, title?: string, className?: string }) => (
     <div className={props.className}>
         {props.title ? <h6>{props.title}</h6> : null}
         <pre>{props.children}</pre>
     </div>
-)
+);
 
 const Stacks = (props: { error: SomeError, errorInfo: ErrorInfo, className?: string }) => (
     <div style={{ maxHeight: 350, overflowY: 'scroll' }}>
         <Stack title={props.error.name + ' Stacktrace:'}>{props.error.stack}</Stack>
         <Stack title="Component Stacktrace:">{props.errorInfo.componentStack}</Stack>
     </div>
-)
+);
 
 @hot(module, false)
 @WithRouter()
@@ -47,12 +47,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProp
     static displayName                               = 'ErrorBoundary';
     static defaultProps: Partial<ErrorBoundaryProps> = {
         title     : 'Whoops..',
-        goBackText: 'Return to previous page'
-    }
+        goBackText: 'Return to previous page',
+    };
 
     protected unregisterLocationListener: UnregisterCallback = null;
 
-    state: State = { hasError: false }
+    state: State = { hasError: false };
 
     componentDidCatch(error: SomeError, errorInfo: ErrorInfo) {
         this.setState({ hasError: true, error, errorInfo });
@@ -62,7 +62,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProp
     componentDidMount() {
         this.unregisterLocationListener = this.props.history.listen((location, action) => {
             if ( this.state.hasError ) {
-                this.setState({ hasError: false })
+                this.setState({ hasError: false });
             }
         });
     }
@@ -71,26 +71,28 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProp
         this.unregisterLocationListener();
     }
 
-    static getDerivedStateFromError(){
-        return {hasError:true}
+    static getDerivedStateFromError() {
+        return { hasError: true };
     }
 
     render() {
-        let { title, showStacks, goBackText, withError } = this.props
-        let { error, errorInfo, hasError }               = this.state
+        let { title, showStacks, goBackText, withError } = this.props;
+        let { error, errorInfo, hasError }               = this.state;
         if ( hasError || withError ) {
             error = error || withError;
-            log('error', { error })
+            log('error', { error });
             return (
                 <Row type="flex">
                     <Col xs={24} md={{ span: 12, offset: 6 }}>
                         <Title>{title}</Title>
-                        <Message>{error.message}</Message>
-                        <Message>{error.linkback ? <Button onClick={e => this.props.history.goBack()}>{goBackText}</Button> : null}</Message>
+                        <If condition={error && error.message}>
+                            <Message>{error.message}</Message>
+                            <Message>{error.linkback ? <Button onClick={e => this.props.history.goBack()}>{goBackText}</Button> : null}</Message>
+                        </If>
                         {showStacks ? <Stacks error={error} errorInfo={errorInfo}/> : null}
                     </Col>
                 </Row>
-            )
+            );
         }
         return React.Children.only(this.props.children);
     }

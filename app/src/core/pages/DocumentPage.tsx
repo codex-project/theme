@@ -65,7 +65,14 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
         const { project, revision, document } = this.props;
         if ( ! this.store.isDocument(project, revision, document) ) {
             this.store.setDocument(null);
-            this.store.fetchDocument(project, revision, document);
+            try {
+                await this.store.fetchDocument(project, revision, document);
+            } catch ( e ) {
+                app.notification.error({
+                    message  : e && e.message ? e.message : 'Document does not exist',
+                    placement: 'bottomRight',
+                });
+            }
         }
     }
 

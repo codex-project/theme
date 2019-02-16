@@ -74,9 +74,24 @@ export default class DynamicMenu extends React.Component<DynamicMenuProps, State
         }
     }
 
+    openKeys     = [];
     onOpenChange = (openKeys: string[]) => transaction(() => {
         log('onOpenChange', openKeys);
-        this.props.items.collapseAll().items(openKeys).expand();
+
+        if ( ! this.props.multiroot ) {
+            if ( openKeys.length > this.openKeys.length ) {
+                // opened
+                let openedId = openKeys[ openKeys.length - 1 ];
+                let rootIds  = this.props.items.ids();
+                if ( rootIds.includes(openedId) ) {
+                    let toCloseIds = openKeys.filter(key => key !== openedId).filter(key => rootIds.includes(key));
+                    this.props.items.collapseAll();
+                    this.props.items.items([ openedId ]).expand();
+                }
+            }
+        } else {
+            this.props.items.collapseAll().items(openKeys).expand();
+        }
     });
 
     onClick = (param: ClickParam) => transaction(() => {

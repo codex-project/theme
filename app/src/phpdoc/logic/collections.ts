@@ -1,5 +1,5 @@
 import { api } from '@codex/api';
-import { PhpdocMethod } from './types';
+import { PhpdocMethod, PhpdocProperty } from './types';
 // noinspection ES6UnusedImports
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
@@ -66,7 +66,9 @@ export class Collection<T> extends Array<T> implements Array<T> {
 }
 
 export class NamedCollection<T> extends Collection<T> {
-    KEYNAME: string = 'name';
+    getKeyName():keyof T{
+        return 'name' as keyof T;
+    }
 
     constructor(...items: T[]) {
         super(...items);
@@ -74,7 +76,7 @@ export class NamedCollection<T> extends Collection<T> {
     }
 
     get(keyValue) {
-        return this.findBy(this.KEYNAME as any, keyValue);
+        return this.findBy(this.getKeyName(), keyValue);
     }
 
     has(key) {
@@ -82,22 +84,22 @@ export class NamedCollection<T> extends Collection<T> {
     }
 
     getKeys(): string[] {
-        return this.map(item => item[ this.KEYNAME ]);
+        return this.map(item => item[ this.getKeyName() as any ]);
     }
 
     getIndex(keyValue) {
-        return this.findIndex(item => item[ this.KEYNAME ] === keyValue);
+        return this.findIndex(item => item[ this.getKeyName() ] === keyValue);
     }
 
     only(keys: string[]) {
-        return this.whereIn(this.KEYNAME as any, keys);
+        return this.whereIn(this.getKeyName(), keys);
     }
 
     without(keys: string[]) {
-        return this.whereNotIn(this.KEYNAME as any, keys);
+        return this.whereNotIn(this.getKeyName(), keys);
     }
 
-    toMap(keyName = this.KEYNAME): ImmutableMap<string, T> {
+    toMap(keyName = this.getKeyName()): ImmutableMap<string, T> {
         let map = this.mapKeyBy(keyName as any);
         return ImmutableMap(map);
     }
@@ -110,7 +112,7 @@ export class Methods<T extends api.PhpdocMethod = PhpdocMethod> extends NamedCol
     }
 }
 
-export class Properties<T extends api.PhpdocProperty = api.PhpdocProperty> extends NamedCollection<T> {
+export class Properties<T extends api.PhpdocProperty = PhpdocProperty> extends NamedCollection<T> {
     constructor(...items: T[]) {
         super(...items);
         Object.setPrototypeOf(this, Properties.prototype);

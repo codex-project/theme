@@ -21,6 +21,9 @@ const menuPlugin   = new MenuPlugin();
 const routerPlugin = new RouterPlugin({
     defaultRoute: 'documentation',
 });
+app.notification.config({
+
+})
 app.Component      = Root;
 app
     .plugin(menuPlugin)
