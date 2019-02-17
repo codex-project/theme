@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import {  lazyInject, RouteLink, Trigger } from '@codex/core';
+import { lazyInject, RouteLink, Trigger } from '@codex/core';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import { FQSEN, PhpdocStore, Type } from '../../logic';
@@ -54,7 +54,7 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
 
 
     renderLink() {
-        const { fqsen, type, props }                 = this;
+        const { fqsen, type, props }                = this;
         const { modifiers, action, children, icon } = props;
         const { manifest }                          = this.context;
         const { project, revision }                 = manifest;
@@ -103,12 +103,16 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
         const props = this.props;
         if ( ! props.fqsen ) return null;
         this.fqsen = FQSEN.from(props.fqsen);
-        this.type = new Type(this.context.manifest, this.fqsen.fullName);
+        this.type  = new Type(this.context.manifest, this.fqsen.fullName);
         let footerText;
         if ( props.action === 'drawer' ) {
             footerText = 'Click opens quick-preview';
         } else if ( props.action === 'navigate' ) {
             footerText = 'Click goes to documentation';
+        }
+
+        if ( this.type.isEntity && this.type.isExternal ) {
+            return <span>{this.fqsen.fullName}</span>;
         }
 
         return (

@@ -30,10 +30,13 @@ export class DocumentLinkType extends LinkType {
 
         let props: LinkProps = {
             ...rest,
-            to       : app.routes.get('documentation.document').toPath({
-                project : this.project,
-                revision: this.revision,
-                document: this.document,
+            to       : app.routes.toUrl({
+                name  : 'documentation.document',
+                params: {
+                    project : this.project,
+                    revision: this.revision,
+                    document: this.document,
+                },
             }),
             className: styling ? 'c-document-link' : null,
         };
