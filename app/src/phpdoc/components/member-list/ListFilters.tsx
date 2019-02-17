@@ -1,11 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { hot } from 'react-hot-loader';
-import { IList, ListContext } from './ListContext';
+import { IList, IListFilters, ListContext } from './ListContext';
 import { Checkbox, Input, Popover, Tabs, Tooltip } from 'antd';
 import { Button, ucfirst } from '@codex/core';
 import { Observer } from 'mobx-react';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { Member } from './PhpdocMemberList';
 
 const log = require('debug')('phpdoc:components:ListFilters');
 
@@ -19,19 +18,20 @@ export interface ListFiltersProps {
     onSearch?: (value: string) => any
 
     filterable?: boolean
-    onFilter?: (list:IList) => void
+    onFilter?: (list: IList) => void
+    defaultFilters?: Array<keyof IListFilters>
 }
 
 interface State {
-    searchFocus:boolean
+    searchFocus: boolean
 }
 
 @hot(module)
-export default class ListFilters extends Component<ListFiltersProps,State> {
+export default class ListFilters extends Component<ListFiltersProps, State> {
     static displayName                             = 'ListFilters';
     static defaultProps: Partial<ListFiltersProps> = {
-        onSearch:()=>null,
-        onFilter:()=>null
+        onSearch: () => null,
+        onFilter: () => null,
     };
     static contextType                             = ListContext;
     context!: React.ContextType<typeof ListContext>;
@@ -41,6 +41,14 @@ export default class ListFilters extends Component<ListFiltersProps,State> {
     };
 
     get list(): IList {return this.context.list;}
+
+
+    constructor(props: ListFiltersProps, context: React.ContextType<typeof ListContext>) {
+        super(props, context);
+        if ( props.defaultFilters && props.defaultFilters.length ) {
+            props.defaultFilters.forEach(name => context.list.setFilter(name, true));
+        }
+    }
 
     setSearchFocus = (searchFocus: boolean) => this.setState(state => ({ searchFocus }));
 
@@ -55,8 +63,9 @@ export default class ListFilters extends Component<ListFiltersProps,State> {
 
     handleFilterChange = (e: CheckboxChangeEvent) => {
         this.list.setFilter(e.target.name as any, e.target.checked === false);
-        this.props.onFilter(this.list)
+        this.props.onFilter(this.list);
     };
+
     render() {
         const { searchable, filterable } = this.props;
         return (

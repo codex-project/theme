@@ -1,7 +1,7 @@
 import { isAbsolute, join, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import webpack, { DevtoolModuleFilenameTemplateInfo, RuleSetRule } from 'webpack';
+import webpack, { Configuration, DevtoolModuleFilenameTemplateInfo, RuleSetRule } from 'webpack';
 import FriendlyErrorsPlugin, { Options as FriendlyErrorsOptions } from 'friendly-errors-webpack-plugin';
 import BarPlugin, { Options as BarOptions } from 'webpackbar';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
@@ -248,7 +248,7 @@ chain.when(isProd, chain => {
 //endregion
 
 //region: Style Loaders
-chain.onToConfig(config => {
+export function addStyleLoaders(config: Configuration) {
     AntdScssThemePlugin.SCSS_THEME_PATH = chain.srcPath('core/styling/antd/theme.scss');
     let antdScssLoader                  = AntdScssThemePlugin.themify({
         loader : 'sass-loader',
@@ -323,7 +323,9 @@ chain.onToConfig(config => {
     } ] as RuleSetRule[]);
     config.plugins.push(new AntdScssThemePlugin(AntdScssThemePlugin.SCSS_THEME_PATH));
     return config;
-});
+}
+
+chain.onToConfig(config => addStyleLoaders(config));
 //endregion
 
 //region: Optimization
@@ -341,10 +343,10 @@ chain.when(isDev, chain => {
         namedModules: true,
         namedChunks : true,
         splitChunks : {
-            maxInitialRequests:Infinity,
-            maxAsyncRequests:Infinity,
-            maxSize:Infinity,
-            name: true,
+            maxInitialRequests: Infinity,
+            maxAsyncRequests  : Infinity,
+            maxSize           : Infinity,
+            name              : true,
         },
         // occurrenceOrder: true,
         // runtimeChunk          : true,

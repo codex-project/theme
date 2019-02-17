@@ -6,7 +6,9 @@ import TabbedMemberList, { TabbedMemberListProps } from './TabbedMemberList';
 
 
 const log = require('debug')('phpdoc:components:PhpdocMemberList');
+export interface PhpdocMemberListProps extends TabbedMemberListProps{
 
+}
 @hot(module)
 export default class PhpdocMemberList extends React.Component<TabbedMemberListProps> {
     static displayName: string = 'PhpdocMemberList';

@@ -19,12 +19,12 @@ export interface PhpdocTypeProps {
     seperator?: string;
     noClick?: boolean
     noLink?: boolean
-    type: string | string[]
     showNamespace?: boolean
     showTooltip?: boolean
     showTooltipIcon?: boolean
     showTooltipClick?: boolean
     linkToApi?: boolean
+    type: string | string[]
     onClick?: () => void
 }
 
@@ -34,10 +34,10 @@ export default class PhpdocType extends React.PureComponent<PhpdocTypeProps> {
     static displayName: string                    = 'PhpdocType';
     static defaultProps: Partial<PhpdocTypeProps> = {
         seperator       : ' | ',
-        showTooltip     : true,
-        showTooltipIcon : true,
-        showTooltipClick: true,
-        linkToApi       : false,
+        // showTooltip     : true,
+        // showTooltipIcon : true,
+        // showTooltipClick: true,
+        // linkToApi       : false,
     };
 
     static contextType = ManifestCtx;

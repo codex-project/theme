@@ -10,7 +10,6 @@ import PhpdocTags from '../tags';
 import PhpdocType from '../type';
 import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
-import { hot } from 'react-hot-loader';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
@@ -21,8 +20,8 @@ export interface PhpdocMethodProps {
     withoutTags?: string[]
     onlyTags?: string[]
 
-    collapse?: boolean
-    closed?: boolean
+    collapsible?: boolean
+    collapsed?: boolean
     innerRef?: any
     signature?: React.ReactNode
     signatureProps?: Partial<PhpdocMethodSignatureProps>
@@ -71,7 +70,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
     @lazyInject('components') hc: HtmlComponents;
 
-    state: { open: boolean } = { open: ! this.props.closed };
+    state: { open: boolean } = { open: ! this.props.collapsed };
 
     toggleCollapse = () => this.setState({ open: ! this.state.open });
 
@@ -140,7 +139,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     }
 
     render() {
-        const { innerRef, collapse, boxed, className, hide, signature, signatureProps, style } = this.props;
+        const { innerRef, collapsible, boxed, className, hide, signature, signatureProps, style } = this.props;
 
         const { fqsen } = this.context;
         const method    = this.method;
@@ -174,7 +173,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
                 <If condition={! hide.signature && ! signature}>
                     <PhpdocMethodSignature fqsen={fqsen} hide={hide} {...signatureProps}>
-                        <If condition={collapse}>
+                        <If condition={collapsible}>
                             <a href="javascript:" onClick={this.toggleCollapse}
                                className={classes('method-collapse')} //, { closed })}
                             >{null}</a>
