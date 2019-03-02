@@ -21,10 +21,8 @@ const menuPlugin   = new MenuPlugin();
 const routerPlugin = new RouterPlugin({
     defaultRoute: 'documentation',
 });
-app.notification.config({
-
-})
-app.Component      = Root;
+app.notification.config({});
+app.Component = Root;
 app
     .plugin(menuPlugin)
     .plugin(routerPlugin);
@@ -95,9 +93,10 @@ routerPlugin.hooks.registered.tap('CORE', routes => {
             },
         },
         {
-            name  : 'documentation.document',
-            path  : '/documentation/:project/:revision/:document+',
-            action: async (props, routeState) => {
+            name         : 'documentation.document',
+            path         : '/documentation/:project/:revision/:document+',
+            loadComponent: async () => import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage'),
+            async action(props, routeState) {
                 let params  = routeState.params;
                 let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                 if ( ! project ) {
@@ -109,10 +108,12 @@ routerPlugin.hooks.registered.tap('CORE', routes => {
                 }
 
                 log('documentation.document', 'FETCH', params);
-                let document, Component;
+                let document;
+                let Component = this.component;
+
                 try {
                     // app.store.fetchDocument(params.project, params.revision, params.document);
-                    Component = (await import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage')).default;
+                    // Component = (await import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage')).default;
                     log('documentation.document', 'FETCHING', params, app.store.document, Component);
                     return <Component {...props} routeState={routeState} project={params.project} revision={params.revision} document={params.document}/>;
                 } catch ( error ) {

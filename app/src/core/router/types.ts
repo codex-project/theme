@@ -24,7 +24,8 @@ export interface RouteDefinition extends Partial<RouteProps> {
     path: string
     loader?: RouteDefinitionLoaderConfig | boolean
     transition?: RouteDefinitionTransitionConfig | boolean
-    action?: (props: RouteActionDefnitionProps, routeState: RouteState) => Promise<React.ReactNode>
+    loadComponent?: () => Promise<any>
+    action?: (props: RouteActionDefnitionProps, routeState: RouteState,Component?) => Promise<React.ReactNode>
 
     component?: RouteProps['component']
     render?: RouteProps['render']

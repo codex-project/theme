@@ -20,13 +20,19 @@ export interface RenderRouteProps {
 export class RenderRoute extends Component<RenderRouteProps & RouteComponentProps> {
     static displayName                             = 'RenderRoute';
     static defaultProps: Partial<RenderRouteProps> = {};
-    state                                          = { routeName: null, action: null, loading: true };
+    state                                          = { routeName: null, action: null, loading: true, component: this.props.definition.component };
     @lazyInject('history') history: History;
 
 
     load() {
         const { children, definition, staticContext, ...props } = this.props;
         log('load', props.routeState.pathname);
+        if ( definition.loadComponent && ! definition.component ) {
+            definition.loadComponent().then(val => {
+                definition.component = val.default ? val.default : val;
+                this.setState({ component: definition.component });
+            });
+        }
         if ( definition.action ) {
             if ( this.state.action ) {
                 return;
@@ -58,6 +64,9 @@ export class RenderRoute extends Component<RenderRouteProps & RouteComponentProp
     render() {
         const { children, definition, routeState, staticContext, ...props } = this.props;
         // log('render', definition.name, { routeState, state: this.state, action: definition.action });
+        if ( definition.loadComponent && ! this.state.component ) {
+            return null;
+        }
         if ( definition.action && this.state.loading ) {
             return null;
         }

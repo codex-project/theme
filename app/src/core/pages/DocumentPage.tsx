@@ -5,7 +5,7 @@ import { BrowserRouter, RouteComponentProps } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
 import posed from 'react-pose';
-import { toJS } from 'mobx';
+import { observable, runInAction, toJS } from 'mobx';
 import { RouteState } from 'router';
 import { app, lazyInject } from 'ioc';
 import { HtmlComponents } from 'classes/HtmlComponents';
@@ -57,29 +57,41 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
     getChildContext() {
         return {
             router  : app.get<BrowserRouter>('router'),
-            document: toJS(this.store.document),
+            document: toJS(this.document),
         };
     }
 
+    @observable document = null;
+
     async fetch() {
         const { project, revision, document } = this.props;
-        if ( ! this.store.isDocument(project, revision, document) ) {
-            // this.store.setDocument(null);
-            try {
-                let promise = this.store.fetchDocument(project, revision, document);
-                this.store.setDocument(null);
-                await promise;
-            } catch ( e ) {
-                app.notification.error({
-                    message  : e && e.message ? e.message : 'Document does not exist',
-                    placement: 'bottomRight',
-                });
-            }
+        try {
+            let doc = await this.store.fetchDocument(project, revision, document);
+            runInAction(() => this.document = doc);
+        } catch ( e ) {
+            app.notification.error({
+                message  : e && e.message ? e.message : 'Document does not exist',
+                placement: 'bottomRight',
+            });
         }
+        // if ( ! this.store.isDocument(project, revision, document) ) {
+        //     // this.store.setDocument(null);
+        //     try {
+        //         let promise = this.store.fetchDocument(project, revision, document);
+        //         this.store.setDocument(null);
+        //         await promise;
+        //     } catch ( e ) {
+        //         console.trace(project +revision+document,e)
+        //         app.notification.error({
+        //             message  : e && e.message ? e.message : 'Document does not exist',
+        //             placement: 'bottomRight',
+        //         });
+        //     }
+        // }
     }
 
     public componentDidMount(): void {
-        log('componentDidMount')
+        log('componentDidMount');
         this.fetch();
     }
 
@@ -89,23 +101,23 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
 
     render() {
         const { children, routeState, history, staticContext, location, match, ...props } = this.props;
-        const { document }                                                                = this.store;
+        // const { document }                                                                = this.store;
 
-        ! document && log('render', 'NO DOCUMENT', { document, props });
-        document && log('render', 'WITH DOCUMENT', document.key, { document, props });
+        ! this.document && log('render', 'NO DOCUMENT', { document: this.document, props });
+        this.document && log('render', 'WITH DOCUMENT', this.document.key, { document: this.document, props });
         let content = null;
-        if ( document ) {
+        if ( this.document ) {
             try {
-                content = this.hc.parse(document.content);
+                content = this.hc.parse(this.document.content);
             } catch ( e ) {
                 console.warn(e);
             }
         }
         return (
-            <DocumentContainer id="document" pose={document ? 'enter' : 'exit'} {...props}>
-                <If condition={document}>
+            <DocumentContainer id="document" pose={this.document ? 'enter' : 'exit'} {...props}>
+                <If condition={this.document}>
                     <Helmet>
-                        <title>{document.title || document.key}</title>
+                        <title>{this.document.title || this.document.key}</title>
                     </Helmet>
                     {content}
                 </If>
