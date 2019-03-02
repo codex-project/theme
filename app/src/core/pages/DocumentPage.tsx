@@ -64,9 +64,11 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
     async fetch() {
         const { project, revision, document } = this.props;
         if ( ! this.store.isDocument(project, revision, document) ) {
-            this.store.setDocument(null);
+            // this.store.setDocument(null);
             try {
-                await this.store.fetchDocument(project, revision, document);
+                let promise = this.store.fetchDocument(project, revision, document);
+                this.store.setDocument(null);
+                await promise;
             } catch ( e ) {
                 app.notification.error({
                     message  : e && e.message ? e.message : 'Document does not exist',
@@ -77,6 +79,7 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
     }
 
     public componentDidMount(): void {
+        log('componentDidMount')
         this.fetch();
     }
 

@@ -190,51 +190,66 @@ export class Store {
         return this.project;
     }
 
-    fetching = false;
+    prevFetch: { projectKey?: string, revisionKey?: string, documentKey?: string, promise: Promise<any>, controller: AbortController } = null;
 
     async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
-        if ( this.fetching ) return;
-        this.fetching = true;
-        let query     = new QueryBuilder(projectKey, revisionKey, documentKey);
-        query.withChanges()
-            .addProjectFields('key', 'display_name', 'description')
-            .addRevisionFields('key')
-            .addDocumentFields('key', 'content');
 
-        // query      = this.hooks.fetch.call(query);
-        let result = await query.get();
-        transaction(() => {
-            let layout;
-            if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
-                this.project  = null;
-                this.revision = null;
-                this.document = null;
-                this.project  = result.project;
-                layout        = result.project;
-                this.mergeLayout(layout);
-            }
-            if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
-                this.revision = null;
-                this.document = null;
-                this.revision = result.revision;
-                layout        = result.revision;
-                this.mergeLayout(layout);
-            }
-            if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
-                this.document = null;
-                this.document = result.document;
-                layout        = result.document;
-                this.mergeLayout(layout);
-            }
-            if ( layout ) {
-                this.mergeLayout(layout);
-            }
-        });
+        let makeFetch = async (signal: AbortSignal) => {
+            let query = new QueryBuilder(projectKey, revisionKey, documentKey);
+            query.withChanges()
+                .addProjectFields('key', 'display_name', 'description')
+                .addRevisionFields('key')
+                .addDocumentFields('key', 'content');
 
-        log('fetched', { result });
-        this.fetching = false;
-        // this.hooks.fetched.call(result);
-        return result;
+            // query      = this.hooks.fetch.call(query);
+            let result = await query.get(signal);
+            transaction(() => {
+                let layout;
+                if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
+                    this.project  = null;
+                    this.revision = null;
+                    this.document = null;
+                    this.project  = result.project;
+                    layout        = result.project;
+                    this.mergeLayout(layout);
+                }
+                if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
+                    this.revision = null;
+                    this.document = null;
+                    this.revision = result.revision;
+                    layout        = result.revision;
+                    this.mergeLayout(layout);
+                }
+                if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
+                    this.document = null;
+                    this.document = result.document;
+                    layout        = result.document;
+                    this.mergeLayout(layout);
+                }
+                if ( layout ) {
+                    this.mergeLayout(layout);
+                }
+            });
+
+            log('fetched', { result });
+            // this.hooks.fetched.call(result);
+            return result;
+        };
+
+        if ( this.prevFetch ) {
+            let prev = this.prevFetch;
+            if ( prev.projectKey === projectKey && prev.revisionKey === revisionKey && prev.documentKey === documentKey ) {
+                return prev.promise;
+            } else {
+                prev.promise.cancel();
+                prev.controller.abort();
+                this.prevFetch = undefined;
+            }
+        }
+        const controller = new AbortController();
+        this.prevFetch   = { projectKey, revisionKey, documentKey, promise: makeFetch(controller.signal), controller };
+
+        return this.prevFetch.promise;
     }
 
 }

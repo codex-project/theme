@@ -39,7 +39,8 @@ export class RouterLinkMenuType extends MenuType {
 
         return (
             <Item key={item.id}>
-                <RouteLink to={item.to} key={getRandomId(6)}>{inner}</RouteLink>
+                {/*<RouteLink to={item.to} key={getRandomId(6)}>{inner}</RouteLink>*/}
+                <a href={this.app.routes.toUrl(item.to)} key={getRandomId(6)} onClick={e => e.preventDefault()}>{inner}</a>
             </Item>
             //     {
             //         item.type === 'link' ?

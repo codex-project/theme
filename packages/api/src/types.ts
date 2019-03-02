@@ -19,6 +19,7 @@ export interface ApiOptions {
     referrer?: RequestInit['referrer'];
     referrerPolicy?: RequestInit['referrerPolicy'];
     integrity?: RequestInit['integrity'];
+    signal?: RequestInit['signal'];
 }
 
 

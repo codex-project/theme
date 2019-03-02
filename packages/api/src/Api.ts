@@ -20,6 +20,7 @@ export class Api {
         url    : '/graphql',
         headers: { 'Content-Type': 'application/json' },
         method : 'POST',
+
     };
 
     constructor() { }

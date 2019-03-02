@@ -1,4 +1,4 @@
-import { injectable, lazyInject } from '../ioc'
+import { injectable, lazyInject } from '../ioc';
 
 import { merge, uniq } from 'lodash';
 // import { Api, api, FetchResult } from '@codex/api';
@@ -24,7 +24,7 @@ type Fields = Record<string, string>
 
 @injectable()
 export class QueryBuilder {
-    @lazyInject('api') api:Api;
+    @lazyInject('api') api: Api;
     @lazyInject('fetched') fetched: Fetched;
 
     public readonly hooks = {
@@ -44,6 +44,7 @@ export class QueryBuilder {
         protected revisionKey?: string,
         protected documentKey?: string,
     ) {}
+
 
     protected addField(fields: Fields, name: string, fieldName?: string): this {
         fieldName      = fieldName || name;
@@ -131,13 +132,13 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
     }
 
 
-    async get(): Promise<BuildQueryReturn> {
+    async get(signal?: AbortSignal): Promise<BuildQueryReturn> {
         this.hooks.get.call(this);
         let queryFields = this.buildQueryFields();
         log('get()', 'queryFields', queryFields);
         if ( queryFields.length > 0 ) {
             let query    = `query {\n${queryFields.join('\n')}\n}`;
-            let response = await this.api.query(query);
+            let response = await this.api.query(query, { signal });
             this.hooks.queryResult.call(response, this);
             log('get()', 'response', response);
             let { data, errors, status } = response;

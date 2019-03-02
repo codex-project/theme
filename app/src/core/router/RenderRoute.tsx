@@ -42,7 +42,7 @@ export class RenderRoute extends Component<RenderRouteProps & RouteComponentProp
 
     componentDidMount() {
         const { children, definition, routeState, staticContext, ...props } = this.props;
-        // log('componentDidMount', definition.name, { routeState, state: this.state, action: definition.action });
+        log('componentDidMount', definition.name, { routeState, state: this.state, action: definition.action });
         this.setState({ name: routeState.name });
         this.load();
     }

@@ -2779,6 +2779,18 @@
   dependencies:
     "@types/babel-types" "*"
 
+"@types/bluebird-global@^3.5.11":
+  version "3.5.11"
+  resolved "https://registry.npmjs.org/@types/bluebird-global/-/bluebird-global-3.5.11.tgz#14f6d826fc6b18d6734cd659888b484eedb908eb"
+  integrity sha512-PGCGPlLo9WFMaOsDINVYE8NGVeGjq88Pg0F5kJoDxVcMEx85+sezrg+hlmXzPchoEKuzprlylXrq3i/c5rORQg==
+  dependencies:
+    "@types/bluebird" "*"
+
+"@types/bluebird@*", "@types/bluebird@^3.5.26":
+  version "3.5.26"
+  resolved "https://registry.npmjs.org/@types/bluebird/-/bluebird-3.5.26.tgz#a38c438ae84fa02431d6892edf86e46edcbca291"
+  integrity sha512-aj2mrBLn5ky0GmAg6IPXrQjnN0iB/ulozuJ+oZdrHRAzRbXjGmu4UXsNCjFvPbSaaPZmniocdOzsM392qLOlmQ==
+
 "@types/body-parser@*":
   version "1.17.0"
   resolved "https://registry.npmjs.org/@types/body-parser/-/body-parser-1.17.0.tgz#9f5c9d9bd04bb54be32d5eb9fc0d8c974e6cf58c"
@@ -5642,6 +5654,11 @@ block-stream@*:
   integrity sha1-E+v+d4oDIFz+A3UUgeu0szAMEmo=
   dependencies:
     inherits "~2.0.0"
+
+bluebird-global@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/bluebird-global/-/bluebird-global-1.0.1.tgz#147c174f4e3a19740e80d992ea70ec3dc51d0d95"
+  integrity sha512-llTREi0V3EUM150DKdMLlXN/X2QsQ/hWJDiaGnivqeDwE32I0dmivYLU9/VvhotTzvvbv7OiM6zjVXYJ2dCmKQ==
 
 bluebird@^3.3.5, bluebird@^3.5.0, bluebird@^3.5.1, bluebird@^3.5.3:
   version "3.5.3"

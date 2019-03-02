@@ -7,7 +7,7 @@ export let Mermaid: MermaidComponent = loadable(() => import(
     /* webpackChunkName: "core.components.code-renderer.mermaid" */
     './Mermaid'
     ),
-);
+);1
 
 
 
