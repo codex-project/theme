@@ -2,6 +2,7 @@ import React from 'react';
 
 export * from './base';
 export {default as PhpdocDocblock} from './docblock';
+export {default as PhpdocDrawer} from './drawer';
 export {default as PhpdocEntity} from './entity';
 export {default as PhpdocLink} from './link';
 export {default as PhpdocMemberList} from './member-list';

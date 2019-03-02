@@ -94,6 +94,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProp
                 </Row>
             );
         }
-        return React.Children.only(this.props.children);
+        return this.props.children;
     }
 }

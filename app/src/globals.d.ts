@@ -4,10 +4,6 @@
 /// <reference types="hammerjs" />
 
 
-
-
-
-
 declare module '*.styl';
 declare module '*.scss';
 declare module '*.mscss';
@@ -15,11 +11,11 @@ declare module '*.less';
 declare module '*.json';
 
 
-declare const DEV: boolean
-declare const ENV: any
-declare const PROD: boolean
-declare const TEST: boolean
-declare const APP_VERSION: string
+declare const DEV: boolean;
+declare const ENV: any;
+declare const PROD: boolean;
+declare const TEST: boolean;
+declare const APP_VERSION: string;
 // declare module 'react' {
 //     interface HTMLAttributes<T> {
 //         styleName?: string;
@@ -33,44 +29,46 @@ declare const APP_VERSION: string
 declare function For<T>({ each, of, index }: { each: string; of: T[]; index?: string });
 
 declare interface IfProps {
-    condition?:any
+    condition?: any
 
 
     // empty?:any
     // notEmpty?:any
 
     // boolean
-    true?:any // if props.true === true
-    false?:any
+    true?: any // if props.true === true
+    false?: any
 
     // typeofs
-    number?:any // typeof props.number === 'number'
-    string?:any
-    array?:any
-    undefined?:any
-    boolean?:any
-    function?:any
+    number?: any // typeof props.number === 'number'
+    string?: any
+    array?: any
+    undefined?: any
+    boolean?: any
+    function?: any
 
     // comparisons
-    value?:any
-    gt?:any // if props.value > props.gt
-    lt?:any
-    eq?:any
+    value?: any
+    gt?: any // if props.value > props.gt
+    lt?: any
+    eq?: any
 }
-declare function If(props:IfProps);
 
-declare function Choose(__ignore:any);
+declare function If(props: IfProps);
+
+declare function Choose(__ignore: any);
 
 declare function When({ condition }: { condition: boolean });
 
-declare function Otherwise(__ignore:any):any;
+declare function Otherwise(__ignore: any): any;
 
 declare function With(props: { [ id: string ]: any });
 
-declare module "*.css" {
+declare module '*.css' {
     interface IClassNames {
-        [className: string]: string;
+        [ className: string ]: string;
     }
+
     const classNames: IClassNames;
     export = classNames;
 }
@@ -78,8 +76,8 @@ declare module "*.css" {
 declare module 'react-hammerjs' {
     type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
-    export type HammerOptionsWithRecognizers = Omit<HammerOptions, "recognizers"> & {
-        recognizers?: { [gesture: string]: RecognizerOptions };
+    export type HammerOptionsWithRecognizers = Omit<HammerOptions, 'recognizers'> & {
+        recognizers?: { [ gesture: string ]: RecognizerOptions };
     };
 
     export interface HammerDirectionValues {
@@ -99,7 +97,7 @@ declare module 'react-hammerjs' {
         style?: React.CSSProperties
         className?: string
         direction?: HammerDirection
-        recognizeWith?: { [gesture: string]: Recognizer | string };
+        recognizeWith?: { [ gesture: string ]: Recognizer | string };
         vertical?: boolean;
         options?: HammerOptionsWithRecognizers
 
@@ -133,9 +131,9 @@ declare module 'react-hammerjs' {
 
 
 declare module 'react-html-parser' {
-    import React from 'react'
+    import React from 'react';
 
-    export const htmlparser2: any
+    export const htmlparser2: any;
 
     export interface Node<A = any> {
         type: 'tag' | 'text' | 'style'
@@ -162,6 +160,25 @@ declare module 'react-html-parser' {
 }
 
 
+declare module 'react-iframe-resizer-super' {
+    import { IFrameOptions } from 'iframe-resizer';
+
+    export interface ReactIframeResizerProps {
+        content?: string | HTMLElement
+        src?: string
+        iframeResizerEnable?: boolean
+        iframeResizerOptions?: IFrameOptions
+        iframeResizerUrl?: string | boolean
+        id?: string
+        frameBorder?: number
+        className?: string
+        style?: React.CSSProperties
+    }
+
+    export default class ReactIframeResizer extends React.Component<ReactIframeResizerProps> {}
+}
+
+
 declare class ResizeObserver {
     constructor(cb: ResizeObserverCallback)
 
@@ -171,6 +188,7 @@ declare class ResizeObserver {
 
     disconnect(): void;
 }
+
 declare namespace NodeJS {
     interface ProcessEnv {
         NODE_ENV: 'development' | 'production' | 'test'

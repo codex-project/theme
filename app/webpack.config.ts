@@ -272,7 +272,7 @@ export function addStyleLoaders(config: Configuration) {
         exclude: [ /\.module.css$/ ],
         use    : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'fast-css-loader', options: { importLoaders: 1, sourceMap: isDev } },
+            { loader: 'css-loader', options: { importLoaders: 1, sourceMap: isDev } },
             isProd && postCssLoader,
         ].filter(Boolean),
     }, {
@@ -316,7 +316,7 @@ export function addStyleLoaders(config: Configuration) {
         test: /\.less$/,
         use : [
             isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            { loader: 'fast-css-loader', options: { importLoaders: 2, sourceMap: isDev } },
+            { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev } },
             isProd && postCssLoader,
             { loader: antdLessLoader.loader, options: { ...antdLessLoader.options, ...{ javascriptEnabled: true, sourceMap: isDev } } },
         ].filter(Boolean),
