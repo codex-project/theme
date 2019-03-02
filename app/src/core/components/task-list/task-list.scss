@@ -1,0 +1,77 @@
+@import "../../styling/base";
+
+@mixin checkbox-size($checkbox-size) {
+    $checkbox-prefix-cls: #{$ant-prefix}-checkbox;
+    $checkbox-inner-prefix-cls: #{$checkbox-prefix-cls}-inner;
+
+    .#{$checkbox-prefix-cls} {
+        &-inner {
+            width: #{$checkbox-size}px;
+            height: #{$checkbox-size}px;
+
+            &:after {
+                $check-width: ($checkbox-size / 14) * 5;
+                $check-height: ($checkbox-size / 14) * 8;
+                //left: #{($checkbox-size - $check-width) / 2 - 0.5 * ($checkbox-size / 14)}px;
+                //top: #{($checkbox-size - $check-height) / 2 - 2 * ($checkbox-size / 14)}px;
+                width: #{$check-width}px;
+                height: #{$check-height}px;
+            }
+        }
+    }
+
+    .#{$checkbox-prefix-cls}-indeterminate {
+        .#{$checkbox-inner-prefix-cls}:after {
+            $indeterminate-width: $checkbox-size - 8px;
+            $indeterminate-height: $checkbox-size - 8px;
+            width: $indeterminate-width;
+            height: $indeterminate-height;
+        }
+    }
+}
+
+$prefix-cls: "c-task-list";
+ul.#{$prefix-cls},
+ol.#{$prefix-cls} {
+    padding-left: 25px;
+    list-style: none;
+
+    > li.#{$prefix-cls}-item > .#{$prefix-cls},
+    > li.#{$prefix-cls}-item > .#{$prefix-cls} .#{$prefix-cls} {
+
+    }
+
+    li.#{$prefix-cls}-item {
+        margin-top: 2px;
+        margin-bottom: 2px;
+        list-style-type: none;
+
+        label {
+            font-weight: normal
+        }
+
+        &.enabled label {
+            cursor: pointer
+        }
+
+        + .#{$prefix-cls}-item {
+            margin-top: 3px
+        }
+
+        .handle {
+            display: none
+        }
+
+        .#{$prefix-cls}-item-checkbox {
+            margin: 0 0.5em 0.25em -1.6em;
+            vertical-align: middle
+        }
+
+        @include checkbox-size(13);
+    }
+
+
+}
+
+
+

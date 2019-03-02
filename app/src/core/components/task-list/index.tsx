@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { getElementType } from 'utils/getElementType';
 
+
+import './task-list.scss'
+import { Checkbox } from 'antd';
+
 export interface TaskListProps extends React.HTMLAttributes<HTMLUListElement> {
     as?: string
 }
@@ -16,7 +20,7 @@ export class TaskList extends Component<TaskListProps> {
         const ElementType            = getElementType(TaskList, this.props);
 
         return (
-            <ElementType>
+            <ElementType className="c-task-list">
                 {children}
             </ElementType>
         );
@@ -42,11 +46,14 @@ export class TaskListItem extends Component<TaskListItemProps> {
     render() {
         const { children, ...props } = this.props;
         return (
-            <li>
-                <input
-                    type="checkbox"
+            <li className="c-task-list-item">
+                <Checkbox
+                    className="c-task-list-item-checkbox"
                     checked={this.state.checked}
-                    onChange={event1 => this.setChecked(event1.target.checked)}
+                    onChange={event1 => {
+                        this.setChecked(event1.target.checked);
+                        event1.nativeEvent.target['blur']()
+                    }}
                 />
                 {children}
             </li>
