@@ -60,7 +60,7 @@ export class Icon extends React.PureComponent<IconProps, State> {
             rotate && 'fa-rotate-' + rotate.toString(),
         ].filter(Boolean);
 
-        const ElementType = getElementType(Icon, this.props);
+        const ElementType:any = getElementType(Icon, this.props) as any;
 
         return <ElementType className={classes(...classNames)} style={{ fontSize, ...style }} {...props} />;
     }

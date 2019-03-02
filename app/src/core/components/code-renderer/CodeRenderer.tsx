@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { observer } from 'mobx-react';
-import { Chart, Mathematica, Mermaid } from 'components/code-renderer/renderers';
+import { Chart, Mathematica, Mermaid, Nomnoml } from 'components/code-renderer/renderers';
 import { ErrorBoundary } from 'components/errors';
 
 export interface CodeRendererProps {
@@ -28,6 +28,9 @@ export default class CodeRenderer extends Component<CodeRendererProps> {
                     </If>
                     <If condition={language === 'chart'}>
                         <Chart chart={JSON.parse(this.props.children.toString())}/>
+                    </If>
+                    <If condition={language === 'nomnoml'}>
+                        <Nomnoml code={this.props.children.toString()}/>
                     </If>
                     <If condition={[ 'katex', 'asciimath' ].includes(language)}>
                         <Mathematica language={language}>{this.props.children}</Mathematica>

@@ -18,6 +18,8 @@ import { Col, Modal, Popover, Row, Tooltip } from 'antd';
 import { Icon } from 'components/icon';
 import { Button } from 'components/button';
 import { CodeRenderer } from 'components/code-renderer';
+import { Emoji } from 'components/emoji';
+import TaskListItem, { TaskList } from 'components/task-list';
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     decorate(injectable(), Api);
@@ -42,6 +44,9 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
             'c-toc-list-item' : TOCListItem,
             'c-toc-header'    : TOCHeader,
             'c-link'          : CLink,
+            'c-emoji'         : Emoji,
+            'c-task-list'     : TaskList,
+            'c-task-list-item': TaskListItem,
 
             'link'   : RouteLink,
             'trigger': Trigger,

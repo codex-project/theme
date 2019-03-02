@@ -30,3 +30,14 @@ export let Mathematica: MathematicaComponent = loadable(() => import(
 );
 
 
+
+
+import { NomnomlProps } from './Nomnoml';
+export type NomnomlComponent = ComponentType<NomnomlProps> & {}
+export let Nomnoml: NomnomlComponent = loadable(() => import(
+    /* webpackChunkName: "core.components.code-renderer.nomnoml" */
+    './Nomnoml'
+    ),
+);
+
+

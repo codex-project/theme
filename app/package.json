@@ -103,7 +103,8 @@
         "typestyle": "^2.0.1",
         "typestyled-components": "^1.0.0",
         "url-join": "^4.0.0",
-        "nomnoml": "^0.3.0"
+        "nomnoml": "^0.3.0",
+        "react-emoji-render": "^0.5.0"
     },
     "devDependencies": {
         "@blueprintjs/core": "^3.7.0",

@@ -17,6 +17,7 @@ export * from './responsive';
 export * from './scrollbar';
 export * from './spin';
 // export * from './store-control';
+export * from './task-list';
 export * from './toc';
 export * from './toolbar';
 export * from './trigger';
