@@ -4,7 +4,9 @@ import api from '@codex/api';
 import React from 'react';
 
 // noinspection ES6UnusedImports
-import H,{History} from 'history'
+import * as H from 'history'
+
+
 declare global {
     const BACKEND_DATA: api.Query;
 

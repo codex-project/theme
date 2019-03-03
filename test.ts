@@ -122,7 +122,7 @@ interface Lifecycle {
 
 class Transition {
     public readonly hooks = {
-        start   : new SyncBailHook(),
+        started : new SyncBailHook(),
         leave   : new SyncBailHook(),
         enter   : new SyncHook(),
         finished: new SyncHook(),
@@ -379,7 +379,7 @@ r.hooks.transition.tap('a', (transition) => {
         console.log('router.hook.transition.hook.enter', ...args);
         transition.cancel();
     });
-    transition.hooks.start.tap('a', (...args) => {
+    transition.hooks.started.tap('a', (...args) => {
         console.log('router.hook.transition.hook.start', ...args);
     });
     transition.hooks.finished.tap('a', (...args) => {

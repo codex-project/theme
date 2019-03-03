@@ -45,7 +45,9 @@
 <% if(DEV){ %>
 <script>
     (function () {
+
         var codex = window['codex'];
+        if(!codex.core) return;
         codex.core.loadPolyfills().then(function () {
             var app = codex.core.app;
             app.plugin(new codex.phpdoc.default());
@@ -69,6 +71,7 @@
 <script>
     (function () {
         var codex = window['codex'];
+        if(!codex.core) return;
         codex.core.loadPolyfills().then(function () {
             var app = codex.core.app;
             app.plugin(new codex.phpdoc.default());

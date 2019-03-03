@@ -5,7 +5,5 @@
     <mapping directory="$PROJECT_DIR$/app/src/core/components/code-renderer/renderers/.katex" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/core/components/code-renderer/renderers/.katex/submodules/katex-fonts" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/core/components/code-renderer/renderers/.katex/submodules/katex-test-fonts" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/core/components/code-renderer/renderers/katex" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/tapable" vcs="Git" />
   </component>
 </project>

@@ -277,23 +277,6 @@ export function addStyleLoaders(config: Configuration) {
         ].filter(Boolean),
     }, {
         oneOf: [
-            //     {
-            //     test: path => {
-            //         if ( path.endsWith('antd/theme.scss') || path.endsWith('antd/mixins.scss') || path.endsWith('antd/_button-mixins.scss') ) {
-            //             return true;
-            //         }
-            //         if ( path.endsWith('_base.scss') ) {
-            //             return true;
-            //         }
-            //         return false;
-            //     },
-            //     use : [
-            //         isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCssExtractPlugin.loader,
-            //         { loader: 'css-loader', options: { importLoaders: 2, sourceMap: isDev, camelCase: true } },
-            //         isProd && postCssLoader,
-            //         antdScssLoader,
-            //     ].filter(Boolean),
-            // },
             {
                 test: /\.(module\.scss|mscss)$/,
                 use : [
@@ -348,23 +331,6 @@ chain.when(isDev, chain => {
             maxSize           : Infinity,
             name              : true,
         },
-        // occurrenceOrder: true,
-        // runtimeChunk          : true,
-        //https://github.com/webpack/webpack/tree/master/examples/multiple-entry-points
-        // splitChunks : {
-        //     minSize           : 0,
-        //     maxSize           : Infinity,
-        //     maxInitialRequests: Infinity,
-        //     maxAsyncRequests  : Infinity,
-        //     cacheGroups       : {
-        //         default: false,
-        //         commons: {
-        //             name     : 'commons',
-        //             chunks   : 'initial',
-        //             minChunks: 1,
-        //         },
-        //     },
-        // },
         minimize,
         minimizer   : [
             new TerserPlugin(<TerserPlugin.TerserPluginOptions>{
@@ -468,37 +434,15 @@ addBabelToRule(chain, 'vendor-js', {
     sourceMaps: false,
 });
 addPackage(chain, 'api', '@codex/api');
-// addPluginEntry(chain, 'api', packagesPath('api/src'), 'index.ts');
-addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
-// addPluginEntry(chain, 'documents', chain.srcPath('documents'), 'index.tsx');
-addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
-// addPluginEntry(chain, 'auth', chain.srcPath('auth'), 'index.tsx');
-chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
+addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.tsx')
+// addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
+// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
+// chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
 chain.resolve.alias.merge({
     'heading'            : chain.srcPath('core/styling/heading.less'),
     '../../theme.config$': chain.srcPath('core/styling/theme.config'),
     './core/index.less$' : chain.srcPath('core/styling/antd/core.less'),
 });
-// chain.set('externals', [ chain.get('externals'), (context: any, request: any, callback: (error?: any, result?: any) => void) => {
-//     let a = { context, request, callback };
-//
-//     if ( ! context.startsWith(chain.srcPath('core')) ) {
-//         if ( /^(react|react-dom|mobx|mobx-react)$/.test(request) ) {
-//             let name = request
-//                 .replace('react', 'React')
-//                 .replace('react-dom', 'ReactDOM')
-//                 .replace('mobx', 'mobx')
-//                 .replace('mobx-react', 'mobxReact');
-//
-//             debugger;
-//             return callback(null, 'var ' + name);
-//         }
-//     }
-//     callback();
-// } ]);
-// chain.entry('vendor').merge([
-//     'react', 'react-dom', 'mobx', 'mobx-react'
-// ]);
 //endregion
 
 
