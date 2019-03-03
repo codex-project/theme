@@ -10,12 +10,12 @@ import { hot } from 'decorators';
 import { clink } from 'stores';
 import { lazyInject } from 'ioc';
 import { Api, api } from '@codex/api';
-import { match } from 'react-router';
+import { Match } from 'router';
 
 
 export interface DocumentPopoverActionProps {
     link: React.ReactNode
-    match: match<any>
+    match: Match<any>
     to: string
 }
 

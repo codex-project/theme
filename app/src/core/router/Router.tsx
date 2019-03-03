@@ -24,11 +24,12 @@ export class Router extends EventEmitter {
     @observable location: Location = null;
     @observable started            = false;
     @observable current: State     = null;
-    @computed get transitioning():boolean{
-        if(!this.transition){
+
+    @computed get transitioning(): boolean {
+        if ( ! this.transition ) {
             return false;
         }
-        if(this.transition.canceled || this.transition.forwarded || this.transition.finished){
+        if ( this.transition.canceled || this.transition.forwarded || this.transition.finished ) {
             return false;
         }
         return true;
@@ -83,11 +84,20 @@ export class Router extends EventEmitter {
         if ( this.started ) throw Error('Router already started');
         log('start', this);
         this.hooks.start.call();
+
         if ( this.routes.has(defaultRoute) ) {
             defaultRoute = this.buildUrl(defaultRoute);
         }
-        let match    = this.matchPath(defaultRoute);
-        let state = this.buildState(match.name, match.params);
+        let match = this.matchPath(defaultRoute);
+
+        if ( this.history.location.pathname !== '/' ) {
+            let _match = this.matchPath(this.history.location.pathname);
+            if ( _match ) {
+                match = _match;
+            }
+        }
+
+        let state    = this.buildState(match.name, match.params);
         this.started = true;
         this.history.listen((location, action) => {
             log(action, 'location', location);
@@ -147,8 +157,8 @@ export class Router extends EventEmitter {
                 let route = routesByPath.get(match.path);
                 return { ...match, name: route.name };
             });
-        if(matches[0]){
-            matches[0].url = decodeURIComponent(matches[0].url)
+        if ( matches[ 0 ] ) {
+            matches[ 0 ].url = decodeURIComponent(matches[ 0 ].url);
         }
         return matches[ 0 ];
     }
@@ -172,8 +182,8 @@ export class Router extends EventEmitter {
                 return match.url;
             }
         }
-        if ( typeof to === 'object' && to['to'] ) {
-            return this.toUrl(to['to']);
+        if ( typeof to === 'object' && to[ 'to' ] ) {
+            return this.toUrl(to[ 'to' ]);
         }
     }
 

@@ -6,6 +6,8 @@ import { MenuPlugin } from 'menus';
 import { RouterPlugin } from 'router';
 import Root from 'components/Root';
 import { ColorElement } from 'elements';
+import TestPage from 'pages/TestPage';
+import DocumentPage from 'pages/DocumentPage';
 
 const log = require('debug')('site:index');
 
@@ -39,9 +41,9 @@ routerPlugin.hooks.registered.tap('CORE', router => {
             path         : '/',
             loadComponent: () => import(/* webpackChunkName: "core.pages.home" */'./pages/HomePage'),
         }, {
-            name         : 'test',
-            path         : '/test',
-            loadComponent: () => import('./pages/TestPage'),
+            name     : 'test',
+            path     : '/test',
+            component: TestPage,
         },
         {
             name    : 'documentation',
@@ -73,10 +75,15 @@ routerPlugin.hooks.registered.tap('CORE', router => {
             },
         },
         {
-            name         : 'documentation.document',
-            path         : '/documentation/:project/:revision/:document+',
-            loadComponent: async () => import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage'),
-            canEnter     : async (state) => {
+            name     : 'documentation.document',
+            path     : '/documentation/:project/:revision/:document+',
+            enter    : async (state) => {
+                let { project, revision, document } = state.params;
+                return app.store.fetchDocument(project, revision, document);
+            },
+            // loadComponent: async () => import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage'),
+            component: DocumentPage,
+            canEnter : async (state) => {
                 let params  = state.params;
                 let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                 if ( ! project ) {

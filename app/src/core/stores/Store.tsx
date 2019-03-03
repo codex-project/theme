@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { action, computed, observable, toJS, transaction } from 'mobx';
+import { action, computed, observable, observe, toJS, transaction } from 'mobx';
 import { get, has, merge, set } from 'lodash';
 import { injectable, postConstruct } from 'inversify';
 import { LayoutStore } from './LayoutStore';
@@ -192,6 +192,8 @@ export class Store {
 
     prevFetch: { projectKey?: string, revisionKey?: string, documentKey?: string, promise: Promise<any>, controller: AbortController } = null;
 
+    obs = null;
+
     async fetch(projectKey?: string, revisionKey?: string, documentKey?: string) {
 
         let makeFetch = async (signal: AbortSignal) => {
@@ -231,16 +233,24 @@ export class Store {
                 }
             });
 
+            if ( ! this.obs ) {
+                this.obs = observe(this.document, change => {
+                    log('document', change.type, change.object);
+                });
+            }
             log('fetched', { result });
             // this.hooks.fetched.call(result);
             return result;
         };
 
+
         if ( this.prevFetch ) {
             let prev = this.prevFetch;
             if ( prev.projectKey === projectKey && prev.revisionKey === revisionKey && prev.documentKey === documentKey ) {
+                log('fetch return prevFetch.promise');
                 return prev.promise;
             } else {
+                log('fetch cancel and abort');
                 prev.promise.cancel();
                 prev.controller.abort();
                 this.prevFetch = undefined;
@@ -248,7 +258,7 @@ export class Store {
         }
         const controller = new AbortController();
         this.prevFetch   = { projectKey, revisionKey, documentKey, promise: makeFetch(controller.signal), controller };
-
+        log('fetch new promise');
         return this.prevFetch.promise;
     }
 

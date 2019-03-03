@@ -136,12 +136,7 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     }
 
     findActiveFromRoute() {
-        if ( app.router.transitioning ) {
-            app.router.once('transition.finished', () => this.findActiveFromRoute());
-            return;
-        }
         let current = app.router.history.location.pathname;
-        log('findActiveFromRoute', current);
         if ( ! current ) return;
         return this.rfind(item => {
             let url = app.router.toUrl(item as any);
@@ -149,7 +144,28 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
         });
     }
 
+    static requests = [];
+    static requestHandler;
+
     selectActiveFromRoute(expandParents: boolean = false, collapseOthers: boolean = false) {
+        if ( app.router.transitioning ) {
+            if ( ! MenuItems.requestHandler ) {
+
+                MenuItems.requests       = [];
+                MenuItems.requestHandler = () => {
+                    setTimeout(() => {
+                        transaction(() => MenuItems.requests.forEach(request => request()));
+                        MenuItems.requestHandler = undefined;
+                        MenuItems.requests       = [];
+                    }, 200);
+                };
+                app.router.once('transition.finished', MenuItems.requestHandler);
+            }
+
+            MenuItems.requests.push(() => this.selectActiveFromRoute(expandParents, collapseOthers));
+            return;
+        }
+        log('selectActiveFromRoute', expandParents, collapseOthers);
         let active = this.findActiveFromRoute();
         if ( active ) {
             transaction(() => {

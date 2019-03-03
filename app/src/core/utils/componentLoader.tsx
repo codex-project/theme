@@ -1,7 +1,6 @@
 import { Loading } from '../components/loading';
 import Loadable from 'react-loadable';
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
 
 export const componentLoader: ComponentLoaderFn = (
     loader,
@@ -21,7 +20,7 @@ export type ComponentLoaderLoader<T> = () => Promise<T>
 export type ComponentLoaderMapLoader<LOADER extends Record<string, any>> = {
     [P in keyof LOADER]: () => Promise<LOADER[P]>
 }
-export type ComponentLoaderRender<T, PARAMS extends any = any> = (loaded: T, props: RouteComponentProps<PARAMS>) => React.ReactNode;
+export type ComponentLoaderRender<T, PARAMS extends any = any> = (loaded: T, props: any) => React.ReactNode;
 export type ComponentLoaderOptions = Partial<Loadable.CommonOptions>
 export type ComponentLoader<T, PARAMS extends any = any> = {
     loader?: ComponentLoaderLoader<T>,

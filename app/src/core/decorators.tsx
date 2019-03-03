@@ -1,6 +1,5 @@
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { RouteComponentProps, withRouter } from 'react-router';
 
 const log = require('debug')('decorators');
 
@@ -31,13 +30,6 @@ export function cold<T>(mod: NodeModule, hoist = false) {
         return TargetComponent;
     };
 }
-
-export const WithRouter = () => {
-    return (target) => {
-        return withRouter(target) as any;
-    };
-};
-export type WithRouterProps = Partial<RouteComponentProps<any>>
 
 
 interface Constructor<T> {

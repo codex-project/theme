@@ -6,8 +6,7 @@ import { LinkType } from './LinkType';
 import { hot } from 'decorators';
 import { clink } from 'stores';
 import { app } from 'ioc';
-import { LinkProps } from 'react-router-dom';
-import { RouteLink } from 'router';
+import { RouteLink, RouteLinkProps } from 'router';
 
 
 @hot(module)
@@ -28,7 +27,7 @@ export class RevisionLinkType extends LinkType {
         if ( ! this.project || ! this.revision ) return <Fragment>{this.props.children}</Fragment>;
         const { children, link, match, to, icon, styling, ...rest } = this.props;
 
-        let props: LinkProps = {
+        let props: RouteLinkProps = {
             ...rest,
             to       : app.router.toUrl({ name: 'documentation.revision', params: { project: this.project, revision: this.revision } }),
             className: styling ? 'c-revision-link' : null,

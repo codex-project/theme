@@ -9,14 +9,13 @@ import { lazyInject } from 'ioc';
 import { Api } from '@codex/api';
 import { PopoverAction } from './PopoverAction';
 import { Scrollbar } from '../scrollbar';
-import { match } from 'react-router-dom';
 import { Icon } from '../icon';
-import { RouteLink, RouteMap } from 'router';
+import { Match, RouteLink, Router } from 'router';
 
 
 export interface ProjectPopoverActionProps {
     link: React.ReactNode
-    match: match<any>
+    match: Match<any>
     to: string
 }
 
@@ -25,7 +24,7 @@ export interface ProjectPopoverActionProps {
 @clink.action('project', 'popover')
 export class ProjectPopoverAction extends React.Component<ProjectPopoverActionProps> {
     @lazyInject('api') api: Api;
-    @lazyInject('routes') routes: RouteMap;
+    @lazyInject('router') router: Router;
     @lazyInject('store') store: Store;
 
     render() {
@@ -61,7 +60,7 @@ project(projectKey: "${project}"){
                                     <List.Item style={{ padding: 5 }}>
                                         <List.Item.Meta
                                             avatar={<Icon name="code-fork" style={{ fontSize: 25, marginLeft: 10 }}/>}
-                                            title={<RouteLink to={this.routes.get('documentation.revision').toPath({ project: project.key, revision: revision.key })} style={{ display: 'block' }}>{revision.key}</RouteLink>}
+                                            title={<RouteLink to={{ name: 'documentation.revision', params: { project: project.key, revision: revision.key } }} style={{ display: 'block' }}>{revision.key}</RouteLink>}
                                         />
                                         {revision.key === project.default_revision ? <Icon name="dot-circle-o" title="Default Revision" style={{ fontSize: 15, margin: 5 }}/> : null}
                                     </List.Item>

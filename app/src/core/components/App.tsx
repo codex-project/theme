@@ -6,9 +6,8 @@ import { lazyInject } from 'ioc';
 import { ErrorBoundary } from 'components/errors';
 import { TunnelProvider } from 'components/tunnel';
 import Layout from 'components/layout';
-import { WithRouterProps } from 'decorators';
 import { StoreControl } from 'components/store-control';
-import { Router, View } from 'router';
+import { Router, Routes, View } from 'router';
 
 const log = require('debug')('App');
 
@@ -18,7 +17,7 @@ export interface AppProps {}
 
 
 @observer
-export class App extends React.Component<AppProps & WithRouterProps, any> {
+export class App extends React.Component<AppProps, any> {
     @lazyInject('store') store: Store;
     @lazyInject('router') router: Router;
 
@@ -34,11 +33,11 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
                             titleTemplate={this.store.codex.display_name + ' - %s'}
                             {...this.store.helmet}
                         />
-                        <ErrorBoundary key={this.router.history.location.key}>
-                            <View/>
+                        <ErrorBoundary key="routes">
+                            <Routes />
                         </ErrorBoundary>
 
-                        {this.renderStoreController()}
+                        {/*{this.renderStoreController()}*/}
                     </Layout>
                 </TunnelProvider>
             </ErrorBoundary>

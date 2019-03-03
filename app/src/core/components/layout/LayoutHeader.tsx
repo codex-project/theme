@@ -5,12 +5,12 @@ import { Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { observer } from 'mobx-react';
 import { Layout, Menu as AntdMenu, Tooltip } from 'antd';
-import { NavLink } from 'react-router-dom';
 import { DynamicMenu } from '../dynamic-menu';
 import { classes } from 'typestyle';
 import { MenuItemIcon } from '../dynamic-menu/MenuItemIcon';
 import { FontAwesomeIcon } from 'interfaces';
 import { getColor } from 'utils/colors';
+import { RouteLink } from 'router';
 
 const { Header } = Layout;
 
@@ -82,7 +82,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
                     <AntdMenu.SubMenu title="DevLinks" style={{ backgroundColor: getColor(header.color) }}>
                         {devLinks.map(link => {
                             let props = { key: link, style: { backgroundColor: getColor(header.color), margin: 0 } };
-                            return <AntdMenu.Item {...props}><NavLink to={link}>{link}</NavLink></AntdMenu.Item>;
+                            return <AntdMenu.Item {...props}><RouteLink to={link}>{link}</RouteLink></AntdMenu.Item>;
                         })}
                     </AntdMenu.SubMenu>
                 </AntdMenu>

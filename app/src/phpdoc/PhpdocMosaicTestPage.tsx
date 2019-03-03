@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react';
 import memo from 'memoize-one';
-import { Button, CodeHighlight, lazyInject, RouteState, Scrollbar, Store, Toolbar } from '@codex/core';
+import { Button, CodeHighlight, lazyInject, Scrollbar, State, Store, Toolbar } from '@codex/core';
 import { api, Api } from '@codex/api';
 import { FQSEN, PhpdocFile, PhpdocStore } from './logic';
-import { RouteComponentProps } from 'react-router';
 import { Observer, observer } from 'mobx-react';
 import { Tabs } from 'antd';
 import { action, computed, observable } from 'mobx';
@@ -46,7 +45,7 @@ const Win    = memo(props =>
 
 
 @observer
-class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: RouteState } & RouteComponentProps> {
+class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: State } > {
     static displayName = 'PhpdocMosaicTestPage';
 
     @lazyInject('api') api: Api;
@@ -187,7 +186,7 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
 
     render() {
         window[ 'phpdocmosaic' ]                                                                    = this;
-        const { children, revision, history, location, staticContext, match, routeState, ...props } = this.props;
+        const { children, revision,  routeState, ...props } = this.props;
 
         return (
             <ManifestProvider project="codex" revision="master">

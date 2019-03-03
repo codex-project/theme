@@ -1,0 +1,103 @@
+/**
+ * Copyright (c) 2018. Codex Project
+ *
+ * The license can be found in the package and online at https://codex-project.mit-license.org.
+ *
+ * @copyright 2018 Codex Project
+ * @author Robin Radic
+ * @license https://codex-project.mit-license.org MIT License
+ */
+// https://vuejs.org/v2/guide/transitions.html#CSS-Animations
+@import "~animate-scss/_bouncing-entrances/bounceIn";
+@import "~animate-scss/_bouncing-entrances/bounceInUp";
+@import "~animate-scss/_bouncing-entrances/bounceInDown";
+@import "~animate-scss/_bouncing-entrances/bounceInLeft";
+@import "~animate-scss/_bouncing-entrances/bounceInRight";
+
+.bounce-up-enter-active, .bounceIn { @include bounceIn(); }
+
+.bounce-up-enter-active, .bounceInUp { @include bounceInUp() }
+
+.bounce-down-enter-active, .bounceInDown { @include bounceInDown() }
+
+.bounce-left-enter-active, .bounceInLeft { @include bounceInLeft() }
+
+.bounce-right-enter-active, .bounceInRight { @include bounceInRight() }
+
+@import "~animate-scss/_bouncing-exits/bounceOut";
+@import "~animate-scss/_bouncing-exits/bounceOutUp";
+@import "~animate-scss/_bouncing-exits/bounceOutDown";
+@import "~animate-scss/_bouncing-exits/bounceOutLeft";
+@import "~animate-scss/_bouncing-exits/bounceOutRight";
+
+.bounce-up-leave-active, .bounceOut { @include bounceOut() }
+
+.bounce-up-leave-active, .bounceOutUp { @include bounceOutUp() }
+
+.bounce-down-leave-active, .bounceOutDown { @include bounceOutDown() }
+
+.bounce-left-leave-active, .bounceOutLeft { @include bounceOutLeft() }
+
+.bounce-right-leave-active, .bounceOutRight { @include bounceOutRight() }
+
+@import "~animate-scss/_fading-entrances/fadeIn";
+@import "~animate-scss/_fading-exits/fadeOut";
+
+.fade-enter-active, .fadeIn { @include fadeIn($countDefault, $durationDefault, 1s) }
+
+.fade-leave-active, .fadeOut { @include fadeOut() }
+
+@import "~animate-scss/_sliding-entrances/slideInUp";
+@import "~animate-scss/_sliding-entrances/slideInDown";
+@import "~animate-scss/_sliding-entrances/slideInLeft";
+@import "~animate-scss/_sliding-entrances/slideInRight";
+
+.slide-up-enter-active, .slideInUp { @include slideInUp() }
+
+.slide-down-enter-active, .slideInDown { @include slideInDown() }
+
+.slide-left-enter-active, .slideInLeft { @include slideInLeft() }
+
+.slide-right-enter-active, .slideInRight { @include slideInRight() }
+
+@import "~animate-scss/_sliding-exits/slideOutUp";
+@import "~animate-scss/_sliding-exits/slideOutDown";
+@import "~animate-scss/_sliding-exits/slideOutLeft";
+@import "~animate-scss/_sliding-exits/slideOutRight";
+
+.slide-up-leave-active, .slideOutUp { @include slideOutUp() }
+
+.slide-down-leave-active, .slideOutDown { @include slideOutDown() }
+
+.slide-left-leave-active, .slideOutLeft { @include slideOutLeft() }
+
+.slide-right-leave-active, .slideOutRight { @include slideOutRight() }
+
+@import "transitions/maximize-entrances/maximizeInDown";
+@import "transitions/minimize-exists/minimizeOutUp";
+
+.maximize-down-enter-active, .maximizeInDown {
+    overflow-y : hidden;
+    @include maximizeInDown(1, 1000ms, 0, ease-out)
+}
+
+.maximize-down-leave-active, .minimizeOutUp {
+    overflow-y : hidden;
+    @include minimizeOutUp(1, 1000ms, 0, ease-in) // https://motion.ant.design/language/time
+}
+
+.slide-enter {
+    opacity : 0;
+}
+
+.slide-enter-active {
+    opacity : 1;
+    @include slideInLeft($countDefault, $durationDefault, 1s);
+}
+
+.slide-leave {
+}
+
+.slide-leave-active {
+    @include slideOutRight($countDefault, $durationDefault, 0s);
+}

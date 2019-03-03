@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react';
-import { dialog, lazyInject, RouteState, Store } from '@codex/core';
+import { dialog, lazyInject, State, Store } from '@codex/core';
 import { api, Api } from '@codex/api';
 import { PhpdocManifest, PhpdocStore } from './logic';
-import { RouteComponentProps } from 'react-router';
 import { Observer, observer } from 'mobx-react';
 import { Tabs } from 'antd';
 import { action, observable } from 'mobx';
@@ -25,7 +24,7 @@ export interface PhpdocTestPageProps {
 
 @hot(module)
 @observer
-export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps & { routeState: RouteState } & RouteComponentProps> {
+export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps & { routeState: State } > {
     static displayName = 'PhpdocTestPage';
 
     @lazyInject('api') api: Api;
@@ -76,7 +75,7 @@ export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps 
 
     render() {
         window[ 'phpdocpage' ]                                                                      = this;
-        const { revision, routeState, children, match, staticContext, location, history, ...props } = this.props;
+        const { revision, routeState, children, ...props } = this.props;
 
         return (
             <div id="phpdoc" {...props}>

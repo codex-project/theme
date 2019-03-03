@@ -1,9 +1,7 @@
 import React from 'react';
-import { lazyInject, RouteState, Store } from '@codex/core';
+import { lazyInject, State, Store } from '@codex/core';
 import { api, Api } from '@codex/api';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { action, observable } from 'mobx';
 import { hot } from 'react-hot-loader';
 
 const log = require('debug')('pages:auth');
@@ -14,7 +12,7 @@ export interface AuthPageProps {
 
 
 @observer
-class AuthPage extends React.Component<AuthPageProps & { routeState: RouteState } & RouteComponentProps> {
+class AuthPage extends React.Component<AuthPageProps & { routeState: State }> {
     static displayName = 'AuthPage';
 
     @lazyInject('api') api: Api;

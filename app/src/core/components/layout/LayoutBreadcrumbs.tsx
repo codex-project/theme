@@ -9,7 +9,7 @@ import './index.scss';
 import { hot } from 'decorators';
 import { Store } from 'stores';
 import { lazyInject } from 'ioc';
-import { RouteLink, RouteMap } from 'router';
+import { RouteLink, Router } from 'router';
 
 export interface LayoutBreadcrumbsProps {
     className?: string
@@ -22,7 +22,7 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
     static displayName                                   = 'LayoutBreadcrumbs';
     static defaultProps: Partial<LayoutBreadcrumbsProps> = {};
     @lazyInject('store') store: Store;
-    @lazyInject('routes') routes: RouteMap;
+    @lazyInject('router') router: Router;
 
     render() {
         const { style, className, ...props }         = this.props;

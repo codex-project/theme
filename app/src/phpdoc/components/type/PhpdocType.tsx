@@ -3,8 +3,7 @@ import { classes } from 'typestyle';
 import { Popover } from 'antd';
 import { PhpdocStore, Type } from '../../logic';
 import { isArray, isString } from 'lodash';
-import { lazyInject, strStripLeft, strStripRight } from '@codex/core';
-import { Link } from 'react-router-dom';
+import { lazyInject, RouteLink, strStripLeft, strStripRight } from '@codex/core';
 import './type.scss';
 import { ManifestCtx } from '../base';
 import { hot } from 'react-hot-loader';
@@ -104,7 +103,7 @@ export default class PhpdocType extends React.PureComponent<PhpdocTypeProps> {
             if ( ! clickable ) {
                 line = <span {...lineProps}>{lineChildren}{suffix}</span>;
             } else if ( linkToApi ) {
-                line = <Link to={{ name: 'phpdoc', params: { project, revision }, hash: type.toQuery().toHash() }} {...lineProps}>{lineChildren}{suffix}</Link>;
+                line = <RouteLink to={{ name: 'phpdoc', params: { project, revision }, hash: type.toQuery().toHash() }} {...lineProps}>{lineChildren}{suffix}</RouteLink>;
             } else {
                 line = <a {...lineProps}>{lineChildren}{suffix}</a>;
             }

@@ -5,16 +5,15 @@ import React from 'react';
 import { hot } from 'decorators';
 import { clink, Store } from 'stores';
 import { lazyInject } from 'ioc';
-import { RouteMap } from 'router';
 import { Api } from '@codex/api';
 import { PopoverAction } from './PopoverAction';
 import { Card } from 'antd';
-import { match } from 'react-router';
+import { Match, Router } from 'router';
 
 
 export interface RevisionPopoverActionProps {
     link: React.ReactNode
-    match: match<any>
+    match: Match<any>
     to: string
 }
 
@@ -23,7 +22,7 @@ export interface RevisionPopoverActionProps {
 @clink.action('revision', 'popover')
 export class RevisionPopoverAction extends React.Component<RevisionPopoverActionProps> {
     @lazyInject('api') api: Api;
-    @lazyInject('routes') routes: RouteMap;
+    @lazyInject('router') router: Router;
     @lazyInject('store') store: Store;
 
     render() {

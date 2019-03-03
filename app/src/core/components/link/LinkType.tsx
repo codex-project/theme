@@ -1,10 +1,10 @@
 import React from 'react';
 import { app } from 'ioc';
-import { match } from 'react-router';
+import { Match } from 'router';
 
 export interface LinkTypeProps {
     link?: React.ReactNode
-    match?: match<any>
+    match?: Match<any>
     to?: string
     styling?: boolean
     icon?: boolean
