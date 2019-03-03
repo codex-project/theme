@@ -91,7 +91,7 @@ export default class DynamicMenu extends React.Component<DynamicMenuProps, State
         }
     });
 
-    onClick = (param: ClickParam) => transaction(() => {
+    onClick = (param: ClickParam) => {
         log('onClick', param);
         let { items } = this.props;
         let item      = items.item(param.key);
@@ -101,10 +101,10 @@ export default class DynamicMenu extends React.Component<DynamicMenuProps, State
                 items.deselectAll().select(item);
             }
         } else {
-            this.selectFromRoutePath();
+            // this.selectFromRoutePath();
         }
 
-    });
+    };
 
     onTitleClick = (param: ClickParam) => transaction(() => {
         log('onTitleClick', param);

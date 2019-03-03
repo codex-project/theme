@@ -148,24 +148,29 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     static requestHandler;
 
     selectActiveFromRoute(expandParents: boolean = false, collapseOthers: boolean = false) {
-        if ( app.router.transitioning ) {
-            if ( ! MenuItems.requestHandler ) {
-
-                MenuItems.requests       = [];
-                MenuItems.requestHandler = () => {
-                    setTimeout(() => {
-                        transaction(() => MenuItems.requests.forEach(request => request()));
-                        MenuItems.requestHandler = undefined;
-                        MenuItems.requests       = [];
-                    }, 200);
-                };
-                app.router.once('transition.finished', MenuItems.requestHandler);
-            }
-
-            MenuItems.requests.push(() => this.selectActiveFromRoute(expandParents, collapseOthers));
-            return;
-        }
-        log('selectActiveFromRoute', expandParents, collapseOthers);
+        // if ( app.router.transitioning ) {
+        //     log('selectActiveFromRoute', ' during transition');
+        //     if ( ! MenuItems.requestHandler ) {
+        //
+        //         MenuItems.requests       = [];
+        //         MenuItems.requestHandler = () => {
+        //             MenuItems.requestHandler = undefined;
+        //             MenuItems.requests       = [];
+        //
+        //             setTimeout(() => {
+        //                 transaction(() => MenuItems.requests.forEach(request => request()));
+        //             }, 200);
+        //         };
+        //         app.router.once('transition.finished', MenuItems.requestHandler);
+        //     }
+        //
+        //     MenuItems.requests.push(() => this.selectActiveFromRoute(expandParents, collapseOthers));
+        //     return;
+        // }
+        // console.groupCollapsed('selectActiveFromRoute')
+        // console.trace('selectActiveFromRoute')
+        // console.groupEnd()
+        // log('selectActiveFromRoute', expandParents, collapseOthers);
         let active = this.findActiveFromRoute();
         if ( active ) {
             transaction(() => {

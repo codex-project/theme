@@ -33,6 +33,7 @@ export class Routes extends Component<RoutesProps> {
     render() {
         const { children, ...props } = this.props;
 
+        // return this.router.started && this.router.current ? <AnimatedSwitch currentState={this.router.current}/> : null;
         return (
             <div>
                 <If condition={this.router.started && this.router.current}>
@@ -56,11 +57,9 @@ export class Switch extends Component<SwitchProps> {
     @lazyInject('router') router: Router;
 
     public componentDidMount(): void {
-        log('Switch mount');
     }
 
     render() {
-        log('Switch render');
         const { children, state, ...props } = this.props;
         let element, match;
 
@@ -101,13 +100,6 @@ export class View extends Component<ViewProps> {
             return React.createElement(route.component, { key: name, name, route, routeState: state });
         }
         return null;
-        // const Component = route.component || ((p) => null);
-        // return <Component {...{ key: name, name, route, routeState: state }} />;
-
-        // return React.createElement(child.type, {
-        //     ...child.props,
-        //     children: React.createElement(route.component, { key: name, name, route, routeState: state }),
-        // });
     }
 }
 
@@ -133,14 +125,13 @@ export class AnimatedSwitch extends Component<AnimatedSwitchProps> {
                 config={config.slow}
                 items={currentState}
                 keys={currentState.url}
-                from={{ transform: 'translateY(100px)', opacity: 0 }}
-                enter={{ transform: 'translateY(0px)', opacity: 1 }}
-                leave={{ transform: 'translateY(100px)', opacity: 0 }}
-                reset={true}
-                unique={true}
+                from={{ opacity: 0 }} //transform: 'translateY(100px)', 
+                enter={{ opacity: 1 }} //transform: 'translateY(0px)', 
+                leave={{ opacity: 0 }} //transform: 'translateY(100px)', 
+                // reset={true}
+                // unique={true}
             >
                 {(item, state, index) => style => {
-                    log('AnimatedSwitch', state, index, item, style);
                     return (
                         <Switch state={state === 'update' ? currentState : item}>
                             {this.router.routes.toArray().map(route => (
