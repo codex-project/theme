@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteState } from '../router';
+import { State } from '../router';
 import { lazyInject } from 'ioc';
 import { Store } from 'stores';
 
@@ -9,7 +9,7 @@ export interface ErrorPageProps {
     title?: React.ReactNode
     message?: React.ReactNode
     error?: Error
-    routeState: RouteState
+    routeState: State
 }
 
 export default class ErrorPage extends React.Component<ErrorPageProps> {

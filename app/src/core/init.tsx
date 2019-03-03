@@ -6,9 +6,6 @@ import { MenuPlugin } from 'menus';
 import { RouterPlugin } from 'router';
 import Root from 'components/Root';
 import { ColorElement } from 'elements';
-import { generatePath, Redirect } from 'react-router';
-import { ErrorPage } from 'pages/index';
-import TestPage from 'pages/TestPage';
 
 const log = require('debug')('site:index');
 
@@ -36,89 +33,58 @@ app.hooks.registered.tap('CORE', app => {
     }
 });
 
-routerPlugin.hooks.registered.tap('CORE', routes => {
-    routes.push({
-            name  : 'home',
-            path  : '/',
-            action: async (props, routeState) => {
-                let promise    = new Promise((resolve, reject) => setTimeout(() => resolve({ home: 'ok' }), 500));
-                let result     = await promise;
-                const HomePage = (await import(/* webpackChunkName: "core.pages.home" */'./pages/HomePage')).default;
-                return <HomePage {...props} {...result} />;
-            },
+routerPlugin.hooks.registered.tap('CORE', router => {
+    router.addRoutes({
+            name         : 'home',
+            path         : '/',
+            loadComponent: () => import(/* webpackChunkName: "core.pages.home" */'./pages/HomePage'),
         }, {
-            name  : 'test',
-            path  : '/test',
-            action: async (props, routeState) => {
-                const TestPage = (await import('./pages/TestPage')).default;
-                return <TestPage {...props} />;
-            },
+            name         : 'test',
+            path         : '/test',
+            loadComponent: () => import('./pages/TestPage'),
         },
         {
-            name  : 'documentation',
-            path  : '/documentation',
-            action: async (props, routeState) => {
-                let to = generatePath(routes.get('documentation.project').path, { project: BACKEND_DATA.codex.default_project });
-                return <Redirect to={to}/>;
-            },
+            name    : 'documentation',
+            path    : '/documentation',
+            redirect: async (state, router) => ({ name: 'documentation.project', params: { project: BACKEND_DATA.codex.default_project } }),
         },
         {
-            name  : 'documentation.project',
-            path  : '/documentation/:project',
-            action: async (props, routeState) => {
-                let params  = { project: routeState.params.project, revision: 'master' };
+            name    : 'documentation.project',
+            path    : '/documentation/:project',
+            redirect: async (state, router) => {
+                let params  = { project: state.params.project, revision: 'master' };
                 let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                 if ( ! project ) {
-                    return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
+                    // return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
                 }
-                let to = generatePath(routes.get('documentation.revision').path, params);
-                return <Redirect to={to}/>;
+                return { name: 'documentation.revision', params };
             },
         },
         {
-            name  : 'documentation.revision',
-            path  : '/documentation/:project/:revision',
-            action: async (props, routeState) => {
-                let params  = { project: routeState.params.project, revision: routeState.params.revision, document: 'index' };
-                let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
-                if ( ! project ) {
-                    return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
-                }
+            name    : 'documentation.revision',
+            path    : '/documentation/:project/:revision',
+            redirect: async (state, router) => {
+                let params   = { project: state.params.project, revision: state.params.revision, document: 'index' };
+                let project  = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
+                // if ( ! project ) {return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;                }
                 let revision = project.revisions.find(r => r.key === params.revision);
-                if ( ! revision ) {
-                    return <ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>;
-                }
-                let to = generatePath(routes.get('documentation.document').path, params);
-                return <Redirect to={to}/>;
+                // if ( ! revision ) { return <ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>; }
+                return { name: 'documentation.document', params };
             },
         },
         {
             name         : 'documentation.document',
             path         : '/documentation/:project/:revision/:document+',
             loadComponent: async () => import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage'),
-            async action(props, routeState) {
-                let params  = routeState.params;
+            canEnter     : async (state) => {
+                let params  = state.params;
                 let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
                 if ( ! project ) {
-                    return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
+                    return false; //<ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
                 }
                 let revision = project.revisions.find(r => r.key === params.revision);
                 if ( ! revision ) {
-                    return <ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>;
-                }
-
-                log('documentation.document', 'FETCH', params);
-                let document;
-                let Component = this.component;
-
-                try {
-                    // app.store.fetchDocument(params.project, params.revision, params.document);
-                    // Component = (await import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage')).default;
-                    log('documentation.document', 'FETCHING', params, app.store.document, Component);
-                    return <Component {...props} routeState={routeState} project={params.project} revision={params.revision} document={params.document}/>;
-                } catch ( error ) {
-                    console.warn('documentation.document', 'FETCH_ERROR', { e: error, params, document, Component });
-                    return <ErrorPage {...props} routeState={routeState} title={error.name} message={<p>{error.message || ''}</p>}/>;
+                    return false; //<ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>;
                 }
             },
         },

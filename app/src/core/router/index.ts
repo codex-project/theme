@@ -1,15 +1,10 @@
 import { RouterPlugin } from './RouterPlugin';
-import { generatePath, matchPath, withRouter } from 'react-router-dom';
 
-export * from './types';
-export * from './Router';
-export * from './RenderRoute';
+export * from './interfaces';
 export * from './RouteLink';
-export * from './RouteGroup';
-export * from './RouteMap';
-export * from './RouterPlugin';
+export * from './Router';
+export * from './Transition';
+export * from './View';
 
-export { generatePath, matchPath, withRouter };
 
-export default RouterPlugin;
-
+export { RouterPlugin };

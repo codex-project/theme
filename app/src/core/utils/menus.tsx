@@ -29,7 +29,7 @@ export function isPath(item: MenuItem): boolean {
 }
 
 export function getActiveFromRoutePath(items: MenuItems) {
-    let current = app.routes.history.location.pathname;
+    let current = app.router.history.location.pathname;
     if ( ! current ) return;
     let active = items.rfind(item => {
         return current === toPath(item);

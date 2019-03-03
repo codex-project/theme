@@ -1,56 +1,54 @@
 import React, { Component } from 'react';
-import { History } from './types';
-import { RouteMap } from './RouteMap';
+import { hot } from 'react-hot-loader';
 import { lazyInject } from 'ioc';
+import { Router } from './Router';
+import { getElementType } from 'utils/getElementType';
 
-
-export interface RouteLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-    name?: string
-    params?: any
+export interface RouteLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
+    as?: React.ReactType
+    to: string | { name: string, params?: any }
+    push?: boolean
     replace?: boolean
-    to?: any
+    go?: number
 }
 
-
+@hot(module)
 export class RouteLink extends Component<RouteLinkProps> {
     static displayName                           = 'RouteLink';
     static defaultProps: Partial<RouteLinkProps> = {
-        params : {},
-        replace: false,
+        as: 'a',
     };
-    @lazyInject('routes') routes: RouteMap;
-    @lazyInject('history') history: History;
+
+    @lazyInject('router') router: Router;
+
+    handleClick = (event) => {
+        event.preventDefault();
+        let { to, push, replace, go } = this.props;
+        if ( typeof go === 'number' ) {
+            this.router.go(go);
+            return;
+        }
+        let match = this.router.matchPath(this.router.toUrl(to));
+        this.router.navigate(match.name, match.params, { push, replace });
+    };
 
     getUrl() {
-        const { children, name, params, replace, to, ...props } = this.props;
-        if ( to ) {
-            return this.routes.toUrl(to);
-        } else if ( name ) {
-            return this.routes.generatePath(name, params);
-        }
-        return null;
+        return this.router.toUrl(this.props.to);
     }
 
     render() {
-        const { children, name, params, replace, to, ...props } = this.props;
+        const { children, as, to, ...props } = this.props;
+        const ElementType                    = getElementType(RouteLink, this.props) as any;
+
         return (
-            <a
+            <ElementType
                 href={this.getUrl()}
-                onClick={this.onClick}
-                {...props}>
+                onClick={e => this.handleClick(e)}
+                {...props}
+            >
                 {children}
-            </a>
+            </ElementType>
         );
     }
-
-    onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        let url = this.getUrl();
-        if ( this.props.replace ) {
-            this.history.replace(url);
-        } else {
-            this.history.push(url);
-        }
-    };
 }
 

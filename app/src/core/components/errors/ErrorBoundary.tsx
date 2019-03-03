@@ -2,7 +2,9 @@ import React, { Component, ErrorInfo } from 'react';
 import { UnregisterCallback } from 'history';
 import { Button, Col, Row } from 'antd';
 import { colors } from 'utils/colors';
-import { hot, WithRouter, WithRouterProps } from 'decorators';
+import { hot } from 'decorators';
+import { lazyInject } from 'ioc';
+import { Router } from 'router';
 
 export interface ErrorBoundaryProps {
     title?: string
@@ -42,13 +44,13 @@ const Stacks = (props: { error: SomeError, errorInfo: ErrorInfo, className?: str
 );
 
 @hot(module, false)
-@WithRouter()
-export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProps, State> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
     static displayName                               = 'ErrorBoundary';
     static defaultProps: Partial<ErrorBoundaryProps> = {
         title     : 'Whoops..',
         goBackText: 'Return to previous page',
     };
+    @lazyInject('router') router: Router;
 
     protected unregisterLocationListener: UnregisterCallback = null;
 
@@ -60,7 +62,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProp
     }
 
     componentDidMount() {
-        this.unregisterLocationListener = this.props.history.listen((location, action) => {
+        this.unregisterLocationListener = this.router.history.listen((location, action) => {
             if ( this.state.hasError ) {
                 this.setState({ hasError: false });
             }
@@ -87,7 +89,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps & WithRouterProp
                         <Title>{title}</Title>
                         <If condition={error && error.message}>
                             <Message>{error.message}</Message>
-                            <Message>{error.linkback ? <Button onClick={e => this.props.history.goBack()}>{goBackText}</Button> : null}</Message>
+                            <Message>{error.linkback ? <Button onClick={e => this.router.go(- 1)}>{goBackText}</Button> : null}</Message>
                         </If>
                         {showStacks ? <Stacks error={error} errorInfo={errorInfo}/> : null}
                     </Col>

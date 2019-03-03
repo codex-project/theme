@@ -30,7 +30,7 @@ export class DocumentLinkType extends LinkType {
 
         let props: LinkProps = {
             ...rest,
-            to       : app.routes.toUrl({
+            to       : app.router.toUrl({
                 name  : 'documentation.document',
                 params: {
                     project : this.project,

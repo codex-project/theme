@@ -1,13 +1,12 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { RouteState } from 'router';
+import { State } from 'router';
 import { lazyInject } from 'ioc';
 import { Store } from 'stores';
-import { DragDropPanes, Pane, Panes, DragPane, DropPanes } from 'components/panes';
+import { DragDropPanes, DragPane, DropPanes, Pane, Panes } from 'components/panes';
 
 const log = require('debug')('pages:home');
 
-export default class TestPage extends React.Component<{ routeState: RouteState, data?: any } & RouteComponentProps> {
+export default class TestPage extends React.Component<{ routeState: State, data?: any }> {
     static displayName = 'TestPage';
     @lazyInject('store') store: Store;
 
@@ -20,7 +19,7 @@ export default class TestPage extends React.Component<{ routeState: RouteState, 
                 <h4>Panes</h4>
                 <Panes>
                     <Pane>Pane 1</Pane>
-                    <Panes split='horizontal' >
+                    <Panes split='horizontal'>
                         <Pane>Pane 2.1</Pane>
                         <Pane>Pane 2.2</Pane>
                         <Pane>Pane 2.3</Pane>
@@ -30,7 +29,7 @@ export default class TestPage extends React.Component<{ routeState: RouteState, 
                 <h4>DragDropPanes</h4>
                 <DragDropPanes>
                     <DragPane>Pane 1</DragPane>
-                    <DropPanes split='horizontal' >
+                    <DropPanes split='horizontal'>
                         <DragPane>Pane 2.1</DragPane>
                         <DragPane>Pane 2.2</DragPane>
                         <DragPane>Pane 2.3</DragPane>

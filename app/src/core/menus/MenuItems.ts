@@ -5,6 +5,8 @@ import { MenuManager } from './MenuManager';
 import { api } from '@codex/api';
 import { transaction } from 'mobx';
 
+const log = require('debug')('menus:MenuItems');
+
 export type IMenuItemItems<T> = string | string[] | T | T[]
 
 export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> implements Array<T> {
@@ -134,10 +136,15 @@ export class MenuItems<T extends api.MenuItem = api.MenuItem> extends Array<T> i
     }
 
     findActiveFromRoute() {
-        let current = app.routes.history.location.pathname;
+        if ( app.router.transitioning ) {
+            app.router.once('transition.finished', () => this.findActiveFromRoute());
+            return;
+        }
+        let current = app.router.history.location.pathname;
+        log('findActiveFromRoute', current);
         if ( ! current ) return;
         return this.rfind(item => {
-            let url = app.routes.toUrl(item);
+            let url = app.router.toUrl(item as any);
             return url && current === url;
         });
     }

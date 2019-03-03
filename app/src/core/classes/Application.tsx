@@ -16,7 +16,7 @@ import { IUrl, url } from './Url';
 import { Plugin } from './Plugin';
 import { NotificationApi } from 'antd/lib/notification';
 import { MenuManager } from '../menus';
-import { RouteMap } from '../router';
+import { Router } from '../router';
 import { Store } from '../stores';
 import { createNotificationApi } from 'utils/createNotificationApi';
 
@@ -188,7 +188,7 @@ export class Application extends Container {
 
     get api(): Api { return this.get('api'); }
 
-    get routes(): RouteMap { return this.get('routes'); }
+    get router(): Router { return this.get('router'); }
 
     get store(): Store { return this.get('store'); }
 

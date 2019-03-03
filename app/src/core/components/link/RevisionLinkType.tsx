@@ -30,7 +30,7 @@ export class RevisionLinkType extends LinkType {
 
         let props: LinkProps = {
             ...rest,
-            to       : app.routes.toUrl({ name: 'documentation.revision', params: { project: this.project, revision: this.revision } }),
+            to       : app.router.toUrl({ name: 'documentation.revision', params: { project: this.project, revision: this.revision } }),
             className: styling ? 'c-revision-link' : null,
         };
         return (

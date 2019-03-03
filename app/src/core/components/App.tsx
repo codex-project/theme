@@ -1,16 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import { Helmet } from 'react-helmet';
 import { Store } from 'stores';
-import { app, lazyInject } from 'ioc';
+import { lazyInject } from 'ioc';
 import { ErrorBoundary } from 'components/errors';
 import { TunnelProvider } from 'components/tunnel';
 import Layout from 'components/layout';
-import { History, RouteGroup, RouteMap } from 'router';
-import { Router } from 'react-router';
-import { WithRouter, WithRouterProps } from 'decorators';
-import { DevDialog, StoreControl } from 'components/store-control';
+import { WithRouterProps } from 'decorators';
+import { StoreControl } from 'components/store-control';
+import { Router, View } from 'router';
 
 const log = require('debug')('App');
 
@@ -20,36 +18,11 @@ export interface AppProps {}
 
 
 @observer
-@WithRouter()
 export class App extends React.Component<AppProps & WithRouterProps, any> {
     @lazyInject('store') store: Store;
-    @lazyInject('routes') routes: RouteMap;
-    @lazyInject('history') history: History;
+    @lazyInject('router') router: Router;
 
-    static displayName  = 'App';
-    static contextTypes = {
-        router: PropTypes.shape({
-            history: PropTypes.shape({
-                push      : PropTypes.func.isRequired,
-                replace   : PropTypes.func.isRequired,
-                createHref: PropTypes.func.isRequired,
-            }).isRequired,
-        }).isRequired,
-    };
-
-    context: { router: Router };
-
-    constructor(props: {} & WithRouterProps, context: { router: Router }) {
-        super(props, context);
-        if ( ! app.isBound('router') ) {
-            app.bind('router').toConstantValue(context.router);
-        }
-        props.history.listen((location, action) => {
-            log('location', action, location);
-        });
-
-
-    }
+    static displayName = 'App';
 
     render() {
         return (
@@ -61,8 +34,8 @@ export class App extends React.Component<AppProps & WithRouterProps, any> {
                             titleTemplate={this.store.codex.display_name + ' - %s'}
                             {...this.store.helmet}
                         />
-                        <ErrorBoundary key={this.history.location.key}>
-                            <RouteGroup routes={this.routes} withTransitions={true}/>
+                        <ErrorBoundary key={this.router.history.location.key}>
+                            <View/>
                         </ErrorBoundary>
 
                         {this.renderStoreController()}

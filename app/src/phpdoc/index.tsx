@@ -51,8 +51,8 @@ export default class PhpdocPlugin extends BasePlugin {
             });
         });
         if ( app.plugins.has('router') ) {
-            app.plugins.get<RouterPlugin>('router').hooks.register.tap(this.name, (routeMap) => {
-                routeMap.set('phpdoc', {
+            app.plugins.get<RouterPlugin>('router').hooks.register.tap(this.name, (router) => {
+                router.addRoute({
                     name  : 'phpdoc',
                     path  : app.url.phpdoc(':project/:revision'),
                     action: async (props, routeState) => {
@@ -70,7 +70,7 @@ export default class PhpdocPlugin extends BasePlugin {
                         });
                     },
                 });
-                DEV && routeMap.set('phpdoc.test', {
+                DEV && router.addRoute({
                     name  : 'phpdoc.test',
                     path  : app.url.root('phpdoc-test'),
                     action: async (props, routeState) => {
@@ -78,7 +78,7 @@ export default class PhpdocPlugin extends BasePlugin {
                         return <PhpdocTestPage {...props} routeState={routeState}/>;
                     },
                 });
-                DEV && routeMap.set('phpdoc.mosaic.test', {
+                DEV && router.addRoute({
                     name     : 'phpdoc.mosaic.test',
                     path     : app.url.root('phpdoc-mosaic'),
                     component: require('./PhpdocMosaicTestPage').default,

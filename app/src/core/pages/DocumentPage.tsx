@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Api } from '@codex/api';
 import PropTypes from 'prop-types';
-import { BrowserRouter, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import Helmet from 'react-helmet';
 import posed from 'react-pose';
 import { observable, runInAction, toJS } from 'mobx';
-import { RouteState } from 'router';
+import { State } from 'router';
 import { app, lazyInject } from 'ioc';
 import { HtmlComponents } from 'classes/HtmlComponents';
 import { Store } from 'stores';
@@ -14,7 +14,7 @@ import { Store } from 'stores';
 const log = require('debug')('pages:DocumentPage');
 
 export interface DocumentPageProps extends React.HTMLAttributes<HTMLDivElement> {
-    routeState: RouteState
+    routeState: State
     project: string
     revision: string
     document: string
@@ -24,47 +24,30 @@ const DocumentContainer = posed.div({
     enter: {
         opacity: 1,
         delay  : 500,
-
-        // afterChildren : true,
-        // height        : '100%',
-        // position      : 'relative',
     },
     exit : {
         opacity   : 0,
         transition: { duration: 500 },
-        // delay         : 500,
-        // beforeChildren: true,
-        // afterChildren : true,
-        // beforeChildren: true,
-        // height        : '100%',
-        // position      : 'relative',
     },
 });
 @observer
-export default class DocumentPage extends React.Component<DocumentPageProps & RouteComponentProps> {
+export default class DocumentPage extends React.Component<DocumentPageProps > {
     @lazyInject('api') api: Api;
     @lazyInject('components') hc: HtmlComponents;
     @lazyInject('store') store: Store;
 
     static displayName = 'DocumentPage';
 
-    static childContextTypes = {
-        router    : PropTypes.object.isRequired,
-        document  : PropTypes.object,
-        attributes: PropTypes.object,
-    };
+    static childContextTypes = { document: PropTypes.object };
 
     getChildContext() {
-        return {
-            router  : app.get<BrowserRouter>('router'),
-            document: toJS(this.document),
-        };
+        return { document: toJS(this.document) };
     }
 
     @observable document = null;
 
     async fetch() {
-        const { project, revision, document } = this.props;
+        const { project, revision, document } = this.props.routeState.params;
         try {
             let doc = await this.store.fetchDocument(project, revision, document);
             runInAction(() => this.document = doc);
@@ -100,7 +83,7 @@ export default class DocumentPage extends React.Component<DocumentPageProps & Ro
     }
 
     render() {
-        const { children, routeState, history, staticContext, location, match, ...props } = this.props;
+        const { children, routeState, ...props } = this.props;
         // const { document }                                                                = this.store;
 
         ! this.document && log('render', 'NO DOCUMENT', { document: this.document, props });
