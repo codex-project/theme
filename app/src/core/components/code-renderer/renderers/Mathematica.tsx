@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader';
 import { observer } from 'mobx-react';
 import { KatexOptions, renderToString } from 'katex';
 import { Alert } from 'antd';
+// import './mathematica.katex.less'
 
 export interface MathematicaProps {
     language: string
@@ -12,7 +13,7 @@ export interface MathematicaProps {
 let katexStyleImported = false;
 const importKatexStyle = () => {
     if ( katexStyleImported ) return;
-    import('./mathematica.katex.less');
+    import(/* webpackChunkName: "core.components.code-renderer.mathematica.katex" */'./mathematica.katex.less');
     katexStyleImported = true;
 };
 

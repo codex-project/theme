@@ -2,12 +2,12 @@ import { mixin, utils } from '@radic/build-tools';
 import { gulp, Gulpclass, GulpEnvMixin, Task } from '@radic/build-tools-gulp';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
-import serve,{Options as ServeOptions} from 'webpack-serve';
 import { Chain } from './build/chain';
 import { relative } from 'path';
 import { getFileSizeInfo } from '@radic/build-tools/dist/utils';
 import { readFileSync } from 'fs';
 import SMP from 'speed-measure-webpack-plugin';
+import 'webpack-hot-middleware';
 
 const chalk = require('chalk').default;
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
@@ -61,6 +61,7 @@ class Gulpfile {
     async prodBuild() {
         this.prod();
         const { chain, addAnalyzerPlugins } = require('./webpack.config');
+        // chain.optimization.minimize(false);
         addAnalyzerPlugins(chain);
         await this.build(chain);
     }
@@ -76,30 +77,11 @@ class Gulpfile {
     prodWatch() {
         this.prod();
         const { chain, addAnalyzerPlugins } = require('./webpack.config');
+        chain.optimization.minimize(false);
         addAnalyzerPlugins(chain);
         return this.watch(chain);
     }
-    protected async serve4(chain: Chain, host: string = 'localhost', port: number = 8513) {
-        port      = await utils.choosePort(host, port);
-        const url = `http://${host}:${port}`;
-        chain.data.merge({ host, port, url });
 
-        chain.output.publicPath(url + '/');
-
-        let config             = chain.toConfig();
-        config.serve = {
-            config,
-            devMiddleware: {
-                publicPath: chain.output.get('publicPath'),
-                headers: {                    'Access-Control-Allow-Origin': '*'                },
-                writeToDisk:true
-            },
-            hotClient: {
-
-            }
-        }
-
-    }
     protected async serve(chain: Chain, host: string = 'localhost', port: number = 8513) {
         port      = await utils.choosePort(host, port);
         const url = `http://${host}:${port}`;
@@ -139,8 +121,8 @@ class Gulpfile {
 
         console.log('Starting dev-server @ ', url);
 
-        let config             = chain.toConfig();
-        config.devServer.proxy = {
+        let config                        = chain.toConfig();
+        config.devServer.proxy            = {
             '/api': {
                 target             : 'http://codex.local',
                 secure             : false,
@@ -156,7 +138,7 @@ class Gulpfile {
                 },
             },
         };
-        config.devServer['writeToDisk']=true;
+        config.devServer[ 'writeToDisk' ] = true;
         WebpackDevServer.addDevServerEntrypoints(config, config.devServer);
         config         = smp.wrap(config) as any;
         const compiler = webpack(config);
@@ -172,7 +154,7 @@ class Gulpfile {
         });
     }
 
-    protected watch(chain) {
+    protected watch(chain:Chain) {
         const config = chain.toConfig();
         webpack(config).watch({}, (err, stats) => {
             if ( err ) {
@@ -182,7 +164,7 @@ class Gulpfile {
         });
     }
 
-    protected async build(chain) {
+    protected async build(chain:Chain) {
         const config = chain.toConfig();
         return new Promise<webpack.Stats>((resolve, reject) => {
             webpack(config, (err, stats) => {

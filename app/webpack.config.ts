@@ -15,8 +15,8 @@ import { Options as TypescriptLoaderOptions } from 'ts-loader';
 import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
 import WebappPlugin from 'webapp-webpack-plugin';
-import TerserPlugin from 'terser-webpack-plugin';
-import TemplatedPathPlugin from './build/TemplatedPathPlugin';
+import EntrypointPathPlugin from './build/EntrypointPathPlugin';
+import TerserPlugin = require('terser-webpack-plugin');
 
 
 const chain             = new Chain({
@@ -25,14 +25,14 @@ const chain             = new Chain({
     outputDir: resolve(__dirname, process.env.NODE_ENV === 'development' ? 'dev' : 'dist'),
 });
 const { isDev, isProd } = chain;
-const cache             = isDev;
-// const _assetPath        = 'vendor';
-const _assetPath        = isDev ? 'vendor' : 'vendor/codex_[entrypoint]';
+const cache             = true;
+const assetsByEntry     = isProd;
+const _assetPath        = assetsByEntry ? 'vendor/codex_[entrypoint]' : 'vendor';
+const minimize          = isProd;
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
-const minimize          = isProd; //isProd;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -46,12 +46,12 @@ export function addBabelToRule(chain: Chain, ruleName: string, options: BabelLoa
     rule.use('babel-loader')
         .loader('babel-loader')
         .options(<BabelLoaderOptions>{
-            babelrc         : false,
-            configFile      : false,
-            presets         : [
+            babelrc       : false,
+            configFile    : false,
+            presets       : [
                 [ 'react-app' ],
             ],
-            plugins         : [
+            plugins       : [
                 'jsx-control-statements',
                 [ 'react-css-modules', {
                     'context'               : chain.srcPath(),
@@ -68,9 +68,8 @@ export function addBabelToRule(chain: Chain, ruleName: string, options: BabelLoa
                 } ],
                 ...babelImportPlugins,
             ].filter(Boolean),
-            cacheDirectory  : cache,
-            cacheCompression: isProd,
-            compact         : minimize,
+            cacheDirectory: cache,
+            compact       : false,
             ...options,
         } as any);
 }
@@ -183,7 +182,7 @@ export function addPackage(chain: Chain, name: string, umdName?: string) {
 
 //region: Plugins
 chain.plugin('clean').use(CleanWebpackPlugin, [
-    [ 'js/', 'css/', '*.hot-update.js', '*.hot-update.js.map', '*.hot-update.json', 'assets/', 'vendor/' ],
+    [ 'js/', 'css/', '*.hot-update.*', 'assets/', 'vendor/' ],
     <CleanWebpackPlugin.Options>{ root: chain.outPath(), verbose: false },
 ]);
 chain.plugin('define').use(webpack.DefinePlugin, [ {
@@ -210,8 +209,7 @@ chain.plugin('friendly-errors').use(FriendlyErrorsPlugin, [ <FriendlyErrorsOptio
     additionalTransformers: [],
 } ]);
 chain.plugin('copy').use(CopyPlugin, [ [
-    isProd && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor/codex_core') },
-    isDev && { from: chain.srcPath('core/assets'), to: chain.outPath('vendor') },
+    assetsByEntry ? { from: chain.srcPath('core/assets'), to: chain.outPath('vendor/codex_core') } : { from: chain.srcPath('core/assets'), to: chain.outPath('vendor') },
 
 ].filter(Boolean) ]);
 chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
@@ -220,20 +218,25 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     inject            : 'head',
     chunksSortMode    : isDev ? 'dependency' : 'auto',
     templateParameters: {
-        DEV : isDev,
-        PROD: isProd,
-        TEST: process.env.NODE_ENV === 'test',
-        ENV : dotenv.load({ path: resolve('.env') }).parsed,
+        assetPath: {
+            core:_assetPath.replace('[entrypoint]', 'core'),
+            phpdoc:_assetPath.replace('[entrypoint]', 'phpdoc'),
+        },
+        DEV      : isDev,
+        PROD     : isProd,
+        TEST     : process.env.NODE_ENV === 'test',
+        ENV      : dotenv.load({ path: resolve('.env') }).parsed,
     },
 } ]);
 chain.plugin('favicon').use(WebappPlugin, [ {
     logo  : rootPath('node_modules/@fortawesome/fontawesome-free/svgs/solid/book.svg'),
     cache,
-    prefix: isDev ? 'vendor/img' : 'vendor/codex_core/img',
+    prefix: assetsByEntry ? 'vendor/codex_core/img' : 'vendor/img',
     inject: true,
 } ]).after('html');
+
 chain.when(isProd, chain => {
-    chain.plugin('write-file').use(require('write-file-webpack-plugin'), [ { useHashIndex: false } ]);
+    // chain.plugin('write-file').use(require('write-file-webpack-plugin'), [ { useHashIndex: false } ]);
     chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
         filename     : assetPath('css/[name].css?[hash]'),
         chunkFilename: assetPath('css/[name].chunk.css?[chunkhash]'),
@@ -245,6 +248,8 @@ chain.when(isProd, chain => {
         canPrint           : true,
     } ]);
 });
+
+chain.when(assetsByEntry, chain => chain.plugin('path').use(EntrypointPathPlugin));
 //endregion
 
 //region: Style Loaders
@@ -312,51 +317,38 @@ chain.onToConfig(config => addStyleLoaders(config));
 //endregion
 
 //region: Optimization
-chain.when(isDev, chain => {
-    chain.set('optimization', <webpack.Configuration['optimization']>{
-        namedModules: true,
-        namedChunks : true,
-        splitChunks : {
-            maxAsyncRequests  : Infinity,
-            maxInitialRequests: Infinity,
+chain.optimization
+    .namedChunks(true)
+    .namedModules(true)
+    .splitChunks(<webpack.Options.SplitChunksOptions>{
+        maxInitialRequests: Infinity,
+        maxAsyncRequests  : Infinity,
+        // maxSize           : Infinity,
+        // name              : true,
+    })
+    .minimize(minimize)
+;
+chain.optimization.minimizer('terser').use(TerserPlugin, [ <TerserPlugin.TerserPluginOptions>{
+    terserOptions: {
+        parse   : { ecma: 8 },
+        mangle  : { safari10: true },
+        compress: {
+            ecma       : 5,
+            warnings   : false,
+            comparisons: false,
+            inline     : 2,
         },
-    });
-}, chain => {
-    chain.set('optimization', <webpack.Configuration['optimization']>{
-        namedModules: true,
-        namedChunks : true,
-        splitChunks : {
-            maxInitialRequests: Infinity,
-            maxAsyncRequests  : Infinity,
-            maxSize           : Infinity,
-            name              : true,
+        output  : {
+            ecma      : 5,
+            comments  : false,
+            ascii_only: true,
         },
-        minimize,
-        minimizer   : [
-            new TerserPlugin(<TerserPlugin.TerserPluginOptions>{
-                terserOptions: {
-                    parse   : { ecma: 8 },
-                    mangle  : { safari10: true },
-                    compress: {
-                        ecma       : 5,
-                        warnings   : false,
-                        comparisons: false,
-                        inline     : 2,
-                    },
-                    output  : {
-                        ecma      : 5,
-                        comments  : false,
-                        ascii_only: true,
-                    },
-                },
-                parallel     : true,
-                cache        : true,
-                sourceMap    : false,
-            }),
-        ],
-    });
-    chain.plugin('path').use(TemplatedPathPlugin);
-});
+    },
+    parallel     : true,
+    cache        : true,
+    sourceMap    : false,
+} ]);
+chain.when(isDev, chain => {}, chain => {});
 //endregion
 
 //region: Init
@@ -371,13 +363,11 @@ chain.output
     .publicPath('/')
     .library([ 'codex', '[name]' ] as any)
     .libraryTarget('window')
-    .filename(assetPath('js/[name].js'))
-    .chunkFilename(assetPath('js/chunk.[name].js'));
+    .filename(assetPath('js/[name].js?[hash]'))
+    .chunkFilename(assetPath('js/chunk.[name].js?[chunkhash]'));
 
 chain.output.when(isDev, chain => chain
-    .filename(assetPath('js/[name].js?[hash]'))
-    .chunkFilename(assetPath('js/chunk.[name].js?[hash]'))
-    .sourceMapFilename('[file].map?[contenthash]')
+    .sourceMapFilename('[file].map')
     .devtoolModuleFilenameTemplate((info: DevtoolModuleFilenameTemplateInfo) => {
         // return 'file://' + resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
         return resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
@@ -393,6 +383,7 @@ chain.resolve
     'mobx$'            : chain.srcPath('mobx.js'),
     'lodash-es$'       : 'lodash',
     'async$'           : 'neo-async',
+    'react-dom'        : '@hot-loader/react-dom',
     '@ant-design/icons': 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
 }).end();
 chain.resolveLoader
@@ -416,7 +407,6 @@ chain.performance
     .maxEntrypointSize(999999999)
     .maxAssetSize(999999999)
     .assetFilter(as => false);
-
 chain.module.set('strictExportPresence', true);
 chain.module.rule('ts').test(/\.(ts|tsx)$/);
 chain.module.rule('js').test(/\.(js|mjs|jsx)$/);
@@ -435,6 +425,8 @@ addBabelToRule(chain, 'vendor-js', {
 });
 addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.tsx')
+// addPluginEntry(chain, 'core', chain.srcPath('core'), '_small.tsx');
+
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
 addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
@@ -448,6 +440,5 @@ chain.resolve.alias.merge({
 
 const config = chain.toConfig();
 
-const a = 'a';
 export default config;
 export { chain, config };

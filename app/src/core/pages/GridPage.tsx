@@ -3,7 +3,7 @@ import { State } from 'router';
 import { lazyInject } from 'ioc';
 import { LayoutStore, Store } from 'stores';
 import { hot } from 'react-hot-loader';
-import { Grid,Panel } from './grid';
+// import { Grid,Panel } from './grid';
 
 
 const log = require('debug')('pages:home');
@@ -25,11 +25,11 @@ class GridPage extends React.Component<{ routeState: State, data?: any }> {
         const { children, ...props } = this.props;
         return (
             <div id="grid-page">
-                <Grid>
+                {/*<Grid>
                     <Panel key="a">a</Panel>
                     <Panel key="b">b</Panel>
                     <Panel key="c">c</Panel>
-                </Grid>
+                </Grid>*/}
             </div>
         );
     }

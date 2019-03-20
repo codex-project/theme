@@ -210,7 +210,7 @@ export class Store {
             let result = await query.get(signal);
 
             transaction(() => {
-                let layout = this.codex;
+                let layout;
                 if ( projectKey && (! this.project || this.project.key !== projectKey) && result.project ) {
                     this.project  = null;
                     this.revision = null;
