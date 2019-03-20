@@ -34,13 +34,13 @@ export class CLink extends React.Component<CLinkProps > {
         if ( href ) to = href;
 
         to = this.router.toUrl(to)
-        const matches = this.router.matchPath(to);
+        const match = this.router.matchPath(to);
 
-        if ( !matches ) {
+        if ( !match ) {
             console.warn(`Link with to [${to}] does not match any route.`);
             return null;
         }
-        const match = matches[ 0 ];
+        // const match = match[ 0 ];
 
         if ( ! this.links.hasType(type) ) {
             console.warn(`Link type [${type}] not valid. Register it with Link.registerType()`);

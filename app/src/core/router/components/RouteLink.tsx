@@ -23,13 +23,16 @@ export class RouteLink extends Component<RouteLinkProps> {
 
     handleClick = (event) => {
         event.preventDefault();
-        let { to, push, replace, go } = this.props;
+        let { push, replace, go } = this.props;
         if ( typeof go === 'number' ) {
             this.router.go(go);
             return;
         }
-        let match = this.router.matchPath(this.router.toUrl(to));
-        this.router.navigate(match.name, match.params, { push, replace });
+        let to      = this.router.isTo(this.props.to) ? this.props.to : this.props;
+        let options = { push, replace };
+        if ( this.router.isTo(to) ) {
+            this.router.navigateTo(to, options);
+        }
     };
 
     getUrl() {
