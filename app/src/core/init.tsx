@@ -8,6 +8,8 @@ import Root from 'components/Root';
 import { ColorElement } from 'elements';
 import TestPage from 'pages/TestPage';
 import DocumentPage from 'pages/DocumentPage';
+import { NotFoundPage } from 'pages';
+import { QueryError } from 'stores';
 
 const log = require('debug')('site:index');
 
@@ -41,6 +43,10 @@ routerPlugin.hooks.registered.tap('CORE', router => {
             path         : '/',
             loadComponent: () => import(/* webpackChunkName: "core.pages.home" */'./pages/HomePage'),
         }, {
+            name         : 'grid',
+            path         : '/grid',
+            loadComponent: () => import(/* webpackChunkName: "core.pages.grid" */'./pages/GridPage'),
+        }, {
             name     : 'test',
             path     : '/test',
             component: TestPage,
@@ -53,45 +59,64 @@ routerPlugin.hooks.registered.tap('CORE', router => {
         {
             name    : 'documentation.project',
             path    : '/documentation/:project',
-            redirect: async (state, router) => {
-                let params  = { project: state.params.project, revision: 'master' };
-                let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
-                if ( ! project ) {
-                    // return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
+            canEnter: async (state) => {
+                let { project, revision } = state.params;
+                if ( ! app.store.hasProject(project) ) {
+                    // return { name: 'documentation' };
+                    return () => NotFoundPage.project(project);
                 }
-                return { name: 'documentation.revision', params };
+            },
+            redirect: async (state, router) => {
+                let { project }          = state.params;
+                let { default_revision } = app.store.getProject(project);
+                return { name: 'documentation.revision', params: { project, revision: default_revision } };
             },
         },
         {
             name    : 'documentation.revision',
             path    : '/documentation/:project/:revision',
+            canEnter: async (state) => {
+                let { project, revision } = state.params;
+                if ( ! app.store.hasProject(project) ) {
+                    // return { name: 'documentation' };
+                    return () => NotFoundPage.project(project);
+                }
+                if ( ! app.store.hasRevision(project, revision) ) {
+                    // return { name: 'documentation.project', params: { project } };
+                    return () => NotFoundPage.revision(revision);
+                }
+            },
             redirect: async (state, router) => {
-                let params   = { project: state.params.project, revision: state.params.revision, document: 'index' };
-                let project  = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
-                // if ( ! project ) {return <ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;                }
-                let revision = project.revisions.find(r => r.key === params.revision);
-                // if ( ! revision ) { return <ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>; }
-                return { name: 'documentation.document', params };
+                let { project, revision } = state.params;
+                let { default_document }  = app.store.getRevision(project, revision);
+                return { name: 'documentation.document', params: { project, revision, document: default_document } };
             },
         },
         {
             name     : 'documentation.document',
             path     : '/documentation/:project/:revision/:document+',
-            enter    : async (state) => {
-                let { project, revision, document } = state.params;
-                return app.store.fetchDocument(project, revision, document);
-            },
-            // loadComponent: async () => import(/* webpackChunkName: "core.pages.document" */'./pages/DocumentPage'),
             component: DocumentPage,
             canEnter : async (state) => {
-                let params  = state.params;
-                let project = BACKEND_DATA.codex.projects.find(p => p.key === params.project);
-                if ( ! project ) {
-                    return false; //<ErrorPage {...props} routeState={routeState} title='Project not found' message={<p>Could not find the project [{params.project}]</p>}/>;
+                let { project, revision, document } = state.params;
+                if ( ! app.store.hasProject(project) ) {
+                    return () => NotFoundPage.project(project);
                 }
-                let revision = project.revisions.find(r => r.key === params.revision);
-                if ( ! revision ) {
-                    return false; //<ErrorPage {...props} routeState={routeState} title="Revision not found" message={<p>Could not find revision [{params.revision}] in project [{project.key}]</p>}/>;
+                if ( ! app.store.hasRevision(project, revision) ) {
+                    return () => NotFoundPage.revision(revision);
+                }
+            },
+            enter    : async (state) => {
+                let { project, revision, document } = state.params;
+                try {
+                    await app.store.fetchDocument(project, revision, document);
+                } catch ( e ) {
+                    if ( e instanceof QueryError ) {
+                        app.notification.error({
+                            message: e.message || e,
+                        });
+                    }
+                    return () => NotFoundPage.document(document);
+                    // return () => <ErrorPage routeState={state} title='Document not found' message={<p>{document} does not exist</p>}/>;
                 }
             },
         },

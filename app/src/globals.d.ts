@@ -4,7 +4,6 @@
 /// <reference types="hammerjs" />
 
 
-
 declare module '*.styl';
 declare module '*.scss';
 declare module '*.mscss';
@@ -131,6 +130,93 @@ declare module 'react-hammerjs' {
 }
 
 
+declare module 'react-dazzle' {
+    import React from 'react';
+
+        export interface DashboardProps {
+
+            /**
+             * The layout of the dashboard.
+             */
+            layout?: object,
+
+            /**
+             * List of widgets that are avilable in the dashboard.
+             */
+            widgets?: object,
+
+            /**
+             * Indicates weather the dashoard is in editable state or not.
+             */
+            editable?: bool,
+
+            /**
+             * CSS class name that should be provided to the row. Default is 'row'.
+             */
+            rowClass?: string,
+
+            /**
+             * Customized widget frame. The dashboard supports a default frame. But if
+             * it doesn't suit your needs or the look and feel is not what you wanted, you
+             * could create your own widget frame and pass it through here. Ever widget Will
+             * use this as the outer container which displays controls like 'remove' button
+             * on edit mode.
+             */
+            frameComponent?: Function,
+
+            /**
+             * A custom component for the `add widget` button.
+             */
+            addWidgetComponent?: Function,
+
+            /**
+             * Class to be used for columns in editable mode.
+             */
+            editableColumnClass?: string,
+
+            /**
+             * CSS class to be used for columns when a widget is droppable.
+             */
+            droppableColumnClass?: string,
+
+            /**
+             * Text that should be displayed in the `AddWidget` component.
+             */
+            addWidgetComponentText?: string,
+
+            /**
+             * Will be called when a widget removed by the user from the dashboard.
+             * Should be handled if the dashbord supports edit functionality.
+             * provides the updated layout object. This layout object  with the removed widget
+             * should be given back to the dashboard through the layout prop to re-render the dashboard.
+             */
+            onRemove?: Function,
+
+            /**
+             * Will be called when user tries to add a widget into a column.
+             */
+            onAdd?: Function,
+
+            /**
+             * Function to be called when a widget is moved by the user.
+             */
+            onMove?: Function,
+            /**
+             * Function to be called when a widget is edited.
+             */
+            onEdit?: Function,
+        }
+
+        // class DashboardWithoutDndContext extends Dashboard {}
+
+
+    export default class Dashboard extends React.Component<DashboardProps> {}
+    export class DashboardWithoutDndContext extends React.Component<DashboardProps> {}
+
+
+}
+
+
 declare module 'react-html-parser' {
     import React from 'react';
 
@@ -210,6 +296,7 @@ declare module 'react-emoji-render' {
      * notations to native unicode characters.
      */
     export function Emoji(opts: Props): ReturnType;
+
     /**
      * Twemoji is an emoji set designed by Twitter, you can use the included Twemoji
      * component to render emoji images in this style.
@@ -217,6 +304,7 @@ declare module 'react-emoji-render' {
      * @see https://github.com/twitter/twemoji
      */
     export function Twemoji(opts: Props): ReturnType;
+
     /**
      * Emojione is a great looking open source emoji set, you can use
      * the included Emojione component to render emoji images in this style.
@@ -234,7 +322,7 @@ declare module 'react-emoji-render' {
      */
     export function toArray(
         text: string,
-        options?: Options
+        options?: Options,
     ): React.ReactNodeArray;
 }
 

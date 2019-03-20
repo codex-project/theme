@@ -73,10 +73,7 @@ export default class PhpdocPlugin extends BasePlugin {
                 DEV && router.addRoute({
                     name  : 'phpdoc.test',
                     path  : app.url.root('phpdoc-test'),
-                    action: async (props, routeState) => {
-                        const PhpdocTestPage = (await import('./PhpdocTestPage')).default;
-                        return <PhpdocTestPage {...props} routeState={routeState}/>;
-                    },
+                    loadComponent: () => import('./PhpdocPage'),
                 });
                 DEV && router.addRoute({
                     name     : 'phpdoc.mosaic.test',

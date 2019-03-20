@@ -61,24 +61,25 @@ export default class Layout extends React.Component<LayoutProps> {
     @observable contentLayoutMinHeight = null;
     @action updateContentMinHeight     = () => this.contentLayoutMinHeight = this.toolbarContainerRef.current ? this.toolbarContainerRef.current.getBoundingClientRect().height : 0;
     observer: ResizeObserver;
-    observingElement
-    observing
+    observingElement;
+    observing;
 
-    observe(){
-        if(this.observing){
+    observe() {
+        if ( this.observing ) {
             this.observing();
         }
         this.observingElement = this.toolbarContainerRef.current;
-        if(this.toolbarContainerRef.current) {
+        if ( this.toolbarContainerRef.current ) {
             this.observer.observe(this.toolbarContainerRef.current);
             this.observing = () => {
-                this.observer.unobserve(this.observingElement)
-            }
+                this.observer.unobserve(this.observingElement);
+            };
         }
     }
+
     public componentDidMount(): void {
         this.observer = new ResizeObserver(() => {
-            this.updateContentMinHeight()
+            this.updateContentMinHeight();
         });
         this.observe();
     }
@@ -94,9 +95,9 @@ export default class Layout extends React.Component<LayoutProps> {
     }
 
     render() {
-        window[ 'layout' ]                                                = this;
-        const { children, ...props }                                      = this.props;
-        const { container, header, left, middle, content, right, footer } = this.layout;
+        window[ 'layout' ]                                                         = this;
+        const { children, ...props }                                               = this.props;
+        const { container, header, left, middle, content, right, footer, toolbar } = this.layout;
 
         return (
             <AntdLayout style={container.computedStyle}>
@@ -117,20 +118,19 @@ export default class Layout extends React.Component<LayoutProps> {
                         </If>
 
                         <Content style={{ minHeight: '100%' }}>
-                            <Affix enabled={true}>
-                                <ToolbarContainer ref={this.toolbarContainerRef}>
-                                    <Toolbar
-                                        style={{
-                                            backgroundColor: content.computedStyle.backgroundColor,
-                                            paddingLeft    : content.computedStyle.marginLeft,
-                                            paddingRight   : content.computedStyle.marginRight,
-                                        }}
-                                    />
-                                    <Toolbar.Item side="left">
-                                        <LayoutBreadcrumbs/>
-                                    </Toolbar.Item>
-                                </ToolbarContainer>
-                            </Affix>
+                            <If condition={toolbar.show}>
+                                <Affix enabled={toolbar.fixed}>
+                                    <ToolbarContainer ref={this.toolbarContainerRef}>
+                                        <Toolbar
+                                            style={toolbar.computedStyle}
+                                            className={toolbar.computedClass}
+                                        />
+                                        <Toolbar.Item side="left">
+                                            <LayoutBreadcrumbs/>
+                                        </Toolbar.Item>
+                                    </ToolbarContainer>
+                                </Affix>
+                            </If>
 
                             <AntdLayout style={{ minHeight: `calc(100% - ${this.contentLayoutMinHeight}px)` }}>
                                 <Content style={content.computedStyle} className={content.computedClass}>

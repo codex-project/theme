@@ -1,7 +1,7 @@
 import { SyncBailHook, SyncHook } from 'tapable';
 import { Router } from './Router';
-import { Route } from './interfaces';
 import { action, computed, observable } from 'mobx';
+import { State } from './State';
 
 const log  = require('debug')('router:Transition');
 const slog = require('debug')('router:Transition:state');
@@ -33,12 +33,14 @@ export class Transition {
             this.to.url,
         );
         this.status = status;
+        this.router.emit(`transition.${status}`);
     }
 
     @action
     protected setStep(step: TransitionStep) {
         slog(step);
         this.step = step;
+        this.router.emit(`state.${step}`, this);
     }
 
 
@@ -63,9 +65,7 @@ export class Transition {
             }
             this.setStatus('canceled');
             this.hooks.canceled.call();
-            this.router.emit('transition.canceled', this);
             this.hooks.finished.call();
-            this.router.emit('transition.finished', this);
         }
         return this.canceled;
     }
@@ -75,7 +75,6 @@ export class Transition {
 
     start() {
         this.setStatus('started');
-        this.router.emit('transition.started', this);
         if ( this.hooks.started.call() !== undefined ) {
             return this.cancel();
         }
@@ -98,19 +97,23 @@ export class Transition {
                 }
             }
 
-            this.setStep('canEnter');
-            if ( this.to.route.canEnter ) {
-                let canEnter = await this.to.route.canEnter(this.to);
-                if ( canEnter !== true && canEnter !== undefined && canEnter !== null ) {
-                    return this.cancel();
-                }
-            }
-
             this.setStep('leave');
             if ( this.hooks.leave.call() !== undefined ) {
                 return this.cancel();
             }
-            this.router.emit('state.leave', this);
+
+            this.setStep('canEnter');
+            if ( this.to.route.canEnter ) {
+                let canEnter = await this.to.route.canEnter(this.to);
+                if ( canEnter !== true && canEnter !== undefined && canEnter !== null ) {
+                    this.cancel();
+                }
+                if ( typeof canEnter === 'function' ) {
+                    this.to.render = canEnter;
+                } else if ( this.router.isTo(canEnter) ) {
+                    this.router.navigateTo(canEnter);
+                }
+            }
 
             if ( ! this.options.pop ) { // pop = history.go
                 if ( this.options.replace ) {
@@ -120,17 +123,20 @@ export class Transition {
                 }
             }
 
+
             this.setStep('beforeEnter');
             if ( this.to.route.beforeEnter ) {
-                await this.to.route.beforeEnter(this.to);
+                let beforeEnter = await this.to.route.beforeEnter(this.to);
             }
 
             this.setStep('enter');
-            if ( this.to.route.enter ) {
-                await this.to.route.enter(this.to);
-            }
-            this.router.emit('state.enter', this);
             this.hooks.enter.call();
+            if ( this.to.route.enter ) {
+                let enter = await this.to.route.enter(this.to);
+                if ( typeof enter === 'function' ) {
+                    this.to.render = enter;
+                }
+            }
 
             res();
         });
@@ -138,7 +144,6 @@ export class Transition {
             return;
         }
         this.promise.then(async () => {
-            this.router.current = this.to;
 
             if ( this.to.route.redirect ) {
                 let to = await this.to.route.redirect(this.to, this.router);
@@ -148,20 +153,9 @@ export class Transition {
             }
 
 
-
             this.setStatus('finished');
             this.hooks.finished.call();
-            this.router.emit('transition.finished', this);
         });
 
     }
-}
-
-
-export class State {
-    name: string;
-    route: Route;
-    params: any = {};
-    url: string;
-    meta: any   = {};
 }

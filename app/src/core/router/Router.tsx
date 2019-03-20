@@ -3,7 +3,8 @@ import { SyncHook } from 'tapable';
 import { Map } from 'immutable';
 import pathToRegexp from 'path-to-regexp';
 import { Match, matchPath } from './utils';
-import { State, Transition } from './Transition';
+import { Transition } from './Transition';
+import { State } from './State';
 import { Location, Route, To } from './interfaces';
 import { injectable } from 'inversify';
 import { computed, observable, runInAction, toJS } from 'mobx';
@@ -43,6 +44,8 @@ export class Router extends EventEmitter {
         let transition  = new Transition(this, options);
         transition.from = toJS(this.current);
         transition.to   = this.buildState(routeName, params);
+        // transition.hooks.enter.tap('Router', t => this.current = transition.to);
+        transition.hooks.finished.tap('Router', t => this.current = transition.to);
         return transition;
     }
 
@@ -78,6 +81,12 @@ export class Router extends EventEmitter {
 
     go(n: number) {
         this.history.go(n);
+    }
+
+    cancel() {
+        if ( this.transition ) {
+            this.transition.cancel();
+        }
     }
 
     start(defaultRoute: any = this.history.location.pathname) {
@@ -185,6 +194,10 @@ export class Router extends EventEmitter {
         if ( typeof to === 'object' && to[ 'to' ] ) {
             return this.toUrl(to[ 'to' ]);
         }
+    }
+
+    isTo(value: any): value is To {
+        return typeof value === 'string' || (value && typeof value.name === 'string');
     }
 
 }

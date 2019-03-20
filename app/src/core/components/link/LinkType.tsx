@@ -23,7 +23,9 @@ export abstract class LinkType<P extends LinkTypeProps = LinkTypeProps, S = {}> 
 
     abstract updateRouteParams()
 
-    getRouteParams() { return this.props.match.params; }
+    getRouteParams() { 
+        return this.props.match.params;
+     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any): void {
         if ( this.props.to !== prevProps.to ) {

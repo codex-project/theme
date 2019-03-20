@@ -95,6 +95,7 @@ export default class DynamicMenu extends React.Component<DynamicMenuProps, State
         log('onClick', param);
         let { items } = this.props;
         let item      = items.item(param.key);
+
         items.handleClick(item, param.domEvent);
         if ( item.selected ) {
             if ( this.props.multiple === false ) {

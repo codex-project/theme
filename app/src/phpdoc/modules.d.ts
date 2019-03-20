@@ -1,21 +1,22 @@
 // noinspection ES6UnusedImports
-import InspireTree from 'inspire-tree'
-import { PhpdocManifest } from './logic';
+import InspireTree from 'inspire-tree';
 
 declare module '@codex/api/types/types' {
     interface MenuItem {
-        phpdoc?:boolean
+        phpdoc?: boolean
     }
 }
 declare module 'inspire-tree' {
+    import { PhpdocManifest } from './logic';
 
     interface Config {
-        manifest?:PhpdocManifest
+        manifest?: PhpdocManifest
     }
 
     interface InspireTree {
-        opts:Config
+        opts: Config
     }
+
     type TreeNodeType = 'namespace' | 'class' | 'trait' | 'interface' | 'generic'
 
     interface TreeNodeData {
@@ -27,8 +28,9 @@ declare module 'inspire-tree' {
         type: TreeNodeType
         children?: Array<TreeNodeData>
     }
+
     interface TreeNode extends TreeNodeData {
-        itree?:any
+        itree?: any
     }
 
 }

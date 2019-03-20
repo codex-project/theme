@@ -1,5 +1,5 @@
 import * as H from 'history';
-import { State } from './Transition';
+import { State } from './State';
 import * as React from 'react';
 import { Router } from './Router';
 

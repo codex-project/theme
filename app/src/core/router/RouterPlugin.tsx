@@ -37,6 +37,21 @@ export class RouterPlugin extends BasePlugin<Partial<RouterPluginOptions>> {
     }
 
     install(app: Application) {
+        const stopProgress  = (timeout: number = 0) => {
+            setTimeout(t => {
+                if ( ! app.progress.isStarted() ) {
+                    return;
+                }
+                app.progress.done();
+            }, timeout);
+        };
+        const startProgress = () => {
+            if ( app.progress.isStarted() ) {
+                return;
+            }
+            app.progress.start();
+            stopProgress(1500);
+        };
         app.hooks.register.tap(this.name, (app) => {
             let { historyOptions, defaultRoute, ...routerOptions } = this.options;
             this.hooks.register.call(app.get('router'));
@@ -46,7 +61,16 @@ export class RouterPlugin extends BasePlugin<Partial<RouterPluginOptions>> {
             this.hooks.registered.call(app.get('router'));
         });
         app.hooks.booted.tap(this.name, app => {
-            app.get<Router>('router').start(this.options.defaultRoute);
+            const router = app.get<Router>('router');
+            router.start(this.options.defaultRoute);
+            router.hooks.transition.tap(this.name, transition => {
+                transition.hooks.enter.tap(this.name, e => startProgress());
+                transition.hooks.started.tap(this.name, e => startProgress());
+                transition.hooks.canceled.tap(this.name, e => stopProgress(500));
+                transition.hooks.finished.tap(this.name, e => stopProgress(500));
+            });
+            app.progress.start();
+            stopProgress(1500);
         });
     }
 }

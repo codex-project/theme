@@ -12,6 +12,7 @@ import { HelmetProps } from 'react-helmet';
 import { BuildQueryReturn, QueryBuilder } from './QueryBuilder';
 import { Fetched } from './Fetched';
 import { SyncHook } from 'tapable';
+import { DocumentStore } from 'stores/DocumentStore';
 
 const log = require('debug')('store');
 
@@ -44,6 +45,8 @@ export class Store {
         fetch  : new SyncHook<QueryBuilder>([ 'builder' ]),
         fetched: new SyncHook<BuildQueryReturn>([ 'result' ]),
     };
+
+    doc = new DocumentStore();
 
     @lazyInject('api') api: Api;
     @lazyInject('fetched') fetched: Fetched;
@@ -205,9 +208,10 @@ export class Store {
 
             // query      = this.hooks.fetch.call(query);
             let result = await query.get(signal);
+
             transaction(() => {
-                let layout;
-                if ( projectKey && (! this.project || this.project.key !== projectKey) ) {
+                let layout = this.codex;
+                if ( projectKey && (! this.project || this.project.key !== projectKey) && result.project ) {
                     this.project  = null;
                     this.revision = null;
                     this.document = null;
@@ -215,14 +219,14 @@ export class Store {
                     layout        = result.project;
                     this.mergeLayout(layout);
                 }
-                if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) ) {
+                if ( revisionKey && (! this.revision || this.revision.key !== revisionKey) && result.revision ) {
                     this.revision = null;
                     this.document = null;
                     this.revision = result.revision;
                     layout        = result.revision;
                     this.mergeLayout(layout);
                 }
-                if ( documentKey && (! this.document || this.document.key !== documentKey) ) {
+                if ( documentKey && (! this.document || this.document.key !== documentKey) && result.document ) {
                     this.document = null;
                     this.document = result.document;
                     layout        = result.document;
@@ -230,6 +234,11 @@ export class Store {
                 }
                 if ( layout ) {
                     this.mergeLayout(layout);
+                }
+                for ( const errors of Object.values(result.errors) ) {
+                    for ( const error of errors ) {
+                        throw error;
+                    }
                 }
             });
 

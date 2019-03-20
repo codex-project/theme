@@ -4,7 +4,7 @@ import { merge, uniq } from 'lodash';
 // import { Api, api, FetchResult } from '@codex/api';
 import { SyncHook } from 'tapable';
 import { Fetched } from './Fetched';
-import { Api, FetchResult } from '@codex/api';
+import { Api, FetchResult, GraphQLError } from '@codex/api';
 
 const log = require('debug')('BuildQuery');
 
@@ -19,8 +19,55 @@ export type BuildQueryReturn = {
     project: any //api.Project,
     revision: any //api.Revision,
     document: any //api.Document,
+    errors: Record<string, Array<QueryError>>
 }
 type Fields = Record<string, string>
+
+const codexQuery    = (fieldNames: string[]) => `
+query CodexQuery {
+    codex {
+        ${fieldNames.join('\n')}
+    }
+}
+`;
+const projectQuery  = (fieldNames: string[]) => `
+query ProjectQuery($projectKey:ID) {
+    project(key: $projectKey){
+        ${fieldNames.join('\n')}
+    }
+}
+`;
+const revisionQuery = (fieldNames: string[]) => `
+query RevisionQuery($projectKey:ID, $revisionKey:ID) {
+    revision(projectKey: $projectKey, revisionKey: $revisionKey){
+        ${fieldNames.join('\n')}
+    }
+}
+`;
+const documentQuery = (fieldNames: string[]) => `
+query RevisionQuery($projectKey:ID, $revisionKey:ID, $documentKey:ID) {
+    document(projectKey: $projectKey, revisionKey: $revisionKey, documentKey: $documentKey){
+        ${fieldNames.join('\n')}
+    }
+}
+`;
+
+export class QueryError extends Error implements Error, GraphQLError {
+    constructor(error: GraphQLError) {
+        super(error.message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        // this.name      = 'QueryError';
+        this.locations = error.locations;
+        this.path      = error.path;
+        if ( error[ 'trace' ] ) {
+            this.stack = error[ 'trace' ];
+        }
+    }
+
+    public locations: { line: number; column: number }[];
+    public path: string[];
+    public stack: string;
+}
 
 @injectable()
 export class QueryBuilder {
@@ -98,51 +145,72 @@ export class QueryBuilder {
 
     protected getDocumentFieldNames() {return this.getFieldNames(this.fetched.getDocumentPath(this.projectKey, this.revisionKey, this.documentKey), this.documentFields); }
 
-    protected buildQueryFields() {
-        let queryFields: string[] = [];
-        let fieldNames            = this.getCodexFieldNames();
-        fieldNames.length && queryFields.push(`
-codex {
-    ${fieldNames.join('\n')}
-}`);
-        if ( this.projectKey ) {
-            let fieldNames = this.getProjectFieldNames();
-            fieldNames.length && queryFields.push(`
-project(key: "${this.projectKey}"){
-    ${fieldNames.join('\n')}
-}`);
+    buildQueryMap() {
+        let fieldNames    = {
+            codex   : this.getCodexFieldNames(),
+            project : this.getProjectFieldNames(),
+            revision: this.getRevisionFieldNames(),
+            document: this.getDocumentFieldNames(),
+        };
+        let queryMap: any = {};
+        if ( fieldNames.codex.length ) {
+            queryMap.codex = {
+                query: codexQuery(fieldNames.codex),
+            };
         }
-        if ( this.revisionKey ) {
-            let fieldNames = this.getRevisionFieldNames();
-            fieldNames.length && queryFields.push(`
-revision(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}"){
-    ${fieldNames.join('\n')}
-}`);
+        if ( fieldNames.project.length && this.projectKey ) {
+            queryMap.project = {
+                query    : projectQuery(fieldNames.project),
+                variables: { projectKey: this.projectKey },
+            };
         }
-        if ( this.documentKey ) {
-            let fieldNames = this.getDocumentFieldNames();
-            fieldNames.length && queryFields.push(`
-document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", documentKey: "${this.documentKey}"){
-    ${fieldNames.join('\n')}
-}`);
+        if ( fieldNames.revision.length && this.revisionKey ) {
+            queryMap.revision = {
+                query    : revisionQuery(fieldNames.revision),
+                variables: { projectKey: this.projectKey, revisionKey: this.revisionKey },
+            };
+        }
+        if ( fieldNames.document.length && this.documentKey ) {
+            queryMap.document = {
+                query    : documentQuery(fieldNames.document),
+                variables: { projectKey: this.projectKey, revisionKey: this.revisionKey, documentKey: this.documentKey },
+            };
         }
 
-        this.hooks.queryFields.call(queryFields, this);
-        return queryFields;
+        return queryMap;
     }
 
+    async query(signal?: AbortSignal) {
+        const queryMap = this.buildQueryMap();
+        const keys     = Object.keys(queryMap);
+        const query    = await this.api.queryMapBatch(queryMap, { signal });
+        log('query()', 'query', query);
+        const data: any                                 = {};
+        const errors: Record<string, Array<QueryError>> = {};
+        new Error();
+        keys.forEach(key => {
+            let response = query.data[ key ];
+            if ( response.errors && response.errors.length > 0 ) {
+                errors[ key ] = response.errors.map(error => new QueryError(error));
+            }
+            if ( response.data && response.data[ key ] ) {
+                data[ key ] = response.data[ key ];
+            }
+        });
+
+        return { data, errors, response: query };
+    }
 
     async get(signal?: AbortSignal): Promise<BuildQueryReturn> {
         this.hooks.get.call(this);
-        let queryFields = this.buildQueryFields();
-        log('get()', 'queryFields', queryFields);
-        if ( queryFields.length > 0 ) {
-            let query    = `query {\n${queryFields.join('\n')}\n}`;
-            let response = await this.api.query(query, { signal });
-            this.hooks.queryResult.call(response, this);
-            log('get()', 'response', response);
-            let { data, errors, status } = response;
-
+        const queryMap    = this.buildQueryMap();
+        const shouldQuery = Object.keys(queryMap).length > 0;
+        let errors        = {};
+        if ( shouldQuery ) {
+            let query = await this.query(signal);
+            log('get()', 'query', query);
+            let { data, response } = query;
+            errors                 = query.errors;
             if ( data.codex ) {
                 let codex = this.fetched.getCodex();
                 if ( data.codex.changes ) {
@@ -199,6 +267,7 @@ document(projectKey: "${this.projectKey}", revisionKey: "${this.revisionKey}", d
             project : this.projectKey ? this.fetched.getProject(this.projectKey) : null,
             revision: this.revisionKey ? this.fetched.getRevision(this.projectKey, this.revisionKey) : null,
             document: this.documentKey ? this.fetched.getDocument(this.projectKey, this.revisionKey, this.documentKey) : null,
+            errors,
         };
 
         this.hooks.returns.call(returns, this);

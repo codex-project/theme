@@ -20,6 +20,9 @@ import { Router } from '../router';
 import { Store } from '../stores';
 import { createNotificationApi } from 'utils/createNotificationApi';
 
+
+import NProgress from 'nprogress';
+
 const log = require('debug')('classes:Application');
 
 interface PluginMap extends Map<string, Plugin> {
@@ -51,6 +54,8 @@ function createPluginMapProxy<T extends Map<string, Plugin> = Map<string, Plugin
 export class Application extends Container {
     public readonly plugins: PluginMapProxy       = createPluginMapProxy(new Map());
     public readonly notification: NotificationApi = createNotificationApi();
+    public readonly progress: NProgressStatic     = NProgress;
+
 
     protected registered            = false;
     protected booted                = false;

@@ -26,6 +26,7 @@ export class LayoutStore {
     public content: IStoreProxy<LayoutStoreContent>;
     public header: IStoreProxy<LayoutStoreHeader>;
     public footer: IStoreProxy<LayoutStoreFooter>;
+    public toolbar: IStoreProxy<LayoutStoreToolbar>;
 
     constructor() {
         let self       = this;
@@ -206,6 +207,32 @@ export class LayoutStore {
             },
         });
 
+        this.toolbar = createStoreProxy<LayoutStoreToolbar>({
+            class: {},
+            style: {},
+            color: null,
+            show : true,
+            fixed: true,
+            setShow(show: boolean) {this.show = show;},
+            setFixed(fixed: boolean) {this.fixed = fixed;},
+            setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
+            setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
+            get computedClass(): string {
+                let classNames = Object.keys(this.class).filter(className => this.class[ className ] !== false);
+                return classes(...classNames);
+            },
+            get computedStyle(): React.CSSProperties {
+                let style: React.CSSProperties = {
+                    ...this.style,
+                    backgroundColor: self.content.computedStyle.backgroundColor,
+                    paddingLeft    : self.content.computedStyle.marginLeft,
+                    paddingRight   : self.content.computedStyle.marginRight,
+                }
+                if ( this.color ) style.backgroundColor = colorKeys.includes(this.color) ? colors[ this.color ] : this.color;
+                return style;
+            },
+
+        });
         // CookieStorage.has('layout.left.collapsed') && this.left.setCollapsed(parseBool(CookieStorage.get('layout.left.collapsed')));
         // CookieStorage.has('layout.right.collapsed') && this.right.setCollapsed(parseBool(CookieStorage.get('layout.right.collapsed'))); 
     }
@@ -315,6 +342,7 @@ export type LayoutStoreContent = LayoutStorePart<api.LayoutContent> & LayoutColo
     padding: number | string | number[] | string[]
     margin: number | string | number[] | string[]
 }
+export type LayoutStoreToolbar = LayoutStorePart<any> & LayoutColorData & LayoutShowData & LayoutFixedData & {}
 
 //
 // export class LayoutStore {

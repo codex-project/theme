@@ -1,14 +1,18 @@
 import { RouterPlugin } from './RouterPlugin';
+import './router.scss';
 
 export * from './interfaces';
 export * from './utils';
 
-export * from './RouteLink';
-export * from './Router';
+export * from './State';
 export * from './Transition';
-export * from './View';
+export * from './Router';
 
+export * from './components/AnimatedViews';
+export * from './components/RouteLink';
+export * from './components/Routes';
+export * from './components/Switch';
+export * from './components/View';
 
 export { RouterPlugin };
 
-import './router.scss';

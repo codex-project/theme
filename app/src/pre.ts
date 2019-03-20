@@ -1,7 +1,8 @@
 import Promise from 'bluebird'; //= require('bluebird')
 Promise.config({
     cancellation:true,
-    warnings: false
+    warnings: false,
+    longStackTraces: false
 })
 let i = 0;
 

@@ -1,0 +1,18 @@
+@import "../styling/base";
+
+
+.not-found-page {
+    display: flex;
+    flex-grow: 1;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+
+    &-title {
+        display: block;
+    }
+
+    &-message {
+        display: block;
+    }
+}

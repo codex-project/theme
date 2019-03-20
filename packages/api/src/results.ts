@@ -2,7 +2,7 @@ import { GraphQLBatchedResponse, GraphQLError, GraphQLRequestContext, GraphQLRes
 import { Query } from './generated';
 import { ContentResponse } from './ContentResponse';
 
-export class Result<DATA, CONTENT> {
+export class Result<DATA extends any=any, CONTENT extends any=any> {
     errors: GraphQLError[] = [];
     data: DATA;
 
@@ -40,7 +40,7 @@ export class BatchResult extends Result<GraphQLBatchedResponse, GraphQLBatchedRe
 }
 
 
-export class BatchMapResult extends Result<Record<string, GraphQLBatchedResponse>, GraphQLBatchedResponse> {
+export class BatchMapResult extends Result<Record<string, GraphQLResponse>, GraphQLBatchedResponse> {
     constructor(map: Record<string, GraphQLRequestContext>, response: ContentResponse<GraphQLBatchedResponse>, request: GraphQLRequestContext[]) {
         super(response, request);
         this.data = {};

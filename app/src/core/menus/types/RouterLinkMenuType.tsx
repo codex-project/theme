@@ -31,6 +31,7 @@ export class RouterLinkMenuType extends MenuType {
             } else {
                 this.app.router.navigateTo(to, { push, replace });
             }
+            items.deselectAll().select(item).expandParentsForSelected();
             return;
         }
         console.warn('RouterLinkMenuType handle :: menu ite did not have a [to] property', { item });

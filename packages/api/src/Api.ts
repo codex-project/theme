@@ -59,7 +59,7 @@ export class Api {
     protected async fetch(request: GraphQLRequestContext, options: Partial<ApiOptions> = {}) {
         const response = await this.request<GraphQLResponse>(makeBody(request), options);
         const result   = new FetchResult(response, request);
-        if ( result.status >= 200 && result.status < 400 && ! result.hasErrors() ) {
+        if ( result.status >= 200 && result.status < 400 ) {
             return result;
         }
 
@@ -70,7 +70,7 @@ export class Api {
     protected async batch(requests: GraphQLRequestContext[], options: Partial<ApiOptions> = {}) {
         const response            = await this.request<GraphQLBatchedResponse>(makeBody(requests), options);
         const result: BatchResult = new BatchResult(response, requests);
-        if ( result.status >= 200 && result.status < 400 && ! result.hasErrors() ) {
+        if ( result.status >= 200 && result.status < 400  ) {
             return result;
         }
 
@@ -81,7 +81,7 @@ export class Api {
         let requests                 = Object.values(requestMap);
         const response               = await this.request<GraphQLBatchedResponse>(makeBody(requests), options);
         const result: BatchMapResult = new BatchMapResult(requestMap, response, requests);
-        if ( result.status >= 200 && result.status < 400 && ! result.hasErrors() ) {
+        if ( result.status >= 200 && result.status < 400 ) {
             return result;
         }
 

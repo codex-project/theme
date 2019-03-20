@@ -33,6 +33,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
         const devLinks                                       = [
             '/',
             '/about',
+            '/grid',
             '/documentation',
             '/documentation/codex',
             '/documentation/codex/master',
