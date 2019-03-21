@@ -61,7 +61,6 @@ class Gulpfile {
     async prodBuild() {
         this.prod();
         const { chain, addAnalyzerPlugins } = require('./webpack.config');
-        // chain.optimization.minimize(false);
         addAnalyzerPlugins(chain);
         await this.build(chain);
     }
@@ -110,14 +109,6 @@ class Gulpfile {
             .headers({ 'Access-Control-Allow-Origin': '*' })
             .public(url + '/')
             .publicPath('/');
-        // .set('before', app => app.use(require('morgan')(':method :url :status :res[content-length] - :response-time ms')));
-
-        // chain.devServer
-        //     .contentBase(contentBase)  //resolve(__dirname, '../../../public')
-        //     .watchContentBase(true)
-        //     .set('disableHostCheck', true)
-        //     .quiet(false)
-
 
         console.log('Starting dev-server @ ', url);
 

@@ -7,7 +7,7 @@ import { ErrorBoundary } from 'components/errors';
 import { TunnelProvider } from 'components/tunnel';
 import Layout from 'components/layout';
 import { StoreControl } from 'components/store-control';
-import { Router, Routes, View } from 'router';
+import { Router, Routes } from 'router';
 
 const log = require('debug')('App');
 
@@ -34,7 +34,7 @@ export class App extends React.Component<AppProps, any> {
                             {...this.store.helmet}
                         />
                         <ErrorBoundary key="routes">
-                            <Routes />
+                            <Routes style={{ width: 'inherit' }}/>
                         </ErrorBoundary>
 
                         {/*{this.renderStoreController()}*/}

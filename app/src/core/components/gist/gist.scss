@@ -1,0 +1,12 @@
+$prefix: 'c-gist';
+
+.#{$prefix} {
+    width: 100%;
+    overflow-x: scroll;
+
+    &-loading {
+    }
+
+    &-inner {
+    }
+}

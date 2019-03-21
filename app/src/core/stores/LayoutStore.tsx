@@ -200,7 +200,7 @@ export class LayoutStore {
                 return classes(...classNames);
             },
             get computedStyle(): React.CSSProperties {
-                let style: React.CSSProperties = { ...this.style, ...padding(this.padding), ...margin(this.margin) };
+                let style: React.CSSProperties = { ...this.style, ...padding(this.padding), ...margin(this.margin), width: '100%' };
                 if ( this.color ) style.backgroundColor = colorKeys.includes(this.color) ? colors[ this.color ] : this.color;
 
                 return style;

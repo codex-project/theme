@@ -20,6 +20,8 @@ import { Button } from 'components/button';
 import { CodeRenderer } from 'components/code-renderer';
 import { Emoji } from 'components/emoji';
 import TaskListItem, { TaskList } from 'components/task-list';
+import { Gist } from 'components/gist';
+import { Scrollbar } from 'components/scrollbar';
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     decorate(injectable(), Api);
@@ -47,6 +49,8 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
             'c-emoji'         : Emoji,
             'c-task-list'     : TaskList,
             'c-task-list-item': TaskListItem,
+            'c-gist'          : Gist,
+            'c-scrollbar'     : Scrollbar,
 
             'link'   : RouteLink,
             'trigger': Trigger,

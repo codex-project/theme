@@ -23,7 +23,7 @@
 @import "./components/content";
 @import "./components/document";
 @import "./components/nprogress";
-
+@import "./components/code";
 
 pre,code {
     @include Monospace();

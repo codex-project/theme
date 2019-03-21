@@ -24,7 +24,7 @@ let prismPromise;
 export async function getPrism(): Promise<any> {
     return Promise.all([
         import(/* webpackChunkName: "prismjs" */'./prism'),
-        import(/* webpackChunkName: "prismjs" */'../styling/prismjs.scss'),
+        // import(/* webpackChunkName: "prismjs" */'../styling/prismjs.scss'),
     ]);
 }
 

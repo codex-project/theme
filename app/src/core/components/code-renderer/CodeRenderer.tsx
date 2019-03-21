@@ -24,7 +24,7 @@ export default class CodeRenderer extends Component<CodeRendererProps> {
             <div className="c-code-renderer">
                 <ErrorBoundary>
                     <If condition={language === 'mermaid'}>
-                        <Mermaid diagram={this.props.children.toString()} />
+                        <Mermaid diagram={this.props.children.toString()}/>
                     </If>
                     <If condition={language === 'chart'}>
                         <Chart chart={JSON.parse(this.props.children.toString())}/>

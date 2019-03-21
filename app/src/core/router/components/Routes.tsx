@@ -13,6 +13,8 @@ const log = require('debug')('router:components:Routes');
 
 export interface RoutesProps {
     routes: Route[]
+    className?:string
+    style?:React.CSSProperties
 }
 
 @hot(module)
@@ -26,11 +28,11 @@ export class Routes extends Component<RoutesProps> {
     @computed get show() {return this.router.started && this.router.current;}
 
     render() {
-        const { children, ...props } = this.props;
+        const { children, className,style,...props } = this.props;
         let currentState             = toJS(this.router.current);
         let duration                 = 500;
         return (
-            <div>
+            <div className={className} style={style}>
                 <If condition={this.show}>
                     <AnimatedViews
                         state={currentState}
