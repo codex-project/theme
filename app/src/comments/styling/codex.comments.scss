@@ -1,0 +1,8 @@
+@import "../../core/styling/base";
+
+$prefix: c-comments;
+
+.#{$prefix} {
+    margin-top: 35px;
+    border-top:2px dotted #bfbfbf;
+}

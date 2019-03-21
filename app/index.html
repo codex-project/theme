@@ -51,6 +51,7 @@
         codex.core.loadPolyfills().then(function () {
             var app = codex.core.app;
             app.plugin(new codex.phpdoc.default());
+            app.plugin(new codex.comments.default());
 
             return app.register({
                 debug : true,

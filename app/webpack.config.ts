@@ -145,6 +145,7 @@ export function addPluginEntry(chain: Chain, name: string, dirPath: string, entr
 
 export function addHMR(chain: Chain, reactHotLoader: boolean = true) {
     chain.plugin('hmr').use(webpack.HotModuleReplacementPlugin, [ {} ]);
+    return;
     const modifyOptions = (o: BabelLoaderOptions) => {
         if ( reactHotLoader ) {
             o.plugins.push('react-hot-loader/babel');
@@ -429,6 +430,7 @@ addPackage(chain, 'api', '@codex/api');
 
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
 addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
+addPluginEntry(chain, 'comments', chain.srcPath('comments'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
 chain.resolve.alias.merge({
     'heading'            : chain.srcPath('core/styling/heading.less'),

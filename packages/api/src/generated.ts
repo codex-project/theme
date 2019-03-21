@@ -212,6 +212,14 @@ export interface Document {
 
     description?: Maybe<string>;
 
+    scripts?: Maybe<(Maybe<string>)[]>;
+
+    styles?: Maybe<(Maybe<string>)[]>;
+
+    html?: Maybe<(Maybe<string>)[]>;
+
+    comments?: Maybe<DocumentCommentsConfig>;
+
     meta?: Maybe<Meta>;
 
     layout?: Maybe<Layout>;
@@ -219,6 +227,18 @@ export interface Document {
     view?: Maybe<string>;
 
     cache?: Maybe<CacheConfig>;
+}
+
+export interface DocumentCommentsConfig {
+    enabled?: Maybe<boolean>;
+
+    driver?: Maybe<string>;
+
+    html?: Maybe<string>;
+
+    script?: Maybe<string>;
+
+    style?: Maybe<string>;
 }
 
 export interface Meta {

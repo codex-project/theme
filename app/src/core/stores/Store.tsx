@@ -206,7 +206,7 @@ export class Store {
                 .addRevisionFields('key')
                 .addDocumentFields('key', 'content');
 
-            // query      = this.hooks.fetch.call(query);
+            this.hooks.fetch.call(query);
             let result = await query.get(signal);
 
             transaction(() => {
@@ -248,7 +248,7 @@ export class Store {
                 });
             }
             log('fetched', { result });
-            // this.hooks.fetched.call(result);
+            this.hooks.fetched.call(result);
             return result;
         };
 

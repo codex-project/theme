@@ -206,11 +206,14 @@ export class QueryBuilder {
         const queryMap    = this.buildQueryMap();
         const shouldQuery = Object.keys(queryMap).length > 0;
         let errors        = {};
+        let response      = null;
         if ( shouldQuery ) {
             let query = await this.query(signal);
             log('get()', 'query', query);
-            let { data, response } = query;
-            errors                 = query.errors;
+            let { data } = query;
+            errors       = query.errors;
+            response     = query.response;
+
             if ( data.codex ) {
                 let codex = this.fetched.getCodex();
                 if ( data.codex.changes ) {
@@ -268,6 +271,7 @@ export class QueryBuilder {
             revision: this.revisionKey ? this.fetched.getRevision(this.projectKey, this.revisionKey) : null,
             document: this.documentKey ? this.fetched.getDocument(this.projectKey, this.revisionKey, this.documentKey) : null,
             errors,
+            response,
         };
 
         this.hooks.returns.call(returns, this);

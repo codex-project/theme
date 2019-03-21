@@ -8,6 +8,7 @@ import { TunnelProvider } from 'components/tunnel';
 import Layout from 'components/layout';
 import { StoreControl } from 'components/store-control';
 import { Router, Routes } from 'router';
+import { HtmlComponents } from 'classes/HtmlComponents';
 
 const log = require('debug')('App');
 
@@ -20,6 +21,7 @@ export interface AppProps {}
 export class App extends React.Component<AppProps, any> {
     @lazyInject('store') store: Store;
     @lazyInject('router') router: Router;
+    @lazyInject('components') components: HtmlComponents;
 
     static displayName = 'App';
 
