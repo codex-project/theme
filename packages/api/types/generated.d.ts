@@ -129,9 +129,7 @@ export interface Document {
 export interface DocumentCommentsConfig {
     enabled?: Maybe<boolean>;
     driver?: Maybe<string>;
-    html?: Maybe<string>;
-    script?: Maybe<string>;
-    style?: Maybe<string>;
+    connection?: Maybe<string>;
 }
 export interface Meta {
     icon?: Maybe<string>;

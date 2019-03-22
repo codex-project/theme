@@ -234,11 +234,7 @@ export interface DocumentCommentsConfig {
 
     driver?: Maybe<string>;
 
-    html?: Maybe<string>;
-
-    script?: Maybe<string>;
-
-    style?: Maybe<string>;
+    connection?: Maybe<string>;
 }
 
 export interface Meta {

@@ -145,7 +145,6 @@ export function addPluginEntry(chain: Chain, name: string, dirPath: string, entr
 
 export function addHMR(chain: Chain, reactHotLoader: boolean = true) {
     chain.plugin('hmr').use(webpack.HotModuleReplacementPlugin, [ {} ]);
-    return;
     const modifyOptions = (o: BabelLoaderOptions) => {
         if ( reactHotLoader ) {
             o.plugins.push('react-hot-loader/babel');
@@ -364,8 +363,8 @@ chain.output
     .publicPath('/')
     .library([ 'codex', '[name]' ] as any)
     .libraryTarget('window')
-    .filename(assetPath('js/[name].js?[hash]'))
-    .chunkFilename(assetPath('js/chunk.[name].js?[chunkhash]'));
+    .filename(assetPath('js/[name].js'))
+    .chunkFilename(assetPath('js/chunk.[name].js'));
 
 chain.output.when(isDev, chain => chain
     .sourceMapFilename('[file].map')
@@ -384,7 +383,7 @@ chain.resolve
     'mobx$'            : chain.srcPath('mobx.js'),
     'lodash-es$'       : 'lodash',
     'async$'           : 'neo-async',
-    'react-dom'        : '@hot-loader/react-dom',
+    // 'react-dom'        : '@hot-loader/react-dom',
     '@ant-design/icons': 'purched-antd-icons', /** @see https://github.com/ant-design/ant-design/issues/12011 */
 }).end();
 chain.resolveLoader
