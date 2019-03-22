@@ -3,10 +3,10 @@ import { lazyInject, RouteLink, Trigger } from '@codex/core';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import { FQSEN, PhpdocStore, Type } from '../../logic';
-import PhpdocType from '../type';
-import PhpdocEntity from '../entity';
-import PhpdocPopover from '../popover';
-import PhpdocMethod from '../method';
+import { PhpdocType } from '../type';
+import { PhpdocEntity } from '../entity';
+import { PhpdocPopover } from '../popover';
+import { PhpdocMethod } from '../method';
 import { ManifestCtx } from '../base';
 import { hot } from 'react-hot-loader';
 

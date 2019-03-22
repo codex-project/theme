@@ -13,13 +13,13 @@ import './styling/vendor/react-mosaic-component/index.scss';
 import './phpdoc-mosaic.scss';
 import { PhpdocTree } from './components/tree';
 import { classes } from 'typestyle';
-import PhpdocMethod from './components/method';
-import PhpdocEntity from './components/entity';
-import PhpdocMemberList from './components/member-list';
+import { PhpdocMethod } from './components/method';
+import { PhpdocEntity } from './components/entity';
+import { PhpdocMemberList } from './components/member-list';
+import { PhpdocDocblock } from './components/docblock';
 import { debounce } from 'lodash-decorators';
 import { ManifestProvider } from './components/base';
 import { InspireTree } from './components/tree/InspireTree';
-import PhpdocDocblock from './components/docblock';
 
 const { TabPane: Tab } = Tabs;
 const log              = require('debug')('pages:phpdoc');
@@ -45,7 +45,7 @@ const Win    = memo(props =>
 
 
 @observer
-class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: State } > {
+class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & { routeState: State }> {
     static displayName = 'PhpdocMosaicTestPage';
 
     @lazyInject('api') api: Api;
@@ -185,8 +185,8 @@ class PhpdocMosaicTestPage extends React.Component<PhpdocMosaicTestPageProps & {
     };
 
     render() {
-        window[ 'phpdocmosaic' ]                                                                    = this;
-        const { children, revision,  routeState, ...props } = this.props;
+        window[ 'phpdocmosaic' ]                           = this;
+        const { children, revision, routeState, ...props } = this.props;
 
         return (
             <ManifestProvider project="codex" revision="master">

@@ -1,18 +1,13 @@
-import React, { ComponentType } from 'react';
-import loadable from '@loadable/component';
+import React from 'react';
 import { PhpdocLinkProps } from './PhpdocLink';
 import { loadStyling } from '../../loadStyling';
+import { loader } from '@codex/core';
 
-const loader = () => Promise.all([
-    import(
+export const PhpdocLink = loader<PhpdocLinkProps>([
+    () => import(
         /* webpackChunkName: "phpdoc.components.link" */
-      // /* webpackPrefetch: true */
+        // /* webpackPrefetch: true */
         './PhpdocLink'
         ),
-    loadStyling(),
-]).then(value => value[ 0 ]);
-export type PhpdocLinkComponent = ComponentType<PhpdocLinkProps> & {}
-
-export let PhpdocLink: PhpdocLinkComponent = loadable(loader);
-
-export default PhpdocLink;
+    () => loadStyling(),
+]);

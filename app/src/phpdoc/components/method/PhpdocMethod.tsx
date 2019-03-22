@@ -6,8 +6,8 @@ import { CodeHighlight, HtmlComponents, lazyInject } from '@codex/core';
 import { PhpdocTag } from '@codex/api';
 import { classes } from 'typestyle';
 import { IFQSEN, PhpdocMethod as Method } from '../../logic';
-import PhpdocTags from '../tags';
-import PhpdocType from '../type';
+import { PhpdocTags } from '../tags';
+import { PhpdocType } from '../type';
 import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 

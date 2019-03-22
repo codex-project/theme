@@ -14,8 +14,8 @@ export default class PhpdocDrawer extends Component<PhpdocDrawerProps> {
     static defaultProps: Partial<PhpdocDrawerProps> = {};
     static contextType                              = FQNSComponentCtx;
     context!: React.ContextType<typeof FQNSComponentCtx>;
-    private _offCanvas                                      = React.createRef<OffCanvas>();
-    public get offCanvas(): OffCanvas {return this._offCanvas.current;}
+    private _offCanvas                                      = React.createRef<typeof OffCanvas>();
+    public get offCanvas(): typeof OffCanvas {return this._offCanvas.current;}
 
     render() {
         const { children, ...props } = this.props;

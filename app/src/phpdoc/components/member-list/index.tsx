@@ -1,19 +1,13 @@
-import React, { ComponentType } from 'react';
-import loadable from '@loadable/component';
+import React from 'react';
 import { loadStyling } from '../../loadStyling';
 import { PhpdocMemberListProps } from './PhpdocMemberList';
+import { loader } from '@codex/core';
 
-const loader = () => Promise.all([
-    import(
+export const PhpdocMemberList = loader<PhpdocMemberListProps>([
+    () => import(
         /* webpackChunkName: "phpdoc.components.member-list" */
-      /* webpackPrefetch: true */
+        /* webpackPrefetch: true */
         './PhpdocMemberList'
         ),
-    loadStyling(),
-]).then(async value => value[ 0 ]);
-export type PhpdocMemberListComponent = ComponentType<PhpdocMemberListProps> & {
-}
-
-export let PhpdocMemberList: PhpdocMemberListComponent = loadable(loader);
-
-export default PhpdocMemberList;
+    () => loadStyling(),
+]);

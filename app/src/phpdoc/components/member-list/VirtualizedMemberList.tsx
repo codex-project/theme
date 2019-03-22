@@ -5,7 +5,7 @@ import ListItem, { ListItemProps } from './ListItem';
 import './member-list.scss';
 import { Button, Scrollbar } from '@codex/core';
 import { AutoSizer, List } from 'react-virtualized';
-import PhpdocMethod, { PhpdocMethodSignature } from '../method';
+import {PhpdocMethod, PhpdocMethodSignature } from '../method';
 import { PhpdocMethod as PhpdocMethodClass, PhpdocProperty } from '../../logic';
 import memo from 'memoize-one';
 import { isEqual } from 'lodash';

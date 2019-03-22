@@ -1,21 +1,17 @@
-import React, { ComponentType } from 'react';
-import loadable from '@loadable/component';
-// import PhpdocTree,{ PhpdocTreeProps } from './PhpdocTree';
+import React from 'react';
 import { PhpdocTreeProps } from './PhpdocTree';
 import { loadStyling } from '../../loadStyling';
 import { TreeBuilder } from './TreeBuilder';
+import { loader } from '@codex/core';
 
-const loader = () => Promise.all([
-    import(
-        /* webpackChunkName: "phpdoc.components.tree" */
+export { TreeBuilder };
+
+
+export const PhpdocTree = loader<PhpdocTreeProps>([
+    () => import(
+        /* webpackChunkName: "phpdoc.components." */
         // /* webpackPrefetch: true */
         './PhpdocTree'
         ),
-    loadStyling(),
-]).then(value => value[ 0 ]);
-export type PhpdocTreeComponent = ComponentType<PhpdocTreeProps> & {}
-
-let PhpdocTree: PhpdocTreeComponent = loadable(loader);
-
-export default PhpdocTree;
-export {PhpdocTree,TreeBuilder};
+    () => loadStyling(),
+]);

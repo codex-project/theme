@@ -1,22 +1,16 @@
-import React, { ComponentType } from 'react';
-import loadable from '@loadable/component';
-// import PhpdocType,{ PhpdocTypeProps } from './PhpdocType';
+import React from 'react';
 import { PhpdocTypeProps } from './PhpdocType';
 import { loadStyling } from '../../loadStyling';
-import PhpdocPopover from '../popover';
+import {PhpdocPopover} from '../popover';
+import { loader } from '@codex/core';
 
-const loader = () => Promise.all([
-    import(
+
+export const PhpdocType = loader<PhpdocTypeProps>([
+    () => import(
         /* webpackChunkName: "phpdoc.components.type" */
         // /* webpackPrefetch: true */
         './PhpdocType'
         ),
-    loadStyling(),
-    PhpdocPopover.loader(),
-]).then(async value => value[ 0 ]);
-export type PhpdocTypeComponent = ComponentType<PhpdocTypeProps> & {}
-
-let PhpdocType: PhpdocTypeComponent = loadable(loader);
-export { PhpdocType };
-export default PhpdocType;
-
+    () => loadStyling(),
+    PhpdocPopover.loader,
+]);

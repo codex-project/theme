@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader';
 import { PhpdocProperty } from '../../logic';
 import { Tooltip } from 'antd';
 import { ListContext } from './ListContext';
-import PhpdocType from '../type';
+import {PhpdocType} from '../type';
 
 export interface PropertyItemProps {
     item: PhpdocProperty

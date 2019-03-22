@@ -1,18 +1,23 @@
-import React, { ComponentType } from 'react';
-import loadable from '@loadable/component';
+import React from 'react';
 import { PhpdocAppProps } from './PhpdocApp';
 import { loadStyling } from '../../loadStyling';
+import { loader } from '@codex/core';
 
-const loader = () => Promise.all([
-    import(
+export const PhpdocApp = loader<PhpdocAppProps>([
+    () => import(
         /* webpackChunkName: "phpdoc.components.app" */
         // /* webpackPrefetch: true */
         './PhpdocApp'
         ),
-    loadStyling(),
-]).then(value => value[ 0 ]);
-export type PhpdocAppComponent = ComponentType<PhpdocAppProps> & {}
+    () => loadStyling(),
+]);
 
-export let PhpdocApp: PhpdocAppComponent = loadable(loader);
 
-export default PhpdocApp;
+// export const Phpdoc = loader<PhpdocApp>([
+//     () => import(
+//         /* webpackChunkName: "phpdoc.components." */
+//         // /* webpackPrefetch: true */
+//         './Phpdoc'
+//         ),
+//     () => loadStyling(),
+// ]);

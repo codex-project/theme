@@ -5,7 +5,7 @@ import './method.scss';
 import { strEnsureLeft } from '@codex/core';
 import { Arguments, IFQSEN, PhpdocMethod as Method } from '../../logic';
 import { PhpdocArgument } from '@codex/api';
-import PhpdocType from '../type';
+import {PhpdocType} from '../type';
 import { classes } from 'typestyle';
 import { FQNSComponent, FQNSComponentCtx } from '../base';
 
