@@ -1,11 +1,8 @@
+import { loader } from 'components/loader';
+import React from 'react';
+import { OffCanvasProps } from './OffCanvas';
+
 export * from './utils';
 
-import React from 'react';
-import loadable from '@loadable/component';
-import OffCanvasClass from './OffCanvas';
-
-export interface OffCanvas extends OffCanvasClass {
-
-}
-export const OffCanvas: typeof OffCanvasClass = loadable(() => import(/* webpackChunkName: "core.components.off-canvas" */'./OffCanvas')) as any;
+export const OffCanvas = loader<OffCanvasProps>(() => import(/* webpackChunkName: "core.components.off-canvas" */'./OffCanvas')) as any;
 

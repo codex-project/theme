@@ -37,7 +37,6 @@ export * from './pages';
 // export * from './utils/box';
 export * from './utils/breakpoints';
 export * from './utils/colors';
-// export * from './utils/componentLoader';
 export * from './utils/createObservableContext';
 // export * from './utils/event';
 export * from './utils/general';

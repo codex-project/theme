@@ -1,6 +1,6 @@
 import React from 'react';
-import loadable from '@loadable/component';
 import { ScrollbarProps } from './Scrollbar';
+import { loader } from 'components/loader';
 
 
-export const Scrollbar: React.ComponentType<ScrollbarProps> = loadable(() => import(/* webpackChunkName: "core.components.scrollbar" */'./Scrollbar'));
+export const Scrollbar = loader<ScrollbarProps>(() => import(/* webpackChunkName: "core.components.scrollbar" */'./Scrollbar'));

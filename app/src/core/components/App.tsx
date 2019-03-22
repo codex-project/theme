@@ -5,7 +5,7 @@ import { Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { ErrorBoundary } from 'components/errors';
 import { TunnelProvider } from 'components/tunnel';
-import Layout from 'components/layout';
+import { Layout } from 'components/layout';
 import { StoreControl } from 'components/store-control';
 import { Router, Routes } from 'router';
 import { HtmlComponents } from 'classes/HtmlComponents';

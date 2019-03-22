@@ -4,7 +4,8 @@
         "reinstall": "nps uninstall && yarn",
         "app": "cd app && yarn",
         "api": "cd packages/api && yarn",
-        "core": "cd packages/core && yarn"
+        "core": "cd packages/core && yarn",
+        "doc": "typedoc"
     },
     "workspaces": {
         "packages": [
@@ -32,6 +33,7 @@
 
         "nps-utils": "^1.7.0",
         "typescript": "3.3.*",
-        "ts-node": "^7.0.1"
+        "ts-node": "^7.0.1",
+        "typedoc": "^0.14.2"
     }
 }

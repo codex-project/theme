@@ -1,6 +1,14 @@
-import {CodeRenderer, CodeRendererProps } from './CodeRenderer';
-import React, { ComponentType } from 'react';
-import loadable from '@loadable/component';
+import { CodeRendererProps } from './CodeRenderer';
+import React from 'react';
+import { loader } from 'components/loader';
+
+export const CodeRenderer = loader<CodeRendererProps>(() => import(
+    /* webpackChunkName: "core.components.code-renderer" */
+    // /* webpackPrefetch: true */
+    './CodeRenderer'
+    ));
+
+
 
 // const loader = () => import(
 //     /* webpackChunkName: "core.components.code-highlight" */
@@ -12,5 +20,3 @@ import loadable from '@loadable/component';
 // export let CodeRenderer: CodeRendererComponent = loadable(loader);
 //
 // export default CodeRenderer;
-
-export {CodeRenderer}

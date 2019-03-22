@@ -1,16 +1,16 @@
 import React from 'react';
 import { StoreControlProps } from './StoreControl';
-import { default as DevDialogClass, DevDialogItemKind, DialogReturn } from './DevDialog';
-import loadable from '@loadable/component';
+import { default as DevDialogClass, DevDialogItemKind, DevDialogProps, DialogReturn } from './DevDialog';
 import { Modal } from 'antd';
 import { listen } from 'utils/general';
+import { loader } from 'components/loader';
 
 export let StoreControl: React.ComponentType<StoreControlProps> = () => null;
 export let DevDialog: typeof DevDialogClass                     = (() => null) as any;
 
 if ( DEV ) {
-    StoreControl = loadable(() => import(/* webpackChunkName: "core.components.store-control" */'./StoreControl'));
-    DevDialog    = loadable(() => import(/* webpackChunkName: "core.components.store-control" */'./DevDialog')) as any;
+    StoreControl = loader<StoreControlProps>(() => import(/* webpackChunkName: "core.components.store-control" */'./StoreControl'));
+    DevDialog    = loader<DevDialogProps>(() => import(/* webpackChunkName: "core.components.store-control" */'./DevDialog')) as any;
 }
 
 export const dialog = {
@@ -22,7 +22,7 @@ export const dialog = {
             ),
         });
     },
-    bindToKey: (key: string, ...items: DevDialogItemKind[]):{ remove() } => {
+    bindToKey: (key: string, ...items: DevDialogItemKind[]): { remove() } => {
         return listen(window, 'keydown', (event: WindowEventMap['keydown']) => {
             if ( event.key.toLowerCase() !== key.toLowerCase() || event.shiftKey === false ) return;
             dialog.show(...items);

@@ -1,7 +1,7 @@
 import React from 'react';
-import loadable from '@loadable/component';
 import { TabsProps } from './Tabs';
 import { TabProps } from './Tab';
+import { loader } from 'components/loader';
 
-export const Tabs: React.ComponentType<TabsProps> = loadable(() => import(/* webpackChunkName: "core.components.tabs" */'./Tabs'));
-export const Tab: React.ComponentType<TabProps> = loadable(() => import(/* webpackChunkName: "core.components.tabs" */'./Tab'));
+export const Tabs = loader<TabsProps>(() => import(/* webpackChunkName: "core.components.tabs" */'./Tabs'));
+export const Tab  = loader<TabProps>(() => import(/* webpackChunkName: "core.components.tabs" */'./Tab'));

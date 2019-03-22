@@ -78,7 +78,13 @@ export class LoaderLoading extends Component<LoaderLoadingProps> {
 }
 
 export type ILoadableComponent<T> = React.ComponentType<T> & { preload(props?: T): void };
-export type Loadable = ((props?: any) => Promise<any>) | Array<((props?: any) => Promise<any>)> // | [ ((props?: any) => Promise<any>), ...Promise<any>[] ]
+export type LoadableFunction = ((props?: any) => Promise<any>)
+export type LoadableArray = Array<LoadableFunction> // | [ ((props?: any) => Promise<any>), ...Promise<any>[] ]
+export type Loadable = LoadableFunction | LoadableArray
+
+const isLoadableFunction = (val: any): val is LoadableFunction => typeof val === 'function';
+const isLoadableArray    = (val: any): val is LoadableArray => Array.isArray(val) && isLoadableFunction(val[ 0 ]);
+const isLoadable         = (val: any): val is Loadable => isLoadableFunction(val) || isLoadableArray(val);
 
 export interface LoaderOptions {
     loadable: Loadable
@@ -117,8 +123,8 @@ function resolve(loadable) {
     return loadable[ k ];
 }
 
-export function loader<T>(options: LoaderOptions): ILoadableComponent<T> {
-    options = getLoaderOptions(options);
+export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponent<T> {
+    let options: LoaderOptions = getLoaderOptions(isLoadable(_options) ? { loadable: _options } : _options);
 
     const Loading  = options.loading;
     const fallback = options.showLoading ? <Loading {...options.loadingOptions}/> : undefined;
@@ -126,11 +132,13 @@ export function loader<T>(options: LoaderOptions): ILoadableComponent<T> {
     const LoadableComponent = _loadable(async (props) => {
 
         let loadable;
-        if ( Array.isArray(options.loadable) ) {
+        if ( isLoadableArray(options.loadable) ) {
             let loadableValues = await Promise.all(options.loadable.map(l => l(props)));
             loadable           = loadableValues.shift();
-        } else {
+        } else if ( isLoadableFunction(options.loadable) ) {
             loadable = await options.loadable(props);
+        } else {
+            throw new Error('invalid loadable')
         }
         return options.animated ? animated(resolve(loadable)) : resolve(loadable);
 
