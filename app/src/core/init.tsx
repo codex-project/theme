@@ -20,7 +20,7 @@ customElements.define(ColorElement.TAG, ColorElement);
 
 const menuPlugin   = new MenuPlugin();
 const routerPlugin = new RouterPlugin({
-    defaultRoute: 'documentation',
+    defaultRoute: 'home',
 });
 app.notification.config({});
 app.Component = Root;

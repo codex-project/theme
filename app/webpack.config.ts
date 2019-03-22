@@ -145,6 +145,8 @@ export function addPluginEntry(chain: Chain, name: string, dirPath: string, entr
 
 export function addHMR(chain: Chain, reactHotLoader: boolean = true) {
     chain.plugin('hmr').use(webpack.HotModuleReplacementPlugin, [ {} ]);
+    chain.resolve.alias.set('react-dom', '@hot-loader/react-dom')
+    return;
     const modifyOptions = (o: BabelLoaderOptions) => {
         if ( reactHotLoader ) {
             o.plugins.push('react-hot-loader/babel');
@@ -367,11 +369,11 @@ chain.output
     .chunkFilename(assetPath('js/chunk.[name].js'));
 
 chain.output.when(isDev, chain => chain
-    .sourceMapFilename('[file].map')
-    .devtoolModuleFilenameTemplate((info: DevtoolModuleFilenameTemplateInfo) => {
+    // .sourceMapFilename('[file].map')
+    // .devtoolModuleFilenameTemplate((info: DevtoolModuleFilenameTemplateInfo) => {
         // return 'file://' + resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
-        return resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
-    }),
+        // return resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
+    // }),
 );
 chain.resolve
     .symlinks(true)

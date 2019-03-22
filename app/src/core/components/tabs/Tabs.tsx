@@ -19,6 +19,7 @@ export default class Tabs extends Component<TabsProps> {
         const { children, className, style, ...props } = this.props;
         React.Children.map(children, (child, index) => React.cloneElement(child as any, {key:index}))
         return (
+
             <AntdTabs {...props} className={className} style={style}>
                 {children}
             </AntdTabs>

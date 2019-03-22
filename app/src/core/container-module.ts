@@ -33,6 +33,7 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
         return layout;
     });
 
+    // dfssfd
     bind<typeof LocalStorage>('storage.local').toConstantValue(LocalStorage);
     bind<typeof SessionStorage>('storage.session').toConstantValue(SessionStorage);
     bind<typeof CookieStorage>('storage.cookie').toConstantValue(CookieStorage);
@@ -47,6 +48,8 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
             'c-toc-list-item' : TOCListItem,
             'c-toc-header'    : TOCHeader,
             'c-link'          : CLink,
+
+
             'c-emoji'         : Emoji,
             'c-task-list'     : TaskList,
             'c-task-list-item': TaskListItem,
@@ -54,16 +57,15 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
             'c-scrollbar'     : Scrollbar,
             'c-tabs'          : Tabs,
             'c-tab'           : Tab,
-
-            'link'   : RouteLink,
-            'trigger': Trigger,
-            'modal'  : Modal,
-            'icon'   : Icon as any,
-            'col'    : Col,
-            'row'    : Row,
-            'button' : Button,
-            'tooltip': Tooltip,
-            'popover': Popover,
+            'c-route-link'    : RouteLink,
+            'c-trigger'       : Trigger,
+            'c-modal'         : Modal,
+            'c-icon'          : Icon as any,
+            'c-col'           : Col,
+            'c-row'           : Row,
+            'c-button'        : Button,
+            'c-tooltip'       : Tooltip,
+            'c-popover'       : Popover,
         });
         return components;
     });

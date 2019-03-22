@@ -38,7 +38,6 @@ export class App extends React.Component<AppProps, any> {
                         <ErrorBoundary key="routes">
                             <Routes style={{ width: 'inherit' }}/>
                         </ErrorBoundary>
-
                         {/*{this.renderStoreController()}*/}
                     </Layout>
                 </TunnelProvider>
