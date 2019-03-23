@@ -5,7 +5,7 @@ import { PhpdocStore, Type } from '../../logic';
 import { isArray, isString } from 'lodash';
 import { lazyInject, RouteLink, strStripLeft, strStripRight } from '@codex/core';
 import './type.scss';
-import { ManifestCtx } from '../base';
+import { ManifestContext } from '../base';
 import { hot } from 'react-hot-loader';
 
 const log = require('debug')('components:PhpdocType');
@@ -39,8 +39,8 @@ export default class PhpdocType extends React.PureComponent<PhpdocTypeProps> {
         // linkToApi       : false,
     };
 
-    static contextType = ManifestCtx;
-    context!: React.ContextType<typeof ManifestCtx>;
+    static contextType = ManifestContext;
+    context!: React.ContextType<typeof ManifestContext>;
 
     @lazyInject('store.phpdoc') store: PhpdocStore;
 

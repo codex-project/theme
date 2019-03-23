@@ -2,7 +2,7 @@
 ///<reference path="../modules.d.ts"/>
 ///<reference path="../globals.d.ts"/>
 import * as types from './logic/types';
-import { Application, BasePlugin, Bind, HtmlComponents, IsBound, MenuPlugin, Rebind, RouterPlugin, Unbind } from '@codex/core';
+import { Application, BasePlugin, Bind, ComponentRegistry, IsBound, MenuPlugin, Rebind, RouterPlugin, Unbind } from '@codex/core';
 import React from 'react';
 import { PhpdocStore } from './logic';
 import { PhpdocDocblock, PhpdocEntity, PhpdocLink, PhpdocMemberList, PhpdocMethod, PhpdocPopover, PhpdocTags, PhpdocTree, PhpdocType } from './components';
@@ -31,24 +31,24 @@ export default class PhpdocPlugin extends BasePlugin {
 
     install(app: Application) {
         app.hooks.registered.tap(this.name, app => {
-            const components = app.get<HtmlComponents>('components');
+            const components = app.get<ComponentRegistry>('components');
             components.registerMap({
-                'phpdoc-docblock'         : PhpdocDocblock,
-                'phpdoc-entity'           : PhpdocEntity,
-                'phpdoc-link'             : PhpdocLink,
-                'phpdoc-member-list'      : PhpdocMemberList,
-                'phpdoc-method'           : PhpdocMethod,
-                'phpdoc-method-arguments' : PhpdocMethodArguments,
-                'phpdoc-method-signature' : PhpdocMethodSignature,
-                'phpdoc-popover'          : PhpdocPopover,
-                'phpdoc-tags'             : PhpdocTags,
-                'phpdoc-tree'             : PhpdocTree,
-                'phpdoc-type'             : PhpdocType,
-                'phpdoc-manifest-provider': ManifestProvider,
+                'docblock'         : PhpdocDocblock,
+                'entity'           : PhpdocEntity,
+                'link'             : PhpdocLink,
+                'member-list'      : PhpdocMemberList,
+                'method'           : PhpdocMethod,
+                'method-arguments' : PhpdocMethodArguments,
+                'method-signature' : PhpdocMethodSignature,
+                'popover'          : PhpdocPopover,
+                'tags'             : PhpdocTags,
+                'tree'             : PhpdocTree,
+                'type'             : PhpdocType,
+                'manifest-provider': ManifestProvider,
                 // 'phpdoc-content'         : PhpdocContent,
                 // 'phpdoc-method-component': PhpdocMethodComponent,
                 // 'phpdoc-file-component'  : PhpdocFileComponent,
-            });
+            }, { tagPrefix: 'phpdoc-' });
         });
         if ( app.plugins.has('router') ) {
             app.plugins.get<RouterPlugin>('router').hooks.register.tap(this.name, (router) => {
@@ -71,8 +71,8 @@ export default class PhpdocPlugin extends BasePlugin {
                     },
                 });
                 DEV && router.addRoute({
-                    name  : 'phpdoc.test',
-                    path  : app.url.root('phpdoc-test'),
+                    name         : 'phpdoc.test',
+                    path         : app.url.root('phpdoc-test'),
                     loadComponent: () => import('./PhpdocPage'),
                 });
                 DEV && router.addRoute({

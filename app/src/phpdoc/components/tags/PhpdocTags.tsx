@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
-import { CodeHighlight,getColor, HtmlComponents, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
+import { CodeHighlight,getColor, HtmlParser, lazyInject, MaterialColor, strEnsureLeft } from '@codex/core';
 import { classes } from 'typestyle';
 
 import './tags.scss';
@@ -28,7 +28,7 @@ export interface PhpdocTagsProps {
 @hot(module)
 @observer
 export default class PhpdocTags extends React.Component<PhpdocTagsProps> {
-    @lazyInject('components') hc: HtmlComponents;
+    @lazyInject('htmlparser') htmlParser: HtmlParser;
     static displayName: string                    = 'PhpdocTags';
     static defaultProps: Partial<PhpdocTagsProps> = {
         size     : 11,
@@ -82,7 +82,7 @@ export default class PhpdocTags extends React.Component<PhpdocTagsProps> {
         let { variable, refers, link, line, description, type, name, types } = tag;
         variable                                                             = <span className={classes('tag-variable')}>{variable}</span> as any;
         try {
-            description = this.hc.parse(description) as any;
+            description = this.htmlParser.parse(description) as any;
         } catch ( e ) {
 
         }

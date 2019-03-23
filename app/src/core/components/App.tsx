@@ -8,7 +8,8 @@ import { TunnelProvider } from 'components/tunnel';
 import { Layout } from 'components/layout';
 import { StoreControl } from 'components/store-control';
 import { Router, Routes } from 'router';
-import { HtmlComponents } from 'classes/HtmlComponents';
+import { HtmlParser } from 'classes/HtmlParser';
+import { DC } from '../dc';
 
 const log = require('debug')('App');
 
@@ -21,9 +22,13 @@ export interface AppProps {}
 export class App extends React.Component<AppProps, any> {
     @lazyInject('store') store: Store;
     @lazyInject('router') router: Router;
-    @lazyInject('components') components: HtmlComponents;
+    @lazyInject('htmlparser') htmlParser: HtmlParser;
 
     static displayName = 'App';
+
+    render2(){
+        return <DC />
+    }
 
     render() {
         return (
@@ -44,62 +49,62 @@ export class App extends React.Component<AppProps, any> {
             </ErrorBoundary>
         );
     }
-
-    renderStoreController() {
-
-        return (
-            <StoreControl store={this.store.layout} stores={{
-                'container': {
-                    stretch: 'boolean',
-                },
-                'header'   : {
-                    show             : 'boolean',
-                    height           : 'number',
-                    fixed            : 'boolean',
-                    color            : 'color.name',
-                    logo             : 'boolean',
-                    show_left_toggle : 'boolean',
-                    show_right_toggle: 'boolean',
-                    menu             : 'menu',
-                },
-                'left'     : {
-                    show          : 'boolean',
-                    width         : 'number',
-                    fixed         : 'boolean',
-                    collapsedWidth: 'number',
-                    collapsed     : 'boolean',
-                    outside       : 'boolean',
-                    color         : 'color.name',
-                    menu          : 'menu',
-                },
-                'right'    : {
-                    show          : 'boolean',
-                    width         : 'number',
-                    fixed         : 'boolean',
-                    collapsedWidth: 'number',
-                    collapsed     : 'boolean',
-                    outside       : 'boolean',
-                    color         : 'color.name',
-                },
-                'middle'   : {
-                    padding: 'string',
-                    margin : 'string',
-                    color  : 'color.name',
-                },
-                'content'  : {
-                    padding: 'string',
-                    margin : 'string',
-                    color  : 'color.name',
-                },
-                'footer'   : {
-                    show  : 'boolean',
-                    height: 'number',
-                    fixed : 'boolean',
-                    color : 'color.name',
-                },
-            }}/>
-        );
-    }
+    //
+    // renderStoreController() {
+    //
+    //     return (
+    //         <StoreControl store={this.store.layout} stores={{
+    //             'container': {
+    //                 stretch: 'boolean',
+    //             },
+    //             'header'   : {
+    //                 show             : 'boolean',
+    //                 height           : 'number',
+    //                 fixed            : 'boolean',
+    //                 color            : 'color.name',
+    //                 logo             : 'boolean',
+    //                 show_left_toggle : 'boolean',
+    //                 show_right_toggle: 'boolean',
+    //                 menu             : 'menu',
+    //             },
+    //             'left'     : {
+    //                 show          : 'boolean',
+    //                 width         : 'number',
+    //                 fixed         : 'boolean',
+    //                 collapsedWidth: 'number',
+    //                 collapsed     : 'boolean',
+    //                 outside       : 'boolean',
+    //                 color         : 'color.name',
+    //                 menu          : 'menu',
+    //             },
+    //             'right'    : {
+    //                 show          : 'boolean',
+    //                 width         : 'number',
+    //                 fixed         : 'boolean',
+    //                 collapsedWidth: 'number',
+    //                 collapsed     : 'boolean',
+    //                 outside       : 'boolean',
+    //                 color         : 'color.name',
+    //             },
+    //             'middle'   : {
+    //                 padding: 'string',
+    //                 margin : 'string',
+    //                 color  : 'color.name',
+    //             },
+    //             'content'  : {
+    //                 padding: 'string',
+    //                 margin : 'string',
+    //                 color  : 'color.name',
+    //             },
+    //             'footer'   : {
+    //                 show  : 'boolean',
+    //                 height: 'number',
+    //                 fixed : 'boolean',
+    //                 color : 'color.name',
+    //             },
+    //         }}/>
+    //     );
+    // }
 
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { hot } from 'decorators';
+
+import { hot } from 'react-hot-loader';
 import { IStoreProxy, LayoutStoreSide, Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { observer } from 'mobx-react';

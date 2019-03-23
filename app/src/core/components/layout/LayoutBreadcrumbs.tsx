@@ -6,7 +6,7 @@ import { Icon } from '../icon';
 import { classes } from 'typestyle';
 
 import './index.scss';
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 import { Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { RouteLink, Router } from 'router';

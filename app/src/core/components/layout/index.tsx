@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType,ComponentClass } from 'react';
 import { loader } from 'components/loader';
 
 import { LayoutProps } from './Layout';
@@ -20,8 +20,8 @@ export type LayoutComponent = ComponentType<LayoutProps> & {
     Breadcrumbs?: ComponentType<LayoutBreadcrumbsProps>
 }
 
-export let Layout: LayoutComponent = loader<LayoutProps>(() => _loader().then(l => l.Layout));
-export const LayoutHeader          = Layout.Header = loader<LayoutHeaderProps>(() => _loader().then(l => l.Layout.Header));
-export const LayoutFooter          = Layout.Footer = loader<LayoutFooterProps>(() => _loader().then(l => l.Layout.Footer));
-export const LayoutSide            = Layout.Side = loader<LayoutSideProps>(() => _loader().then(l => l.Layout.Side));
-export const LayoutBreadcrumbs     = Layout.Breadcrumbs = loader<LayoutBreadcrumbsProps>(() => _loader().then(l => l.Layout.Breadcrumbs));
+export let Layout: LayoutComponent                             = loader<LayoutProps>(() => _loader().then(l => l.Layout));
+export const LayoutHeader: LayoutComponent['Header']           = Layout.Header = loader<LayoutHeaderProps>(() => _loader().then(l => l.Layout.Header));
+export const LayoutFooter: LayoutComponent['Footer']           = Layout.Footer = loader<LayoutFooterProps>(() => _loader().then(l => l.Layout.Footer));
+export const LayoutSide: LayoutComponent['Side']               = Layout.Side = loader<LayoutSideProps>(() => _loader().then(l => l.Layout.Side));
+export const LayoutBreadcrumbs: LayoutComponent['Breadcrumbs'] = Layout.Breadcrumbs = loader<LayoutBreadcrumbsProps>(() => _loader().then(l => l.Layout.Breadcrumbs));

@@ -13,7 +13,7 @@ import { TunnelPlaceholder } from '../tunnel';
 import './index.scss';
 import { LayoutStore, Store } from 'stores';
 import { lazyInject } from 'ioc';
-import { hot } from 'decorators';
+import { hot } from 'react-hot-loader';
 import { action, observable } from 'mobx';
 
 const { Sider, Header, Content, Footer } = AntdLayout;

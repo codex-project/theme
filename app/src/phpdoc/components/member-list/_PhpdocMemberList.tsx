@@ -6,7 +6,7 @@ import { Checkbox, Input, Popover, Tabs, Tooltip } from 'antd';
 import ListItem, { ListItemProps } from './ListItem';
 import './member-list.scss';
 import { Button, Scrollbar, ucfirst } from '@codex/core';
-import { FQNSComponent, FQNSComponentCtx } from '../base';
+import { FQNSComponent, FQNSComponentContext } from '../base';
 import { AutoSizer, List, ListRowProps } from 'react-virtualized';
 import PhpdocMethod, { PhpdocMethodSignature } from '../method';
 import { IFQSEN, PhpdocFile, PhpdocMethod as PhpdocMethodClass, PhpdocProperty } from '../../logic';
@@ -71,8 +71,8 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         onInheritedClick : () => null,
         onGotoSourceClick: () => null,
     };
-    static contextType                                  = FQNSComponentCtx;
-    context!: React.ContextType<typeof FQNSComponentCtx>;
+    static contextType                                  = FQNSComponentContext;
+    context!: React.ContextType<typeof FQNSComponentContext>;
     listRef: List                                       = null;
     state: {
         list: MemberList,
@@ -106,7 +106,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
     @observable scrollTop: number                       = 0;
     @observable searchFocus: boolean                    = false;
 
-    constructor(props: PhpdocMemberListProps, context: React.ContextType<typeof FQNSComponentCtx>) {
+    constructor(props: PhpdocMemberListProps, context: React.ContextType<typeof FQNSComponentContext>) {
         super(props, context);
         // this.state.list = new MemberList(context.file);
         // this.state.list.setSelected(props.selected);

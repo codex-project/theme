@@ -128,8 +128,9 @@ export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponen
 
     const Loading  = options.loading;
     const fallback = options.showLoading ? <Loading {...options.loadingOptions}/> : undefined;
+    let Loadable;
 
-    const LoadableComponent = _loadable(async (props) => {
+    let LoadableComponent = _loadable(async (props) => {
 
         let loadable;
         if ( isLoadableArray(options.loadable) ) {
@@ -138,21 +139,28 @@ export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponen
         } else if ( isLoadableFunction(options.loadable) ) {
             loadable = await options.loadable(props);
         } else {
-            throw new Error('invalid loadable')
+            throw new Error('invalid loadable');
         }
-        return options.animated ? animated(resolve(loadable)) : resolve(loadable);
+        Loadable = resolve(loadable);
+        return Loadable;
 
     }, { fallback }) as ILoadableComponent<T>;
+
+    // LoadableComponent.displayName = 'LoadableComponent';
 
     if ( ! options.animated ) {
         return LoadableComponent;
     }
 
     let AnimatedLoadableComponent: ILoadableComponent<T>;
-    AnimatedLoadableComponent         = function (props) {
-        const style = useSpring(options.animation);
+    AnimatedLoadableComponent             = function (props) {
+        const style                   = useSpring(options.animation);
+        const displayName             = LoadableComponent.displayName;
+        LoadableComponent             = animated(LoadableComponent) as any;
+        LoadableComponent.displayName = displayName;
         return <LoadableComponent {...props} style={style}/>;
     } as any;
-    AnimatedLoadableComponent.preload = (props) => LoadableComponent.preload(props);
+    AnimatedLoadableComponent.displayName = 'AnimatedLoadableComponent';
+    AnimatedLoadableComponent.preload     = (props) => LoadableComponent.preload(props);
     return AnimatedLoadableComponent;
 }

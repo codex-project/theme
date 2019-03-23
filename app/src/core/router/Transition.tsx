@@ -7,7 +7,7 @@ const log  = require('debug')('router:Transition');
 const slog = require('debug')('router:Transition:state');
 
 export  type TransitionStatus = 'started' | 'finished' | 'canceled' | 'forwarded';
-export  type TransitionStep = 'canLeave' | 'beforeLeave' | 'canEnter' | 'leave' | 'beforeEnter' | 'enter';
+export  type TransitionStep = 'canLeave' | 'beforeLeave' | 'canEnter' | 'leave' | 'beforeEnter' | 'enter' | 'entered';
 
 export class Transition {
     static count          = 0;
@@ -15,6 +15,7 @@ export class Transition {
         started : new SyncBailHook(),
         leave   : new SyncBailHook(),
         enter   : new SyncHook(),
+        entered : new SyncHook(),
         finished: new SyncHook(),
         canceled: new SyncHook(),
     };
@@ -138,6 +139,7 @@ export class Transition {
                 }
             }
 
+            this.setStep('entered');
             res();
         });
         if ( this.canceled ) {

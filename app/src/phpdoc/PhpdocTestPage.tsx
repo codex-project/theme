@@ -6,7 +6,7 @@ import { Observer, observer } from 'mobx-react';
 import { Tabs } from 'antd';
 import { action, observable } from 'mobx';
 import { hot } from 'react-hot-loader';
-import { ManifestCtx, ManifestProvider } from './components/base';
+import { ManifestContext, ManifestProvider } from './components/base';
 import PhpdocMemberList from './components/member-list';
 import { Col, Row } from 'antd/es/grid';
 import PhpdocTree from './components/tree';
@@ -115,7 +115,7 @@ export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps 
             <div id="phpdoc" {...props}>
                 <h3>PHPDOC Test Page</h3>
                 <ManifestProvider project="codex" revision="master">
-                    <ManifestCtx.Consumer>
+                    <ManifestContext.Consumer>
                         {ctx => {
                             this.manifest = ctx.manifest;
                             return (
@@ -142,7 +142,7 @@ export default class PhpdocTestPage extends React.Component<PhpdocTestPageProps 
                                 }</Observer>
                             );
                         }}
-                    </ManifestCtx.Consumer>
+                    </ManifestContext.Consumer>
                 </ManifestProvider>
             </div>
         );

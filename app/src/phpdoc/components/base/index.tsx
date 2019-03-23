@@ -6,7 +6,8 @@ export interface IManifestCtx {
     manifest: PhpdocManifest
 }
 
-export const ManifestCtx = React.createContext<IManifestCtx>({ manifest: null });
+export const ManifestContext = React.createContext<IManifestCtx>({ manifest: null });
+ManifestContext.displayName  = 'ManifestContext';
 
 export interface ManifestProviderBaseProps {
     project: string
@@ -50,9 +51,9 @@ export class ManifestProvider extends Component<ManifestProviderProps> {
         const { children, ...props } = this.props;
 
         return (
-            <ManifestCtx.Provider value={{ manifest: this.state.manifest }}>
+            <ManifestContext.Provider value={{ manifest: this.state.manifest }}>
                 {this.state.manifest ? children : props.forceRenderChildren ? children : null}
-            </ManifestCtx.Provider>
+            </ManifestContext.Provider>
         );
     }
 }
@@ -65,7 +66,8 @@ export interface IFQNSComponentCtx {
 }
 
 
-export const FQNSComponentCtx = React.createContext<IFQNSComponentCtx>({ manifest: null, file: null, fqsen: null });
+export const FQNSComponentContext = React.createContext<IFQNSComponentCtx>({ manifest: null, file: null, fqsen: null });
+FQNSComponentContext.displayName='FQNSComponentContext';
 
 export interface FQNSComponentProps {
     fqsen:IFQSEN
@@ -77,8 +79,8 @@ export function FQNSComponent(contextual: boolean = false) {
         class HOC extends Component<FQNSComponentProps> {
             static displayName                        = 'FQNSHOC';
             static WrappedComponent                   = TargetComponent;
-            static contextType                        = ManifestCtx;
-            context!: React.ContextType<typeof ManifestCtx>;
+            static contextType                        = ManifestContext;
+            context!: React.ContextType<typeof ManifestContext>;
             state: { fqsen: FQSEN, file: PhpdocFile } = { fqsen: null, file: null };
 
             constructor(props: any, context: any) {
@@ -116,11 +118,11 @@ export function FQNSComponent(contextual: boolean = false) {
             render() {
                 const { children, ...props } = this.props;
                 return (
-                    <FQNSComponentCtx.Provider value={{ manifest: this.context.manifest, file: this.state.file, fqsen: this.state.fqsen }}>
+                    <FQNSComponentContext.Provider value={{ manifest: this.context.manifest, file: this.state.file, fqsen: this.state.fqsen }}>
                         <If condition={this.state.file}>
                             {React.createElement(TargetComponent as any, props, children)}
                         </If>
-                    </FQNSComponentCtx.Provider>
+                    </FQNSComponentContext.Provider>
                 );
             }
         }

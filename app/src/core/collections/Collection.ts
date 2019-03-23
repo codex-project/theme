@@ -6,7 +6,7 @@ export class Collection<T> extends Array<T> implements Array<T> {
 
     constructor(...items: T[]) {
         super(...items);
-        Object.setPrototypeOf(this, Collection.prototype);
+        Object.setPrototypeOf(this, new.target.prototype);
     }
 
     static make<T>(items: T[]) { return new Collection<T>(...items); }
@@ -67,7 +67,6 @@ export class NamedCollection<T> extends Collection<T> {
 
     constructor(...items: T[]) {
         super(...items);
-        Object.setPrototypeOf(this, NamedCollection.prototype);
     }
 
     get(key) {

@@ -7,7 +7,7 @@ import posed from 'react-pose';
 import { toJS } from 'mobx';
 import { State } from 'router';
 import { app, lazyInject } from 'ioc';
-import { HtmlComponents } from 'classes/HtmlComponents';
+import { HtmlParser } from 'classes/HtmlParser';
 import { Store } from 'stores';
 
 const log = require('debug')('pages:DocumentPage');
@@ -30,7 +30,7 @@ const DocumentContainer = posed.div({
 @observer
 export default class DocumentPage extends React.Component<DocumentPageProps> {
     @lazyInject('api') api: Api;
-    @lazyInject('components') hc: HtmlComponents;
+    @lazyInject('htmlparser') htmlParser: HtmlParser;
     @lazyInject('store') store: Store;
 
     static displayName = 'DocumentPage';
@@ -73,7 +73,7 @@ export default class DocumentPage extends React.Component<DocumentPageProps> {
         let content = null;
         if ( document ) {
             try {
-                content = this.hc.parse(document.content);
+                content = this.htmlParser.parse(document.content);
             } catch ( e ) {
                 console.warn(e);
             }

@@ -12,7 +12,7 @@ import { TreeBuilder } from './TreeBuilder';
 import { hot } from 'react-hot-loader';
 
 import './PhpdocTree.scss';
-import { ManifestCtx } from '../base';
+import { ManifestContext } from '../base';
 import Scrollbars from 'react-custom-scrollbars';
 import { TreeNode, TreeNodes } from 'inspire-tree';
 
@@ -36,8 +36,8 @@ export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
     static defaultProps: Partial<PhpdocTreeProps> = {
         getTree: () => null,
     };
-    static contextType                            = ManifestCtx;
-    context!: React.ContextType<typeof ManifestCtx>;
+    static contextType                            = ManifestContext;
+    context!: React.ContextType<typeof ManifestContext>;
 
     search: typeof Search;
     scrollbar = React.createRef<Scrollbars>();

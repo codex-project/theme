@@ -3,7 +3,7 @@ import './method-signature.scss';
 import { PhpdocMethod as Method, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type';
 import { classes } from 'typestyle';
-import { FQNSComponent, FQNSComponentCtx, FQNSComponentProps } from '../base';
+import { FQNSComponent, FQNSComponentContext, FQNSComponentProps } from '../base';
 import { iconTooltipDeprecated, iconTooltipInherited } from '../tooltips';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
@@ -43,8 +43,8 @@ export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMet
         size           : 14,
         hide           : {},
     };
-    static contextType                                       = FQNSComponentCtx;
-    context!: React.ContextType<typeof FQNSComponentCtx>;
+    static contextType                                       = FQNSComponentContext;
+    context!: React.ContextType<typeof FQNSComponentContext>;
 
     get method(): Method {return this.context.file.entity.methods.get(this.context.fqsen.memberName);};
 

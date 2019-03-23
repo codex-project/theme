@@ -3427,6 +3427,13 @@
     "@types/node" "*"
     "@types/react" "*"
 
+"@types/react-hyperscript@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.npmjs.org/@types/react-hyperscript/-/react-hyperscript-3.0.4.tgz#b7d4b357c018ac9d6b16dd543fb4c0209a23e91d"
+  integrity sha512-TZiUdoHJO5Sysw6hpS48CN9f2oDy2TEbrGr58JJACt0x9OZijH1bKCaXL6llk7QjCZWGsMSuyl6Jy4PhHcSjbw==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-loadable@^5.4.1":
   version "5.5.0"
   resolved "https://registry.npmjs.org/@types/react-loadable/-/react-loadable-5.5.0.tgz#7a878408ad940250aeb91d77d2b54a18f3c7c946"
@@ -18786,6 +18793,11 @@ react-html-parser@^2.0.2:
   integrity sha512-XeerLwCVjTs3njZcgCOeDUqLgNIt/t+6Jgi5/qPsO/krUWl76kWKXMeVs2LhY2gwM6X378DkhLjur0zUQdpz0g==
   dependencies:
     htmlparser2 "^3.9.0"
+
+react-hyperscript@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.npmjs.org/react-hyperscript/-/react-hyperscript-3.2.0.tgz#24144ff6b1beb07af7154794a782a74b34920868"
+  integrity sha512-kf9VmxwCNqAImT3uDrCPJ8H5XdNzfSLps9x0qgJCH6OUCBiGAy1m9wHpedfr7GSuFqowhkNwv4ZuC40k3E/zRQ==
 
 react-iframe-resizer-super@^0.2.2:
   version "0.2.2"

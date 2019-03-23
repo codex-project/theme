@@ -32,5 +32,9 @@ $prefix-cls: 'phpdoc-entity';
         > i { line-height : 20px; font-size : 13px; }
         > .header-title { font-size : 13px; line-height : 15px; }
     }
+
+    .phpdoc-popover & {
+        padding: 0;
+    }
 }
 

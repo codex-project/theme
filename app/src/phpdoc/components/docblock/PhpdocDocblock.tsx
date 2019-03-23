@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { classes, style } from 'typestyle';
 import { isString } from 'lodash';
-import { getColor, hot, HtmlComponents, lazyInject, MaterialColor } from '@codex/core';
+import { getColor, hot, HtmlParser, lazyInject, MaterialColor } from '@codex/core';
 import { api } from '@codex/api';
 import { Tags } from '../../logic';
 import './docblock.scss';
@@ -33,7 +33,7 @@ export { PhpdocDocblock };
 @hot(module)
 @observer
 export default class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
-    @lazyInject('components') hc: HtmlComponents;
+    @lazyInject('htmlparser') htmlParser: HtmlParser;
     static displayName: string                        = 'PhpdocDocblock';
     static defaultProps: Partial<PhpdocDocblockProps> = {
         boxed      : false,
@@ -60,9 +60,9 @@ export default class PhpdocDocblock extends React.Component<PhpdocDocblockProps>
         }
         let { description, line, tags, long_description } = docblock;
         try {
-            description = this.hc.parse(description) as any;
+            description = this.htmlParser.parse(description) as any;
             if ( this.hasLongDescription ) {
-                long_description = this.hc.parse(long_description) as any;
+                long_description = this.htmlParser.parse(long_description) as any;
             }
         } catch ( e ) {
 

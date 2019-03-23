@@ -1,7 +1,7 @@
 import { FQSEN, Methods, PhpdocFile, PhpdocManifest, PhpdocMethod, PhpdocProperty, Properties } from '../../logic';
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
-import { FQNSComponent, FQNSComponentCtx, FQNSComponentProps } from '../base';
+import { FQNSComponent, FQNSComponentContext, FQNSComponentProps } from '../base';
 import { api } from '@codex/api';
 import { List, Map } from 'immutable';
 
@@ -62,8 +62,8 @@ export { ListContextProvider };
 export default class ListContextProvider extends Component<ListContextProviderProps, State> {
     static displayName                                     = 'ListContextProvider';
     static defaultProps: Partial<ListContextProviderProps> = {};
-    static contextType                                     = FQNSComponentCtx;
-    context!: React.ContextType<typeof FQNSComponentCtx>;
+    static contextType                                     = FQNSComponentContext;
+    context!: React.ContextType<typeof FQNSComponentContext>;
 
     state: State = {
         items   : null,
@@ -82,7 +82,7 @@ export default class ListContextProvider extends Component<ListContextProviderPr
         },
     };
 
-    constructor(props: ListContextProviderProps, context: React.ContextType<typeof FQNSComponentCtx>) {
+    constructor(props: ListContextProviderProps, context: React.ContextType<typeof FQNSComponentContext>) {
         super(props, context);
         this.state.items    = context.file.entity.members.toList();
         this.state.filtered = this.state.items.keySeq().toArray();

@@ -3,7 +3,7 @@ import { Api, api } from '@codex/api';
 import { observer } from 'mobx-react';
 import { observable, runInAction } from 'mobx';
 import { lazyInject } from 'ioc';
-import { HtmlComponents } from 'classes/HtmlComponents';
+import { HtmlParser } from 'classes/HtmlParser';
 import { Store } from 'stores';
 import Helmet from 'react-helmet';
 
@@ -51,7 +51,7 @@ export class Scripts extends React.Component<RunScriptProps> {
 @observer
 export default class DocumentViewer extends React.Component<DocumentViewerProps> {
     @lazyInject('api') api: Api;
-    @lazyInject('components') hc: HtmlComponents;
+    @lazyInject('htmlparser') htmlParser: HtmlParser;
     @lazyInject('store') store: Store;
     static displayName = 'DocumentViewer';
 
@@ -80,7 +80,7 @@ export default class DocumentViewer extends React.Component<DocumentViewerProps>
         let content = null;
         if ( this.document && this.document.content ) {
             try {
-                content = this.hc.parse(this.document.content);
+                content = this.htmlParser.parse(this.document.content);
                 content = (
                     <div id="document">
                         <Helmet>

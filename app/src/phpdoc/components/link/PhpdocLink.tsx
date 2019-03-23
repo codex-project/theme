@@ -7,10 +7,10 @@ import { PhpdocType } from '../type';
 import { PhpdocEntity } from '../entity';
 import { PhpdocPopover } from '../popover';
 import { PhpdocMethod } from '../method';
-import { ManifestCtx } from '../base';
+import { ManifestContext } from '../base';
 import { hot } from 'react-hot-loader';
+import PhpdocDrawer from '../drawer';
 
-export { PhpdocLink };
 
 const log = require('debug')('phpdoc:link');
 
@@ -28,15 +28,15 @@ export interface PhpdocLinkProps {
 
 @hot(module)
 @observer
-export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
+export class PhpdocLink extends React.Component<PhpdocLinkProps> {
     static displayName                            = 'PhpdocLink';
     static defaultProps: Partial<PhpdocLinkProps> = {
         action   : 'navigate',
         modifiers: [],
     };
 
-    static contextType = ManifestCtx;
-    context!: React.ContextType<typeof ManifestCtx>;
+    static contextType = ManifestContext;
+    context!: React.ContextType<typeof ManifestContext>;
 
     @lazyInject('store.phpdoc') store: PhpdocStore;
 
@@ -85,13 +85,15 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
         }
         if ( action === 'drawer' ) {
             return (
-                <a
-                    href="javascript:void(0)"
-                    onClick={() => this.setShowDrawer(true)}
-                    className={linkClassName}
-                >
-                    {linkChildren}
-                </a>
+                <Fragment>
+                    <a
+                        href="javascript:void(0)"
+                        onClick={() => this.setShowDrawer(true)}
+                        className={linkClassName}
+                    >
+                        {linkChildren}
+                    </a>
+                </Fragment>
             );
         }
 
@@ -115,11 +117,13 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
             return <span>{this.fqsen.fullName}</span>;
         }
 
+        const maxHeight = this.fqsen.isMethod ? 200 : null;
+
         return (
             <Fragment>
                 {/*{props.action === 'drawer' ? <PhpdocDrawer query={props.query} open={this.showDrawer} onChange={open => this.setShowDrawer(open)}/> : null}*/}
                 {props.modifiers.includes('popover') ?
-                 <PhpdocPopover maxHeight={200} placement="bottom" footerText={footerText}>
+                 <PhpdocPopover maxHeight={maxHeight} placement="bottom" footerText={footerText}>
                      <Trigger listenTo={[ 'onMouseEnter', 'onMouseLeave', 'onClick' ]}>
                          {this.renderLink()}
                      </Trigger>
@@ -128,6 +132,11 @@ export default class PhpdocLink extends React.Component<PhpdocLinkProps> {
                       null}
                  </PhpdocPopover> :
                  this.renderLink()}
+                 <If condition={props.action === 'drawer'}>
+                     <PhpdocDrawer fqsen={this.fqsen} >
+                         Drawer Content
+                     </PhpdocDrawer>
+                 </If>
             </Fragment>
         );
     }

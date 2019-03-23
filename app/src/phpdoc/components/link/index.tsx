@@ -11,3 +11,6 @@ export const PhpdocLink = loader<PhpdocLinkProps>([
         ),
     () => loadStyling(),
 ]);
+
+
+// export {PhpdocLink}

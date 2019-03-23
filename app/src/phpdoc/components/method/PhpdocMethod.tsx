@@ -2,14 +2,14 @@
 import React, { Component } from 'react';
 import './method.scss';
 import PhpdocMethodArguments from './PhpdocMethodArguments';
-import { CodeHighlight, HtmlComponents, lazyInject } from '@codex/core';
+import { CodeHighlight, HtmlParser, lazyInject } from '@codex/core';
 import { PhpdocTag } from '@codex/api';
 import { classes } from 'typestyle';
 import { IFQSEN, PhpdocMethod as Method } from '../../logic';
 import { PhpdocTags } from '../tags';
 import { PhpdocType } from '../type';
 import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
-import { FQNSComponent, FQNSComponentCtx } from '../base';
+import { FQNSComponent, FQNSComponentContext } from '../base';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
@@ -65,16 +65,16 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
         signatureProps: {},
     };
 
-    static contextType = FQNSComponentCtx;
-    context!: React.ContextType<typeof FQNSComponentCtx>;
+    static contextType = FQNSComponentContext;
+    context!: React.ContextType<typeof FQNSComponentContext>;
 
-    @lazyInject('components') hc: HtmlComponents;
+    @lazyInject('htmlparser') htmlParser: HtmlParser;
 
     state: { open: boolean } = { open: ! this.props.collapsed };
 
     toggleCollapse = () => this.setState({ open: ! this.state.open });
 
-    public shouldComponentUpdate(nextProps: Readonly<PhpdocMethodProps>, nextState: Readonly<{ open: boolean }>, nextContext: React.ContextType<typeof FQNSComponentCtx>): boolean {
+    public shouldComponentUpdate(nextProps: Readonly<PhpdocMethodProps>, nextState: Readonly<{ open: boolean }>, nextContext: React.ContextType<typeof FQNSComponentContext>): boolean {
         if ( nextState.open !== this.state.open ) {
             log('shouldComponentUpdate', 'nextState.open');
             return true;
@@ -131,11 +131,11 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     }
 
     get description() {
-        return this.hc.parse(this.method.docblock.description) as any;
+        return this.htmlParser.parse(this.method.docblock.description) as any;
     }
 
     get long_description() {
-        return this.method.docblock.long_description ? this.hc.parse(this.method.docblock.long_description) as any : null;
+        return this.method.docblock.long_description ? this.htmlParser.parse(this.method.docblock.long_description) as any : null;
     }
 
     render() {
