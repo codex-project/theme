@@ -117,7 +117,18 @@ export interface PhpdocComponents {
     'phpdoc-manifest-provider': ManifestProviderProps
 }
 declare module 'codex-components' {
-    interface Components extends PhpdocComponents {
-
+    interface Components {
+        'phpdoc-docblock'         : PhpdocDocblockProps
+        'phpdoc-entity'           : PhpdocEntityProps
+        'phpdoc-link'             : PhpdocLinkProps
+        'phpdoc-member-list'      : PhpdocMemberListProps
+        'phpdoc-method'           : PhpdocMethodProps
+        'phpdoc-method-arguments' : PhpdocMethodArgumentsProps
+        'phpdoc-method-signature' : PhpdocMethodSignatureProps
+        'phpdoc-popover'          : PhpdocPopoverProps
+        'phpdoc-tags'             : PhpdocTagsProps
+        'phpdoc-tree'             : PhpdocTreeProps
+        'phpdoc-type'             : PhpdocTypeProps
+        'phpdoc-manifest-provider': ManifestProviderProps
     }
 }

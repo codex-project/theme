@@ -10,7 +10,7 @@ import { observable } from 'mobx';
 import { FQSEN } from './logic';
 import { observer } from 'mobx-react';
 import { hot } from 'react-hot-loader';
-import {PhpdocLink} from './components/link';
+import { PhpdocLink } from './components/link';
 
 const AutoWidthGridLayout = WidthProvider(ReactGridLayout);
 
@@ -64,14 +64,6 @@ export default class PhpdocPage extends React.Component<PhpdocPageProps & { rout
                     </ManifestContext.Provider>
                 </If>
             </div>
-        );
-    }
-
-    renderContent(): React.ReactNode {
-        return (
-            <PhpdocLink fqsen={this.fqsen} action="drawer">
-                The link
-            </PhpdocLink>
         );
     }
 

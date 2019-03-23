@@ -78,7 +78,11 @@ export namespace Hyper {
     export interface FragmentFn {
         (...children: ReactElement<any>[]): ReactElement<any>
     }
+
+
 }
 
 export const h: Hyper.RenderFn   = (...args: any[]) => Hyper.render(...args);
 export const f: Hyper.FragmentFn = (...args: any[]) => Hyper.fragment(...args);
+
+

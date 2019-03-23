@@ -18,5 +18,8 @@
         "gulpfile.ts",
         "test.ts",
         "./build"
+    ],
+    "exclude": [
+        "app"
     ]
 }

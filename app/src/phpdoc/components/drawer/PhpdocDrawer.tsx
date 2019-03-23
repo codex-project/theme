@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { FQNSComponent, FQNSComponentContext, FQNSComponentProps } from '../base';
 import { observer } from 'mobx-react';
-import { app, OffCanvas } from '@codex/core';
+import { app, h, OffCanvas } from '@codex/core';
 import ReactDOM from 'react-dom';
 import { OffCanvasProps } from '@codex/core/components/off-canvas/OffCanvas';
 
 class AppendToRoot extends React.Component {
-    static displayName='AppendToRoot';
+    static displayName = 'AppendToRoot';
+
     render() {
         return ReactDOM.createPortal(this.props.children, window.document.getElementById(app.config.rootID));
     }
@@ -31,14 +32,24 @@ export default class PhpdocDrawer extends Component<PhpdocDrawerProps & FQNSComp
         return (
             <AppendToRoot>
                 <OffCanvas
+
                     {...props}
                     ref={this._offCanvas}
+
                     position="left"
                 >
+                    {this.context.fqsen.isEntity ? this.renderEntity() : null}
                     {children}
                 </OffCanvas>
             </AppendToRoot>
         );
+    }
+
+    renderEntity() {
+        const { fqsen } = this.context;
+        return h('div', {}, h([
+            h('phpdoc-entity', { fqsen }),
+        ]));
     }
 }
 

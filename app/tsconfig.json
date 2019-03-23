@@ -30,5 +30,8 @@
         "./test.ts",
         "./gulpfile.ts",
         "./webpack.config.ts"
+    ],
+    "exclude": [
+        "src"
     ]
 }

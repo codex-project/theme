@@ -3,7 +3,6 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "*": ["*"],
             "assets": ["assets"],
             "assets/*": ["assets/*"],
             "elements": ["elements"],
@@ -26,9 +25,13 @@
         }
     },
     "include": [
+        "*",
         "*.ts",
         "*.tsx",
         "**/*.ts",
         "**/*.tsx"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

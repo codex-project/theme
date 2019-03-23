@@ -14,5 +14,6 @@
   </component>
   <component name="TypeScriptCompiler">
     <option name="scopeName" value="All Places" />
+    <option name="typeScriptCompilerParams" value="-p /home/radic/theme/app/tsconfig.webpack.json" />
   </component>
 </project>
