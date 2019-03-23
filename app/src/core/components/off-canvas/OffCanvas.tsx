@@ -6,7 +6,7 @@ import Hammer, { HammerDirection } from 'react-hammerjs';
 import { Motion, spring } from 'react-motion';
 import { isString } from 'lodash';
 import { hot } from 'react-hot-loader';
-import { DirectionHelper, Position, PositionHelper } from './utils';
+import { DirectionHelper, Position, PositionHelper } from 'components/off-canvas/utils';
 
 const log = require('debug')('off-canvas');
 

@@ -33,22 +33,19 @@ export default class PhpdocPlugin extends BasePlugin {
         app.hooks.registered.tap(this.name, app => {
             const components = app.get<ComponentRegistry>('components');
             components.registerMap({
-                'docblock'         : PhpdocDocblock,
-                'entity'           : PhpdocEntity,
-                'link'             : PhpdocLink,
-                'member-list'      : PhpdocMemberList,
-                'method'           : PhpdocMethod,
-                'method-arguments' : PhpdocMethodArguments,
-                'method-signature' : PhpdocMethodSignature,
-                'popover'          : PhpdocPopover,
-                'tags'             : PhpdocTags,
-                'tree'             : PhpdocTree,
-                'type'             : PhpdocType,
-                'manifest-provider': ManifestProvider,
-                // 'phpdoc-content'         : PhpdocContent,
-                // 'phpdoc-method-component': PhpdocMethodComponent,
-                // 'phpdoc-file-component'  : PhpdocFileComponent,
-            }, { tagPrefix: 'phpdoc-' });
+                'phpdoc-docblock'         : PhpdocDocblock,
+                'phpdoc-entity'           : PhpdocEntity,
+                'phpdoc-link'             : PhpdocLink,
+                'phpdoc-member-list'      : PhpdocMemberList,
+                'phpdoc-method'           : PhpdocMethod,
+                'phpdoc-method-arguments' : PhpdocMethodArguments,
+                'phpdoc-method-signature' : PhpdocMethodSignature,
+                'phpdoc-popover'          : PhpdocPopover,
+                'phpdoc-tags'             : PhpdocTags,
+                'phpdoc-tree'             : PhpdocTree,
+                'phpdoc-type'             : PhpdocType,
+                'phpdoc-manifest-provider': ManifestProvider,
+            });
         });
         if ( app.plugins.has('router') ) {
             app.plugins.get<RouterPlugin>('router').hooks.register.tap(this.name, (router) => {
@@ -92,3 +89,35 @@ export default class PhpdocPlugin extends BasePlugin {
 
 
 
+
+import { PhpdocTagsProps } from './components/tags/PhpdocTags';
+import { PhpdocTypeProps } from './components/type/PhpdocType';
+import { PhpdocLinkProps } from './components/link/PhpdocLink';
+import { PhpdocMethodArgumentsProps } from './components/method/PhpdocMethodArguments';
+import { PhpdocTreeProps } from './components/tree/PhpdocTree';
+import { PhpdocEntityProps } from './components/entity/PhpdocEntity';
+import { PhpdocMethodSignatureProps } from './components/method/PhpdocMethodSignature';
+import { PhpdocDocblockProps } from './components/docblock/PhpdocDocblock';
+import { ManifestProviderProps } from './components/base';
+import { PhpdocPopoverProps } from './components/popover/PhpdocPopover';
+import { PhpdocMethodProps } from './components/method/PhpdocMethod';
+import { PhpdocMemberListProps } from './components/member-list/PhpdocMemberList';
+export interface PhpdocComponents {
+    'phpdoc-docblock'         : PhpdocDocblockProps
+    'phpdoc-entity'           : PhpdocEntityProps
+    'phpdoc-link'             : PhpdocLinkProps
+    'phpdoc-member-list'      : PhpdocMemberListProps
+    'phpdoc-method'           : PhpdocMethodProps
+    'phpdoc-method-arguments' : PhpdocMethodArgumentsProps
+    'phpdoc-method-signature' : PhpdocMethodSignatureProps
+    'phpdoc-popover'          : PhpdocPopoverProps
+    'phpdoc-tags'             : PhpdocTagsProps
+    'phpdoc-tree'             : PhpdocTreeProps
+    'phpdoc-type'             : PhpdocTypeProps
+    'phpdoc-manifest-provider': ManifestProviderProps
+}
+declare module 'codex-components' {
+    interface Components extends PhpdocComponents {
+
+    }
+}

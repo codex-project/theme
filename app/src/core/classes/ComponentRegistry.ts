@@ -5,6 +5,7 @@ import { cloneDeep, get, has, merge, set, unset } from 'lodash';
 export interface RegistryItemOptions {
     tag?: boolean
     tagPrefix?: string
+    defaultProps?:any
 }
 
 export interface RegistryItem<P = any> {
@@ -15,7 +16,7 @@ export interface RegistryItem<P = any> {
 
 const defaultRegistryItemOptions: Partial<RegistryItemOptions> = {
     tag   : true,
-    tagPrefix: 'c-',
+    defaultProps: {}
 };
 
 export class ComponentList<T extends RegistryItem = RegistryItem> extends Array<T> implements Array<T> {
@@ -40,10 +41,6 @@ export class ComponentList<T extends RegistryItem = RegistryItem> extends Array<
         this.push(item);
         return this;
     }
-
-    getPrefixed(id: string) { return this.find(item => id == item.options.tagPrefix + item.id); }
-
-    hasPrefixed(id: string) { return this.getPrefixed(id) !== undefined; }
 }
 
 

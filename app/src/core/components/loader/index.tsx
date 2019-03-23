@@ -1,4 +1,3 @@
-import _loadable from '@loadable/component';
 import React, { Component, CSSProperties } from 'react';
 import { hot } from 'react-hot-loader';
 import { animated, useSpring, UseSpringProps } from 'react-spring';
@@ -7,6 +6,7 @@ import { Spin, SpinProps } from 'components/spin';
 import { getElementType } from 'utils/getElementType';
 import { classes } from 'typestyle';
 import './loader.scss';
+import loadable from '@loadable/component';
 
 export interface LoaderLoadingProps {
     as?: React.ElementType
@@ -24,6 +24,7 @@ export class LoaderLoading extends Component<LoaderLoadingProps> {
     static defaultProps: Partial<LoaderLoadingProps> = {
         as         : 'span',
         spin       : false,
+        delay      : 200,
         loadingText: 'Loading...',
         prefixCls  : 'c-loader-loading',
     };
@@ -67,7 +68,7 @@ export class LoaderLoading extends Component<LoaderLoadingProps> {
                     <Spin className={prefixCls + '-spin'} {...spin || { iconStyle: { fontSize: '5em' } }} />
                 </If>
                 <If condition={typeof loadingText === 'string'}>
-                    <div className={prefixCls + '-text'}>{loadingText}</div>
+                    <span className={prefixCls + '-text'}>{loadingText}</span>
                 </If>
                 <If condition={React.isValidElement(loadingText)}>
                     {loadingText}
@@ -77,8 +78,8 @@ export class LoaderLoading extends Component<LoaderLoadingProps> {
     }
 }
 
-export type ILoadableComponent<T> = React.ComponentType<T> & { preload(props?: T): void };
-export type LoadableFunction = ((props?: any) => Promise<any>)
+export type ILoadableComponent<T> = React.ComponentType<T> & { preload?(props?: T): void };
+export type LoadableFunction = ((...args) => Promise<any>)
 export type LoadableArray = Array<LoadableFunction> // | [ ((props?: any) => Promise<any>), ...Promise<any>[] ]
 export type Loadable = LoadableFunction | LoadableArray
 
@@ -100,8 +101,10 @@ export interface LoaderOptions {
 const getLoaderOptions = (options: LoaderOptions): LoaderOptions => {
     return merge({
         loading       : LoaderLoading,
-        showLoading   : false,
-        loadingOptions: {},
+        showLoading   : true,
+        loadingOptions: {
+            delay: 200,
+        },
         animated      : false,
         animation     : {
             opacity: 1,
@@ -128,39 +131,36 @@ export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponen
 
     const Loading  = options.loading;
     const fallback = options.showLoading ? <Loading {...options.loadingOptions}/> : undefined;
-    let Loadable;
 
-    let LoadableComponent = _loadable(async (props) => {
-
+    let LazyComponent = loadable<T>(async (props) => {
         let loadable;
         if ( isLoadableArray(options.loadable) ) {
-            let loadableValues = await Promise.all(options.loadable.map(l => l(props)));
+            let loadableValues = await Promise.all(options.loadable.map((l, i) => l(i === 0 ? props : undefined)));
             loadable           = loadableValues.shift();
         } else if ( isLoadableFunction(options.loadable) ) {
             loadable = await options.loadable(props);
         } else {
             throw new Error('invalid loadable');
         }
-        Loadable = resolve(loadable);
-        return Loadable;
-
-    }, { fallback }) as ILoadableComponent<T>;
-
-    // LoadableComponent.displayName = 'LoadableComponent';
+        return {
+            __esModule: true,
+            default   : resolve(loadable),
+        };
+    }, { fallback });
 
     if ( ! options.animated ) {
-        return LoadableComponent;
+        return LazyComponent;
     }
 
     let AnimatedLoadableComponent: ILoadableComponent<T>;
     AnimatedLoadableComponent             = function (props) {
-        const style                   = useSpring(options.animation);
-        const displayName             = LoadableComponent.displayName;
-        LoadableComponent             = animated(LoadableComponent) as any;
-        LoadableComponent.displayName = displayName;
-        return <LoadableComponent {...props} style={style}/>;
+        const style               = useSpring(options.animation);
+        const displayName         = LazyComponent.displayName;
+        LazyComponent             = animated(LazyComponent) as any;
+        LazyComponent.displayName = displayName;
+        return <LazyComponent {...props} style={style}/>;
     } as any;
     AnimatedLoadableComponent.displayName = 'AnimatedLoadableComponent';
-    AnimatedLoadableComponent.preload     = (props) => LoadableComponent.preload(props);
+    AnimatedLoadableComponent.preload     = (props) => LazyComponent.preload(props);
     return AnimatedLoadableComponent;
 }

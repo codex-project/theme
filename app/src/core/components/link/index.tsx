@@ -11,7 +11,7 @@ const styleLoader = async () => await import(/* webpackChunkName: "core.componen
 function registerType(name: string, ComponentLoader) {
     const Component = loader({
         loadable      : [ ComponentLoader, styleLoader ],
-        animated      : true,
+        animated      : false,
         showLoading   : true,
         loadingOptions: { delay: 1000 },
     });
@@ -22,7 +22,7 @@ function registerType(name: string, ComponentLoader) {
 function registerAction(type: string, action: string, ComponentLoader) {
     const Component = loader({
         loadable      : [ ComponentLoader, styleLoader ],
-        animated      : true,
+        animated      : false,
         showLoading   : true,
         loadingOptions: { delay: 1000 },
     });

@@ -11,26 +11,53 @@ import { decorate, injectable } from 'ioc';
 import { toJS } from 'mobx';
 import { CodeHighlight } from 'components/code-highlight';
 import { TOC, TOCHeader, TOCList, TOCListItem } from 'components/toc';
-import { CLink } from 'components/link';
-import { AnimatedViews, RouteLink, Routes, Switch, View } from 'router';
-import { Trigger } from 'components/trigger';
+import { CLink, CLinkProps } from 'components/link';
+import { AnimatedViews, AnimatedViewsProps, RouteLink, RouteLinkProps, Routes, RoutesProps, Switch, SwitchProps, View, ViewProps } from 'router';
+import { Trigger, TriggerProps } from 'components/trigger';
 import { BackTop, Col, Layout, Modal, Popover, Row, Tooltip } from 'antd';
-import { Icon } from 'components/icon';
-import { Button } from 'components/button';
+import { Icon, IconProps } from 'components/icon';
+import { Button, ButtonProps } from 'components/button';
 import { CodeRenderer } from 'components/code-renderer';
 import { Emoji } from 'components/emoji';
-import { TaskList, TaskListItem } from 'components/task-list';
-import { Gist } from 'components/gist';
+import { TaskList, TaskListItem, TaskListItemProps, TaskListProps } from 'components/task-list';
+import { Gist, GistProps } from 'components/gist';
 import { Scrollbar } from 'components/scrollbar';
 import { Tab, Tabs } from 'components/tabs';
 import { LayoutBreadcrumbs, LayoutFooter, LayoutHeader, LayoutSide } from 'components/layout';
 import { ComponentRegistry } from 'classes/ComponentRegistry';
 import { DynamicMenu } from 'components/dynamic-menu';
 import { OffCanvas } from 'components/off-canvas';
-import { Responsive } from 'components/responsive';
+import { Responsive, ResponsiveProps } from 'components/responsive';
 import { Toolbar, ToolbarItem } from 'components/toolbar';
-import { Tunnel, TunnelPlaceholder } from 'components/tunnel';
+import { Tunnel, TunnelPlaceholder, TunnelPlaceholderProps, TunnelProps } from 'components/tunnel';
 import { Affix } from 'components/affix';
+import { Hyperstring, HyperstringProps } from 'components/Hyperstring';
+
+import { AffixProps } from 'antd/es/affix';
+import { CodeRendererProps } from 'components/code-renderer/CodeRenderer';
+import { CodeHighlightProps } from 'components/code-highlight/CodeHighlight';
+import { ScrollbarProps } from 'components/scrollbar/Scrollbar';
+import { LayoutHeaderProps } from 'components/layout/LayoutHeader';
+import { EmojiProps } from 'components/emoji/Emoji';
+import { TOCHeaderProps } from 'components/toc/TOCHeader';
+import { LayoutFooterProps } from 'components/layout/LayoutFooter';
+import { TOCProps } from 'components/toc/TOC';
+import { DynamicMenuProps } from 'components/dynamic-menu/DynamicMenu';
+import { ToolbarProps } from 'components/toolbar/Toolbar';
+import { OffCanvasProps } from 'components/off-canvas/OffCanvas';
+import { LayoutSideProps } from 'components/layout/LayoutSide';
+import { TOCListProps } from 'components/toc/TOCList';
+import { TOCListItemProps } from 'components/toc/TOCListItem';
+import { LayoutBreadcrumbsProps } from 'components/layout/LayoutBreadcrumbs';
+import { LayoutProps } from 'components/layout/Layout';
+import { TabProps } from 'components/tabs/Tab';
+import { TabsProps } from 'components/tabs/Tabs';
+import { ToolbarItemProps } from 'components/toolbar/ToolbarItem';
+import { TooltipProps } from 'antd/lib/tooltip';
+import { ModalProps } from 'antd/es/modal';
+import { BackTopProps } from 'antd/es/back-top';
+import { ColProps, RowProps } from 'antd/es/grid';
+import { PopoverProps } from 'antd/es/popover';
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     decorate(injectable(), Api);
@@ -64,54 +91,111 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
 
     cr.registerMap({
         // components
-        'affix'             : Affix,
-        'button'            : Button,
-        'code-renderer'     : CodeRenderer,
-        'code-highlight'    : CodeHighlight,
-        'dynamic-menu'      : DynamicMenu,
-        'emoji'             : Emoji,
-        'gist'              : Gist,
-        'icon'              : Icon as any,
-        'container'         : Layout,
-        'layout-side'       : LayoutSide,
-        'layout-header'     : LayoutHeader,
-        'layout-footer'     : LayoutFooter,
-        'layout-content'    : Layout.Content,
-        'layout-breadcrumbs': LayoutBreadcrumbs,
-        'link'              : CLink,
-        'off-canvas'        : OffCanvas,
-        'responsive'        : Responsive,
-        'scrollbar'         : Scrollbar,
-        'tabs'              : Tabs,
-        'tab'               : Tab,
-        'task-list'         : TaskList,
-        'task-list-item'    : TaskListItem,
-        'toc'               : TOC,
-        'toc-list'          : TOCList,
-        'toc-list-item'     : TOCListItem,
-        'toc-header'        : TOCHeader,
-        'toolbar'           : Toolbar,
-        'toolbar-item'      : ToolbarItem,
-        'trigger'           : Trigger,
-        'tunnel'            : Tunnel,
-        'tunnel-placeholder': TunnelPlaceholder,
+        'c-affix'             : Affix,
+        'c-button'            : Button,
+        'c-code-renderer'     : CodeRenderer,
+        'c-code-highlight'    : CodeHighlight,
+        'c-dynamic-menu'      : DynamicMenu,
+        'c-emoji'             : Emoji,
+        'c-gist'              : Gist,
+        'c-icon'              : Icon as any,
+        'c-container'         : Layout,
+        'c-layout-side'       : LayoutSide,
+        'c-layout-header'     : LayoutHeader,
+        'c-layout-footer'     : LayoutFooter,
+        'c-layout-content'    : Layout.Content,
+        'c-layout-breadcrumbs': LayoutBreadcrumbs,
+        'c-link'              : CLink,
+        'c-off-canvas'        : OffCanvas,
+        'c-responsive'        : Responsive,
+        'c-scrollbar'         : Scrollbar,
+        'c-tabs'              : Tabs,
+        'c-tab'               : Tab,
+        'c-task-list'         : TaskList,
+        'c-task-list-item'    : TaskListItem,
+        'c-toc'               : TOC,
+        'c-toc-list'          : TOCList,
+        'c-toc-list-item'     : TOCListItem,
+        'c-toc-header'        : TOCHeader,
+        'c-toolbar'           : Toolbar,
+        'c-toolbar-item'      : ToolbarItem,
+        'c-trigger'           : Trigger,
+        'c-tunnel'            : Tunnel,
+        'c-tunnel-placeholder': TunnelPlaceholder,
+
+        'c-hyper': Hyperstring,
 
         // router components
-        'animated-views': AnimatedViews,
-        'route-link'    : RouteLink,
-        'routes'        : Routes,
-        'switch'        : Switch,
-        'view'          : View,
+        'c-animated-views': AnimatedViews,
+        'c-route-link'    : RouteLink,
+        'c-routes'        : Routes,
+        'c-switch'        : Switch,
+        'c-view'          : View,
 
         // antd components
-        'back-to-top': BackTop,
-        'modal'      : Modal,
-        'col'        : Col,
-        'row'        : Row,
-        'tooltip'    : Tooltip,
-        'popover'    : Popover,
+        'c-back-to-top': BackTop,
+        'c-modal'      : Modal,
+        'c-col'        : Col,
+        'c-row'        : Row,
+        'c-tooltip'    : Tooltip,
+        'c-popover'    : Popover,
     });
 
     bind<HtmlParser>('htmlparser').to(HtmlParser).inSingletonScope();
 });
 
+
+declare module 'codex-components' {
+
+
+    interface Components {
+        // components
+        'c-affix': AffixProps,
+        'c-button': ButtonProps,
+        'c-code-renderer': CodeRendererProps
+        'c-code-highlight': CodeHighlightProps
+        'c-dynamic-menu': DynamicMenuProps
+        'c-emoji': EmojiProps
+        'c-gist': GistProps
+        'c-icon': IconProps
+        'c-container': LayoutProps
+        'c-layout-side': LayoutSideProps
+        'c-layout-header': LayoutHeaderProps
+        'c-layout-footer': LayoutFooterProps
+        'c-layout-content': LayoutProps
+        'c-layout-breadcrumbs': LayoutBreadcrumbsProps
+        'c-link': CLinkProps
+        'c-off-canvas': OffCanvasProps
+        'c-responsive': ResponsiveProps
+        'c-scrollbar': ScrollbarProps
+        'c-tabs': TabsProps
+        'c-tab': TabProps
+        'c-task-list': TaskListProps
+        'c-task-list-item': TaskListItemProps
+        'c-toc': TOCProps
+        'c-toc-list': TOCListProps
+        'c-toc-list-item': TOCListItemProps
+        'c-toc-header': TOCHeaderProps
+        'c-toolbar': ToolbarProps
+        'c-toolbar-item': ToolbarItemProps
+        'c-trigger': TriggerProps
+        'c-tunnel': TunnelProps
+        'c-tunnel-placeholder': TunnelPlaceholderProps
+
+        'c-hyper': HyperstringProps,
+        // router components
+        'c-animated-views': AnimatedViewsProps
+        'c-route-link': RouteLinkProps
+        'c-routes': RoutesProps
+        'c-switch': SwitchProps
+        'c-view': ViewProps
+
+        // antd components
+        'c-back-to-top': BackTopProps
+        'c-modal': ModalProps
+        'c-col': ColProps
+        'c-row': RowProps
+        'c-tooltip': TooltipProps
+        'c-popover': PopoverProps
+    }
+}

@@ -4,6 +4,7 @@ import { FQNSComponent, FQNSComponentContext, FQNSComponentProps } from '../base
 import { observer } from 'mobx-react';
 import { app, OffCanvas } from '@codex/core';
 import ReactDOM from 'react-dom';
+import { OffCanvasProps } from '@codex/core/components/off-canvas/OffCanvas';
 
 class AppendToRoot extends React.Component {
     static displayName='AppendToRoot';
@@ -12,7 +13,7 @@ class AppendToRoot extends React.Component {
     }
 }
 
-export interface PhpdocDrawerProps {}
+export interface PhpdocDrawerProps extends Partial<OffCanvasProps> {}
 
 @hot(module)
 @FQNSComponent()
@@ -30,6 +31,7 @@ export default class PhpdocDrawer extends Component<PhpdocDrawerProps & FQNSComp
         return (
             <AppendToRoot>
                 <OffCanvas
+                    {...props}
                     ref={this._offCanvas}
                     position="left"
                 >

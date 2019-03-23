@@ -3,6 +3,19 @@
 /// <reference types="react-dom" />
 /// <reference types="hammerjs" />
 
+declare module 'codex-components' {
+    import { ReactElement } from 'react';
+
+    export interface Components {
+        [ key: string ]: any
+    }
+
+    export type ComponentID<C extends Components = Components> = keyof C;
+
+    export type ComponentElements<C extends Components = Components> = {
+        [K in keyof C]: ReactElement<C[K]>
+    }
+}
 
 declare module '*.styl';
 declare module '*.scss';
@@ -133,84 +146,85 @@ declare module 'react-hammerjs' {
 declare module 'react-dazzle' {
     import React from 'react';
 
-        export interface DashboardProps {
+    export interface DashboardProps {
 
-            /**
-             * The layout of the dashboard.
-             */
-            layout?: object,
+        /**
+         * The layout of the dashboard.
+         */
+        layout?: object,
 
-            /**
-             * List of widgets that are avilable in the dashboard.
-             */
-            widgets?: object,
+        /**
+         * List of widgets that are avilable in the dashboard.
+         */
+        widgets?: object,
 
-            /**
-             * Indicates weather the dashoard is in editable state or not.
-             */
-            editable?: bool,
+        /**
+         * Indicates weather the dashoard is in editable state or not.
+         */
+        editable?: bool,
 
-            /**
-             * CSS class name that should be provided to the row. Default is 'row'.
-             */
-            rowClass?: string,
+        /**
+         * CSS class name that should be provided to the row. Default is 'row'.
+         */
+        rowClass?: string,
 
-            /**
-             * Customized widget frame. The dashboard supports a default frame. But if
-             * it doesn't suit your needs or the look and feel is not what you wanted, you
-             * could create your own widget frame and pass it through here. Ever widget Will
-             * use this as the outer container which displays controls like 'remove' button
-             * on edit mode.
-             */
-            frameComponent?: Function,
+        /**
+         * Customized widget frame. The dashboard supports a default frame. But if
+         * it doesn't suit your needs or the look and feel is not what you wanted, you
+         * could create your own widget frame and pass it through here. Ever widget Will
+         * use this as the outer container which displays controls like 'remove' button
+         * on edit mode.
+         */
+        frameComponent?: Function,
 
-            /**
-             * A custom component for the `add widget` button.
-             */
-            addWidgetComponent?: Function,
+        /**
+         * A custom component for the `add widget` button.
+         */
+        addWidgetComponent?: Function,
 
-            /**
-             * Class to be used for columns in editable mode.
-             */
-            editableColumnClass?: string,
+        /**
+         * Class to be used for columns in editable mode.
+         */
+        editableColumnClass?: string,
 
-            /**
-             * CSS class to be used for columns when a widget is droppable.
-             */
-            droppableColumnClass?: string,
+        /**
+         * CSS class to be used for columns when a widget is droppable.
+         */
+        droppableColumnClass?: string,
 
-            /**
-             * Text that should be displayed in the `AddWidget` component.
-             */
-            addWidgetComponentText?: string,
+        /**
+         * Text that should be displayed in the `AddWidget` component.
+         */
+        addWidgetComponentText?: string,
 
-            /**
-             * Will be called when a widget removed by the user from the dashboard.
-             * Should be handled if the dashbord supports edit functionality.
-             * provides the updated layout object. This layout object  with the removed widget
-             * should be given back to the dashboard through the layout prop to re-render the dashboard.
-             */
-            onRemove?: Function,
+        /**
+         * Will be called when a widget removed by the user from the dashboard.
+         * Should be handled if the dashbord supports edit functionality.
+         * provides the updated layout object. This layout object  with the removed widget
+         * should be given back to the dashboard through the layout prop to re-render the dashboard.
+         */
+        onRemove?: Function,
 
-            /**
-             * Will be called when user tries to add a widget into a column.
-             */
-            onAdd?: Function,
+        /**
+         * Will be called when user tries to add a widget into a column.
+         */
+        onAdd?: Function,
 
-            /**
-             * Function to be called when a widget is moved by the user.
-             */
-            onMove?: Function,
-            /**
-             * Function to be called when a widget is edited.
-             */
-            onEdit?: Function,
-        }
+        /**
+         * Function to be called when a widget is moved by the user.
+         */
+        onMove?: Function,
+        /**
+         * Function to be called when a widget is edited.
+         */
+        onEdit?: Function,
+    }
 
-        // class DashboardWithoutDndContext extends Dashboard {}
+    // class DashboardWithoutDndContext extends Dashboard {}
 
 
     export default class Dashboard extends React.Component<DashboardProps> {}
+
     export class DashboardWithoutDndContext extends React.Component<DashboardProps> {}
 
 

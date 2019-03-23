@@ -30,13 +30,17 @@ export class HtmlParser {
     @lazyInject('components') public readonly components: ComponentRegistry;
 
     protected transformFn = (node: Node) => {
-        if ( this.components.all().hasPrefixed(node.name) ) {
+        if ( this.components.has(node.name) ) {
             let rnd        = getRandomId(5);
-            let item       = this.components.all().getPrefixed(node.name);
+            let item       = this.components.get(node.name);
             let Component  = item.Component;
             let props: any = {};
             if ( node.attribs.props ) {
-                props = JSON.parse(node.attribs.props.replace(/\\/g, '\\\\'));
+                try {
+                    props = JSON.parse(node.attribs.props.replace(/\\/g, '\\\\'));
+                } catch ( e ) {
+                    console.warn(e);
+                }
                 delete node.attribs.props;
             }
             props         = {

@@ -87,7 +87,7 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
             return (
                 <Fragment>
                     <a
-                        href="javascript:void(0)"
+                        // href="javascript:void(0)"
                         onClick={() => this.setShowDrawer(true)}
                         className={linkClassName}
                     >
@@ -133,7 +133,11 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
                  </PhpdocPopover> :
                  this.renderLink()}
                  <If condition={props.action === 'drawer'}>
-                     <PhpdocDrawer fqsen={this.fqsen} >
+                     <PhpdocDrawer
+                         fqsen={this.fqsen}
+                         onChange={open => this.setShowDrawer(open)}
+                         open={this.showDrawer}
+                     >
                          Drawer Content
                      </PhpdocDrawer>
                  </If>

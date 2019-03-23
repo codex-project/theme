@@ -25,3 +25,4 @@ export * from './trigger';
 export * from './tunnel';
 
 
+export * from './Hyperstring';
