@@ -2,7 +2,7 @@ import React from 'react';
 
 
 import { hot } from 'react-hot-loader';
-import { IStoreProxy, LayoutStoreSide, Store } from 'stores';
+import { IStoreProxy, LayoutStorePart, LayoutStoreSide, Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { observer } from 'mobx-react';
 import { Layout } from 'antd';
@@ -14,8 +14,9 @@ import { Affix } from '../affix';
 import { CookieStorage } from 'utils/storage';
 import { parseBool } from 'utils/general';
 import { getColor } from 'utils/colors';
+import { DynamicContent, isDynamicChildren } from 'components/dynamic-content';
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Sider } = Layout;
 
 const log = require('debug')('components:layout:sidebar');
 
@@ -53,15 +54,16 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
         this.setState({ collapsedBeforeResponsive: this.side.collapsed });
     }
 
+    className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
+
     render() {
         let { children } = this.props;
         let side         = this.store.layout[ this.props.side ];
 
-        let className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
 
         const siderToggle = <Icon
             name={side.collapsed ? 'chevron-right' : 'chevron-left'}
-            className={className('side-toggle')}
+            className={this.className('side-toggle')}
             style={{ width: side.collapsed ? side.collapsedWidth : side.width }}
             onClick={() => side.setCollapsed(! side.collapsed)}
         />;
@@ -71,34 +73,43 @@ export class LayoutSide extends React.Component<LayoutSideProps> {
                 collapsible
                 breakpoint="xs"
                 style={side.computedStyle}
-                className={className('side', `c-layout-side-${this.props.side}`, side.computedClass)}
+                className={this.className('side', `c-layout-side-${this.props.side}`, side.computedClass)}
                 width={side.width}
                 defaultCollapsed={true}
                 collapsed={side.collapsed}
                 collapsedWidth={side.collapsedWidth}
                 trigger={null}
             >
-                {
-                    children ?
-                    children :
-                    <Affix enabled={side.fixed} style={{ height: '100%', backgroundColor: getColor(side.color) }}>
-                        {/*{siderToggle}*/}
-                        <DynamicMenu
-                            className={className('side-menu')}
-                            items={side.menu}
-                            subMenuCloseDelay={side.collapsed ? 0.2 : 1}
-                            mode="inline"
-                            inlineCollapsed={side.collapsed}
-                            inlineIndent={15}
-                            selectFromRoutePath={true}
-                            color={side.color}
-                        />
-                    </Affix>
-                }
+                {this.getChildren(side)}
             </Sider>
 
         );
     }
+
+    getChildren(part: LayoutStorePart<any> | IStoreProxy<LayoutStorePart<any>>) {
+        if ( ! this.props.children && isDynamicChildren(part.children) ) {
+            return <DynamicContent children={part.children}/>;
+        }
+        if ( this.props.children && isDynamicChildren(this.props.children) ) {
+            return <DynamicContent children={this.props.children}/>;
+        }
+        if ( ! this.props.children ) {
+            return (
+                <Affix enabled={part.fixed} style={{ height: '100%', backgroundColor: getColor(part.color) }}>
+                    <DynamicMenu
+                        className={this.className('side-menu')}
+                        items={part.menu}
+                        subMenuCloseDelay={part.collapsed ? 0.2 : 1}
+                        mode="inline"
+                        inlineCollapsed={part.collapsed}
+                        inlineIndent={15}
+                        selectFromRoutePath={true}
+                        color={part.color}
+                    />
+                </Affix>
+            );
+        }
+        return this.props.children;
+    }
 }
 
-export default LayoutSide;

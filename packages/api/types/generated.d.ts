@@ -154,17 +154,20 @@ export interface Layout {
     right?: Maybe<LayoutRight>;
     middle?: Maybe<LayoutMiddle>;
     content?: Maybe<LayoutContent>;
+    toolbar?: Maybe<LayoutToolbar>;
 }
 export interface LayoutContainer {
     class?: Maybe<Assoc>;
     style?: Maybe<Assoc>;
     color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
     stretch?: Maybe<boolean>;
 }
 export interface LayoutHeader {
     class?: Maybe<Assoc>;
     style?: Maybe<Assoc>;
     color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
     show?: Maybe<boolean>;
     fixed?: Maybe<boolean>;
     height?: Maybe<number>;
@@ -198,6 +201,7 @@ export interface LayoutFooter {
     class?: Maybe<Assoc>;
     style?: Maybe<Assoc>;
     color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
     show?: Maybe<boolean>;
     fixed?: Maybe<boolean>;
     height?: Maybe<number>;
@@ -207,6 +211,7 @@ export interface LayoutLeft {
     class?: Maybe<Assoc>;
     style?: Maybe<Assoc>;
     color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
     show?: Maybe<boolean>;
     collapsed?: Maybe<boolean>;
     outside?: Maybe<boolean>;
@@ -219,6 +224,7 @@ export interface LayoutRight {
     class?: Maybe<Assoc>;
     style?: Maybe<Assoc>;
     color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
     show?: Maybe<boolean>;
     collapsed?: Maybe<boolean>;
     outside?: Maybe<boolean>;
@@ -231,6 +237,7 @@ export interface LayoutMiddle {
     class?: Maybe<Assoc>;
     style?: Maybe<Assoc>;
     color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
     padding?: Maybe<Mixed>;
     margin?: Maybe<Mixed>;
 }
@@ -238,8 +245,18 @@ export interface LayoutContent {
     class?: Maybe<Assoc>;
     style?: Maybe<Assoc>;
     color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
     padding?: Maybe<Mixed>;
     margin?: Maybe<Mixed>;
+}
+export interface LayoutToolbar {
+    class?: Maybe<Assoc>;
+    style?: Maybe<Assoc>;
+    color?: Maybe<string>;
+    children?: Maybe<(Maybe<Assoc>)[]>;
+    breadcrumbs?: Maybe<(Maybe<Assoc>)[]>;
+    left?: Maybe<(Maybe<Assoc>)[]>;
+    right?: Maybe<(Maybe<Assoc>)[]>;
 }
 export interface CacheConfig {
     enabled?: Maybe<boolean>;

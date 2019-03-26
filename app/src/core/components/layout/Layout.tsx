@@ -4,8 +4,6 @@ import { BackTop, Layout as AntdLayout } from 'antd';
 import { LayoutSide } from './LayoutSide';
 import { LayoutHeader } from './LayoutHeader';
 import { LayoutFooter } from './LayoutFooter';
-import { LayoutBreadcrumbs } from './LayoutBreadcrumbs';
-import { Toolbar } from '../toolbar';
 import posed from 'react-pose';
 import { Affix } from '../affix';
 import { TunnelPlaceholder } from '../tunnel';
@@ -15,6 +13,8 @@ import { LayoutStore, Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { hot } from 'react-hot-loader';
 import { action, observable } from 'mobx';
+import { LayoutToolbar } from 'components/layout';
+import { DynamicContent } from 'components/dynamic-content';
 
 const { Sider, Header, Content, Footer } = AntdLayout;
 
@@ -38,6 +38,7 @@ export interface LayoutProps {
     header?: React.ReactNode
     footer?: React.ReactNode
     content?: React.ReactNode
+    toolbar?: React.ReactNode
 }
 
 export { Layout };
@@ -46,13 +47,8 @@ export { Layout };
 @hot(module)
 @observer
 export default class Layout extends React.Component<LayoutProps> {
-    static displayName                           = 'Layout';
-    static defaultProps: Partial<LayoutProps>    = { left: null, right: null, header: null, footer: null, content: null };
-    static Header: typeof LayoutHeader           = LayoutHeader;
-    static Footer: typeof LayoutFooter           = LayoutFooter;
-    static Side: typeof LayoutSide               = LayoutSide;
-    static Breadcrumbs: typeof LayoutBreadcrumbs = LayoutBreadcrumbs;
-
+    static displayName                        = 'Layout';
+    static defaultProps: Partial<LayoutProps> = { left: null, right: null, header: null, footer: null, content: null };
     @lazyInject('store.layout') layout: LayoutStore;
     @lazyInject('store') store: Store;
 
@@ -104,7 +100,9 @@ export default class Layout extends React.Component<LayoutProps> {
                 <TunnelPlaceholder id="layout-top" delay={0} multiple/>
 
                 <If condition={left.show && left.outside}>
-                    <LayoutSide side='left'>{props.left}</LayoutSide>
+                    <LayoutSide side='left'>
+                        <DynamicContent/>
+                    </LayoutSide>
                 </If>
 
                 <AntdLayout>
@@ -121,13 +119,10 @@ export default class Layout extends React.Component<LayoutProps> {
                             <If condition={toolbar.show}>
                                 <Affix enabled={toolbar.fixed}>
                                     <ToolbarContainer ref={this.toolbarContainerRef}>
-                                        <Toolbar
+                                        <LayoutToolbar
                                             style={toolbar.computedStyle}
                                             className={toolbar.computedClass}
                                         />
-                                        <Toolbar.Item side="left">
-                                            <LayoutBreadcrumbs/>
-                                        </Toolbar.Item>
                                     </ToolbarContainer>
                                 </Affix>
                             </If>

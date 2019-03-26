@@ -8,7 +8,7 @@ import { loader } from '@codex/core';
 export const PhpdocType = loader<PhpdocTypeProps>([
     () => import(
         /* webpackChunkName: "phpdoc.components.type" */
-        // /* webpackPrefetch: true */
+        /* webpackPrefetch: true */
         './PhpdocType'
         ),
     () => loadStyling(),

@@ -24,7 +24,7 @@ export class ManifestProvider extends Component<ManifestProviderProps> {
     @lazyInject('store.phpdoc') store: PhpdocStore;
 
     state: { manifest: PhpdocManifest } = { manifest: null };
-    unmounting: boolean;
+    mounted: boolean;
 
     async update() {
         const { props, state }      = this;
@@ -33,18 +33,20 @@ export class ManifestProvider extends Component<ManifestProviderProps> {
             return;
         }
         this.store.fetchManifest(project, revision).then(manifest => {
-            if ( ! this.unmounting ) {
-                this.setState({ manifest });
+            if ( !this.mounted ) {
+                return;
             }
+            this.setState({ manifest });
         });
     }
 
     public componentDidMount(): void {
+        this.mounted = true;
         this.update();
     }
 
     public componentWillUnmount(): void {
-        this.unmounting = true;
+        this.mounted = false;
     }
 
     render() {
@@ -67,21 +69,22 @@ export interface IFQSENComponentCtx {
 
 
 export const FQSENComponentContext = React.createContext<IFQSENComponentCtx>({ manifest: null, file: null, fqsen: null });
-FQSENComponentContext.displayName  ='FQSENComponentContext';
+FQSENComponentContext.displayName  = 'FQSENComponentContext';
 
 export interface FQSENComponentProps {
-    fqsen:IFQSEN
-    file?:PhpdocFile
+    fqsen: IFQSEN
+    file?: PhpdocFile
 }
 
 export function FQSENComponent(contextual: boolean = false) {
     return function <T>(TargetComponent: T): T {
         class HOC extends Component<FQSENComponentProps> {
-            static displayName                        = `FQSENHOC(${TargetComponent['name'] || TargetComponent.constructor.name || TargetComponent.toString() })`;
+            static displayName                        = `FQSENHOC(${TargetComponent[ 'name' ] || TargetComponent.constructor.name || TargetComponent.toString()})`;
             static WrappedComponent                   = TargetComponent;
             static contextType                        = ManifestContext;
             context!: React.ContextType<typeof ManifestContext>;
             state: { fqsen: FQSEN, file: PhpdocFile } = { fqsen: null, file: null };
+            mounted: boolean                          = false;
 
             constructor(props: any, context: any) {
                 super(props, context);
@@ -95,15 +98,26 @@ export function FQSENComponent(contextual: boolean = false) {
 
             updateFile() {
                 if ( this.props.file ) {
+                    if ( ! this.mounted ) {
+                        return;
+                    }
                     return this.setState({ file: this.props.file });
                 }
                 this.context.manifest.fetchFile(this.state.fqsen.slashEntityName).then(file => {
+                    if ( ! this.mounted ) {
+                        return;
+                    }
                     this.setState({ file });
                 });
             }
 
             componentDidMount(): void {
+                this.mounted = true;
                 this.updateFile();
+            }
+
+            componentWillUnmount(): void {
+                this.mounted = false;
             }
 
             componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<{ fqsen: FQSEN, file: PhpdocFile }>, snapshot?: any): void {

@@ -87,6 +87,10 @@ const isLoadableFunction = (val: any): val is LoadableFunction => typeof val ===
 const isLoadableArray    = (val: any): val is LoadableArray => Array.isArray(val) && isLoadableFunction(val[ 0 ]);
 const isLoadable         = (val: any): val is Loadable => isLoadableFunction(val) || isLoadableArray(val);
 
+export function isLoadableComponent<T>(val:any): val is ILoadableComponent<T> {
+    return val && typeof val.preload === 'function'
+}
+
 export interface LoaderOptions {
     loadable: Loadable
 
@@ -126,7 +130,7 @@ function resolve(loadable) {
     return loadable[ k ];
 }
 
-export function loader<T>(_options: LoaderOptions | Loadable): React.ComponentType<T> & { preload?(props?: T): void } {
+export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponent<T> {
     let options: LoaderOptions = getLoaderOptions(isLoadable(_options) ? { loadable: _options } : _options);
 
     const Loading  = options.loading;

@@ -27,7 +27,7 @@ export class MethodListItem extends Component<MethodListItemProps> {
             deprecated      : false,
             modifiers       : false,
             namespace       : false,
-            typeTooltip     : false,
+            // typeTooltip     : false,
             argumentDefaults: ! selected, //true,
             argumentTypes   : ! selected, //true,
             returns         : ! selected, //true,

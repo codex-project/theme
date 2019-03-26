@@ -164,8 +164,8 @@ export class Config implements ConfigInterface {
             let res: any = self.processTemplate(value, { data: self.data });
             if ( res === 'true' || res === 'false' ) {
                 res = res === 'true';
-            } else if ( res === 'null'){
-                res = null
+            } else if ( res === 'null' ) {
+                res = null;
             }
             return res;
         });

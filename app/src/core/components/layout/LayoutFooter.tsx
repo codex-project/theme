@@ -1,13 +1,14 @@
-import * as React from 'react';
+import React from 'react';
 
 import { hot } from 'react-hot-loader';
-import { Store } from 'stores';
+import { IStoreProxy, LayoutStorePart, Store } from 'stores';
 import { lazyInject } from 'ioc';
 
 import { observer } from 'mobx-react';
 
 import { Layout } from 'antd';
 import { classes } from 'typestyle';
+import { DynamicContent, isDynamicChildren } from 'components/dynamic-content';
 
 const { Footer } = Layout;
 
@@ -22,6 +23,21 @@ export class LayoutFooter extends React.Component<LayoutFooterProps> {
     static defaultProps: Partial<LayoutFooterProps> = {};
     @lazyInject('store') store: Store;
 
+    getChildren(part: LayoutStorePart<any> | IStoreProxy<LayoutStorePart<any>>) {
+        if ( ! this.props.children && isDynamicChildren(part.children) ) {
+            return <DynamicContent children={part.children}/>;
+        }
+        if ( this.props.children && isDynamicChildren(this.props.children) ) {
+            return <DynamicContent children={this.props.children}/>;
+        }
+        if ( ! this.props.children ) {
+            return (
+                null
+            );
+        }
+        return this.props.children;
+    }
+
     render() {
         const { children }                     = this.props;
         const { footer }                       = this.store.layout;
@@ -30,9 +46,10 @@ export class LayoutFooter extends React.Component<LayoutFooterProps> {
 
         return (
             <Footer style={computedStyle} className={className('footer', computedClass)}>
-                {children}
+                {this.getChildren(footer)}
             </Footer>
         );
     }
 }
-export default LayoutFooter
+
+export default LayoutFooter;

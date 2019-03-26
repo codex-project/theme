@@ -1,6 +1,6 @@
 import * as H from 'history';
 import { State } from './State';
-import * as React from 'react';
+import React from 'react';
 import { Router } from './Router';
 
 export interface Location extends H.Location {

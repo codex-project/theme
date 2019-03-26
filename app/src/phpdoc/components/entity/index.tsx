@@ -6,7 +6,7 @@ import { loader } from '@codex/core';
 export const PhpdocEntity = loader<PhpdocEntityProps>([
     () => import(
         /* webpackChunkName: "phpdoc.components.entity" */
-        // /* webpackPrefetch: true */
+        /* webpackPrefetch: true */
         './PhpdocEntity'
         ),
     () => loadStyling(),

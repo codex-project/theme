@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 
-import { cold } from 'decorators';
-
 export interface TunnelPlaceholderProps {
     children?: () => any
     component?: React.ComponentType<any>

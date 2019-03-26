@@ -1,7 +1,7 @@
 import { isAbsolute, join, resolve } from 'path';
 import * as dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import webpack, { Configuration, DevtoolModuleFilenameTemplateInfo, RuleSetRule } from 'webpack';
+import webpack, { Configuration, RuleSetRule } from 'webpack';
 import FriendlyErrorsPlugin, { Options as FriendlyErrorsOptions } from 'friendly-errors-webpack-plugin';
 import BarPlugin, { Options as BarOptions } from 'webpackbar';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
@@ -16,7 +16,8 @@ import tsImport from 'ts-import-plugin';
 import { colorPaletteFunction, colorPaletteFunctionSignature } from './build/antdScssColorPalette';
 import WebappPlugin from 'webapp-webpack-plugin';
 import EntrypointPathPlugin from './build/EntrypointPathPlugin';
-import TerserPlugin = require('terser-webpack-plugin');
+import TerserPlugin from 'terser-webpack-plugin';
+import { IgnoreNotFoundExportPlugin, IgnoreNotFoundExportPluginOptions } from './build/out/plugins/ts-webpack-ignore-not-found-export';
 
 
 const chain             = new Chain({
@@ -145,7 +146,7 @@ export function addPluginEntry(chain: Chain, name: string, dirPath: string, entr
 
 export function addHMR(chain: Chain, reactHotLoader: boolean = true) {
     chain.plugin('hmr').use(webpack.HotModuleReplacementPlugin, [ {} ]);
-    chain.resolve.alias.set('react-dom', '@hot-loader/react-dom')
+    chain.resolve.alias.set('react-dom', '@hot-loader/react-dom');
     return;
     const modifyOptions = (o: BabelLoaderOptions) => {
         if ( reactHotLoader ) {
@@ -221,8 +222,8 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
     chunksSortMode    : isDev ? 'dependency' : 'auto',
     templateParameters: {
         assetPath: {
-            core:_assetPath.replace('[entrypoint]', 'core'),
-            phpdoc:_assetPath.replace('[entrypoint]', 'phpdoc'),
+            core  : _assetPath.replace('[entrypoint]', 'core'),
+            phpdoc: _assetPath.replace('[entrypoint]', 'phpdoc'),
         },
         DEV      : isDev,
         PROD     : isProd,
@@ -236,7 +237,13 @@ chain.plugin('favicon').use(WebappPlugin, [ {
     prefix: assetsByEntry ? 'vendor/codex_core/img' : 'vendor/img',
     inject: true,
 } ]).after('html');
-
+chain.plugin('IgnoreNotFoundExportPlugin').use(IgnoreNotFoundExportPlugin, [ <IgnoreNotFoundExportPluginOptions>{
+    exportsToIgnore: [
+        // 'Toolbar.*Props',
+        // 'Layout.*Props',
+        '.*Props',
+    ]
+} ]);
 chain.when(isProd, chain => {
     // chain.plugin('write-file').use(require('write-file-webpack-plugin'), [ { useHashIndex: false } ]);
     chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
@@ -250,7 +257,6 @@ chain.when(isProd, chain => {
         canPrint           : true,
     } ]);
 });
-
 chain.when(assetsByEntry, chain => chain.plugin('path').use(EntrypointPathPlugin));
 //endregion
 
@@ -368,11 +374,11 @@ chain.output
     .filename(assetPath('js/[name].js'))
     .chunkFilename(assetPath('js/chunk.[name].js'));
 
-chain.output.when(isDev, chain => chain
+chain.output.when(isDev, chain => chain,
     // .sourceMapFilename('[file].map')
     // .devtoolModuleFilenameTemplate((info: DevtoolModuleFilenameTemplateInfo) => {
-        // return 'file://' + resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
-        // return resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
+    // return 'file://' + resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
+    // return resolve(info.absoluteResourcePath.replace(/\\/g, '/'));
     // }),
 );
 chain.resolve
@@ -428,7 +434,6 @@ addBabelToRule(chain, 'vendor-js', {
 addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.tsx')
 // addPluginEntry(chain, 'core', chain.srcPath('core'), '_small.tsx');
-
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
 addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
 addPluginEntry(chain, 'comments', chain.srcPath('comments'), 'index.tsx');

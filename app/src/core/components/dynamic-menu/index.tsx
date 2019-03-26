@@ -7,6 +7,6 @@ export type DynamicMenuComponent = ComponentType<DynamicMenuProps> & {}
 
 export let DynamicMenu = loader<DynamicMenuProps>(() => import(
     /* webpackChunkName: "core.components.dynamic-menu" */
-    // /* webpackPrefetch: true */
+    /* webpackPrefetch: true */
     './DynamicMenu'
     ));

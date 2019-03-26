@@ -22,4 +22,3 @@ export class ToolbarItem extends Component<ToolbarItemProps> {
         );
     }
 }
-export default ToolbarItem;

@@ -279,6 +279,8 @@ export interface Layout {
     middle?: Maybe<LayoutMiddle>;
 
     content?: Maybe<LayoutContent>;
+
+    toolbar?: Maybe<LayoutToolbar>;
 }
 
 export interface LayoutContainer {
@@ -287,6 +289,8 @@ export interface LayoutContainer {
     style?: Maybe<Assoc>;
 
     color?: Maybe<string>;
+
+    children?: Maybe<(Maybe<Assoc>)[]>;
 
     stretch?: Maybe<boolean>;
 }
@@ -297,6 +301,8 @@ export interface LayoutHeader {
     style?: Maybe<Assoc>;
 
     color?: Maybe<string>;
+
+    children?: Maybe<(Maybe<Assoc>)[]>;
 
     show?: Maybe<boolean>;
 
@@ -360,6 +366,8 @@ export interface LayoutFooter {
 
     color?: Maybe<string>;
 
+    children?: Maybe<(Maybe<Assoc>)[]>;
+
     show?: Maybe<boolean>;
 
     fixed?: Maybe<boolean>;
@@ -375,6 +383,8 @@ export interface LayoutLeft {
     style?: Maybe<Assoc>;
 
     color?: Maybe<string>;
+
+    children?: Maybe<(Maybe<Assoc>)[]>;
 
     show?: Maybe<boolean>;
 
@@ -398,6 +408,8 @@ export interface LayoutRight {
 
     color?: Maybe<string>;
 
+    children?: Maybe<(Maybe<Assoc>)[]>;
+
     show?: Maybe<boolean>;
 
     collapsed?: Maybe<boolean>;
@@ -420,6 +432,8 @@ export interface LayoutMiddle {
 
     color?: Maybe<string>;
 
+    children?: Maybe<(Maybe<Assoc>)[]>;
+
     padding?: Maybe<Mixed>;
 
     margin?: Maybe<Mixed>;
@@ -432,9 +446,27 @@ export interface LayoutContent {
 
     color?: Maybe<string>;
 
+    children?: Maybe<(Maybe<Assoc>)[]>;
+
     padding?: Maybe<Mixed>;
 
     margin?: Maybe<Mixed>;
+}
+
+export interface LayoutToolbar {
+    class?: Maybe<Assoc>;
+
+    style?: Maybe<Assoc>;
+
+    color?: Maybe<string>;
+
+    children?: Maybe<(Maybe<Assoc>)[]>;
+
+    breadcrumbs?: Maybe<(Maybe<Assoc>)[]>;
+
+    left?: Maybe<(Maybe<Assoc>)[]>;
+
+    right?: Maybe<(Maybe<Assoc>)[]>;
 }
 
 export interface CacheConfig {

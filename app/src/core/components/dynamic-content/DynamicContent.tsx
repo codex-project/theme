@@ -1,38 +1,95 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { hot } from 'react-hot-loader';
-import { observer } from 'mobx-react';
+import { lazyInject } from 'ioc';
+import { ComponentRegistry } from 'classes/ComponentRegistry';
+import { merge } from 'lodash';
+import { h } from 'classes/Hyper';
+import { warn } from 'utils/general';
+import { Config } from 'classes/Config';
+import { Application } from 'classes/Application';
+import { Store } from 'stores';
+import { toJS } from 'mobx';
+import { DynamicContentChildren, isDynamicChildren } from 'components/dynamic-content/types';
 
 
-interface IDynamicContent {
-    type:string
+export interface DynamicContentProps {
+    children?: DynamicContentChildren
 
 }
 
-export interface DynamicContentProps {}
 
 @hot(module)
-@observer
-export default class DynamicContent extends Component<DynamicContentProps> {
+export class DynamicContent extends Component<DynamicContentProps> {
+    @lazyInject('app') app: Application;
+    @lazyInject('store') store: Store;
+    @lazyInject('components') components: ComponentRegistry;
+
     static displayName                                = 'DynamicContent';
-    static defaultProps: Partial<DynamicContentProps> = {};
+    static defaultProps: Partial<DynamicContentProps> = {
+        children: [],
+    };
+    state: { children: any[] }                        = { children: this.transform(toJS(this.props.children)) };
+
+    updateChildren(cb?: () => void): this {
+        this.setState({ children: this.transform(toJS(this.props.children)) }, cb);
+        return this;
+    }
+
+    transform(children: DynamicContentChildren) {
+
+        return children
+            .filter(child => {
+                let has = this.components.has(child.component.toString());
+                if ( ! has ) {
+                    warn(`Could not find component [${child.component}] in DynamicContent`);
+                }
+                return has;
+            })
+            .map((child, i) => {
+                let { component, children, ...props } = child;
+                let { id, Component, options }        = this.components.get(component.toString());
+                if ( isDynamicChildren(children) ) {
+                    children = this.transform(children || []);
+                }
+                let childProps = merge(
+                    { key: component + '.' + i },
+                    options.defaultProps,
+                    props,
+                    { children },
+                );
+                let config     = new Config({});
+                config.set('app', this.app);
+                config.set('store', this.store);
+                Object.keys(childProps)
+                    .filter(key => typeof childProps[ key ] === 'string')
+                    .forEach(key => {
+                        try {
+                            config.set(`component.${key}`, childProps[ key ]);
+                            let value = config.get(`component.${key}`, childProps[ key ]);
+                            if ( childProps[ key ] !== value ) {
+                                childProps[ key ] = value;
+                            }
+                        } catch ( error ) {
+                            warn(`DynamicContent compile error on [${key}] of component [${component}]`, { error, childProps, component: this });
+                        }
+                    });
+                return h(component, childProps, childProps.children);
+            });
+    }
+
+    public componentDidUpdate(prevProps: Readonly<DynamicContentProps>, prevState: Readonly<{}>, snapshot?: any): void {
+        if ( prevProps.children !== this.props.children ) {
+            this.updateChildren();
+        }
+    }
 
     render() {
-        const { children, ...props } = this.props;
+        // let { ...props } = this.props;
+        let { children } = this.state;
         return (
-            <div>
+            <Fragment>
                 {children}
-            </div>
+            </Fragment>
         );
-    }
-}
-
-export namespace DynamicContent {
-
-    export interface IToolbarItem {
-        type:string
-    }
-    export interface IToolbar {
-        items
-
     }
 }

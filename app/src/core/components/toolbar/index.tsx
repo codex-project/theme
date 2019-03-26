@@ -1,22 +1,36 @@
-import React, { ComponentType } from 'react';
+import React from 'react';
 import { ToolbarProps } from './Toolbar';
 import { ToolbarItemProps } from './ToolbarItem';
-import { ColProps } from 'antd/lib/col';
+import { ToolbarColumnProps } from './ToolbarColumn';
 import { loader } from 'components/loader';
 
-const _loader = () => import(
+export const Toolbar = loader<ToolbarProps>(() => import(
     /* webpackChunkName: "core.components.toolbar" */
     /* webpackPrefetch: true */
     './Toolbar'
-    );
+    ),
+);
 
-export type ToolbarComponent = ComponentType<ToolbarProps> & {
-    Item?: ComponentType<ToolbarItemProps>
-    Spacer?: ComponentType<{}>
-    Column?: ComponentType<ColProps>
-}
+export const ToolbarItem = loader<ToolbarItemProps>(() => import(
+    /* webpackChunkName: "core.components.toolbar" */
+    /* webpackPrefetch: true */
+    './ToolbarItem'
+    ),
+);
 
-export let Toolbar: ToolbarComponent = loader(_loader);
-export const ToolbarSpacer           = Toolbar.Spacer = loader(() => _loader().then(t => t.Toolbar.Spacer));
-export const ToolbarColumn           = Toolbar.Column = loader(() => _loader().then(t => t.Toolbar.Column));
-export const ToolbarItem             = Toolbar.Item = loader<ToolbarItemProps>(() => _loader().then(t => t.Toolbar.Item));
+export const ToolbarSpacer = loader<{}>(() => import(
+    /* webpackChunkName: "core.components.toolbar" */
+    /* webpackPrefetch: true */
+    './ToolbarSpacer'
+    ),
+);
+
+export const ToolbarColumn = loader<ToolbarColumnProps>(() => import(
+    /* webpackChunkName: "core.components.toolbar" */
+    /* webpackPrefetch: true */
+    './ToolbarColumn'
+    ),
+);
+
+
+export { ToolbarProps, ToolbarItemProps, ToolbarColumnProps };

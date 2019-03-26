@@ -2,9 +2,9 @@ import React, { Component, Fragment } from 'react';
 import { Observer, observer } from 'mobx-react';
 import { hot } from 'react-hot-loader';
 import { Drawer, Popover } from 'antd';
-import { Toolbar } from '../toolbar';
 import { Button } from '../button';
-import './toc.scss'
+import './toc.scss';
+import { Tunnel } from 'components/tunnel';
 
 const log = require('debug')('components:TOC');
 
@@ -17,7 +17,6 @@ export interface TOCProps {
 export type TOCComponent = React.ComponentType<TOCProps>
 
 
-
 /**
  * TOC component
  */
@@ -28,10 +27,10 @@ export default class TOC extends Component<TOCProps> {
     static defaultProps: Partial<TOCProps> = {
         type: 'drawer',
     };
-    state = { visible: false };
-    setVisible = (visible: boolean = true) => {this.setState({ visible: show }); };
-    showDrawer = () => { this.setVisible(true);};
-    hideDrawer = () => { this.setVisible(false);};
+    state                                  = { visible: false };
+    setVisible                             = (visible: boolean = true) => {this.setState({ visible: visible }); };
+    showDrawer                             = () => { this.setVisible(true);};
+    hideDrawer                             = () => { this.setVisible(false);};
 
     render() {
         window[ 'toc' ]                            = this;
@@ -39,7 +38,7 @@ export default class TOC extends Component<TOCProps> {
 
         return (
             <Fragment>
-                <Toolbar.Item side="right">
+                <Tunnel id="layout-toolbar-right">
                     <Observer>{() =>
                         <Button.Group>
                             <If condition={type === 'popover'}>
@@ -66,7 +65,7 @@ export default class TOC extends Component<TOCProps> {
                             </If>
                         </Button.Group>
                     }</Observer>
-                </Toolbar.Item>
+                </Tunnel>
                 <If condition={type === 'drawer'}>
                     <Drawer
                         closable={true}

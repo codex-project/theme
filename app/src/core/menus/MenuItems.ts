@@ -1,5 +1,5 @@
 import { ArrayUtils } from '../collections/ArrayUtils';
-import * as React from 'react';
+import React from 'react';
 import { app, lazyInject } from '../ioc';
 import { MenuManager } from './MenuManager';
 import { api } from '@codex/api';

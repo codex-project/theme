@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Api } from '@codex/api';
 import { State } from 'router';
 import { lazyInject } from 'ioc';

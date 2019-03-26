@@ -23,12 +23,12 @@ import { TaskList, TaskListItem, TaskListItemProps, TaskListProps } from 'compon
 import { Gist, GistProps } from 'components/gist';
 import { Scrollbar } from 'components/scrollbar';
 import { Tab, Tabs } from 'components/tabs';
-import { LayoutBreadcrumbs, LayoutFooter, LayoutHeader, LayoutSide } from 'components/layout';
+import { LayoutBreadcrumbs, LayoutBreadcrumbsProps, LayoutFooter, LayoutFooterProps, LayoutHeader, LayoutHeaderProps, LayoutProps, LayoutSide, LayoutSideProps, LayoutToolbar, LayoutToolbarProps } from 'components/layout';
 import { ComponentRegistry } from 'classes/ComponentRegistry';
 import { DynamicMenu } from 'components/dynamic-menu';
 import { OffCanvas } from 'components/off-canvas';
 import { Responsive, ResponsiveProps } from 'components/responsive';
-import { Toolbar, ToolbarItem } from 'components/toolbar';
+import { Toolbar, ToolbarColumn, ToolbarItem, ToolbarItemProps, ToolbarSpacer } from 'components/toolbar';
 import { Tunnel, TunnelPlaceholder, TunnelPlaceholderProps, TunnelProps } from 'components/tunnel';
 import { Affix } from 'components/affix';
 import { Hyperstring, HyperstringProps } from 'components/Hyperstring';
@@ -37,22 +37,17 @@ import { AffixProps } from 'antd/es/affix';
 import { CodeRendererProps } from 'components/code-renderer/CodeRenderer';
 import { CodeHighlightProps } from 'components/code-highlight/CodeHighlight';
 import { ScrollbarProps } from 'components/scrollbar/Scrollbar';
-import { LayoutHeaderProps } from 'components/layout/LayoutHeader';
 import { EmojiProps } from 'components/emoji/Emoji';
 import { TOCHeaderProps } from 'components/toc/TOCHeader';
-import { LayoutFooterProps } from 'components/layout/LayoutFooter';
+
 import { TOCProps } from 'components/toc/TOC';
 import { DynamicMenuProps } from 'components/dynamic-menu/DynamicMenu';
 import { ToolbarProps } from 'components/toolbar/Toolbar';
 import { OffCanvasProps } from 'components/off-canvas/OffCanvas';
-import { LayoutSideProps } from 'components/layout/LayoutSide';
 import { TOCListProps } from 'components/toc/TOCList';
 import { TOCListItemProps } from 'components/toc/TOCListItem';
-import { LayoutBreadcrumbsProps } from 'components/layout/LayoutBreadcrumbs';
-import { LayoutProps } from 'components/layout/Layout';
 import { TabProps } from 'components/tabs/Tab';
 import { TabsProps } from 'components/tabs/Tabs';
-import { ToolbarItemProps } from 'components/toolbar/ToolbarItem';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { ModalProps } from 'antd/es/modal';
 import { BackTopProps } from 'antd/es/back-top';
@@ -105,6 +100,7 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
         'c-layout-footer'     : LayoutFooter,
         'c-layout-content'    : Layout.Content,
         'c-layout-breadcrumbs': LayoutBreadcrumbs,
+        'c-layout-toolbar'    : LayoutToolbar,
         'c-link'              : CLink,
         'c-off-canvas'        : OffCanvas,
         'c-responsive'        : Responsive,
@@ -119,6 +115,8 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
         'c-toc-header'        : TOCHeader,
         'c-toolbar'           : Toolbar,
         'c-toolbar-item'      : ToolbarItem,
+        'c-toolbar-spacer'    : ToolbarSpacer,
+        'c-toolbar-column'    : ToolbarColumn,
         'c-trigger'           : Trigger,
         'c-tunnel'            : Tunnel,
         'c-tunnel-placeholder': TunnelPlaceholder,
@@ -164,6 +162,7 @@ declare module 'codex-components' {
         'c-layout-footer': LayoutFooterProps
         'c-layout-content': LayoutProps
         'c-layout-breadcrumbs': LayoutBreadcrumbsProps
+        'c-layout-toolbar': LayoutToolbarProps
         'c-link': CLinkProps
         'c-off-canvas': OffCanvasProps
         'c-responsive': ResponsiveProps

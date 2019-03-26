@@ -10,14 +10,16 @@
 
 import { isNumber } from 'lodash';
 
-export function warn(message: string) {
-    console.warn('[codex][core] ' + message)
+export function warn(message: string, ...params: any[]) {
+    console.warn('[codex][core] ' + message, ...params);
 }
+
 export function uniqueId() {
     return Math.floor((1 + Math.random()) * 0x10000)
         .toString(16)
-        .substring(1)
+        .substring(1);
 }
+
 export function getRandomId(length) {
     if ( isNumber(length) ) {
         length = 15;
@@ -32,9 +34,9 @@ export function getRandomId(length) {
 
 export function load(vNodeContext, cb) {
     if ( document.readyState === 'complete' ) {
-        vNodeContext.$nextTick(() => cb())
+        vNodeContext.$nextTick(() => cb());
     } else {
-        document.addEventListener('DOMContentLoaded', () => cb())
+        document.addEventListener('DOMContentLoaded', () => cb());
     }
 }
 
@@ -52,7 +54,7 @@ export function getViewPort() {
 
     return {
         width : e[ a + 'Width' ],
-        height: e[ a + 'Height' ]
+        height: e[ a + 'Height' ],
     };
 }
 
@@ -79,37 +81,39 @@ export function getElementHeight(element) {
     // Running getBoundingClientRect on a
     // disconnected node in IE throws an error
     if ( ! element[ 'getClientRects' ]().length ) {
-        return element.offsetHeight
+        return element.offsetHeight;
     }
 
     let rect = element.getBoundingClientRect();
 
     // Make sure element is not hidden (display: none)
     if ( rect.width || rect.height ) {
-        return rect.bottom - rect.top
+        return rect.bottom - rect.top;
     }
 
     // Return zeros for disconnected and hidden elements (gh-2310)
     return 0;
 }
+
 export interface Listener {
     remove();
 }
-export function listen<T extends EventTarget>(target: T, eventType: string, callback: any):Listener {
+
+export function listen<T extends EventTarget>(target: T, eventType: string, callback: any): Listener {
     if ( target.addEventListener ) {
         target.addEventListener(eventType, callback, false);
         return {
             remove() {
                 target.removeEventListener(eventType, callback, false);
-            }
+            },
         };
     }
-    if ( target['attachEvent'] ) {
-        target['attachEvent'](`on${eventType}`, callback);
+    if ( target[ 'attachEvent' ] ) {
+        target[ 'attachEvent' ](`on${eventType}`, callback);
         return {
             remove() {
-                target['detachEvent'](`on${eventType}`, callback);
-            }
+                target[ 'detachEvent' ](`on${eventType}`, callback);
+            },
         };
     }
 }
@@ -138,7 +142,7 @@ export function getOffset(element) {
     }
     return {
         top,
-        left
+        left,
     };
 }
 
@@ -153,7 +157,7 @@ export function cssTransitions() {
         style[ 'OTransition' ] !== undefined ||
         style[ 'MsTransition' ] !== undefined ||
         style.transition !== undefined
-    )
+    );
 }
 
 export function escapeHash(hash) {
@@ -161,7 +165,7 @@ export function escapeHash(hash) {
 }
 
 export function parseBool(val) {
-    return val === true || val === 1 || val === 'true' || val === '1'
+    return val === true || val === 1 || val === 'true' || val === '1';
 }
 
 
@@ -237,6 +241,6 @@ export function lcfirst(string) {
 
 export function trace(name, ...args) {
     console.groupCollapsed(name);
-    console.trace(...args)
-    console.groupEnd()
+    console.trace(...args);
+    console.groupEnd();
 }

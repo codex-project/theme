@@ -5,6 +5,7 @@ import { Observer } from 'mobx-react';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { MembersContext } from './MembersContext';
 import { ItemStore, ItemStoreFilters } from './ItemStore';
+import { debounce } from 'lodash-decorators';
 
 const log = require('debug')('phpdoc:components:ListFilters');
 
@@ -49,7 +50,8 @@ export class FilterControls extends Component<FilterControlsProps, State> {
 
     setSearchFocus = (searchFocus: boolean) => this.setState(state => ({ searchFocus }));
 
-    handleSearch = (value: string) => {
+    @debounce(100, { leading:true,trailing: true })
+    handleSearch(value: string) {
         log('onSearch', value);
         if ( ! this.props.searchable ) {
             return;

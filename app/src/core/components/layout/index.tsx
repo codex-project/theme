@@ -1,4 +1,4 @@
-import React, { ComponentType,ComponentClass } from 'react';
+import React from 'react';
 import { loader } from 'components/loader';
 
 import { LayoutProps } from './Layout';
@@ -6,22 +6,47 @@ import { LayoutHeaderProps } from './LayoutHeader';
 import { LayoutFooterProps } from './LayoutFooter';
 import { LayoutSideProps } from './LayoutSide';
 import { LayoutBreadcrumbsProps } from './LayoutBreadcrumbs';
+import { LayoutToolbarProps } from 'components/layout/LayoutToolbar';
 
-const _loader = () => import(
+export const Layout = loader<LayoutProps>(() => import(
     /* webpackChunkName: "core.components.layout" */
     /* webpackPrefetch: true */
     './Layout'
-    );
+    ),
+);
 
-export type LayoutComponent = ComponentType<LayoutProps> & {
-    Header?: ComponentType<LayoutHeaderProps>
-    Footer?: ComponentType<LayoutFooterProps>
-    Side?: ComponentType<LayoutSideProps>
-    Breadcrumbs?: ComponentType<LayoutBreadcrumbsProps>
-}
+export const LayoutHeader = loader<LayoutHeaderProps>(() => import(
+    /* webpackChunkName: "core.components.layout" */
+    /* webpackPrefetch: true */
+    './LayoutHeader'
+    ),
+);
 
-export let Layout: LayoutComponent                             = loader<LayoutProps>(() => _loader().then(l => l.Layout));
-export const LayoutHeader: LayoutComponent['Header']           = Layout.Header = loader<LayoutHeaderProps>(() => _loader().then(l => l.Layout.Header));
-export const LayoutFooter: LayoutComponent['Footer']           = Layout.Footer = loader<LayoutFooterProps>(() => _loader().then(l => l.Layout.Footer));
-export const LayoutSide: LayoutComponent['Side']               = Layout.Side = loader<LayoutSideProps>(() => _loader().then(l => l.Layout.Side));
-export const LayoutBreadcrumbs: LayoutComponent['Breadcrumbs'] = Layout.Breadcrumbs = loader<LayoutBreadcrumbsProps>(() => _loader().then(l => l.Layout.Breadcrumbs));
+export const LayoutFooter = loader<LayoutFooterProps>(() => import(
+    /* webpackChunkName: "core.components.layout" */
+    /* webpackPrefetch: true */
+    './LayoutFooter'
+    ),
+);
+
+export const LayoutSide = loader<LayoutSideProps>(() => import(
+    /* webpackChunkName: "core.components.layout" */
+    /* webpackPrefetch: true */
+    './LayoutSide'
+    ),
+);
+
+export const LayoutBreadcrumbs = loader<LayoutBreadcrumbsProps>(() => import(
+    /* webpackChunkName: "core.components.layout" */
+    /* webpackPrefetch: true */
+    './LayoutBreadcrumbs'
+    ),
+);
+export const LayoutToolbar     = loader<LayoutToolbarProps>(() => import(
+    /* webpackChunkName: "core.components.layout" */
+    /* webpackPrefetch: true */
+    './LayoutToolbar'
+    ),
+);
+
+export { LayoutProps, LayoutHeaderProps, LayoutFooterProps, LayoutSideProps, LayoutBreadcrumbsProps, LayoutToolbarProps };

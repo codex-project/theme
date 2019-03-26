@@ -39,43 +39,64 @@ declare const APP_VERSION: string;
 // }
 
 
-declare function For<T>({ each, of, index }: { each: string; of: T[]; index?: string });
+// declare interface IfProps {
+//     condition?: any
+//
+//
+//     // empty?:any
+//     // notEmpty?:any
+//
+//     // boolean
+//     true?: any // if props.true === true
+//     false?: any
+//
+//     // typeofs
+//     number?: any // typeof props.number === 'number'
+//     string?: any
+//     array?: any
+//     undefined?: any
+//     boolean?: any
+//     function?: any
+//
+//     // comparisons
+//     value?: any
+//     gt?: any // if props.value > props.gt
+//     lt?: any
+//     eq?: any
+// }
+// declare function For<T>({ each, of, index }: { each: string; of: T[]; index?: string });
+// declare function If(props: IfProps);
+// declare function Choose(__ignore: any);
+// declare function When({ condition }: { condition: boolean });
+// declare function Otherwise(__ignore: any): any;
+// declare function With(props: { [ id: string ]: any });
 
-declare interface IfProps {
-    condition?: any
+declare function Choose(): any;
+
+declare function When(props: { condition: any; }): any;
+
+declare function Otherwise(): any;
+
+declare function If(props: { condition: any; }): any;
+
+declare function For<T>(props: { each: string; of: Iterable<T>; index?: string; }): any;
+
+declare function With(props: { [ id: string ]: any; }): any;
 
 
-    // empty?:any
-    // notEmpty?:any
+declare namespace JSX {
+    type TChildren =
+        | Element
+        | string
+        | number
+        | boolean
+        | null
+        | typeof undefined;
 
-    // boolean
-    true?: any // if props.true === true
-    false?: any
-
-    // typeofs
-    number?: any // typeof props.number === 'number'
-    string?: any
-    array?: any
-    undefined?: any
-    boolean?: any
-    function?: any
-
-    // comparisons
-    value?: any
-    gt?: any // if props.value > props.gt
-    lt?: any
-    eq?: any
+    interface IntrinsicAttributes {
+        children?: TChildren | TChildren[];
+    }
 }
-
-declare function If(props: IfProps);
-
-declare function Choose(__ignore: any);
-
-declare function When({ condition }: { condition: boolean });
-
-declare function Otherwise(__ignore: any): any;
-
-declare function With(props: { [ id: string ]: any });
 
 declare module '*.css' {
     interface IClassNames {
@@ -384,7 +405,7 @@ declare module '*.png' {
 }
 
 declare module '*.svg' {
-    import * as React from 'react';
+    import React from 'react';
 
     export const ReactComponent: React.SFC<React.SVGProps<SVGSVGElement>>;
 
@@ -2598,9 +2619,9 @@ declare module 'fast-sort' {
     }
 
     function sort<T>(ctx: T[]): {
-        asc(sortBy?: sort.SortBy<T>):T[],
-        desc(sortBy?: sort.SortBy<T>):T[],
-        by(by: Array<{ asc: sort.SortBy<T> } | { desc: sort.SortBy<T> } | sort.SortBy<T>>):T[],
+        asc(sortBy?: sort.SortBy<T>): T[],
+        desc(sortBy?: sort.SortBy<T>): T[],
+        by(by: Array<{ asc: sort.SortBy<T> } | { desc: sort.SortBy<T> } | sort.SortBy<T>>): T[],
     }
 
     export = sort;

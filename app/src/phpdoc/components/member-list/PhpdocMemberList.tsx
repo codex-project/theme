@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { cold, hot } from 'react-hot-loader';
 import './member-list.scss';
 // import { IList, IListFilters, IListItem } from './types';
 import { Scrollbar } from '@codex/core';
@@ -84,6 +83,7 @@ export class PhpdocMemberList<T extends PhpdocMemberListProps> extends Component
 
     render() {
         window[ 'memberlist' ]          = this;
+        const { scrollable }            = this.props;
         const { file, fqsen, manifest } = this.context;
         let style                       = {
             height: this.props.height || '100%',
@@ -91,23 +91,25 @@ export class PhpdocMemberList<T extends PhpdocMemberListProps> extends Component
             ...this.props.style,
         };
 
+        let inner = (
+            <div className="phpdoc-member-list-inner">
+                <If condition={this.isFilterable()}>
+                    {this.renderFilters()}
+                </If>
+                {this.renderItems()}
+            </div>
+        );
+
+        if ( scrollable ) {
+            inner = <Scrollbar style={{ height: '100%', width: '100%' }}>{inner}</Scrollbar>;
+        }
+
         return (
             <div className={'phpdoc-member-list'} style={style}>
                 <MembersContext.Provider value={{ itemStore: this.itemStore, file, fqsen, manifest }}>
-                    <If condition={this.isFilterable()}>
-                        {this.renderFilters()}
-                    </If>
-                    <If condition={this.props.scrollable}>
-                        <Scrollbar style={{ height: '100%', width: '100%' }}>
-                            {this.renderItems()}
-                        </Scrollbar>
-                    </If>
-                    <If condition={! this.props.scrollable}>
-                        {this.renderItems()}
-                    </If>
+                    {inner}
                 </MembersContext.Provider>
             </div>
-
         );
     }
 
@@ -133,7 +135,7 @@ export class PhpdocMemberList<T extends PhpdocMemberListProps> extends Component
 
     renderItems() {
         const { properties, methods } = this.props;
-        const items = this.itemStore.visible
+        return this.itemStore.visible
             .map(key => this.itemStore.members.get(key))
             .map((item, index) => {
                 const props = this.getListItemProps(item);
@@ -145,11 +147,6 @@ export class PhpdocMemberList<T extends PhpdocMemberListProps> extends Component
                 }
                 return null;
             });
-        return (
-            <div className="phpdoc-member-list-inner">
-                {items}
-            </div>
-        )
     }
 
     handleListItemClick = (item: PhpdocMember) => {

@@ -40,7 +40,7 @@ export interface PhpdocEntityProps {
 @hot(module)
 @FQSENComponent()
 @observer
-export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
+export class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     static displayName: string                      = 'PhpdocEntity';
     static defaultProps: Partial<PhpdocEntityProps> = {
         prefixCls: 'phpdoc-entity',

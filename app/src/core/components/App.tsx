@@ -6,10 +6,8 @@ import { lazyInject } from 'ioc';
 import { ErrorBoundary } from 'components/errors';
 import { TunnelProvider } from 'components/tunnel';
 import { Layout } from 'components/layout';
-import { StoreControl } from 'components/store-control';
 import { Router, Routes } from 'router';
 import { HtmlParser } from 'classes/HtmlParser';
-import { DC } from '../dc';
 
 const log = require('debug')('App');
 
@@ -25,10 +23,6 @@ export class App extends React.Component<AppProps, any> {
     @lazyInject('htmlparser') htmlParser: HtmlParser;
 
     static displayName = 'App';
-
-    render2(){
-        return <DC />
-    }
 
     render() {
         return (
@@ -49,6 +43,7 @@ export class App extends React.Component<AppProps, any> {
             </ErrorBoundary>
         );
     }
+
     //
     // renderStoreController() {
     //

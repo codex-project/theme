@@ -183,7 +183,9 @@ $prefix: phpdoc-member-list;
     .hover-filters {
         text-align: right;
         padding: 2px;
-        position: absolute;
+        //position: absolute;
+        position: relative;
+        float: right;
         right: 0;
         opacity: 0.5;
         z-index: 5;

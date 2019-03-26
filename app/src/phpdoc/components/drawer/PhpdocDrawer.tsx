@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { FQSENComponent, FQSENComponentContext, FQSENComponentProps } from '../base';
-import { h, Omit } from '@codex/core';
+import { h, isLoadableComponent, Omit } from '@codex/core';
 import { Drawer } from 'antd';
 import { DrawerProps } from 'antd/es/drawer';
 
@@ -92,7 +92,7 @@ export default class PhpdocDrawer extends Component<PhpdocDrawerProps> {
                 width={width}
                 onClose={this.hide}
                 duration="0.2s"
-                bodyStyle={{padding: 0}}
+                bodyStyle={{ padding: 0 }}
             >
                 {show ? this.renderEntity(fqsen, manifest, file) : null}
             </Drawer>
@@ -100,9 +100,9 @@ export default class PhpdocDrawer extends Component<PhpdocDrawerProps> {
     }
 
     static preload() {
-        PhpdocEntity.preload();
-        PhpdocDocblock.preload();
-        PhpdocMemberList.preload();
+        isLoadableComponent(PhpdocEntity) && PhpdocEntity.preload();
+        isLoadableComponent(PhpdocDocblock) && PhpdocDocblock.preload();
+        isLoadableComponent(PhpdocMemberList) && PhpdocMemberList.preload();
     }
 }
 

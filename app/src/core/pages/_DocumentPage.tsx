@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Api } from '@codex/api';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';

@@ -1,5 +1,5 @@
 import { action, toJS, transaction } from 'mobx';
-import * as React from 'react';
+import React from 'react';
 import { camelCase, set } from 'lodash';
 import { colors } from '../utils/colors';
 import { app } from '../ioc';
@@ -31,9 +31,10 @@ export class LayoutStore {
     constructor() {
         let self       = this;
         this.container = createStoreProxy<LayoutStoreContainer>({
-            class  : {},
-            style  : {},
-            stretch: true,
+            class   : {},
+            style   : {},
+            stretch : true,
+            children: null,
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -58,6 +59,7 @@ export class LayoutStore {
             outside       : false,
             color         : null,
             fixed         : false,
+            children      : null,
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -89,6 +91,7 @@ export class LayoutStore {
             outside       : false,
             color         : null,
             fixed         : false,
+            children      : null,
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -120,6 +123,7 @@ export class LayoutStore {
             color            : null,
             show_left_toggle : false,
             show_right_toggle: false,
+            children         : null,
             _menu            : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -141,13 +145,14 @@ export class LayoutStore {
             },
         });
         this.footer = createStoreProxy<LayoutStoreFooter>({
-            class : {},
-            style : {},
-            show  : true,
-            height: 50,
-            fixed : false,
-            color : null,
-            _menu : [],
+            class   : {},
+            style   : {},
+            show    : true,
+            height  : 50,
+            fixed   : false,
+            color   : null,
+            children: null,
+            _menu   : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
             setShow(show: boolean) {this.show = show;},
@@ -169,11 +174,12 @@ export class LayoutStore {
         });
 
         this.middle  = createStoreProxy<LayoutStoreMiddle>({
-            class  : {},
-            style  : {},
-            padding: 0,
-            margin : 0,
-            color  : null,
+            class   : {},
+            style   : {},
+            padding : 0,
+            margin  : 0,
+            color   : null,
+            children: null,
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -188,11 +194,12 @@ export class LayoutStore {
             },
         });
         this.content = createStoreProxy<LayoutStoreContent>({
-            class  : {},
-            style  : {},
-            padding: 0,
-            margin : 0,
-            color  : null,
+            class   : {},
+            style   : {},
+            padding : 0,
+            margin  : 0,
+            color   : null,
+            children: null,
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -208,11 +215,15 @@ export class LayoutStore {
         });
 
         this.toolbar = createStoreProxy<LayoutStoreToolbar>({
-            class: {},
-            style: {},
-            color: null,
-            show : true,
-            fixed: true,
+            class      : {},
+            style      : {},
+            color      : null,
+            show       : true,
+            fixed      : true,
+            breadcrumbs: null,
+            children   : null,
+            left       : [],
+            right      : [],
             setShow(show: boolean) {this.show = show;},
             setFixed(fixed: boolean) {this.fixed = fixed;},
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
@@ -227,7 +238,7 @@ export class LayoutStore {
                     backgroundColor: self.content.computedStyle.backgroundColor,
                     paddingLeft    : self.content.computedStyle.marginLeft,
                     paddingRight   : self.content.computedStyle.marginRight,
-                }
+                };
                 if ( this.color ) style.backgroundColor = colorKeys.includes(this.color) ? colors[ this.color ] : this.color;
                 return style;
             },
@@ -289,6 +300,9 @@ export type LayoutStorePart<T> = Partial<T> & {
     setClass(value: Record<string, boolean>)
 
     setStyle(value: React.CSSProperties)
+
+
+    children: []
 }
 
 
@@ -320,6 +334,7 @@ export interface LayoutFixedData {
     setFixed(fixed: boolean)
 }
 
+
 export type LayoutStoreContainer = LayoutStorePart<api.LayoutContainer> & {
     stretch: boolean
 }
@@ -342,7 +357,11 @@ export type LayoutStoreContent = LayoutStorePart<api.LayoutContent> & LayoutColo
     padding: number | string | number[] | string[]
     margin: number | string | number[] | string[]
 }
-export type LayoutStoreToolbar = LayoutStorePart<any> & LayoutColorData & LayoutShowData & LayoutFixedData & {}
+export type LayoutStoreToolbar = LayoutStorePart<any> & LayoutColorData & LayoutShowData & LayoutFixedData & {
+    breadcrumbs: null
+    left: []
+    right: []
+}
 
 //
 // export class LayoutStore {

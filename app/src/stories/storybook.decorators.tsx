@@ -1,5 +1,5 @@
 import { makeDecorator } from '@storybook/addons';
-import * as React from 'react';
+import React from 'react';
 import { ManifestProvider } from '@codex/phpdoc';
 
 export const withPhpdocManifest = makeDecorator({

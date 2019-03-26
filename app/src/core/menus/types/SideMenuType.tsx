@@ -4,7 +4,7 @@ import { IStoreProxy } from '../../stores/proxy';
 import { LayoutStoreSide } from '../../stores/LayoutStore';
 import { transaction } from 'mobx';
 import { SyncHook, SyncWaterfallHook } from 'tapable';
-import * as React from 'react';
+import React from 'react';
 
 import { DynamicMenu } from '../../components/dynamic-menu/DynamicMenu';
 import { Menu } from 'antd';
