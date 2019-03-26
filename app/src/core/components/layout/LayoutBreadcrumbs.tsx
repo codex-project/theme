@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import { observer } from 'mobx-react';
 import { Breadcrumb, Dropdown, Menu } from 'antd';
@@ -11,9 +11,6 @@ import { IStoreProxy, LayoutStorePart, Store } from 'stores';
 import { lazyInject } from 'ioc';
 import { RouteLink, Router } from 'router';
 import { DynamicContent, isDynamicChildren } from 'components/dynamic-content';
-import { Affix } from 'components/affix';
-import { getColor } from 'utils/colors';
-import { DynamicMenu } from 'components/dynamic-menu';
 
 export interface LayoutBreadcrumbsProps {
     className?: string
@@ -30,8 +27,8 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
     @lazyInject('router') router: Router;
 
     getChildren(part: LayoutStorePart<any> | IStoreProxy<LayoutStorePart<any>>) {
-        const { codex, project, revision, document }             = this.store;
-        let iconStyle                                            = { marginRight: 5 };
+        const { codex, project, revision, document } = this.store;
+        let iconStyle                                = { marginRight: 5 };
         if ( ! this.props.children && isDynamicChildren(part.children) ) {
             return <DynamicContent children={part.children}/>;
         }
@@ -39,65 +36,57 @@ export class LayoutBreadcrumbs extends React.Component<LayoutBreadcrumbsProps> {
             return <DynamicContent children={this.props.children}/>;
         }
         if ( ! this.props.children ) {
-            return (
-                <Fragment>
+            return [
+                project && project.key && <Breadcrumb.Item key="project">
+                    <Dropdown overlay={
+                        <Menu>
+                            {codex.projects.map((project, i) => {
+                                let params = { project: project.key };
+                                let title  = project.display_name || project.key;
+                                return (
+                                    <Menu.Item key={project.key || i}>
+                                        <RouteLink name="documentation.project" params={params}>
+                                            <Icon name="book" style={iconStyle}/> {title}
+                                        </RouteLink>
+                                    </Menu.Item>
+                                );
+                            })}
+                        </Menu>
+                    }>
+                        <a className="ant-dropdown-link" href="#"><Icon name="book" style={iconStyle}/> {project.display_name || project.key}</a>
+                    </Dropdown>
+                </Breadcrumb.Item>,
 
-                    <If condition={project && project.key}>
-                        <Breadcrumb.Item>
-                            <Dropdown overlay={
-                                <Menu>
-                                    {codex.projects.map((project, i) => {
-                                        let params = { project: project.key };
-                                        let title  = project.display_name || project.key;
-                                        return (
-                                            <Menu.Item key={project.key || i}>
-                                                <RouteLink name="documentation.project" params={params}>
-                                                    <Icon name="book" style={iconStyle}/> {title}
-                                                </RouteLink>
-                                            </Menu.Item>
-                                        );
-                                    })}
-                                </Menu>
-                            }>
-                                <a className="ant-dropdown-link" href="#"><Icon name="book" style={iconStyle}/> {project.display_name || project.key}</a>
-                            </Dropdown>
-                        </Breadcrumb.Item>
-                    </If>
+                revision && revision.key && <Breadcrumb.Item key="revision">
+                    <Dropdown overlay={
+                        <Menu>
+                            <If condition={project.revisions}>
+                                {project.revisions.map((revision, i) => {
+                                    let params = { project: project.key, revision: revision.key };
+                                    let title  = revision.key;
+                                    return (
+                                        <Menu.Item key={revision.key || i}>
+                                            <RouteLink name="documentation.revision" params={params}>
+                                                <Icon name="code-fork" style={iconStyle}/> {title}
+                                            </RouteLink>
+                                        </Menu.Item>
+                                    );
+                                })}
+                            </If>
+                        </Menu>
+                    }>
+                        <a className="ant-dropdown-link" href="#"><Icon name="code-fork" style={iconStyle}/> {revision.key}</a>
+                    </Dropdown>
+                </Breadcrumb.Item>,
 
-                    <If condition={revision && revision.key}>
-                        <Breadcrumb.Item>
-                            <Dropdown overlay={
-                                <Menu>
-                                    <If condition={project.revisions}>
-                                        {project.revisions.map((revision, i) => {
-                                            let params = { project: project.key, revision: revision.key };
-                                            let title  = revision.key;
-                                            return (
-                                                <Menu.Item key={revision.key || i}>
-                                                    <RouteLink name="documentation.revision" params={params}>
-                                                        <Icon name="code-fork" style={iconStyle}/> {title}
-                                                    </RouteLink>
-                                                </Menu.Item>
-                                            );
-                                        })}
-                                    </If>
-                                </Menu>
-                            }>
-                                <a className="ant-dropdown-link" href="#"><Icon name="code-fork" style={iconStyle}/> {revision.key}</a>
-                            </Dropdown>
-                        </Breadcrumb.Item>
-                    </If>
-
-                    <If condition={document && document.key}>
-                        <Breadcrumb.Item>
-                            <Icon name="file-text-o" style={iconStyle}/> {document.title || document.subtitle || document.key}
-                        </Breadcrumb.Item>
-                    </If>
-                </Fragment>
-            );
+                document && document.key && <Breadcrumb.Item key="document">
+                    <Icon name="file-text-o" style={iconStyle}/> {document.title || document.subtitle || document.key}
+                </Breadcrumb.Item>,
+            ].filter(Boolean);
         }
         return this.props.children;
     }
+
     render() {
         const { style, className, hideHome, children, ...props } = this.props;
         const { codex, project, revision, document }             = this.store;
