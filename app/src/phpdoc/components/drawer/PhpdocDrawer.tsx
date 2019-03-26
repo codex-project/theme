@@ -9,7 +9,6 @@ import memo from 'memoize-one';
 import { PhpdocEntity } from '../entity';
 import { PhpdocDocblock } from '../docblock';
 import { PhpdocMemberList } from '../member-list';
-import { Members } from '../members';
 
 
 const log = require('debug')('phpdoc:Drawer');
@@ -46,9 +45,9 @@ export default class PhpdocDrawer extends Component<PhpdocDrawerProps> {
     renderEntity = memo((fqsen, manifest, file) => {
         return h('div', {}, h([
             h('phpdoc-entity', { fqsen }),
-            h('phpdoc-docblock', { docblock: file.docblock }),
+            // h('phpdoc-docblock', { docblock: file.docblock }),
             h('phpdoc-docblock', { docblock: file.entity.docblock }),
-            h(Members, {
+            h(PhpdocMemberList, {
                 fqsen, height: 500,
                 selectable   : true, searchable: true, filterable: true,
                 methods      : {
@@ -93,6 +92,7 @@ export default class PhpdocDrawer extends Component<PhpdocDrawerProps> {
                 width={width}
                 onClose={this.hide}
                 duration="0.2s"
+                bodyStyle={{padding: 0}}
             >
                 {show ? this.renderEntity(fqsen, manifest, file) : null}
             </Drawer>

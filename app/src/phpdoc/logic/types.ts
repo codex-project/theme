@@ -1,7 +1,22 @@
 import { api } from '@codex/api';
 import { Arguments, Methods, Properties, Tags } from './collections';
 import { FQSEN } from './FQSEN';
-import { PhpdocMembers } from '../components/members/ItemStore';
+import { Map } from '@codex/core';
+
+export class PhpdocMembers extends Map<string, PhpdocMember> {
+    getMethods(): Map<string, PhpdocMethod> {
+        return new PhpdocMethods(this.filter(member => member.isMethod()));
+    }
+
+    getProperties(): Map<string, PhpdocProperty> {
+        return new PhpdocProperties(this.filter(member => member.isProperty()));
+    }
+}
+
+export class PhpdocMethods extends Map<string, PhpdocMethod> {}
+
+export class PhpdocProperties extends Map<string, PhpdocProperty> {}
+
 
 export interface PhpdocDocblock extends api.PhpdocDocblock {
     tags: Tags

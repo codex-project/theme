@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { hot } from 'react-hot-loader';
-import { IList, IListFilters, ListContext } from './ListContext';
 import { Checkbox, Input, Popover, Tabs, Tooltip } from 'antd';
 import { Button, ucfirst } from '@codex/core';
 import { Observer } from 'mobx-react';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { MembersContext } from './MembersContext';
+import { ItemStore, ItemStoreFilters } from './ItemStore';
 
 const log = require('debug')('phpdoc:components:ListFilters');
 
@@ -12,41 +12,38 @@ const TabPane = Tabs.TabPane;
 const Search  = Input.Search;
 
 
-export interface ListFiltersProps {
+export interface FilterControlsProps {
 
     searchable?: boolean
     onSearch?: (value: string) => any
 
     filterable?: boolean
-    onFilter?: (list: IList) => void
-    defaultFilters?: Array<keyof IListFilters>
+    onFilter?: (list: ItemStore) => void
+    defaultFilters?: Array<keyof ItemStoreFilters>
 }
 
 interface State {
     searchFocus: boolean
 }
 
-@hot(module)
-export default class ListFilters extends Component<ListFiltersProps, State> {
-    static displayName                             = 'ListFilters';
-    static defaultProps: Partial<ListFiltersProps> = {
+export class FilterControls extends Component<FilterControlsProps, State> {
+    static displayName                                = 'FilterControls';
+    static defaultProps: Partial<FilterControlsProps> = {
         onSearch: () => null,
         onFilter: () => null,
     };
-    static contextType                             = ListContext;
-    context!: React.ContextType<typeof ListContext>;
-
-    state: State = {
+    static contextType                                = MembersContext;
+    context!: React.ContextType<typeof MembersContext>;
+    state: State                                      = {
         searchFocus: false,
     };
 
-    get list(): IList {return this.context.list;}
+    get itemStore(): ItemStore {return this.context.itemStore;}
 
-
-    constructor(props: ListFiltersProps, context: React.ContextType<typeof ListContext>) {
+    constructor(props: FilterControlsProps, context: React.ContextType<typeof MembersContext>) {
         super(props, context);
         if ( props.defaultFilters && props.defaultFilters.length ) {
-            props.defaultFilters.forEach(name => context.list.setFilter(name, true));
+            props.defaultFilters.forEach(name => context.itemStore.setFilter(name, true));
         }
     }
 
@@ -57,13 +54,13 @@ export default class ListFilters extends Component<ListFiltersProps, State> {
         if ( ! this.props.searchable ) {
             return;
         }
-        this.list.setSearch(value.length === 0 ? null : value);
+        this.itemStore.setSearch(value.length === 0 ? null : value);
         this.props.onSearch(value);
     };
 
     handleFilterChange = (e: CheckboxChangeEvent) => {
-        this.list.setFilter(e.target.name as any, e.target.checked === false);
-        this.props.onFilter(this.list);
+        this.itemStore.setFilter(e.target.name as any, e.target.checked === false);
+        this.props.onFilter(this.itemStore.visible as any);
     };
 
     render() {
@@ -80,10 +77,10 @@ export default class ListFilters extends Component<ListFiltersProps, State> {
                         onBlur={() => this.setSearchFocus(false)}
                         onSearch={this.handleSearch}
                         onChange={e => this.handleSearch(e.target.value)}
-                        value={this.list.search}
+                        value={this.itemStore.search}
                     />
-                    <If condition={this.list.search && this.list.search.length}>
-                        <Tooltip title="Clear search" key="search-clean"> <Button icon="close" size="small" onClick={() => this.list.setSearch(null)}/> </Tooltip>
+                    <If condition={this.itemStore.search && this.itemStore.search.length}>
+                        <Tooltip title="Clear search" key="search-clean"> <Button icon="close" size="small" onClick={() => this.itemStore.setSearch(null)}/> </Tooltip>
                     </If>
                 </If>
                 <If condition={filterable}>
@@ -96,11 +93,11 @@ export default class ListFilters extends Component<ListFiltersProps, State> {
                                     <Checkbox
                                         key={prop}
                                         name={prop}
-                                        defaultChecked={this.list.filters[ prop ] === false}
+                                        defaultChecked={this.itemStore.filters[ prop ] === false}
                                         style={{ display: 'block', marginLeft: 0 }}
                                         onChange={e => {
                                             this.handleFilterChange(e);
-                                            log('checkbox onChange', prop, e.target, this.list.filters[ prop ] === false, '  list.filters[prop]: ', this.list.filters[ prop ]);
+                                            log('checkbox onChange', prop, e.target, this.itemStore.filters[ prop ] === false, '  list.filters[prop]: ', this.itemStore.filters[ prop ]);
                                             // this.
                                         }}
                                     >{ucfirst(prop)}</Checkbox>

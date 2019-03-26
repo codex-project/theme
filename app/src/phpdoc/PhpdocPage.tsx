@@ -12,7 +12,7 @@ import { observer } from 'mobx-react';
 import { hot } from 'react-hot-loader';
 import { PhpdocLink } from './components/link';
 import { Col, Row } from 'antd';
-import { Members, MembersWithFilterProps } from './components/members';
+import { PhpdocMemberList } from './components/member-list';
 
 const AutoWidthGridLayout = WidthProvider(ReactGridLayout);
 
@@ -87,7 +87,7 @@ export default class PhpdocPage extends React.Component<PhpdocPageProps & { rout
                         <If condition={this.showLists}>
                             <Row>
                                 <Col span={12} offset={6}>
-                                    <Members<MembersWithFilterProps>
+                                    <PhpdocMemberList
                                         fqsen={this.fqsen}
                                         filterable selectable searchable
                                         scrollable height={500}

@@ -1,21 +1,7 @@
 import { isString } from 'lodash';
 import { action, observable, transaction } from 'mobx';
-import { isMember, PhpdocFile, PhpdocMember, PhpdocMethod, PhpdocProperty } from '../../logic';
+import { isMember, PhpdocFile, PhpdocMember, PhpdocMembers, PhpdocMethod, PhpdocProperty } from '../../logic';
 import { firstBy, Map } from '@codex/core';
-
-export class PhpdocMembers extends Map<string, PhpdocMember> {
-    getMethods(): Map<string, PhpdocMethod> {
-        return new Methods(this.filter(member => member.isMethod()));
-    }
-
-    getProperties(): Map<string, PhpdocProperty> {
-        return new Properties(this.filter(member => member.isProperty()));
-    }
-}
-
-export class Methods extends Map<string, PhpdocMethod> {}
-
-export class Properties extends Map<string, PhpdocProperty> {}
 
 
 export interface ItemStoreFilters {

@@ -49,7 +49,7 @@ $prefix: phpdoc-member-list;
         padding-right: 6px;
     }
 
-    &-inner > .phpdoc-method {
+    &-inner .phpdoc-method {
         border-top: $phpdoc-boxed-border;
         border-bottom: $phpdoc-boxed-border;
         margin: 0;
