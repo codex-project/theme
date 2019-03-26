@@ -85,19 +85,36 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
         }
         if ( action === 'drawer' ) {
             return (
-                <Fragment>
-                    <a
-                        // href="javascript:void(0)"
-                        onClick={() => this.setShowDrawer(true)}
-                        className={linkClassName}
-                    >
-                        {linkChildren}
-                    </a>
-                </Fragment>
+                <a onClick={() => this.setShowDrawer(true)} className={linkClassName}>
+                    {linkChildren}
+                </a>
             );
         }
 
         return children;
+    }
+
+    renderPopoverLink() {
+        const props     = this.props;
+        const maxHeight = this.fqsen.isMethod ? 200 : null;
+
+        let footerText;
+        if ( props.action === 'drawer' ) {
+            footerText = 'Click opens quick-preview';
+        } else if ( props.action === 'navigate' ) {
+            footerText = 'Click goes to documentation';
+        }
+
+        return (
+            <PhpdocPopover maxHeight={maxHeight} placement="bottom" footerText={footerText}>
+                <Trigger listenTo={[ 'onMouseEnter', 'onMouseLeave', 'onClick' ]}>
+                    {this.renderLink()}
+                </Trigger>
+                {this.fqsen.isEntity ? <PhpdocEntity fqsen={this.fqsen} style={{ marginBottom: 0 }} titleStyle={{ margin: 0 }}/> :
+                 this.fqsen.isMethod ? <PhpdocMethod fqsen={this.fqsen} hide={{ namespace: true }}/> :
+                 null}
+            </PhpdocPopover>
+        );
     }
 
 
@@ -106,41 +123,21 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
         if ( ! props.fqsen ) return null;
         this.fqsen = FQSEN.from(props.fqsen);
         this.type  = new Type(this.context.manifest, this.fqsen.fullName);
-        let footerText;
-        if ( props.action === 'drawer' ) {
-            footerText = 'Click opens quick-preview';
-        } else if ( props.action === 'navigate' ) {
-            footerText = 'Click goes to documentation';
-        }
-
         if ( this.type.isEntity && this.type.isExternal ) {
             return <span>{this.fqsen.fullName}</span>;
         }
-
-        const maxHeight = this.fqsen.isMethod ? 200 : null;
+        let hasPopover = props.modifiers.includes('popover');
 
         return (
             <Fragment>
-                {/*{props.action === 'drawer' ? <PhpdocDrawer query={props.query} open={this.showDrawer} onChange={open => this.setShowDrawer(open)}/> : null}*/}
-                {props.modifiers.includes('popover') ?
-                 <PhpdocPopover maxHeight={maxHeight} placement="bottom" footerText={footerText}>
-                     <Trigger listenTo={[ 'onMouseEnter', 'onMouseLeave', 'onClick' ]}>
-                         {this.renderLink()}
-                     </Trigger>
-                     {this.fqsen.isEntity ? <PhpdocEntity fqsen={this.fqsen} style={{ marginBottom: 0 }} titleStyle={{ margin: 0 }}/> :
-                      this.fqsen.isMethod ? <PhpdocMethod fqsen={this.fqsen} hide={{ namespace: true }}/> :
-                      null}
-                 </PhpdocPopover> :
-                 this.renderLink()}
-                 <If condition={props.action === 'drawer'}>
-                     <PhpdocDrawer
-                         fqsen={this.fqsen}
-                         onChange={open => this.setShowDrawer(open)}
-                         open={this.showDrawer}
-                     >
-                         Drawer Content
-                     </PhpdocDrawer>
-                 </If>
+                {hasPopover ? this.renderPopoverLink() : this.renderLink()}
+                <If condition={props.action === 'drawer'}>
+                    <PhpdocDrawer
+                        fqsen={this.fqsen}
+                        visible={this.showDrawer}
+                        onChange={open => setTimeout(() => this.setShowDrawer(open), 100)} // hack
+                    />
+                </If>
             </Fragment>
         );
     }

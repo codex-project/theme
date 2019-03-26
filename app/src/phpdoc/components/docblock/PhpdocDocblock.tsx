@@ -2,11 +2,12 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { classes, style } from 'typestyle';
 import { isString } from 'lodash';
-import { getColor, hot, HtmlParser, lazyInject, MaterialColor } from '@codex/core';
+import { getColor, HtmlParser, lazyInject, MaterialColor } from '@codex/core';
 import { api } from '@codex/api';
 import { Tags } from '../../logic';
 import './docblock.scss';
 import { PhpdocTags } from '../tags';
+import { hot } from 'react-hot-loader';
 
 const log = require('debug')('components:PhpdocDocblock');
 
@@ -28,11 +29,11 @@ export interface PhpdocDocblockProps {
     onlyTags?: string[]
 }
 
-export { PhpdocDocblock };
+
 
 @hot(module)
 @observer
-export default class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
+export class PhpdocDocblock extends React.Component<PhpdocDocblockProps> {
     @lazyInject('htmlparser') htmlParser: HtmlParser;
     static displayName: string                        = 'PhpdocDocblock';
     static defaultProps: Partial<PhpdocDocblockProps> = {

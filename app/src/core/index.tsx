@@ -24,6 +24,8 @@ export * from './classes/Url';
 export * from './classes/CssVariables';
 // export * from './classes/ApiLocalStorageCache';
 export * from './classes/Plugin';
+// export * from './collections/Record';
+export * from './collections/Map';
 // export * from './collections/Collection';
 // export * from './collections/DictionaryWrapper';
 // export * from './collections/ArrayUtils';
@@ -54,6 +56,7 @@ export * from './utils/scroll';
 export * from './utils/scrollTo';
 export * from './utils/storage';
 export * from './utils/styleToString';
+export * from './utils/thenBy';
 export {styled} from './utils/styled';
 import * as scroll from './utils/scroll';
 

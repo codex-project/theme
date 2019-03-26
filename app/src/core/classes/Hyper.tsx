@@ -56,7 +56,6 @@ export class Hyper {
 
 export namespace Hyper {
     export interface RenderFn {
-        (...args: any[]): ReactElement<any>
 
         <P>(children: Array<ReactElement<any>>): ReactElement<P>
 
@@ -82,7 +81,7 @@ export namespace Hyper {
 
 }
 
-export const h: Hyper.RenderFn   = (...args: any[]) => Hyper.render(...args);
+export const h: Hyper.RenderFn   = (...args: any[]) => Hyper.render(...args as [any,any,any]);
 export const f: Hyper.FragmentFn = (...args: any[]) => Hyper.fragment(...args);
 
 

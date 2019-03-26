@@ -6,7 +6,7 @@ import { Checkbox, Input, Popover, Tabs, Tooltip } from 'antd';
 import ListItem, { ListItemProps } from './ListItem';
 import './member-list.scss';
 import { Button, Scrollbar, ucfirst } from '@codex/core';
-import { FQNSComponent, FQNSComponentContext } from '../base';
+import { FQSENComponent, FQSENComponentContext } from '../base';
 import { AutoSizer, List, ListRowProps } from 'react-virtualized';
 import PhpdocMethod, { PhpdocMethodSignature } from '../method';
 import { IFQSEN, PhpdocFile, PhpdocMethod as PhpdocMethodClass, PhpdocProperty } from '../../logic';
@@ -55,7 +55,7 @@ export interface PhpdocMemberListProps {
 }
 
 // @hot(module)
-@FQNSComponent()
+@FQSENComponent()
 @observer
 export default class PhpdocMemberList extends React.Component<PhpdocMemberListProps> {
     static displayName: string                          = 'PhpdocMemberList';
@@ -71,8 +71,8 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
         onInheritedClick : () => null,
         onGotoSourceClick: () => null,
     };
-    static contextType                                  = FQNSComponentContext;
-    context!: React.ContextType<typeof FQNSComponentContext>;
+    static contextType                                  = FQSENComponentContext;
+    context!: React.ContextType<typeof FQSENComponentContext>;
     listRef: List                                       = null;
     state: {
         list: MemberList,
@@ -106,7 +106,7 @@ export default class PhpdocMemberList extends React.Component<PhpdocMemberListPr
     @observable scrollTop: number                       = 0;
     @observable searchFocus: boolean                    = false;
 
-    constructor(props: PhpdocMemberListProps, context: React.ContextType<typeof FQNSComponentContext>) {
+    constructor(props: PhpdocMemberListProps, context: React.ContextType<typeof FQSENComponentContext>) {
         super(props, context);
         // this.state.list = new MemberList(context.file);
         // this.state.list.setSelected(props.selected);

@@ -14,7 +14,8 @@
     .ant-popover-arrow,
     .ant-tooltip-inner,
     .ant-popover-inner {
-        background-color : $blue-grey-1;
+        //background-color : $blue-grey-1;
+        background-color: rgba(black, 0.7);
     }
 
     .ant-popover-inner-content {

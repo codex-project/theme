@@ -4,7 +4,7 @@ import { PhpdocType } from '../type';
 import { observer } from 'mobx-react';
 import { hot } from 'react-hot-loader';
 import './entity.scss';
-import { FQNSComponent, FQNSComponentContext } from '../base';
+import { FQSENComponent, FQSENComponentContext } from '../base';
 import { IFQSEN } from '../../logic';
 
 const log = require('debug')('components:PhpdocHeader');
@@ -38,7 +38,7 @@ export interface PhpdocEntityProps {
 
 
 @hot(module)
-@FQNSComponent()
+@FQSENComponent()
 @observer
 export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     static displayName: string                      = 'PhpdocEntity';
@@ -47,8 +47,8 @@ export default class PhpdocEntity extends React.Component<PhpdocEntityProps> {
         innerRef : (ref: HTMLElement) => ref,
         hide     : [],
     };
-    static contextType                              = FQNSComponentContext;
-    context!: React.ContextType<typeof FQNSComponentContext>;
+    static contextType                              = FQSENComponentContext;
+    context!: React.ContextType<typeof FQSENComponentContext>;
 
     setInnerRef = ref => this.props.innerRef(ref);
 

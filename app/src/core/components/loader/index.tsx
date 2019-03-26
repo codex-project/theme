@@ -126,7 +126,7 @@ function resolve(loadable) {
     return loadable[ k ];
 }
 
-export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponent<T> {
+export function loader<T>(_options: LoaderOptions | Loadable): React.ComponentType<T> & { preload?(props?: T): void } {
     let options: LoaderOptions = getLoaderOptions(isLoadable(_options) ? { loadable: _options } : _options);
 
     const Loading  = options.loading;
@@ -142,6 +142,7 @@ export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponen
         } else {
             throw new Error('invalid loadable');
         }
+        LazyComponent.preload = (props) => loadable.preload(props)
         return {
             __esModule: true,
             default   : resolve(loadable),

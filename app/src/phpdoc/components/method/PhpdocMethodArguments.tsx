@@ -7,7 +7,7 @@ import { Arguments, IFQSEN, PhpdocMethod as Method } from '../../logic';
 import { PhpdocArgument } from '@codex/api';
 import {PhpdocType} from '../type';
 import { classes } from 'typestyle';
-import { FQNSComponent, FQNSComponentContext } from '../base';
+import { FQSENComponent, FQSENComponentContext } from '../base';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
@@ -28,7 +28,7 @@ export interface PhpdocMethodArgumentsProps {
 
 const argInArray = (name: string, arr: any[]) => arr.map(name => strEnsureLeft(name, '$')).includes(strEnsureLeft(name, '$'));
 
-@FQNSComponent()
+@FQSENComponent()
 @observer
 export default class PhpdocMethodArguments extends React.Component<PhpdocMethodArgumentsProps> {
     static displayName: string                               = 'PhpdocMethodArguments';
@@ -36,8 +36,8 @@ export default class PhpdocMethodArguments extends React.Component<PhpdocMethodA
         prefixCls: 'phpdoc-method-arguments',
         hide     : {},
     };
-    static contextType                                       = FQNSComponentContext;
-    context!: React.ContextType<typeof FQNSComponentContext>;
+    static contextType                                       = FQSENComponentContext;
+    context!: React.ContextType<typeof FQSENComponentContext>;
 
     get method(): Method {return this.context.file.entity.methods.get(this.context.fqsen.memberName);};
 

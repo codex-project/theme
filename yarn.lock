@@ -6790,6 +6790,11 @@ code-point-at@^1.0.0:
   resolved "https://registry.npmjs.org/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
+collect.js@^4.6.4:
+  version "4.6.4"
+  resolved "https://registry.npmjs.org/collect.js/-/collect.js-4.6.4.tgz#1b0f6037488892ec8e08f2dad277d9d59f28680d"
+  integrity sha512-/uLJFL4jPDwZAfNVdMYl8y3P64hDfa+W8T7Sm2TQ2K8jB9q8WKg0PKeSS/qx00NDGEqD+hmSQN3RfEZ0LsMiXg==
+
 collection-map@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/collection-map/-/collection-map-1.0.0.tgz#aea0f06f8d26c780c2b75494385544b2255af18c"
@@ -9796,6 +9801,11 @@ fast-sass-loader@^1.4.7:
     co "^4.6.0"
     fs-extra "3.x"
     loader-utils "^1.1.0"
+
+fast-sort@^1.5.6:
+  version "1.5.6"
+  resolved "https://registry.npmjs.org/fast-sort/-/fast-sort-1.5.6.tgz#fe5dbe919f2f2333d1823808d6d1e7c3b8c562cc"
+  integrity sha512-/UihlqTK3c6uie43pn5+tciRncoUBgMFXcxrqqmeZrBTmTQM+TeZ4YW2sZlTyzMICg4skHBTbMlK3OvEIy11ew==
 
 fastparse@^1.1.1:
   version "1.1.2"

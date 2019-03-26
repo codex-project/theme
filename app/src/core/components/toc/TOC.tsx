@@ -29,12 +29,8 @@ export default class TOC extends Component<TOCProps> {
         type: 'drawer',
     };
     state = { visible: false };
- 
-
-    setVisible = (visible: boolean = true) => {this.setState({ visible }); };
+    setVisible = (visible: boolean = true) => {this.setState({ visible: show }); };
     showDrawer = () => { this.setVisible(true);};
-
-    
     hideDrawer = () => { this.setVisible(false);};
 
     render() {

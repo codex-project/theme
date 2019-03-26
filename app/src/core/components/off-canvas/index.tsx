@@ -1,5 +1,5 @@
-import { loader } from 'components/loader';
 import React from 'react';
+import { loader } from 'components/loader';
 import { OffCanvasProps } from './OffCanvas';
 
 export * from './utils';

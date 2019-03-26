@@ -9,7 +9,7 @@ import { IFQSEN, PhpdocMethod as Method } from '../../logic';
 import { PhpdocTags } from '../tags';
 import { PhpdocType } from '../type';
 import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
-import { FQNSComponent, FQNSComponentContext } from '../base';
+import { FQSENComponent, FQSENComponentContext } from '../base';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');
 
@@ -53,7 +53,7 @@ const hasData = (what) => what !== undefined && what.length > 0;
 // export { PhpdocMethod };
 
 // @hot(module)
-@FQNSComponent()
+@FQSENComponent()
 export default class PhpdocMethod extends Component<PhpdocMethodProps> {
     static displayName: string                      = 'PhpdocMethod';
     static defaultProps: Partial<PhpdocMethodProps> = {
@@ -65,8 +65,8 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
         signatureProps: {},
     };
 
-    static contextType = FQNSComponentContext;
-    context!: React.ContextType<typeof FQNSComponentContext>;
+    static contextType = FQSENComponentContext;
+    context!: React.ContextType<typeof FQSENComponentContext>;
 
     @lazyInject('htmlparser') htmlParser: HtmlParser;
 
@@ -74,7 +74,7 @@ export default class PhpdocMethod extends Component<PhpdocMethodProps> {
 
     toggleCollapse = () => this.setState({ open: ! this.state.open });
 
-    public shouldComponentUpdate(nextProps: Readonly<PhpdocMethodProps>, nextState: Readonly<{ open: boolean }>, nextContext: React.ContextType<typeof FQNSComponentContext>): boolean {
+    public shouldComponentUpdate(nextProps: Readonly<PhpdocMethodProps>, nextState: Readonly<{ open: boolean }>, nextContext: React.ContextType<typeof FQSENComponentContext>): boolean {
         if ( nextState.open !== this.state.open ) {
             log('shouldComponentUpdate', 'nextState.open');
             return true;

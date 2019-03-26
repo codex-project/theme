@@ -59,25 +59,25 @@ export class ManifestProvider extends Component<ManifestProviderProps> {
 }
 
 
-export interface IFQNSComponentCtx {
+export interface IFQSENComponentCtx {
     manifest: PhpdocManifest
     file: PhpdocFile
     fqsen: FQSEN
 }
 
 
-export const FQNSComponentContext = React.createContext<IFQNSComponentCtx>({ manifest: null, file: null, fqsen: null });
-FQNSComponentContext.displayName='FQNSComponentContext';
+export const FQSENComponentContext = React.createContext<IFQSENComponentCtx>({ manifest: null, file: null, fqsen: null });
+FQSENComponentContext.displayName  ='FQSENComponentContext';
 
-export interface FQNSComponentProps {
+export interface FQSENComponentProps {
     fqsen:IFQSEN
     file?:PhpdocFile
 }
 
-export function FQNSComponent(contextual: boolean = false) {
+export function FQSENComponent(contextual: boolean = false) {
     return function <T>(TargetComponent: T): T {
-        class HOC extends Component<FQNSComponentProps> {
-            static displayName                        = 'FQNSHOC';
+        class HOC extends Component<FQSENComponentProps> {
+            static displayName                        = `FQSENHOC(${TargetComponent['name'] || TargetComponent.constructor.name || TargetComponent.toString() })`;
             static WrappedComponent                   = TargetComponent;
             static contextType                        = ManifestContext;
             context!: React.ContextType<typeof ManifestContext>;
@@ -118,11 +118,11 @@ export function FQNSComponent(contextual: boolean = false) {
             render() {
                 const { children, ...props } = this.props;
                 return (
-                    <FQNSComponentContext.Provider value={{ manifest: this.context.manifest, file: this.state.file, fqsen: this.state.fqsen }}>
+                    <FQSENComponentContext.Provider value={{ manifest: this.context.manifest, file: this.state.file, fqsen: this.state.fqsen }}>
                         <If condition={this.state.file}>
                             {React.createElement(TargetComponent as any, props, children)}
                         </If>
-                    </FQNSComponentContext.Provider>
+                    </FQSENComponentContext.Provider>
                 );
             }
         }

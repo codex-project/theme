@@ -38,6 +38,8 @@
         "@types/react-virtualized": "^9.18.12",
         "@types/react-window": "^1.1.0",
         "@types/url-join": "^4.0.0",
+        "collect.js": "^4.6.4",
+        "fast-sort": "^1.5.6",
         "animate-scss": "^3.2.1",
         "antd": "^3.10.8",
         "typescript-tuple": "^2.2.1",

@@ -6,11 +6,13 @@ import { ManifestContext } from './components/base';
 import ReactGridLayout, { WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { observable } from 'mobx';
+import { action, observable } from 'mobx';
 import { FQSEN } from './logic';
 import { observer } from 'mobx-react';
 import { hot } from 'react-hot-loader';
 import { PhpdocLink } from './components/link';
+import { Col, Row } from 'antd';
+import { Members, MembersWithFilterProps } from './components/members';
 
 const AutoWidthGridLayout = WidthProvider(ReactGridLayout);
 
@@ -41,6 +43,12 @@ export default class PhpdocPage extends React.Component<PhpdocPageProps & { rout
         }
     }
 
+    @observable showLists = false;
+
+    @action setShowLists(showLists: boolean) {
+        this.showLists = showLists;
+    }
+
     state = { manifest: null, loaded: false };
 
     public componentWillMount(): void {
@@ -54,13 +62,61 @@ export default class PhpdocPage extends React.Component<PhpdocPageProps & { rout
 
     render() {
         window[ 'phpdoc' ] = this;
+        const height       = 300;
         return (
             <div id="phpdoc-page">
                 <If condition={this.state && this.state.manifest && this.state.loaded}>
                     <ManifestContext.Provider value={{ manifest: this.state.manifest }}>
+
                         <PhpdocLink fqsen={this.fqsen} action="drawer">
-                            The link
+                            Show Drawer
                         </PhpdocLink>
+
+                        <a href="#" onClick={e => {
+                            log('showLists click', e, { thisshowLists: this.showLists });
+                            e.preventDefault();
+                            this.setShowLists(! this.showLists);
+                        }}>Show Lists</a>
+
+                        {/*<PhpdocMemberList
+                            fqsen="Codex\\Codex"
+                            height={height}
+                            filterable searchable selectable
+                        />*/}
+
+                        <If condition={this.showLists}>
+                            <Row>
+                                <Col span={12} offset={6}>
+                                    <Members<MembersWithFilterProps>
+                                        fqsen={this.fqsen}
+                                        filterable selectable searchable
+                                        scrollable height={500}
+
+                                        methods={{
+                                            hide: {
+                                                namespace       : true,
+                                                argumentDefaults: true,
+                                                typeTooltip     : true,
+                                            },
+                                        }}
+                                    />
+                                </Col>
+                            </Row>
+                            {/*<Row gutter={10}>
+                                <Col span={6}>
+
+                                </Col>
+                                <Col span={6}>
+                                    <PhpdocMemberList fqsen="Codex\\Projects\\Project" height={height}/>
+                                </Col>
+                                <Col span={6}>
+                                    <PhpdocMemberList fqsen="Codex\\Revisions\\Revision" height={height}/>
+                                </Col>
+                                <Col span={6}>
+                                    <PhpdocMemberList fqsen="Codex\\Documents\\Document" height={height}/>
+                                </Col>
+                            </Row>*/}
+                        </If>
                     </ManifestContext.Provider>
                 </If>
             </div>

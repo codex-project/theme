@@ -1,7 +1,7 @@
 import { api } from '@codex/api';
 import { Arguments, Methods, Properties, Tags } from './collections';
 import { FQSEN } from './FQSEN';
-import { Map } from 'immutable';
+import { PhpdocMembers } from '../components/members/ItemStore';
 
 export interface PhpdocDocblock extends api.PhpdocDocblock {
     tags: Tags
@@ -44,6 +44,26 @@ export class PhpdocFile<T extends PhpdocClassFile | PhpdocInterfaceFile | Phpdoc
 export abstract class PhpdocBaseType<T extends any> {
     toJS: () => T;
 
+    isClass(): this is PhpdocClassFile {
+        return this[ 'type' ] && this[ 'type' ] === 'class';
+    }
+
+    isInterface(): this is PhpdocInterfaceFile {
+        return this[ 'type' ] && this[ 'type' ] === 'interface';
+    }
+
+    isTrait(): this is PhpdocTraitFile {
+        return this[ 'type' ] && this[ 'type' ] === 'trait';
+    }
+
+    isMethod(): this is PhpdocMethod {
+        return this[ 'type' ] && this[ 'type' ] === 'method';
+    }
+
+    isProperty(): this is PhpdocProperty {
+        return this[ 'type' ] && this[ 'type' ] === 'property';
+    }
+
     constructor(data: T) {
         Object.assign(this, data);
         this.toJS = () => data;
@@ -53,12 +73,12 @@ export abstract class PhpdocBaseType<T extends any> {
 export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
     fqsen: FQSEN;
     entity: T;
-    members: Map<string, PhpdocProperty | PhpdocMethod>;
+    members: PhpdocMembers;
 
     constructor(public readonly type: 'class' | 'trait' | 'interface', data: T) {
         super(data);
         this.fqsen   = FQSEN.from(data.full_name);
-        this.members = Map();
+        this.members = new PhpdocMembers();
         if ( data.methods ) {
             this[ 'methods' ] = new Methods(...data.methods.map(item => {
                 if ( item.docblock && item.docblock.tags !== undefined ) {
@@ -75,7 +95,12 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 }));
                 return new PhpdocMethod(item, this);
             }));
-            this[ 'methods' ].getValues().forEach(value => this.members = this.members.set(value.name, value));
+
+            this.members = this.members.withMutations(map => {
+                this[ 'methods' ].getValues().forEach(value => {
+                    map.set(value.name, value);
+                });
+            });
         }
         if ( data.properties ) {
             this[ 'properties' ] = new Properties(...data.properties.map(item => {
@@ -84,12 +109,16 @@ export abstract class PhpdocBaseFile<T extends any> extends PhpdocBaseType<T> {
                 }
                 return new PhpdocProperty(item, this);
             }));
-            this[ 'properties' ].getValues().forEach(value => this.members = this.members.set(value.name, value));
+
+            this.members = this.members.withMutations(map => {
+                this[ 'properties' ].getValues().forEach(value => {
+                    map.set(value.name, value);
+                });
+            });
         }
         if ( data.docblock && data.docblock.tags ) {
             this[ 'docblock' ][ 'tags' ] = new Tags(...data.docblock.tags);
         }
-
     }
 }
 
@@ -151,6 +180,8 @@ export class PhpdocMethod extends PhpdocBaseType<api.PhpdocMethod> {
     original_fqsen: FQSEN;
     type = 'method';
 
+    get isInherited() { return this.inherited_from && this.inherited_from.length; }
+
     constructor(data, parent: PhpdocBaseFile<any>) {
         super(data);
         if ( data.full_name ) {
@@ -173,6 +204,8 @@ export class PhpdocProperty extends PhpdocBaseType<api.PhpdocProperty> {
     original_fqsen: FQSEN;
     type = 'property';
 
+    get isInherited() { return this.inherited_from && this.inherited_from.length; }
+
     constructor(data, parent: PhpdocBaseFile<any>) {
         super(data);
         if ( data.full_name ) {
@@ -189,3 +222,4 @@ export class PhpdocProperty extends PhpdocBaseType<api.PhpdocProperty> {
     }
 }
 
+export type PhpdocMember = PhpdocProperty | PhpdocMethod

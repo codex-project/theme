@@ -3,12 +3,13 @@ import './method-signature.scss';
 import { PhpdocMethod as Method, PhpdocMethod } from '../../logic';
 import { PhpdocType } from '../type';
 import { classes } from 'typestyle';
-import { FQNSComponent, FQNSComponentContext, FQNSComponentProps } from '../base';
+import { FQSENComponent, FQSENComponentContext, FQSENComponentProps } from '../base';
 import { iconTooltipDeprecated, iconTooltipInherited } from '../tooltips';
+import { cold, hot } from 'react-hot-loader';
 
 const log = require('debug')('phpdoc:components:PhpdocMethodSignature');
 
-export interface PhpdocMethodSignatureProps extends FQNSComponentProps {
+export interface PhpdocMethodSignatureProps extends FQSENComponentProps {
     style?: React.CSSProperties
     className?: string;
     prefixCls?: string
@@ -23,6 +24,7 @@ export interface PhpdocMethodSignatureProps extends FQNSComponentProps {
         inherited?: boolean
         deprecated?: boolean
         modifiers?: boolean
+        visibility?: boolean
         arguments?: boolean
         argumentTypes?: boolean
         argumentDefaults?: boolean
@@ -33,8 +35,8 @@ export interface PhpdocMethodSignatureProps extends FQNSComponentProps {
     }
 }
 
-// @hot(module)
-@FQNSComponent()
+@hot(module)
+@FQSENComponent()
 export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMethodSignatureProps> {
     static displayName: string                               = 'PhpdocMethodSignature';
     static defaultProps: Partial<PhpdocMethodSignatureProps> = {
@@ -43,8 +45,8 @@ export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMet
         size           : 14,
         hide           : {},
     };
-    static contextType                                       = FQNSComponentContext;
-    context!: React.ContextType<typeof FQNSComponentContext>;
+    static contextType                                       = FQSENComponentContext;
+    context!: React.ContextType<typeof FQSENComponentContext>;
 
     get method(): Method {return this.context.file.entity.methods.get(this.context.fqsen.memberName);};
 
@@ -99,7 +101,7 @@ export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMet
                 {! hide.inherited && method.inherited_from ? ' ' : null}
 
                 {! hide.modifiers && method.static ? <span className="phpdoc-method-signature-modifier phpdoc-modifier-static">static </span> : null}
-                {! hide.modifiers ? <span className={'phpdoc-method-signature-visibility phpdoc-visibility-' + method.visibility}>{method.visibility} </span> : null}
+                {! hide.visibility ? <span className={'phpdoc-method-signature-visibility phpdoc-visibility-' + method.visibility}>{method.visibility} </span> : null}
                 {! hide.modifiers && method.abstract ? <span className="phpdoc-method-signature-modifier phpdoc-modifier-abstract">abstract </span> : null}
 
                 <span className="phpdoc-method-signature-name">{method.name}</span>

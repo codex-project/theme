@@ -102,20 +102,7 @@ import { ManifestProviderProps } from './components/base';
 import { PhpdocPopoverProps } from './components/popover/PhpdocPopover';
 import { PhpdocMethodProps } from './components/method/PhpdocMethod';
 import { PhpdocMemberListProps } from './components/member-list/PhpdocMemberList';
-export interface PhpdocComponents {
-    'phpdoc-docblock'         : PhpdocDocblockProps
-    'phpdoc-entity'           : PhpdocEntityProps
-    'phpdoc-link'             : PhpdocLinkProps
-    'phpdoc-member-list'      : PhpdocMemberListProps
-    'phpdoc-method'           : PhpdocMethodProps
-    'phpdoc-method-arguments' : PhpdocMethodArgumentsProps
-    'phpdoc-method-signature' : PhpdocMethodSignatureProps
-    'phpdoc-popover'          : PhpdocPopoverProps
-    'phpdoc-tags'             : PhpdocTagsProps
-    'phpdoc-tree'             : PhpdocTreeProps
-    'phpdoc-type'             : PhpdocTypeProps
-    'phpdoc-manifest-provider': ManifestProviderProps
-}
+
 declare module 'codex-components' {
     interface Components {
         'phpdoc-docblock'         : PhpdocDocblockProps

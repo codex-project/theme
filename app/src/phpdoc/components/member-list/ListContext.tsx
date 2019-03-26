@@ -1,9 +1,10 @@
 import { FQSEN, Methods, PhpdocFile, PhpdocManifest, PhpdocMethod, PhpdocProperty, Properties } from '../../logic';
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
-import { FQNSComponent, FQNSComponentContext, FQNSComponentProps } from '../base';
+import { FQSENComponent, FQSENComponentContext, FQSENComponentProps } from '../base';
 import { api } from '@codex/api';
-import { List, Map } from 'immutable';
+import { List } from 'immutable';
+
 
 export type IListItem = PhpdocProperty | PhpdocMethod
 export type IListMap = Map<string, IListItem>
@@ -43,7 +44,7 @@ export interface ListContextValue {
 
 export const ListContext = React.createContext<ListContextValue>({ manifest: null, file: null, fqsen: null, list: null });
 
-export interface ListContextProviderProps extends FQNSComponentProps {}
+export interface ListContextProviderProps extends FQSENComponentProps {}
 
 
 interface State {
@@ -58,12 +59,12 @@ interface State {
 export { ListContextProvider };
 
 @hot(module)
-@FQNSComponent()
+@FQSENComponent()
 export default class ListContextProvider extends Component<ListContextProviderProps, State> {
     static displayName                                     = 'ListContextProvider';
     static defaultProps: Partial<ListContextProviderProps> = {};
-    static contextType                                     = FQNSComponentContext;
-    context!: React.ContextType<typeof FQNSComponentContext>;
+    static contextType                                     = FQSENComponentContext;
+    context!: React.ContextType<typeof FQSENComponentContext>;
 
     state: State = {
         items   : null,
@@ -82,9 +83,9 @@ export default class ListContextProvider extends Component<ListContextProviderPr
         },
     };
 
-    constructor(props: ListContextProviderProps, context: React.ContextType<typeof FQNSComponentContext>) {
+    constructor(props: ListContextProviderProps, context: React.ContextType<typeof FQSENComponentContext>) {
         super(props, context);
-        this.state.items    = context.file.entity.members.toList();
+        this.state.itemList = context.file.entity.members.toList();
         this.state.filtered = this.state.items.keySeq().toArray();
         this.state.search   = null;
     }
@@ -182,7 +183,7 @@ export default class ListContextProvider extends Component<ListContextProviderPr
 }
 
 
-export interface ListComponentHOCProps extends FQNSComponentProps {}
+export interface ListComponentHOCProps extends FQSENComponentProps {}
 
 export function listComponent() {
     return function <T>(TargetComponent: T): T {

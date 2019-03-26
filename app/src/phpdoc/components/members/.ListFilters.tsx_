@@ -1,0 +1,117 @@
+import React, { Component, Fragment } from 'react';
+import { ListContext } from './ListContext';
+import { Checkbox, Input, Popover, Tabs, Tooltip } from 'antd';
+import { Button, ucfirst } from '@codex/core';
+import { Observer } from 'mobx-react';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { IList, IListFilters } from './types';
+
+const log = require('debug')('phpdoc:components:ListFilters');
+
+const TabPane = Tabs.TabPane;
+const Search  = Input.Search;
+
+
+export interface ListFiltersProps {
+
+    searchable?: boolean
+    onSearch?: (value: string) => any
+
+    filterable?: boolean
+    onFilter?: (list: IList) => void
+    defaultFilters?: Array<keyof IListFilters>
+}
+
+interface State {
+    searchFocus: boolean
+}
+
+
+export class ListFilters extends Component<ListFiltersProps, State> {
+    static displayName                             = 'ListFilters';
+    static defaultProps: Partial<ListFiltersProps> = {
+        onSearch: () => null,
+        onFilter: () => null,
+    };
+    static contextType                             = ListContext;
+    context!: React.ContextType<typeof ListContext>;
+
+    state: State = {
+        searchFocus: false,
+    };
+
+    get list(): IList {return this.context.list;}
+
+
+    constructor(props: ListFiltersProps, context: React.ContextType<typeof ListContext>) {
+        super(props, context);
+        if ( props.defaultFilters && props.defaultFilters.length ) {
+            props.defaultFilters.forEach(name => context.list.setFilter(name, true));
+        }
+    }
+
+    setSearchFocus = (searchFocus: boolean) => this.setState(state => ({ searchFocus }));
+
+    handleSearch = (value: string) => {
+        log('onSearch', value);
+        if ( ! this.props.searchable ) {
+            return;
+        }
+        this.list.setSearch(value.length === 0 ? null : value);
+        this.props.onSearch(value);
+    };
+
+    handleFilterChange = (e: CheckboxChangeEvent) => {
+        this.list.setFilter(e.target.name as any, e.target.checked === false);
+        this.props.onFilter(this.list);
+    };
+
+    render() {
+        const { searchable, filterable } = this.props;
+        return (
+            <Fragment>
+                <If condition={searchable}>
+                    <Search
+                        key="search"
+                        size="small"
+                        placeholder="Search"
+                        className={'phpdoc-member-list-search' + (this.state.searchFocus ? ' focus' : '')}
+                        onFocus={() => this.setSearchFocus(true)}
+                        onBlur={() => this.setSearchFocus(false)}
+                        onSearch={this.handleSearch}
+                        onChange={e => this.handleSearch(e.target.value)}
+                        value={this.list.search}
+                    />
+                    <If condition={this.list.search && this.list.search.length}>
+                        <Tooltip title="Clear search" key="search-clean"> <Button icon="close" size="small" onClick={() => this.list.setSearch(null)}/> </Tooltip>
+                    </If>
+                </If>
+                <If condition={filterable}>
+                    <Popover
+                        title="Filters"
+                        key="filters-button"
+                        content={
+                            [ 'public', 'protected', 'private', 'static', 'abstract', 'final', 'inherited' ].map(prop => (
+                                <Observer key={prop}>{() =>
+                                    <Checkbox
+                                        key={prop}
+                                        name={prop}
+                                        defaultChecked={this.list.filters[ prop ] === false}
+                                        style={{ display: 'block', marginLeft: 0 }}
+                                        onChange={e => {
+                                            this.handleFilterChange(e);
+                                            log('checkbox onChange', prop, e.target, this.list.filters[ prop ] === false, '  list.filters[prop]: ', this.list.filters[ prop ]);
+                                            // this.
+                                        }}
+                                    >{ucfirst(prop)}</Checkbox>
+                                }</Observer>
+                            ))
+                        }>
+                        <Button icon="filter" size="small" style={{ marginLeft: 3 }}/>
+                    </Popover>
+                </If>
+            </Fragment>
+        );
+    }
+}
+

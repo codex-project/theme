@@ -2,11 +2,11 @@ import React from 'react';
 
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
-import Hammer, { HammerDirection } from 'react-hammerjs';
+import Hammer from 'react-hammerjs';
 import { Motion, spring } from 'react-motion';
 import { isString } from 'lodash';
 import { hot } from 'react-hot-loader';
-import { DirectionHelper, Position, PositionHelper } from 'components/off-canvas/utils';
+import { DirectionHelper, Position, PositionHelper } from './utils';
 
 const log = require('debug')('off-canvas');
 
@@ -29,11 +29,10 @@ export interface OffCanvasProps {
     onChange?: (open: boolean) => void
 }
 
-interface OffCanvasState {}
 
 @hot(module)
 @observer
-export default class OffCanvas extends React.Component<OffCanvasProps, OffCanvasState> {
+export class OffCanvas extends React.Component<OffCanvasProps> {
     static displayName: string                   = 'OffCanvas';
     static defaultProps: Partial<OffCanvasProps> = {
         margin    : 0,
@@ -65,7 +64,7 @@ export default class OffCanvas extends React.Component<OffCanvasProps, OffCanvas
         }
     }
 
-    public componentDidUpdate(prevProps: Readonly<OffCanvasProps>, prevState: Readonly<OffCanvasState>, snapshot?: any): void {
+    public componentDidUpdate(prevProps: Readonly<OffCanvasProps>, prevState, snapshot?: any): void {
         this.updateSizes();
         if ( this.props.open !== prevProps.open ) {
             this.setValue(this.props.open ? this.size : 0);
