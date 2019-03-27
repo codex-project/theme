@@ -10,11 +10,10 @@ export interface CodeRendererProps {
 }
 
 
-export { CodeRenderer };
 
 @hot(module)
 @observer
-export default class CodeRenderer extends Component<CodeRendererProps> {
+export  class CodeRenderer extends Component<CodeRendererProps> {
     static displayName                              = 'CodeRenderer';
     static defaultProps: Partial<CodeRendererProps> = {};
 

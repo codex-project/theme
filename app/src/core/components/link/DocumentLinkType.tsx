@@ -36,7 +36,7 @@ export class DocumentLinkType extends LinkType {
                     revision: this.revision,
                     document: this.document,
                 },
-            }),
+            }) as any,
             className: styling ? 'c-document-link' : null,
         };
         return (

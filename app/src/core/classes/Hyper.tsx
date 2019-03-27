@@ -11,6 +11,7 @@ type Element = ReactElement | string | number | null;
 const log = require('debug')('classes:Hyper');
 
 let i = 0;
+
 export class Hyper {
     static get components(): ComponentRegistry { return app.get<ComponentRegistry>('components');};
 
@@ -25,9 +26,9 @@ export class Hyper {
             return _h(React.Fragment, { key: i }, args[ 0 ]);
         }
 
-        let type     = args[ 0 ],
-            props    = {},
-            children = null;
+        let type       = args[ 0 ],
+            props: any = {},
+            children   = null;
 
         if ( len === 2 && (Array.isArray(args[ 1 ]) || React.isValidElement(args[ 1 ]) || types[ 1 ] === 'string') ) {
             children = args[ 1 ];
@@ -54,7 +55,7 @@ export class Hyper {
 
     static fragment: Hyper.FragmentFn = (...children: ReactElement<any>[]) => {
         // React.Children.map(children, (child,i) => React.cloneElement(child,))
-        return React.createElement(React.Fragment, {key: i}, ...children);
+        return React.createElement(React.Fragment, { key: i }, ...children);
     };
 }
 

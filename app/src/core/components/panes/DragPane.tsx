@@ -31,7 +31,7 @@ export type DragPaneProps = DragPaneBaseProps & PaneProps
             isDragging       : monitor.isDragging(),
         };
     }) as any)
-export default class DragPane extends Pane<DragPaneProps & Partial<CollectedProps>> {
+export class DragPane extends Pane<DragPaneProps & Partial<CollectedProps>> {
     static displayName?                          = 'DragPane';
     static defaultProps?: Partial<DragPaneProps> = Pane.defaultProps;
 

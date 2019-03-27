@@ -130,13 +130,13 @@ function resolve(loadable) {
     return loadable[ k ];
 }
 
-export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponent<T> {
+export function loader<P={},T =loader.Class<P>>(_options: LoaderOptions | Loadable): T  {
     let options: LoaderOptions = getLoaderOptions(isLoadable(_options) ? { loadable: _options } : _options);
 
     const Loading         = options.loading;
     const fallback        = options.showLoading ? <Loading {...options.loadingOptions}/> : undefined;
     let _loadable;
-    let LazyComponent     = loadable<T>(async (props) => {
+    let LazyComponent     = loadable<P>(async (props) => {
         if ( isLoadableArray(options.loadable) ) {
             let loadableValues = await Promise.all(options.loadable.map((l, i) => l(i === 0 ? props : undefined)));
             _loadable          = loadableValues.shift();
@@ -155,12 +155,12 @@ export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponen
         };
     }, { fallback });
     LazyComponent.preload = (props) => {
-    }
+    };
     if ( ! options.animated ) {
-        return LazyComponent;
+        return LazyComponent as any;
     }
 
-    let AnimatedLoadableComponent: ILoadableComponent<T>;
+    let AnimatedLoadableComponent: loader.Type<P>;
     AnimatedLoadableComponent             = function (props) {
         const style               = useSpring(options.animation);
         const displayName         = LazyComponent.displayName;
@@ -170,5 +170,17 @@ export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponen
     } as any;
     AnimatedLoadableComponent.displayName = 'AnimatedLoadableComponent';
     AnimatedLoadableComponent.preload     = (props) => LazyComponent.preload(props);
-    return AnimatedLoadableComponent;
+    return AnimatedLoadableComponent as any;
+}
+
+export namespace loader {
+    export interface Class<T = {}> extends React.ComponentClass<T> {
+        preload?(props?: T): void
+    }
+
+    export interface Function<T = {}> extends React.FunctionComponent<T> {
+        preload?(props?: T): void
+    }
+
+    export type Type<T> = Class<T> | Function<T>;
 }

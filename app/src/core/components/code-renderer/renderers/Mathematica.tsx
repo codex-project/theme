@@ -20,7 +20,7 @@ const importKatexStyle = () => {
 
 @hot(module)
 @observer
-export default class Mathematica extends Component<MathematicaProps> {
+export class Mathematica extends Component<MathematicaProps> {
     static displayName                             = 'Mathematica';
     static defaultProps: Partial<MathematicaProps> = {};
 

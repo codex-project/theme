@@ -4,5 +4,5 @@ import { OffCanvasProps } from './OffCanvas';
 
 export * from './utils';
 
-export const OffCanvas = loader<OffCanvasProps>(() => import(/* webpackChunkName: "core.components.off-canvas" */'./OffCanvas'))
+export const OffCanvas:loader.Class<OffCanvasProps> = loader(() => import(/* webpackChunkName: "core.components.off-canvas" */'./OffCanvas'))
 

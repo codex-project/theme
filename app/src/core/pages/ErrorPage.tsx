@@ -12,7 +12,7 @@ export interface ErrorPageProps {
     routeState: State
 }
 
-export default class ErrorPage extends React.Component<ErrorPageProps> {
+export class ErrorPage extends React.Component<ErrorPageProps> {
     static displayName = 'ErrorPage';
     @lazyInject('store') store: Store;
 

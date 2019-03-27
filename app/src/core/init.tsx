@@ -4,14 +4,17 @@ import { configure } from 'mobx';
 import { app } from 'ioc';
 import { MenuPlugin } from 'menus';
 import { RouterPlugin } from 'router';
-import Root from 'components/Root';
 import { ColorElement } from 'elements';
-import TestPage from 'pages/TestPage';
-import DocumentPage from 'pages/DocumentPage';
 import { NotFoundPage } from 'pages';
 import { QueryError } from 'stores';
 
+
+import Root from 'components/Root';
+import DocumentPage from 'pages/DocumentPage';
+import { TestPage } from 'pages/TestPage';
+
 const log = require('debug')('site:index');
+
 
 configure({ enforceActions: 'never' });
 

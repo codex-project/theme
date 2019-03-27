@@ -20,7 +20,7 @@ export type TOCHeaderComponent = React.ComponentType<TOCHeaderProps>
 
 @hot(module)
 @observer
-export default class TOCHeader extends Component<TOCHeaderProps> {
+export class TOCHeader extends Component<TOCHeaderProps> {
     static displayName: string                   = 'TOCHeader';
     static defaultProps: Partial<TOCHeaderProps> = {
         linkClassName: 'c-toc-header-link',

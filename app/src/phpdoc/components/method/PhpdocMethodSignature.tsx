@@ -37,7 +37,7 @@ export interface PhpdocMethodSignatureProps extends FQSENComponentProps {
 
 @hot(module)
 @FQSENComponent()
-export default class PhpdocMethodSignature extends React.PureComponent<PhpdocMethodSignatureProps> {
+export class PhpdocMethodSignature extends React.PureComponent<PhpdocMethodSignatureProps> {
     static displayName: string                               = 'PhpdocMethodSignature';
     static defaultProps: Partial<PhpdocMethodSignatureProps> = {
         prefixCls      : 'phpdoc-method-signature',

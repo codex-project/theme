@@ -73,7 +73,7 @@ export interface ResizerProps {
 }
 
 @hot(module)
-export default class Resizer extends Component<ResizerProps> {
+export class Resizer extends Component<ResizerProps> {
     resizer: any;
 
     render() {

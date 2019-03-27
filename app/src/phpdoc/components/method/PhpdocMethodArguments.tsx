@@ -30,7 +30,7 @@ const argInArray = (name: string, arr: any[]) => arr.map(name => strEnsureLeft(n
 
 @FQSENComponent()
 @observer
-export default class PhpdocMethodArguments extends React.Component<PhpdocMethodArgumentsProps> {
+export class PhpdocMethodArguments extends React.Component<PhpdocMethodArgumentsProps> {
     static displayName: string                               = 'PhpdocMethodArguments';
     static defaultProps: Partial<PhpdocMethodArgumentsProps> = {
         prefixCls: 'phpdoc-method-arguments',

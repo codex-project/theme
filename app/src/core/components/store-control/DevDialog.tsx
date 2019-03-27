@@ -32,7 +32,7 @@ export type DialogReturn = {
 }
 @hot(module)
 
-export default class DevDialog extends Component<DevDialogProps> {
+export class DevDialog extends Component<DevDialogProps> {
     static displayName                           = 'DevDialog';
     static defaultProps: Partial<DevDialogProps> = {};
 

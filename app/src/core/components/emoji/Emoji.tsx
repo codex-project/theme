@@ -21,16 +21,16 @@ export class Emoji extends Component<EmojiProps> {
 
     render() {
         let { children, type, name, className, style, svg, ...props } = this.props;
-        name                                                           = strEnsureRight(strEnsureLeft(name, ':'), ':');
-        let classNames                                                 = [
+        name                                                          = strEnsureRight(strEnsureLeft(name, ':'), ':');
+        let classNames                                                = [
             'c-emoji',
             className,
         ];
-        let emojiProps: Props                                          = {
+        let emojiProps: Props & { style?: React.CSSProperties }       = {
             text     : name,
             className: classnames(classNames),
             style,
-            svg
+            svg,
         };
 
         return (

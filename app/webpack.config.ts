@@ -18,7 +18,8 @@ import WebappPlugin from 'webapp-webpack-plugin';
 import EntrypointPathPlugin from './build/EntrypointPathPlugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import { IgnoreNotFoundExportPlugin, IgnoreNotFoundExportPluginOptions } from './build/out/plugins/ts-webpack-ignore-not-found-export';
-
+import ForkTsCheckerPlugin from 'fork-ts-checker-webpack-plugin';
+import { NormalizedMessage } from 'fork-ts-checker-webpack-plugin/lib/NormalizedMessage';
 
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
@@ -34,12 +35,14 @@ const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
+const tschecker = false;
 
 //region: Helper Functions
 const babelImportPlugins = [
     [ 'import', { libraryName: 'antd', style: true }, 'import-antd' ],
     [ 'import', { libraryName: 'lodash', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash' ],
     [ 'import', { libraryName: 'lodash-es', libraryDirectory: '', camel2DashComponentName: false }, 'import-lodash-es' ],
+    [ 'import', { libraryName: 'jquery', libraryDirectory: 'src' }, 'jquery' ],
 ];
 
 export function addBabelToRule(chain: Chain, ruleName: string, options: BabelLoaderOptions = {}) {
@@ -86,8 +89,7 @@ export function addTsToRule(chain: Chain, ruleName: string, options: Partial<Typ
         .options(<Partial<TypescriptLoaderOptions>>{
             transpileOnly        : true,
             configFile           : tsconfig,
-            compilerOptions      : { module: 'es2015' as any, target: 'es5' as any },
-            happyPackMode        : true,
+            // happyPackMode        : true,
             getCustomTransformers: () => ({
                 before: [
                     tsImport([
@@ -96,6 +98,7 @@ export function addTsToRule(chain: Chain, ruleName: string, options: Partial<Typ
                         { libraryName: 'neo-async', libraryDirectory: null, camel2DashComponentName: false },
                         { libraryName: 'lodash', libraryDirectory: null, camel2DashComponentName: false },
                         { libraryName: 'lodash-es', libraryDirectory: null, camel2DashComponentName: false },
+                        { libraryName: 'jquery', libraryDirectory: 'src', camel2DashComponentName: false },
                     ]) as any,
                 ],
             }),
@@ -242,8 +245,19 @@ chain.plugin('IgnoreNotFoundExportPlugin').use(IgnoreNotFoundExportPlugin, [ <Ig
         // 'Toolbar.*Props',
         // 'Layout.*Props',
         '.*Props',
-    ]
+    ],
 } ]);
+chain.when(tschecker, chain => {
+    chain.plugin('ts-checker-core').use(ForkTsCheckerPlugin, [ <ForkTsCheckerPluginOptions>{
+        tsconfig         : chain.srcPath('core/tsconfig.json'),
+        ignoreDiagnostics: [
+            // ERROR in /home/radic/theme/node_modules/mobx/lib/types/observableset.d.ts(21,22):
+            //TS2420: Class 'ObservableSet<T>' incorrectly implements interface 'Set<T>'.
+            2420,
+        ],
+    } ]);
+    // chain.plugin('declaration-bundler-core').use(DeclarationBundlerPlugin, [{}])
+});
 chain.when(isProd, chain => {
     // chain.plugin('write-file').use(require('write-file-webpack-plugin'), [ { useHashIndex: false } ]);
     chain.plugin('css-extract').use(MiniCssExtractPlugin, [ {
@@ -435,8 +449,8 @@ addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.tsx')
 // addPluginEntry(chain, 'core', chain.srcPath('core'), '_small.tsx');
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
-addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
-addPluginEntry(chain, 'comments', chain.srcPath('comments'), 'index.tsx');
+// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
+// addPluginEntry(chain, 'comments', chain.srcPath('comments'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
 chain.resolve.alias.merge({
     'heading'            : chain.srcPath('core/styling/heading.less'),
@@ -450,3 +464,42 @@ const config = chain.toConfig();
 
 export default config;
 export { chain, config };
+
+
+//region: interfaces & types
+declare type ForkTsCheckerPluginFormatter = (message: NormalizedMessage, useColors: boolean) => string;
+
+interface ForkTsCheckerPluginLogger {
+    error(message?: any): void;
+
+    warn(message?: any): void;
+
+    info(message?: any): void;
+}
+
+interface ForkTsCheckerPluginOptions {
+    typescript: string;
+    tsconfig: string;
+    compilerOptions: object;
+    tslint: string | true;
+    tslintAutoFix: boolean;
+    watch: string | string[];
+    async: boolean;
+    ignoreDiagnostics: number[];
+    ignoreLints: string[];
+    ignoreLintWarnings: boolean;
+    reportFiles: string[];
+    colors: boolean;
+    logger: ForkTsCheckerPluginLogger;
+    formatter: 'default' | 'codeframe' | ForkTsCheckerPluginFormatter;
+    formatterOptions: any;
+    silent: boolean;
+    checkSyntacticErrors: boolean;
+    memoryLimit: number;
+    workers: number;
+    vue: boolean;
+    useTypescriptIncrementalApi: boolean;
+    measureCompilationTime: boolean;
+}
+
+//endregion

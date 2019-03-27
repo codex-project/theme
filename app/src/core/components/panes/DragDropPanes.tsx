@@ -11,7 +11,7 @@ export type DragDropPanesProps = DragDropPanesBaseProps & PanesProps
 
 @hot(module)
 @DragDropContext(HTML5Backend)
-export default class DragDropPanes extends Component<DragDropPanesProps> {
+export class DragDropPanes extends Component<DragDropPanesProps> {
     static displayName                               = 'DragDropPanes';
     static defaultProps: Partial<DragDropPanesProps> = {};
 

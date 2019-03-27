@@ -14,10 +14,10 @@ const AnimatedViewContainer = animated.div;
 export interface AnimatedViewsBaseProps {
     children: (state) => React.ReactChild
     state: State
+
 }
 
-export type AnimatedViewsProps = AnimatedViewsBaseProps & Partial<Omit<[ 'children' ], TransitionProps<State>>>
-
+export type AnimatedViewsProps = AnimatedViewsBaseProps & Partial<Omit< TransitionProps<State>, 'children' >>
 @hot(module)
 export class AnimatedViews extends Component<AnimatedViewsProps> {
     static displayName                               = 'AnimatedViews';

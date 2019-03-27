@@ -19,7 +19,7 @@ export type TOCListComponent = React.ComponentType<TOCListProps>
 
 @hot(module)
 @observer
-export default class TOCList extends Component<TOCListProps> {
+export  class TOCList extends Component<TOCListProps> {
     static displayName: string                 = 'TOCList';
     static defaultProps: Partial<TOCListProps> = {
         as: 'ul',

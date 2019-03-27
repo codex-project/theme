@@ -41,7 +41,7 @@ function resizeIframe(obj) {
 
 @hot(module)
 @observer
-export default class Mermaid extends Component<MermaidProps> {
+export class Mermaid extends Component<MermaidProps> {
     static displayName                         = 'Mermaid';
     static defaultProps: Partial<MermaidProps> = {
         style: {

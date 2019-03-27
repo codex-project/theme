@@ -11,7 +11,7 @@ export interface TabsProps extends AntdTabsProps {
 }
 
 @hot(module)
-export default class Tabs extends Component<TabsProps> {
+export class Tabs extends Component<TabsProps> {
     static displayName                      = 'Tabs';
     static defaultProps: Partial<TabsProps> = {};
 

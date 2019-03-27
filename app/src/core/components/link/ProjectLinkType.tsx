@@ -26,7 +26,7 @@ export class ProjectLinkType extends LinkType {
 
         let props: RouteLinkProps = {
             ...rest,
-            to       : app.router.toUrl({ name: 'documentation.project', params: { project: this.project } }),
+            to       : app.router.toUrl({ name: 'documentation.project', params: { project: this.project } }) as any,
             className: styling ? 'c-project-link' : null,
         };
         return (

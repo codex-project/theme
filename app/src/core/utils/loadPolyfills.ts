@@ -1,3 +1,5 @@
+///<reference path="../../globals.d.ts"/>
+
 import 'core-js/es6/promise';
 
 export async function loadPolyfills() {

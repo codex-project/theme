@@ -14,11 +14,10 @@ export interface PhpdocPopoverProps extends PopoverProps {
     maxHeight?: number
     maxWidth?: number
 }
-export {PhpdocPopover}
 
 @hot(module)
 @observer
-export default class PhpdocPopover extends React.Component<PhpdocPopoverProps> {
+export class PhpdocPopover extends React.Component<PhpdocPopoverProps> {
     popover: Popover;
     static displayName: string                       = 'PhpdocPopover'
     static defaultProps: Partial<PhpdocPopoverProps> = {}

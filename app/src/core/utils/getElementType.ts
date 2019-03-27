@@ -9,7 +9,7 @@
  */
 import React from 'react';
 
-export function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ElementType<T>): React.ElementType<T> {
+export function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ElementType<T>): React.ElementType<Partial<T>> {
     const { defaultProps = {} as any } = Component;
 
     if ( props.as && props.as !== defaultProps.as ) {

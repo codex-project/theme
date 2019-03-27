@@ -12,7 +12,7 @@ export interface NotFoundPageProps {
     routeState?: State
 }
 
-export default class NotFoundPage extends React.Component<NotFoundPageProps> {
+export class NotFoundPage extends React.Component<NotFoundPageProps> {
     static displayName                              = 'NotFoundPage';
     static defaultProps: Partial<NotFoundPageProps> = {
         title  : 'Page not found',

@@ -30,7 +30,7 @@ export interface StoreControlProps {
 
 @hot(module)
 @observer
-export default class StoreControl extends React.Component<StoreControlProps> {
+export class StoreControl extends React.Component<StoreControlProps> {
     static displayName                              = 'StoreControl';
     static defaultProps: Partial<StoreControlProps> = {};
     @observable position                            = Position.RIGHT;

@@ -2,7 +2,7 @@ import { CodeRendererProps } from './CodeRenderer';
 import React from 'react';
 import { loader } from 'components/loader';
 
-export const CodeRenderer = loader<CodeRendererProps>(() => import(
+export const CodeRenderer:loader.Class<CodeRendererProps> = loader(() => import(
     /* webpackChunkName: "core.components.code-renderer" */
     // /* webpackPrefetch: true */
     './CodeRenderer'

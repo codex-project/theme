@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { lazyInject } from 'ioc';
-import { Router } from './../Router';
+import { Router } from '../Router';
 import { getElementType } from 'utils/getElementType';
 
 export interface RouteLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
-    as?: React.ReactType
+    as?: React.ElementType
+
+    name?: string,
+    params?: any
     to: string | { name: string, params?: any }
+
     push?: boolean
     replace?: boolean
     go?: number

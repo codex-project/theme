@@ -31,7 +31,7 @@ export interface PhpdocTreeProps extends TreeProps {
 
 @hot(module)
 @observer
-export default class PhpdocTree extends React.Component<PhpdocTreeProps> {
+export class PhpdocTree extends React.Component<PhpdocTreeProps> {
     static displayName: string                    = 'PhpdocTree';
     static defaultProps: Partial<PhpdocTreeProps> = {
         getTree: () => null,

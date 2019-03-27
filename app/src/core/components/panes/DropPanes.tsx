@@ -31,7 +31,7 @@ export type DropPanesProps = DropPanesBaseProps & PanesProps
             canDrop          : monitor.canDrop(),
         };
     }) as any)
-export default class DropPanes extends Panes<DropPanesProps & Partial<CollectedProps>> {
+export class DropPanes extends Panes<DropPanesProps & Partial<CollectedProps>> {
     static displayName?: string                   = 'DropPanes';
     static defaultProps?: Partial<DropPanesProps> = Panes.defaultProps;
 

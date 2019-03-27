@@ -20,7 +20,7 @@ export interface PhpdocDrawerProps extends Omit<Partial<DrawerProps>, 'onClose'>
 
 @hot(module)
 @FQSENComponent()
-export default class PhpdocDrawer extends Component<PhpdocDrawerProps> {
+export class PhpdocDrawer extends Component<PhpdocDrawerProps> {
     static displayName                              = 'PhpdocDrawer';
     static defaultProps: Partial<PhpdocDrawerProps> = {
         onChange: v => null,

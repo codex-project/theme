@@ -19,15 +19,15 @@ export class Fetched {
     public static readonly STORAGE_KEY: string = STORAGE_KEY;
 
     public readonly hooks = {
-        set               : new SyncHook<any, string, this>([ 'value', 'path', 'fetched' ]),
-        setted            : new SyncHook<any, string, this>([ 'value', 'path', 'fetched' ]),
-        get               : new SyncHook<any, string, this>([ 'value', 'path', 'fetched' ]),
-        loadFromStorage   : new SyncHook<any, this>([ 'value', 'fetched' ]),
-        loadedFromStorage : new SyncHook<this>([ 'fetched' ]),
-        saveToStorage     : new SyncHook<this>([ 'fetched' ]),
-        savedToStorage    : new SyncHook<this>([ 'fetched' ]),
-        removeFromStorage : new SyncHook<this>([ 'fetched' ]),
-        removedFromStorage: new SyncHook<this>([ 'fetched' ]),
+        set               : new SyncHook<any, string, Fetched>([ 'value', 'path', 'fetched' ]),
+        setted            : new SyncHook<any, string, Fetched>([ 'value', 'path', 'fetched' ]),
+        get               : new SyncHook<any, string, Fetched>([ 'value', 'path', 'fetched' ]),
+        loadFromStorage   : new SyncHook<any, Fetched>([ 'value', 'fetched' ]),
+        loadedFromStorage : new SyncHook<Fetched>([ 'fetched' ]),
+        saveToStorage     : new SyncHook<Fetched>([ 'fetched' ]),
+        savedToStorage    : new SyncHook<Fetched>([ 'fetched' ]),
+        removeFromStorage : new SyncHook<Fetched>([ 'fetched' ]),
+        removedFromStorage: new SyncHook<Fetched>([ 'fetched' ]),
     };
 
     fetched: FetchedData = {};

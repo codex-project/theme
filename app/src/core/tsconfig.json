@@ -1,7 +1,13 @@
 {
     "extends": "../../tsconfig.webpack.json",
     "compilerOptions": {
-        "baseUrl": ".",
+        "rootDir": ".",
+        "declarationDir": "../../out/core",
+        "outDir": "../../out/core",
+        "typeRoots": [
+            "../../../node_modules/@types"
+        ],
+        "baseUrl": "./",
         "paths": {
             "assets": ["assets"],
             "assets/*": ["assets/*"],
@@ -25,13 +31,10 @@
         }
     },
     "include": [
-        "*",
-        "*.ts",
-        "*.tsx",
-        "**/*.ts",
-        "**/*.tsx"
+        "index.tsx"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "_small.tsx"
     ]
 }

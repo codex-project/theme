@@ -3,11 +3,18 @@ import { gulp, Gulpclass, GulpEnvMixin, Task } from '@radic/build-tools-gulp';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import { Chain } from './build/chain';
-import { relative } from 'path';
+import { dirname, relative, resolve } from 'path';
 import { getFileSizeInfo } from '@radic/build-tools/dist/utils';
 import { readFileSync } from 'fs';
 import SMP from 'speed-measure-webpack-plugin';
 import 'webpack-hot-middleware';
+import globule from 'globule';
+import { copySync, emptyDirSync, existsSync, mkdirpSync, rmdirSync, unlinkSync } from 'fs-extra';
+import { bundle } from 'dts-bundle/lib/index';
+
+
+const path = (...parts: string[]) => resolve(__dirname, 'src', ...parts);
+
 
 const chalk = require('chalk').default;
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
@@ -81,6 +88,47 @@ class Gulpfile {
         return this.watch(chain);
     }
 
+    @Task('dts')
+    dts() {
+        const { chain } = require('./webpack.config');
+        // process.chdir(chain.srcPath('core'));
+
+        // const project = gulpTs.createProject(chain.srcPath('core/tsconfig.json'), {
+        //     typescript           : ts,
+        //     emitDeclarationOnly  : true,
+        //     jsx                  : 'react' as any,
+        //     noStrictGenericChecks: true,
+        //     declarationDir       : chain.outPath('types'),
+        //     // outDir               : 'out',
+        // } as ts.CompilerOptions & gulpTs.Settings);
+        // gulp
+        //     .src(chain.srcPath('core/**/*.ts'))
+        //     .pipe(project())
+        //     .dts.pipe(gulp.dest(chain.outPath('types')));
+        //
+        // process.chdir(__dirname);
+
+        // const dtsDir = copydts(resolve(__dirname, 'out'));
+
+        function bundledts(name: string) {
+            bundle({
+                name      : `@codex/${name}`,
+                main      : `./out/${name}/index.d.ts`,
+                out       : `../codex.${name}.d.ts`,
+                headerPath: null,
+                headerText: `
+I'm quite mellow
+A white fellow
+My pee is bright yellow
+I like jello
+I'm like hello
+﻿`,
+            });
+        }
+
+        bundledts('core');
+    }
+
     protected async serve(chain: Chain, host: string = 'localhost', port: number = 8513) {
         port      = await utils.choosePort(host, port);
         const url = `http://${host}:${port}`;
@@ -145,7 +193,7 @@ class Gulpfile {
         });
     }
 
-    protected watch(chain:Chain) {
+    protected watch(chain: Chain) {
         const config = chain.toConfig();
         webpack(config).watch({}, (err, stats) => {
             if ( err ) {
@@ -155,7 +203,7 @@ class Gulpfile {
         });
     }
 
-    protected async build(chain:Chain) {
+    protected async build(chain: Chain) {
         const config = chain.toConfig();
         return new Promise<webpack.Stats>((resolve, reject) => {
             webpack(config, (err, stats) => {
@@ -214,4 +262,58 @@ function reportFileSizes(...globs: string[]) {
     ui.div(chalk.bold('---'), chalk.bold('---'), chalk.bold('---'));
     ui.div(chalk.bold('TOTAL:'), filesize(totalSize), filesize(totalGzipSize));
     console.log(ui.toString() + '\n');
+}
+
+
+function cleanjs() {
+    let timestamp      = Date.now();
+    let backupDir      = resolve(__dirname, '../.tmp/.cleanjs-' + timestamp);
+    let corePaths      = path('*/**/*.js');
+    let filePaths: any = globule.find(corePaths, {
+        ignore: [
+            path('core/utils/zepto.js'),
+        ],
+    });
+    if ( existsSync(backupDir) ) {
+        rmdirSync(backupDir);
+    }
+    mkdirpSync(backupDir);
+    filePaths.forEach(filePath => {
+        const backupFilePath = resolve(backupDir, relative(resolve(__dirname, 'src'), filePath));
+        const backupDirPath  = dirname(backupFilePath);
+        if ( ! existsSync(backupDirPath) ) {
+            mkdirpSync(backupDirPath);
+        }
+        copySync(filePath, backupFilePath);
+        unlinkSync(filePath);
+        console.log('removed', filePath);
+    });
+}
+
+function copydts(fromDir) {
+    let timestamp      = Date.now();
+    let tmpDir         = resolve(__dirname, '../.tmp/.copydts-' + timestamp);
+    let corePaths      = resolve(fromDir, '{auth,comments,core,phpdoc}/**/*.d.ts');
+    let filePaths: any = globule.find(corePaths, {
+        ignore: [
+            path('core/utils/zepto.js'),
+        ],
+    });
+    if ( existsSync(tmpDir) ) {
+        emptyDirSync(tmpDir);
+        rmdirSync(tmpDir);
+    }
+    mkdirpSync(tmpDir);
+    filePaths.forEach(filePath => {
+        const backupFilePath = resolve(tmpDir, relative(resolve(__dirname, 'src'), filePath));
+        const backupDirPath  = dirname(backupFilePath);
+        if ( ! existsSync(backupDirPath) ) {
+            mkdirpSync(backupDirPath);
+        }
+        copySync(filePath, backupFilePath);
+        unlinkSync(filePath);
+        console.log('removed', filePath);
+    });
+
+    return tmpDir;
 }

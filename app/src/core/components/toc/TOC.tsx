@@ -22,7 +22,7 @@ export type TOCComponent = React.ComponentType<TOCProps>
  */
 @hot(module)
 @observer
-export default class TOC extends Component<TOCProps> {
+export  class TOC extends Component<TOCProps> {
     static displayName: string             = 'TOC';
     static defaultProps: Partial<TOCProps> = {
         type: 'drawer',

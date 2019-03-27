@@ -8,3 +8,5 @@ window['React'] = React;
 window['ReactDOM'] = ReactDOM;
 window['mobx'] = mobx;
 window['mobxReact'] = mobxReact;
+
+

@@ -51,7 +51,7 @@ export class DynamicContent extends Component<DynamicContentProps> {
                 if ( isDynamicChildren(children) ) {
                     children = this.transform(children || []);
                 }
-                let childProps = merge(
+                let childProps:any = merge(
                     { },
                     options.defaultProps,
                     props,
@@ -74,7 +74,7 @@ export class DynamicContent extends Component<DynamicContentProps> {
                         }
                     });
                 childProps.key = component + '.' + i;
-                return h(component, childProps, childProps.children);
+                return h(component as any, childProps as any, childProps.children as any);
             });
     }
 

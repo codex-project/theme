@@ -42,7 +42,7 @@ export interface TreeProps {
 }
 
 @hot(module)
-export default class Tree extends React.Component<TreeProps> {
+export class Tree extends React.Component<TreeProps> {
 
     // Initial state
     state = {

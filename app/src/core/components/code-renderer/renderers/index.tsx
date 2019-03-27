@@ -6,7 +6,7 @@ import { ChartProps } from './Chart';
 import { MathematicaProps } from './Mathematica';
 import { NomnomlProps } from './Nomnoml';
 // export type MermaidComponent = ComponentType<MermaidProps> & {}
-export let Mermaid = loader<MermaidProps>(() => import(
+export let Mermaid:loader.Class<MermaidProps> = loader(() => import(
     /* webpackChunkName: "core.components.code-renderer.mermaid" */
     './Mermaid'
     ),
@@ -15,7 +15,7 @@ export let Mermaid = loader<MermaidProps>(() => import(
 
 
 // export type ChartComponent = ComponentType<ChartProps> & {}
-export let Chart = loader<ChartProps>(() => import(
+export let Chart:loader.Class<ChartProps> = loader(() => import(
     /* webpackChunkName: "core.components.code-renderer.chart" */
     './Chart'
     ),
@@ -23,7 +23,7 @@ export let Chart = loader<ChartProps>(() => import(
 
 
 // export type MathematicaComponent = ComponentType<MathematicaProps> & {}
-export let Mathematica = loader<MathematicaProps>(() => import(
+export let Mathematica:loader.Class<MathematicaProps> = loader(() => import(
     /* webpackChunkName: "core.components.code-renderer.mathematica" */
     './Mathematica'
     ),
@@ -31,7 +31,7 @@ export let Mathematica = loader<MathematicaProps>(() => import(
 
 
 // export type NomnomlComponent = ComponentType<NomnomlProps> & {}
-export let Nomnoml = loader<NomnomlProps>(() => import(
+export let Nomnoml:loader.Class<NomnomlProps> = loader(() => import(
     /* webpackChunkName: "core.components.code-renderer.nomnoml" */
     './Nomnoml'
     ),

@@ -1,5 +1,5 @@
 {
-    "extends": "../../tsconfig.webpack.json",
+    "extends": "../../webpack._json",
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {

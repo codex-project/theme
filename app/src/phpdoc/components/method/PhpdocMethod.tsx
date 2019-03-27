@@ -54,7 +54,7 @@ const hasData = (what) => what !== undefined && what.length > 0;
 
 // @hot(module)
 @FQSENComponent()
-export default class PhpdocMethod extends Component<PhpdocMethodProps> {
+export class PhpdocMethod extends Component<PhpdocMethodProps> {
     static displayName: string                      = 'PhpdocMethod';
     static defaultProps: Partial<PhpdocMethodProps> = {
         withoutTags   : [ 'param', 'example', 'return', 'inherited_from' ],

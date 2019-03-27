@@ -13,7 +13,7 @@ export * from './loading';
 export * from './loader';
 export * from './observables';
 export * from './off-canvas';
-export * from './panes';
+// export * from './panes';
 export * from './responsive';
 export * from './scrollbar';
 export * from './spin';

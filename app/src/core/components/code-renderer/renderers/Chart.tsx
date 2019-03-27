@@ -10,7 +10,7 @@ export interface ChartProps {
 
 @hot(module)
 @observer
-export default class Chart extends Component<ChartProps> {
+export class Chart extends Component<ChartProps> {
     static displayName                       = 'Chart';
     static defaultProps: Partial<ChartProps> = {};
     types                                    = {

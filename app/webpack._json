@@ -1,11 +1,10 @@
 {
+    "compileOnSave": false,
     "compilerOptions": {
-        "declaration": true,
-        "rootDir": ".",
-        "jsx": "react",
         "target": "es5",
         "module": "esnext",
         "moduleResolution": "node",
+        "declaration": true,
         "lib": [
             "dom",
             "es2015",
@@ -13,30 +12,30 @@
             "es2017",
             "esnext"
         ],
-        "listEmittedFiles": true,
+        "sourceMap": true,
+        "skipLibCheck": true,
         "noImplicitReturns": false,
         "noImplicitThis": false,
         "noImplicitAny": false,
         "strictNullChecks": false,
-        "diagnostics": true,
         "suppressImplicitAnyIndexErrors": true,
         "noUnusedLocals": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "suppressExcessPropertyErrors": true,
+        "noStrictGenericChecks": false,
+        "noImplicitUseStrict": true,
+        "jsx": "preserve",
+        "outDir": "out",
+        "typeRoots": [
+            "../node_modules/@types"
+        ]
     },
     "include": [
-        "src/globals.d.ts",
-        "src/modules.d.ts"
     ],
     "exclude": [
-        "node_modules",
-        "src/auth",
-        "src/comments",
-        "src/core",
-        "src/phpdoc",
-        "src/stories",
-        "src/router",
-        "src/welcome"
+        "src",
+        "node_modules"
     ]
 }

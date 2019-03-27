@@ -5,7 +5,7 @@ import { loader } from 'components/loader';
 ;
 export type DynamicMenuComponent = ComponentType<DynamicMenuProps> & {}
 
-export let DynamicMenu = loader<DynamicMenuProps>(() => import(
+export let DynamicMenu:loader.Class<DynamicMenuProps> = loader(() => import(
     /* webpackChunkName: "core.components.dynamic-menu" */
     /* webpackPrefetch: true */
     './DynamicMenu'

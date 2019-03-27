@@ -1,11 +1,17 @@
 ///<reference path="../modules.d.ts"/>
 ///<reference path="../globals.d.ts"/>
+///<reference path="../../../node_modules/@types/zepto/index.d.ts"/>
+
+// import 'source-map-support/register'
+
 import './styling/semantic.less'
 import './styling/stylesheet.scss'
 
+import 'bluebird-global'
 import 'reflect-metadata';
 import './utils/zepto';
 import './vendor'
+
 
 import './ioc';
 import './init';
@@ -22,6 +28,7 @@ export * from './classes/Hyper';
 export * from './classes/ComponentRegistry';
 export * from './classes/Url';
 export * from './classes/CssVariables';
+
 // export * from './classes/ApiLocalStorageCache';
 export * from './classes/Plugin';
 // export * from './collections/Record';

@@ -27,7 +27,7 @@ export interface PhpdocTagsProps {
 
 @hot(module)
 @observer
-export default class PhpdocTags extends React.Component<PhpdocTagsProps> {
+export class PhpdocTags extends React.Component<PhpdocTagsProps> {
     @lazyInject('htmlparser') htmlParser: HtmlParser;
     static displayName: string                    = 'PhpdocTags';
     static defaultProps: Partial<PhpdocTagsProps> = {

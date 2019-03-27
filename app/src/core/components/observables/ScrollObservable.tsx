@@ -5,17 +5,12 @@ import { observable, toJS } from 'mobx';
 import { findDOMNode, unmountComponentAtNode } from 'react-dom';
 
 
-
 import { hot } from 'decorators';
-import { clink, Store } from 'stores';
-import { app, lazyInject } from 'ioc';
-import { RouteDefinition } from 'router';
-import { Api, api } from '@codex/api';
 import { isObject } from 'utils/general';
 import { getScrollPosition, getScrollTarget } from 'utils/scroll';
 import { listenOpts } from 'utils/event';
 
-const log = require('debug')('components:ScrollObservable')
+const log = require('debug')('components:ScrollObservable');
 
 export interface ScrollPosition {
     position: number
@@ -36,41 +31,41 @@ export interface ScrollObservableProps {
 @hot(module)
 @observer
 export class ScrollObservable extends React.Component<ScrollObservableProps> implements ScrollPosition {
-    static displayName: string                          = 'ScrollObservable'
+    static displayName: string                          = 'ScrollObservable';
     static defaultProps: Partial<ScrollObservableProps> = {
-        onScroll: () => null
-    }
+        onScroll: () => null,
+    };
 
-    @observable position: number          = 0
-    @observable direction: 'up' | 'down'  = 'down'
-    @observable directionChanged: boolean = false
-    @observable inflexionPosition: number = 0
+    @observable position: number          = 0;
+    @observable direction: 'up' | 'down'  = 'down';
+    @observable directionChanged: boolean = false;
+    @observable inflexionPosition: number = 0;
 
-    target: GlobalEventHandlers
-    timer: number
+    target: GlobalEventHandlers;
+    timer: number;
 
     render() {
-        return <span aria-hidden={true} style={{ display: 'none' }}/>
+        return <span aria-hidden={true} style={{ display: 'none' }}/>;
     }
 
     componentDidMount() {
         this.setTarget();
         this.bind();
-        this.trigger()
+        this.trigger();
     }
 
     componentWillUnmount() {
-        this.unbind()
+        this.unbind();
     }
 
     setTarget() {
         let el     = findDOMNode(this) as HTMLElement;
-        let target = this.props.target  as any;
+        let target = this.props.target as any;
 
         if ( target === 'parent' ) {
-            this.target = el.parentNode as HTMLElement
+            this.target = el.parentNode as HTMLElement;
         } else if ( isObject(target) ) {
-            this.target = target
+            this.target = target;
         } else {
             this.target = getScrollTarget(el.parentNode, target) as any;
         }
@@ -79,41 +74,41 @@ export class ScrollObservable extends React.Component<ScrollObservableProps> imp
     }
 
     bind() {
-        this.target.addEventListener('scroll', this.trigger, listenOpts.passive)
+        this.target.addEventListener('scroll', this.trigger, listenOpts.passive);
     }
 
     unbind() {
-        this.target.removeEventListener('scroll', this.trigger, listenOpts.passive as any)
+        this.target.removeEventListener('scroll', this.trigger, listenOpts.passive as any);
     }
 
     getPosition = (): ScrollPosition => (toJS({
         position         : this.position,
         direction        : this.direction,
         directionChanged : this.directionChanged,
-        inflexionPosition: this.inflexionPosition
-    }))
+        inflexionPosition: this.inflexionPosition,
+    }));
 
     trigger = () => {
         if ( ! this.timer ) {
-            this.timer = window.requestAnimationFrame(this.emit)
+            this.timer = window.requestAnimationFrame(this.emit);
         }
-    }
+    };
 
     emit = () => {
         const
             pos   = Math.max(0, getScrollPosition(this.target)),
             delta = pos - this.position,
-            dir   = delta < 0 ? 'up' : 'down'
+            dir   = delta < 0 ? 'up' : 'down';
 
-        this.directionChanged = this.direction !== dir
+        this.directionChanged = this.direction !== dir;
         if ( this.directionChanged ) {
-            this.direction         = dir
-            this.inflexionPosition = this.position
+            this.direction         = dir;
+            this.inflexionPosition = this.position;
         }
 
-        this.timer    = null
-        this.position = pos
-        this.props.onScroll(this.getPosition())
-    }
+        this.timer    = null;
+        this.position = pos;
+        this.props.onScroll(this.getPosition());
+    };
 
 }

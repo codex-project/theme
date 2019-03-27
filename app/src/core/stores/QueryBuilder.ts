@@ -75,10 +75,10 @@ export class QueryBuilder {
     @lazyInject('fetched') fetched: Fetched;
 
     public readonly hooks = {
-        get        : new SyncHook<this>([ 'builder' ]),
-        queryFields: new SyncHook<string[], this>([ 'queryFields', 'builder' ]),
-        queryResult: new SyncHook<FetchResult, this>([ 'queryResult', 'builder' ]),
-        returns    : new SyncHook<BuildQueryReturn, this>([ 'returns', 'builder' ]),
+        get        : new SyncHook<QueryBuilder>([ 'builder' ]),
+        queryFields: new SyncHook<string[], QueryBuilder>([ 'queryFields', 'builder' ]),
+        queryResult: new SyncHook<FetchResult, QueryBuilder>([ 'queryResult', 'builder' ]),
+        returns    : new SyncHook<BuildQueryReturn, QueryBuilder>([ 'returns', 'builder' ]),
     };
 
     protected codexFields: Fields    = {};

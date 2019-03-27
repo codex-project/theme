@@ -13,7 +13,7 @@ export interface NomnomlProps {
 
 @hot(module)
 @observer
-export default class Nomnoml extends Component<NomnomlProps> {
+export class Nomnoml extends Component<NomnomlProps> {
     static displayName                         = 'Nomnoml';
     static defaultProps: Partial<NomnomlProps> = {};
 

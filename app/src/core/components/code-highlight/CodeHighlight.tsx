@@ -32,11 +32,10 @@ export interface CodeHighlightProps {
 
     getInstance?: () => any
 }
-export {CodeHighlight}
 
 @hot(module)
 @observer
-export default class CodeHighlight extends React.Component<CodeHighlightProps> {
+export class CodeHighlight extends React.Component<CodeHighlightProps> {
     $pre: HTMLPreElement = null;
     $code: HTMLElement   = null;
 

@@ -35,11 +35,9 @@ interface State {
 
 export type DynamicMenuProps = DynamicMenuBaseProps & AntdMenuProps
 
-export { DynamicMenu };
-
 @hot(module)
 @observer
-export default class DynamicMenu extends React.Component<DynamicMenuProps, State> {
+export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
     static displayName                                                        = 'DynamicMenu';
     static defaultProps: Partial<DynamicMenuBaseProps & AntdMenuProps>        = {
         prefixCls          : 'c-menu',

@@ -25,12 +25,11 @@ export interface LayoutProps {
     toolbar?: React.ReactNode
 }
 
-export { Layout };
 
 
 @hot(module)
 @observer
-export default class Layout extends React.Component<LayoutProps> {
+export class Layout extends React.Component<LayoutProps> {
     static displayName                        = 'Layout';
     static defaultProps: Partial<LayoutProps> = { left: null, right: null, header: null, footer: null, content: null };
     @lazyInject('store.layout') layout: LayoutStore;

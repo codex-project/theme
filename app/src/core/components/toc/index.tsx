@@ -6,8 +6,8 @@ import { TOCHeaderProps } from './TOCHeader';
 import { loader } from 'components/loader';
 
 
-export const TOC         = loader<TOCProps>(() => import(/* webpackChunkName: "core.components.toc" */'./TOC'));
-export const TOCList     = loader<TOCListProps>(() => import(/* webpackChunkName: "core.components.toc" */'./TOCList'));
-export const TOCListItem = loader<TOCListItemProps>(() => import(/* webpackChunkName: "core.components.toc" */'./TOCListItem'));
-export const TOCHeader   = loader<TOCHeaderProps>(() => import(/* webpackChunkName: "core.components.toc" */'./TOCHeader'));
+export const TOC:loader.Class<TOCProps> = loader(() => import(/* webpackChunkName: "core.components.toc" */'./TOC'));
+export const TOCList:loader.Class<TOCListProps> = loader(() => import(/* webpackChunkName: "core.components.toc" */'./TOCList'));
+export const TOCListItem:loader.Class<TOCListItemProps> = loader(() => import(/* webpackChunkName: "core.components.toc" */'./TOCListItem'));
+export const TOCHeader:loader.Class<TOCHeaderProps> = loader(() => import(/* webpackChunkName: "core.components.toc" */'./TOCHeader'));
 
