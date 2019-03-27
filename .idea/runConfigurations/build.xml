@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="build" type="NodeJSConfigurationType" application-parameters="--config webpack.config.js" node-parameters="-r ts-node/register --nolazy" path-to-js-file="./node_modules/.bin/webpack" working-dir="$PROJECT_DIR$/.tmp/jqtest">
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,5 +1,6 @@
 
 {
+    "compileOnSave": false,
     "compilerOptions": {
         "target": "es6",
         "module": "esnext",
@@ -27,6 +28,7 @@
         "noStrictGenericChecks": false,
         "noImplicitUseStrict": true,
         "jsx": "preserve",
+        "outDir": "out",
         "typeRoots": [
             "node_modules/@types",
             "../node_modules/@types"

@@ -4,8 +4,6 @@ import { BackTop, Layout as AntdLayout } from 'antd';
 import { LayoutSide } from './LayoutSide';
 import { LayoutHeader } from './LayoutHeader';
 import { LayoutFooter } from './LayoutFooter';
-import posed from 'react-pose';
-import { Affix } from '../affix';
 import { TunnelPlaceholder } from '../tunnel';
 
 import './index.scss';
@@ -14,23 +12,9 @@ import { lazyInject } from 'ioc';
 import { hot } from 'react-hot-loader';
 import { action, observable } from 'mobx';
 import { LayoutToolbar } from 'components/layout';
-import { DynamicContent } from 'components/dynamic-content';
 
 const { Sider, Header, Content, Footer } = AntdLayout;
 
-
-const ToolbarContainer = posed.div({
-    enter: {
-        opacity       : 1,
-        delay         : 500,
-        beforeChildren: true,
-    },
-    exit : {
-        opacity   : 0,
-        transition: { duration: 500 },
-        delay     : 500,
-    },
-});
 
 export interface LayoutProps {
     left?: React.ReactNode
@@ -100,9 +84,7 @@ export default class Layout extends React.Component<LayoutProps> {
                 <TunnelPlaceholder id="layout-top" delay={0} multiple/>
 
                 <If condition={left.show && left.outside}>
-                    <LayoutSide side='left'>
-                        <DynamicContent/>
-                    </LayoutSide>
+                    <LayoutSide side='left'>{props.left}</LayoutSide>
                 </If>
 
                 <AntdLayout>
@@ -117,14 +99,11 @@ export default class Layout extends React.Component<LayoutProps> {
 
                         <Content style={{ minHeight: '100%' }}>
                             <If condition={toolbar.show}>
-                                <Affix enabled={toolbar.fixed}>
-                                    <ToolbarContainer ref={this.toolbarContainerRef}>
-                                        <LayoutToolbar
-                                            style={toolbar.computedStyle}
-                                            className={toolbar.computedClass}
-                                        />
-                                    </ToolbarContainer>
-                                </Affix>
+                                <LayoutToolbar
+                                    containerRef={this.toolbarContainerRef}
+                                    style={toolbar.computedStyle}
+                                    className={toolbar.computedClass}
+                                />
                             </If>
 
                             <AntdLayout style={{ minHeight: `calc(100% - ${this.contentLayoutMinHeight}px)` }}>

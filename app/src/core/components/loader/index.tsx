@@ -87,8 +87,8 @@ const isLoadableFunction = (val: any): val is LoadableFunction => typeof val ===
 const isLoadableArray    = (val: any): val is LoadableArray => Array.isArray(val) && isLoadableFunction(val[ 0 ]);
 const isLoadable         = (val: any): val is Loadable => isLoadableFunction(val) || isLoadableArray(val);
 
-export function isLoadableComponent<T>(val:any): val is ILoadableComponent<T> {
-    return val && typeof val.preload === 'function'
+export function isLoadableComponent<T>(val: any): val is ILoadableComponent<T> {
+    return val && typeof val.preload === 'function';
 }
 
 export interface LoaderOptions {
@@ -133,26 +133,29 @@ function resolve(loadable) {
 export function loader<T>(_options: LoaderOptions | Loadable): ILoadableComponent<T> {
     let options: LoaderOptions = getLoaderOptions(isLoadable(_options) ? { loadable: _options } : _options);
 
-    const Loading  = options.loading;
-    const fallback = options.showLoading ? <Loading {...options.loadingOptions}/> : undefined;
-
-    let LazyComponent = loadable<T>(async (props) => {
-        let loadable;
+    const Loading         = options.loading;
+    const fallback        = options.showLoading ? <Loading {...options.loadingOptions}/> : undefined;
+    let _loadable;
+    let LazyComponent     = loadable<T>(async (props) => {
         if ( isLoadableArray(options.loadable) ) {
             let loadableValues = await Promise.all(options.loadable.map((l, i) => l(i === 0 ? props : undefined)));
-            loadable           = loadableValues.shift();
+            _loadable          = loadableValues.shift();
         } else if ( isLoadableFunction(options.loadable) ) {
-            loadable = await options.loadable(props);
+            _loadable = await options.loadable(props);
         } else {
             throw new Error('invalid loadable');
         }
-        LazyComponent.preload = (props) => loadable.preload(props)
+
+        if ( _loadable && _loadable.preload ) {
+            return _loadable.preload(props);
+        }
         return {
             __esModule: true,
-            default   : resolve(loadable),
+            default   : resolve(_loadable),
         };
     }, { fallback });
-
+    LazyComponent.preload = (props) => {
+    }
     if ( ! options.animated ) {
         return LazyComponent;
     }

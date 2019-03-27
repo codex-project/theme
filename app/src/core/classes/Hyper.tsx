@@ -10,16 +10,19 @@ type Element = ReactElement | string | number | null;
 
 const log = require('debug')('classes:Hyper');
 
+let i = 0;
 export class Hyper {
-    static get components(): ComponentRegistry { return app.get<ComponentRegistry>('components');}
+    static get components(): ComponentRegistry { return app.get<ComponentRegistry>('components');};
+
 
     static render: Hyper.RenderFn = (...args: any[]) => {
+        i ++;
         let len   = args.length;
         let types = args.map(arg => typeof arg);
 
         // fragment
         if ( len === 1 && (Array.isArray(args[ 0 ]) || React.isValidElement(args[ 0 ])) ) {
-            return _h(React.Fragment, {}, args[ 0 ]);
+            return _h(React.Fragment, { key: i }, args[ 0 ]);
         }
 
         let type     = args[ 0 ],
@@ -43,6 +46,7 @@ export class Hyper {
             }
         }
 
+        props.key  = props.key || i;
         let result = _h(type, props, children);
         log('render', { type, props, children }, { result });
         return result;
@@ -50,7 +54,7 @@ export class Hyper {
 
     static fragment: Hyper.FragmentFn = (...children: ReactElement<any>[]) => {
         // React.Children.map(children, (child,i) => React.cloneElement(child,))
-        return React.createElement(React.Fragment, {}, ...children);
+        return React.createElement(React.Fragment, {key: i}, ...children);
     };
 }
 
@@ -81,7 +85,7 @@ export namespace Hyper {
 
 }
 
-export const h: Hyper.RenderFn   = (...args: any[]) => Hyper.render(...args as [any,any,any]);
+export const h: Hyper.RenderFn   = (...args: any[]) => Hyper.render(...args as [ any, any, any ]);
 export const f: Hyper.FragmentFn = (...args: any[]) => Hyper.fragment(...args);
 
 

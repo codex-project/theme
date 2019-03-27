@@ -52,7 +52,7 @@ export class DynamicContent extends Component<DynamicContentProps> {
                     children = this.transform(children || []);
                 }
                 let childProps = merge(
-                    { key: component + '.' + i },
+                    { },
                     options.defaultProps,
                     props,
                     { children },
@@ -73,7 +73,8 @@ export class DynamicContent extends Component<DynamicContentProps> {
                             warn(`DynamicContent compile error on [${key}] of component [${component}]`, { error, childProps, component: this });
                         }
                     });
-                return h(component, { key: component + '.' + i, ...childProps }, childProps.children);
+                childProps.key = component + '.' + i;
+                return h(component, childProps, childProps.children);
             });
     }
 
@@ -86,7 +87,6 @@ export class DynamicContent extends Component<DynamicContentProps> {
     render() {
         // let { ...props } = this.props;
         let { children } = this.state;
-        children         = Array.from(children).map((value, index) => React.cloneElement(value, { key: value.key || index }));
         return (
             <Fragment>
                 {children}
