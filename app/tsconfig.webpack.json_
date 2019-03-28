@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "rootDir": ".",
+        "jsx": "preserve",
+        "target": "es5",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "es2015",
+            "es2016",
+            "es2017",
+            "esnext"
+        ],
+        "listEmittedFiles": true,
+        "noImplicitReturns": false,
+        "noImplicitThis": false,
+        "noImplicitAny": false,
+        "strictNullChecks": false,
+        "diagnostics": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noUnusedLocals": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [
+    "src"
+    ],
+    "exclude": [
+
+        "node_modules"
+    ]
+}

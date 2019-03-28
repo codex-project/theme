@@ -34,7 +34,7 @@ const minimize          = isProd;
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
 const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
-const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json');
+const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json_');
 const tschecker = false;
 
 //region: Helper Functions
