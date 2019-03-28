@@ -10,7 +10,7 @@ export { TreeBuilder };
 export const PhpdocTree = loader<PhpdocTreeProps>([
     () => import(
         /* webpackChunkName: "phpdoc.components." */
-        // /* webpackPrefetch: true */
+        /* webpackPrefetch: true */
         './PhpdocTree'
         ),
     () => loadStyling(),

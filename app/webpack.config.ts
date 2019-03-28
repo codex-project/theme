@@ -449,8 +449,8 @@ addPackage(chain, 'api', '@codex/api');
 // addPluginEntry(chain, 'router', chain.srcPath('router'), 'index.tsx')
 // addPluginEntry(chain, 'core', chain.srcPath('core'), '_small.tsx');
 addPluginEntry(chain, 'core', chain.srcPath('core'), 'index.tsx');
-// addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
-// addPluginEntry(chain, 'comments', chain.srcPath('comments'), 'index.tsx');
+addPluginEntry(chain, 'phpdoc', chain.srcPath('phpdoc'), 'index.tsx');
+addPluginEntry(chain, 'comments', chain.srcPath('comments'), 'index.tsx');
 chain.resolve.modules.merge([ chain.srcPath('core') ]).end();
 chain.resolve.alias.merge({
     'heading'            : chain.srcPath('core/styling/heading.less'),

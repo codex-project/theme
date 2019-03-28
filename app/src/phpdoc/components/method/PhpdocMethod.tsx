@@ -1,14 +1,14 @@
 //@ts-ignore TS2307
 import React, { Component } from 'react';
 import './method.scss';
-import PhpdocMethodArguments from './PhpdocMethodArguments';
+import {PhpdocMethodArguments} from './PhpdocMethodArguments';
 import { CodeHighlight, HtmlParser, lazyInject } from '@codex/core';
 import { PhpdocTag } from '@codex/api';
 import { classes } from 'typestyle';
 import { IFQSEN, PhpdocMethod as Method } from '../../logic';
 import { PhpdocTags } from '../tags';
 import { PhpdocType } from '../type';
-import PhpdocMethodSignature, { PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
+import { PhpdocMethodSignature,PhpdocMethodSignatureProps } from './PhpdocMethodSignature';
 import { FQSENComponent, FQSENComponentContext } from '../base';
 
 const log = require('debug')('phpdoc:components:PhpdocMethod');

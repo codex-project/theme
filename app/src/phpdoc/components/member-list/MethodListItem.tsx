@@ -4,14 +4,13 @@ import { Tooltip } from 'antd';
 import { ListItem, ListItemProps } from './ListItem';
 import { MembersContext } from './MembersContext';
 import { PhpdocMethodSignatureProps } from '../method/PhpdocMethodSignature';
-import { cold } from 'react-hot-loader';
-import { observer } from 'mobx-react';
 
 export interface MethodListItemProps extends ListItemProps {
     hide?: PhpdocMethodSignatureProps['hide'] & {
         visibility?: boolean
     }
 }
+
 export class MethodListItem extends Component<MethodListItemProps> {
     static displayName                                = 'MethodItem';
     static defaultProps: Partial<MethodListItemProps> = {

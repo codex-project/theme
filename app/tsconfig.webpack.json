@@ -2,7 +2,7 @@
     "compilerOptions": {
         "declaration": true,
         "rootDir": ".",
-        "jsx": "react",
+        "jsx": "preserve",
         "target": "es5",
         "module": "esnext",
         "moduleResolution": "node",
@@ -26,11 +26,11 @@
         "allowSyntheticDefaultImports": true
     },
     "include": [
-        "src/globals.d.ts",
-        "src/modules.d.ts"
     ],
     "exclude": [
+
         "node_modules",
+        "src",
         "src/auth",
         "src/comments",
         "src/core",

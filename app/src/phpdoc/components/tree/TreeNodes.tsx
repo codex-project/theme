@@ -1,6 +1,5 @@
 import React from 'react';
-import {TreeNode} from './TreeNode';
-import { hot } from '@codex/core';
+import { TreeNode } from './TreeNode';
 
 // A recursive component for rendering an array of tree nodes
 // @hot(module)

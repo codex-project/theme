@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { lazyInject, RouteLink, Trigger } from '@codex/core';
+import { lazyInject, RouteLink, RouteLinkProps, Trigger } from '@codex/core';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
 import { FQSEN, PhpdocStore, Type } from '../../logic';
@@ -9,7 +9,12 @@ import { PhpdocPopover } from '../popover';
 import { PhpdocMethod } from '../method';
 import { ManifestContext } from '../base';
 import { hot } from 'react-hot-loader';
-import PhpdocDrawer from '../drawer';
+import { PhpdocDrawer } from '../drawer';
+import { PhpdocDrawerProps } from '../drawer/PhpdocDrawer';
+import { PhpdocMethodProps } from '../method/PhpdocMethod';
+import { PhpdocEntityProps } from '../entity/PhpdocEntity';
+import { PhpdocPopoverProps } from '../popover/PhpdocPopover';
+import { PhpdocTypeProps } from '../type/PhpdocType';
 
 
 const log = require('debug')('phpdoc:link');
@@ -19,9 +24,16 @@ export type PhpdocLinkModifier = 'popover' | 'type' | 'icon' | 'styling'
 export interface PhpdocLinkProps {
     action?: 'navigate' | 'drawer'
     modifiers?: PhpdocLinkModifier[]
-    query?: string
     icon?: boolean
     fqsen: string | FQSEN
+
+    drawer?: Partial<PhpdocDrawerProps>     // action === 'drawer'
+    method?: Partial<PhpdocMethodProps>     // fqsen.isMember
+    entity?: Partial<PhpdocEntityProps>     // fqsen.isEntity
+    popover?: Partial<PhpdocPopoverProps>   // modifiers.popover
+    type?: Partial<PhpdocTypeProps>         // modifiers.type
+    // action === 'drawer' : action === 'navigate'
+    link?: Partial<React.HTMLAttributes<HTMLAnchorElement> | RouteLinkProps>
 
 }
 
@@ -33,6 +45,12 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
     static defaultProps: Partial<PhpdocLinkProps> = {
         action   : 'navigate',
         modifiers: [],
+        drawer   : {},
+        method   : {},
+        entity   : {},
+        popover  : {},
+        type     : {},
+        link     : {},
     };
 
     static contextType = ManifestContext;

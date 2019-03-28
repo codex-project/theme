@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { classes, style } from 'typestyle';
 import { Checkbox, Input, Popover, Tooltip } from 'antd';
 
-import Tree, { TreeProps } from './Tree';
+import { Tree,TreeProps } from './Tree';
 import { action, observable, runInAction } from 'mobx';
 import { InspireTree } from './InspireTree';
 import { debounce } from 'lodash-decorators';
@@ -41,7 +41,7 @@ export class PhpdocTree extends React.Component<PhpdocTreeProps> {
 
     search: typeof Search;
     scrollbar = React.createRef<Scrollbars>();
-    tree: InspireTree;
+    tree: InspireTree
 
 
     constructor(props: PhpdocTreeProps, context: any) {

@@ -13,7 +13,9 @@
     </wildcardResourcePatterns>
   </component>
   <component name="TypeScriptCompiler">
+    <option name="recompileOnChanges" value="true" />
     <option name="scopeName" value="All Places" />
+    <option name="typeScriptCompilerParams" value="--sourceMap true" />
     <option name="useConfig" value="true" />
   </component>
 </project>

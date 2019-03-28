@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="NodeJS" />
+    <plugin id="com.chrisrm.idea.MaterialThemeUI" />
+    <plugin id="com.github.shyykoserhiy.gfm" />
+    <plugin id="org.intellij.plugins.postcss" />
+  </component>
+</project>
