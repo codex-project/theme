@@ -5,6 +5,7 @@ $ant-menu-prefix: "#{$ant-prefix}-menu";
 
 .#{$menu-prefix} {
     height: 100%;
+    background:transparent;
 
     &-border-left,
     &-border-right {

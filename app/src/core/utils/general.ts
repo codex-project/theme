@@ -8,7 +8,7 @@
  * @license https://codex-project.mit-license.org MIT License
  */
 
-import { isNumber } from 'lodash';
+import { camelCase, isNumber } from 'lodash';
 
 export function warn(message: string, ...params: any[]) {
     console.warn('[codex][core] ' + message, ...params);
@@ -243,4 +243,14 @@ export function trace(name, ...args) {
     console.groupCollapsed(name);
     console.trace(...args);
     console.groupEnd();
+}
+
+export function keysToCamelCase(obj: any) {
+    Object.keys(obj).forEach(key => {
+        if ( key !== camelCase(key) ) {
+            obj[ camelCase(key) ] = obj[ key ];
+            delete obj[ key ];
+        }
+    });
+    return obj;
 }

@@ -8,6 +8,8 @@ import { TunnelProvider } from 'components/tunnel';
 import { Layout } from 'components/layout';
 import { Router, Routes } from 'router';
 import { HtmlParser } from 'classes/HtmlParser';
+import { LocalStorage } from 'utils/storage';
+import { TestPage } from 'pages/TestPage';
 
 const log = require('debug')('App');
 
@@ -25,6 +27,13 @@ export class App extends React.Component<AppProps, any> {
     static displayName = 'App';
 
     render() {
+        if(LocalStorage.has('test-page')){
+            return (
+                <ErrorBoundary>
+                    <TestPage />
+                </ErrorBoundary>
+            )
+        }
         return (
             <ErrorBoundary>
                 <TunnelProvider>

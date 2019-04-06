@@ -20,8 +20,8 @@ export class ArrayUtils {
         return flat;
     }
 
-    static mapItems<T extends ArrayItemWithChildren>(items: T[], cb: (item: T, parent?: T) => T, recursiveKey: string = 'children'): T[] {
-        const traverse = (items: T[], parent?: T) => {
+    static mapItems<T extends ArrayItemWithChildren>(items: T[]=[], cb: (item: T, parent?: T) => T, recursiveKey: string = 'children'): T[] {
+        const traverse = (items: T[]=[], parent?: T) => {
             return items.map(item => {
                 item = cb(item, parent);
                 if ( Array.isArray(item[ recursiveKey ]) && item[ recursiveKey ].length > 0 ) {

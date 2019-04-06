@@ -9,6 +9,8 @@ import './styling/stylesheet.scss'
 
 import 'bluebird-global'
 import 'reflect-metadata';
+import './extend-native'
+
 import './utils/zepto';
 import './vendor'
 
@@ -49,6 +51,7 @@ export * from './pages';
 export * from './utils/breakpoints';
 export * from './utils/colors';
 export * from './utils/createObservableContext';
+export * from './utils/CSSNumber';
 // export * from './utils/event';
 export * from './utils/general';
 export * from './utils/getElementType';
@@ -64,6 +67,7 @@ export * from './utils/scrollTo';
 export * from './utils/storage';
 export * from './utils/styleToString';
 export * from './utils/thenBy';
+export * from './utils/tuple';
 export {styled} from './utils/styled';
 import * as scroll from './utils/scroll';
 

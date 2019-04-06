@@ -137,6 +137,12 @@ export const containerModule = new ContainerModule((bind, unbind, isBound, rebin
         'c-row'        : Row,
         'c-tooltip'    : Tooltip,
         'c-popover'    : Popover,
+
+        'ant-layout'        : Layout,
+        'ant-layout-header' : Layout.Header,
+        'ant-layout-footer' : Layout.Footer,
+        'ant-layout-content': Layout.Content,
+        'ant-layout-sider'  : Layout.Sider,
     });
 
     bind<HtmlParser>('htmlparser').to(HtmlParser).inSingletonScope();

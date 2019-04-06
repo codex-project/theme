@@ -53,9 +53,13 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
 .#{$layout-prefix-cls} {
 
     &-header {
-        line-height: var(--layout-header-height);
         display: flex;
         justify-content: space-around;
+    }
+    &-footer {
+        display: flex;
+        justify-content: space-around;
+        padding: 0;
     }
 
     &-header-logo {

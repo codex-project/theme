@@ -12,7 +12,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
-        "inlineSourceMap": true,
+        "sourceMap": true,
         "jsx": "react"
     },
     "include": [
@@ -21,6 +21,7 @@
         "./build"
     ],
     "exclude": [
-        "app"
+        "app",
+        "node_modules"
     ]
 }

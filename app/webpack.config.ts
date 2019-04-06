@@ -20,6 +20,9 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { IgnoreNotFoundExportPlugin, IgnoreNotFoundExportPluginOptions } from './build/out/plugins/ts-webpack-ignore-not-found-export';
 import ForkTsCheckerPlugin from 'fork-ts-checker-webpack-plugin';
 import { NormalizedMessage } from 'fork-ts-checker-webpack-plugin/lib/NormalizedMessage';
+import Dashboard from 'webpack-dashboard/plugin';
+import {DuplicatesPlugin} from 'inspectpack/plugin';
+
 
 const chain             = new Chain({
     mode     : process.env.NODE_ENV as any,
@@ -33,9 +36,9 @@ const _assetPath        = assetsByEntry ? 'vendor/codex_[entrypoint]' : 'vendor'
 const minimize          = isProd;
 const assetPath         = (...parts: string[]) => join(_assetPath, ...parts);
 const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...parts);
-const packagesPath      = (...parts: string[]) => resolve(__dirname, '../packages', ...parts);
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json_');
-const tschecker = false;
+const tschecker         = false;
+const dashboardPort     = 23345;
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -183,6 +186,11 @@ export function addPackage(chain: Chain, name: string, umdName?: string) {
         chain.resolve.alias.set(umdName, rootPath('packages', name, 'es'));
     });
 }
+export function addDashboardPlugin(chain: Chain, port:number=dashboardPort) {
+    chain.plugin('dashboard').use(Dashboard, [ {
+        port: dashboardPort,
+    } ]);
+}
 
 //endregion
 
@@ -240,7 +248,7 @@ chain.plugin('favicon').use(WebappPlugin, [ {
     prefix: assetsByEntry ? 'vendor/codex_core/img' : 'vendor/img',
     inject: true,
 } ]).after('html');
-chain.plugin('IgnoreNotFoundExportPlugin').use(IgnoreNotFoundExportPlugin, [ <IgnoreNotFoundExportPluginOptions>{
+chain.plugin('ignore-not-found-export').use(IgnoreNotFoundExportPlugin, [ <IgnoreNotFoundExportPluginOptions>{
     exportsToIgnore: [
         // 'Toolbar.*Props',
         // 'Layout.*Props',
@@ -256,7 +264,6 @@ chain.when(tschecker, chain => {
             2420,
         ],
     } ]);
-    // chain.plugin('declaration-bundler-core').use(DeclarationBundlerPlugin, [{}])
 });
 chain.when(isProd, chain => {
     // chain.plugin('write-file').use(require('write-file-webpack-plugin'), [ { useHashIndex: false } ]);
@@ -269,6 +276,10 @@ chain.when(isProd, chain => {
         cssProcessor       : require('cssnano'),
         cssProcessorOptions: { discardComments: { removeAll: true } },
         canPrint           : true,
+    } ]);
+    chain.plugin('duplicates').use(DuplicatesPlugin, [ {
+        verbose: true,
+        emitErrors: false
     } ]);
 });
 chain.when(assetsByEntry, chain => chain.plugin('path').use(EntrypointPathPlugin));

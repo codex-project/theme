@@ -1,11 +1,12 @@
 import { classes, style, types } from 'typestyle';
 import React from 'react';
 import { getElementType } from 'utils/getElementType';
+import { tuple } from './tuple';
 
 export type CSS = types.NestedCSSProperties;
 
 export interface FactoryProps<Ref> {
-    as?: React.ReactType
+    as?: React.ElementType
     innerRef?: React.RefObject<Ref>
 }
 
@@ -13,7 +14,7 @@ export type FactoryStyles<PROPS extends FactoryProps<any>> = CSS | ((props: PROP
 export type StyledComponentProps<HTMLELEMENT, PROPS = {}> = {} & PROPS & React.HTMLProps<HTMLELEMENT>
 export type CreatedFactoryFn<HTMLELEMENT> = <PROPS extends FactoryProps<HTMLELEMENT>>(...styles: FactoryStyles<PROPS>[]) => React.ComponentClass<StyledComponentProps<HTMLELEMENT, PROPS>>
 
-export type Elements = {
+export type HTMLElements = {
     a: CreatedFactoryFn<HTMLAnchorElement>
     abbr: CreatedFactoryFn<HTMLElement>
     address: CreatedFactoryFn<HTMLElement>
@@ -126,12 +127,14 @@ export type Elements = {
     video: CreatedFactoryFn<HTMLVideoElement>
     wbr: CreatedFactoryFn<HTMLElement>
 }
-export type Element = keyof Elements
-export type Styled = Elements & {
+// export type Element = keyof Elements
+export type Styled = HTMLElements & {
     <T>(Component: T): CreatedFactoryFn<T>
 }
+export const htmlElements = tuple('a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'big', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'legend', 'li', 'link', 'main', 'map', 'mark', 'menu', 'menuitem', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'source', 'span', 'strong', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'u', 'ul', 'video', 'wbr') as string[]
+// export type HTMLElement = typeof h
+type HTMLElement = (typeof htmlElements)[number];
 
-export const elements: Array<Element> = [ 'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'big', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'legend', 'li', 'link', 'main', 'map', 'mark', 'menu', 'menuitem', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'source', 'span', 'strong', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'u', 'ul', 'video', 'wbr' ];
 
 const filterObject = <T extends {}>(obj: T, fn: (pair: [ string, {} ]) => boolean): T => (
     Object.entries(obj)
@@ -143,7 +146,7 @@ const filterObject = <T extends {}>(obj: T, fn: (pair: [ string, {} ]) => boolea
 );
 
 
-export function factory<HTMLELEMENT extends HTMLElement = HTMLElement>(Component: React.ReactType): CreatedFactoryFn<HTMLELEMENT> {
+export function factory<HTMLELEMENT extends HTMLElement = HTMLElement>(Component: React.ElementType): CreatedFactoryFn<HTMLELEMENT> {
 
     return function <PROPS = {}>(...styles: FactoryStyles<PROPS>[]): React.ComponentClass<StyledComponentProps<HTMLELEMENT, PROPS>> {
 
@@ -174,11 +177,11 @@ export function factory<HTMLELEMENT extends HTMLElement = HTMLElement>(Component
 
 
 export let styled: Styled;
-styled = ((Component: React.ReactType) => {
+styled = ((Component: React.ElementType) => {
     return factory(Component);
 }) as any;
 
-elements.forEach(element => {
+htmlElements.forEach(element => {
     styled[ element ] = factory(element);
 });
 

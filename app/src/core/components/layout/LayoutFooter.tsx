@@ -47,6 +47,7 @@ export class LayoutFooter extends React.Component<LayoutFooterProps> {
         return (
             <Footer style={computedStyle} className={className('footer', computedClass)}>
                 {this.getChildren(footer)}
+
             </Footer>
         );
     }

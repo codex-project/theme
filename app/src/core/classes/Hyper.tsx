@@ -32,11 +32,13 @@ export class Hyper {
 
         if ( len === 2 && (Array.isArray(args[ 1 ]) || React.isValidElement(args[ 1 ]) || types[ 1 ] === 'string') ) {
             children = args[ 1 ];
-        } else if ( len === 2 && types[ 1 ] === 'object' ) {
-            props = args[ 1 ];
+        // } else if ( len === 2 && types[ 1 ] === 'object' ) {
+        //     props = args[ 1 ];
         } else if ( len > 2 && (Array.isArray(args[ 2 ]) || React.isValidElement(args[ 2 ]) || types[ 2 ] === 'string') ) {
             props    = args[ 1 ];
             children = args[ 2 ];
+        } else {
+            props = args[ 1 ];
         }
 
         if ( types[ 0 ] === 'string' && Hyper.components.has(args[ 0 ]) ) {

@@ -9,6 +9,7 @@ import { createStoreProxy, IStoreProxy } from './proxy';
 import { margin, padding } from '../utils/box';
 import { MenuItems } from '../menus';
 import { injectable } from 'inversify';
+import { px } from 'csx';
 
 const log = require('debug')('store:layout');
 
@@ -141,6 +142,7 @@ export class LayoutStore {
                 if ( this.fixed ) style.position = 'fixed';
                 if ( this.color ) style.backgroundColor = colorKeys.includes(this.color) ? colors[ this.color ] : this.color;
                 style.height = this.height;
+                style.lineHeight = px(style.lineHeight || style.height as any)
                 return style;
             },
         });
@@ -169,6 +171,7 @@ export class LayoutStore {
                 if ( this.fixed ) style.position = 'fixed';
                 if ( this.color ) style.backgroundColor = colorKeys.includes(this.color) ? colors[ this.color ] : this.color;
                 style.height = this.height;
+                style.lineHeight = px(style.lineHeight || style.height as any)
                 return style;
             },
         });

@@ -11,8 +11,6 @@ units.forEach(unit => {
 });
 declare global {
     interface Number {
-
-
         /**
          * Returns the number with a suffix of %
          */
@@ -51,11 +49,3 @@ declare global {
         toTurn: () => string
     }
 }
-
-
-const nr = 1;
-
-
-console.log(
-    nr.toPx()
-)

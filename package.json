@@ -36,6 +36,8 @@
         "typescript": "3.3.*"
     },
     "devDependencies": {
-        "@airbnb/node-memwatch": "^1.0.2"
+        "@airbnb/node-memwatch": "^1.0.2",
+        "inspectpack": "^4.2.1",
+        "webpack-dashboard": "^3.0.2"
     }
 }

@@ -1,23 +1,22 @@
 import React from 'react';
-import { State } from 'router';
 import { lazyInject } from 'ioc';
 import { Store } from 'stores';
 import { hot } from 'react-hot-loader';
+import { LayoutFooter, LayoutHeader } from 'components/layout';
 
 const log = require('debug')('pages:home');
 
 @hot(module)
-export class TestPage extends React.Component<{ routeState: State, data?: any }> {
+export class TestPage extends React.Component<any> {
     static displayName = 'TestPage';
     @lazyInject('store') store: Store;
 
     render() {
-        let { routeState, data, children } = this.props;
-        data                               = data || {};
         return (
             <div>
-                <h2>TestPage</h2>
-                <h4>Panes</h4>
+                <LayoutHeader/>
+                <div style={{ height: '99vh'}}>content</div>
+                <LayoutFooter />
             </div>
         );
     }

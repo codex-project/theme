@@ -11,81 +11,98 @@ import 'webpack-hot-middleware';
 import globule from 'globule';
 import { copySync, emptyDirSync, existsSync, mkdirpSync, rmdirSync, unlinkSync } from 'fs-extra';
 import { bundle } from 'dts-bundle/lib/index';
+import { execSync } from 'child_process';
+import cmd from 'commander';
+import { addAnalyzerPlugins, addHMR } from './webpack.config';
 
 
-const path = (...parts: string[]) => resolve(__dirname, 'src', ...parts);
-
-
+const path  = (...parts: string[]) => resolve(__dirname, 'src', ...parts);
 const chalk = require('chalk').default;
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
+const smp = new SMP();
 
-const smp             = new SMP();
-// Import the plugin:
-const DashboardPlugin = require('webpack-dashboard/plugin');
+cmd
+    .option('-D|--debug', 'Enable Debug')
+    .option('--production', 'Enable production mode')
+    .option('--analyzer', 'Use Analyzer plugin')
+    .option('--hmr', 'Enable HMR')
+    .option('--hmr-react', 'Enable HMR + React Hot Loader')
+    .option('--dashboard', 'Use Dasboard plugin')
+    .option('--report', 'Report file sizes on build')
+    .option('--reportGlobs [globs]', 'Globs to use for reporting file sizes [globs: "**/*.js,**/*.css"]', '**/*.js,**/*.css')
+    .parse(process.argv);
+
+cmd.tryReport = (chain: Chain) => cmd.report && reportFileSizes(...(cmd.reportGlobs.toString().split(',').map(chain.outPath)));
 
 interface Gulpfile extends GulpEnvMixin {}
 
 @Gulpclass(gulp)
 @mixin(GulpEnvMixin)
 class Gulpfile {
-    @Task('dev:build')
-    async devBuild() {
-        this.dev();
-        const { chain, addAnalyzerPlugins } = require('./webpack.config');
-        addAnalyzerPlugins(chain);
-        await this.build(chain);
-        reportFileSizes(chain.outPath('js/*.js'));
+
+    protected addPlugins(chain: Chain) {
+        const { addAnalyzerPlugins, addHMR, addDashboardPlugin } = require('./webpack.config');
+        if ( cmd.analyzer ) addAnalyzerPlugins(chain);
+        if ( cmd.hmr || cmd.hmrReact ) addHMR(chain, cmd.hmrReact);
+        if ( cmd.dashboard ) addDashboardPlugin(chain);
+        return this;
     }
 
-    @Task('dev:watch')
-    async devWatch() {
-        this.dev();
-        const { chain, addAnalyzerPlugins } = require('./webpack.config');
-        addAnalyzerPlugins(chain);
-        this.watch(chain);
+    protected pre(errorOnRunned?: boolean){
+        if(!this.runnedEnv) {
+            if ( cmd.production ) {
+                this.prod(errorOnRunned)
+            } else {
+                this.dev(errorOnRunned);
+            }
+        }
+        return require('./webpack.config')
     }
 
-    @Task('dev:serve')
-    async devServe() {
-        this.dev();
-        const { chain, addAnalyzerPlugins, addHMR } = require('./webpack.config');
-        addHMR(chain, true);
-        return this.serve(chain);
+    @Task('default')
+    default() {
+        cmd.help(str => {
+            if ( cmd.debug ) {
+                console.dir({ args: cmd.args, opts: cmd.opts() });
+            }
+            return `${str}\nTasks:\n` + Object.keys(gulp.tasks).map(name => gulp.tasks[ name ]).map(task => `  - ${task.name}`).join('\n');
+        });
     }
 
-    @Task('dev:dashboard')
-    async devDashboard() {
-        this.dev();
-        const { chain, addAnalyzerPlugins, addHMR } = require('./webpack.config');
-        chain.plugin('dashboard').use(DashboardPlugin, [ {} ]);
-        addHMR(chain, true);
-        addAnalyzerPlugins(chain, true);
-        return this.serve(chain);
+    @Task('build')
+    async build() {
+        const { chain } = this.pre();
+        await this._build(chain);
     }
 
-
-    @Task('prod:build')
-    async prodBuild() {
-        this.prod();
-        const { chain, addAnalyzerPlugins } = require('./webpack.config');
-        addAnalyzerPlugins(chain);
-        await this.build(chain);
+    @Task('watch')
+    async watch() {
+        const { chain } = this.pre();
+        this._watch(chain);
     }
 
-    @Task('prod:report')
-    async prodReport() {
-        this.prod();
-        const { chain, addAnalyzerPlugins } = require('./webpack.config');
-        reportFileSizes(...[ chain.outPath('**/*.js'), chain.outPath('**/*.css') ]);
+    @Task('serve')
+    async serve() {
+        const { chain } = this.pre();
+        return this._serve(chain);
     }
 
-    @Task('prod:watch')
-    prodWatch() {
-        this.prod();
-        const { chain, addAnalyzerPlugins } = require('./webpack.config');
-        chain.optimization.minimize(false);
-        addAnalyzerPlugins(chain);
-        return this.watch(chain);
+    @Task('report')
+    report() {
+        const { chain } = this.pre();
+        this.addPlugins(chain);
+        cmd.tryReport(chain);
+    }
+
+    // @Task('prod:watch') prodWatch() {return this._watch(chain, stats => this.nps());    }
+
+    @Task('nps')
+    nps() {
+        execSync('yarn nps copy:theme:assets:dist', {
+            cwd     : resolve(__dirname, '../../codex'),
+            stdio   : 'inherit',
+            encoding: 'utf8',
+        });
     }
 
     @Task('dts')
@@ -129,7 +146,7 @@ I'm like hello
         bundledts('core');
     }
 
-    protected async serve(chain: Chain, host: string = 'localhost', port: number = 8513) {
+    protected async _serve(chain: Chain, host: string = 'localhost', port: number = 8513) {
         port      = await utils.choosePort(host, port);
         const url = `http://${host}:${port}`;
         chain.data.merge({ host, port, url });
@@ -193,23 +210,27 @@ I'm like hello
         });
     }
 
-    protected watch(chain: Chain) {
+    protected _watch(chain: Chain, cb?: (stats) => any) {
         const config = chain.toConfig();
         webpack(config).watch({}, (err, stats) => {
             if ( err ) {
                 return console.error(err);
             }
-            reportFileSizes(chain.outPath('vendor/**/*.js') as any);
+            cmd.tryReport(chain);
+            if ( cb ) {
+                cb(stats);
+            }
         });
     }
 
-    protected async build(chain: Chain) {
+    protected async _build(chain: Chain) {
         const config = chain.toConfig();
         return new Promise<webpack.Stats>((resolve, reject) => {
             webpack(config, (err, stats) => {
                 if ( err ) {
                     return reject(err);
                 }
+                cmd.tryReport(chain);
                 resolve(stats);
             });
         });
