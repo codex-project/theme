@@ -33,6 +33,8 @@ cmd
     .option('--dashboard-port [port]', 'Use Dasboard plugin', 23345)
     .option('--report', 'Report file sizes on build')
     .option('--report-globs [globs]', 'Globs to use for reporting file sizes [globs: "**/*.js,**/*.css"]', '**/*.js,**/*.css')
+    .option('--backend-url [url]', 'Backend base url (BACKEND_URL)')
+    .option('--dev-proxy-target [url]', 'webpack-dev-server api proxy target url', 'http://codex.local')
     .parse(process.argv);
 cmd.tryReport = (chain: Chain) => cmd.report && reportFileSizes(...(cmd.reportGlobs.toString().split(',').map(chain.outPath)));
 if ( cmd.debug ) console.dir({ args: cmd.args, opts: cmd.opts() });
@@ -104,25 +106,6 @@ class Gulpfile {
     @Task('dts')
     dts() {
         const { chain } = require('./webpack.config');
-        // process.chdir(chain.srcPath('core'));
-
-        // const project = gulpTs.createProject(chain.srcPath('core/tsconfig.json'), {
-        //     typescript           : ts,
-        //     emitDeclarationOnly  : true,
-        //     jsx                  : 'react' as any,
-        //     noStrictGenericChecks: true,
-        //     declarationDir       : chain.outPath('types'),
-        //     // outDir               : 'out',
-        // } as ts.CompilerOptions & gulpTs.Settings);
-        // gulp
-        //     .src(chain.srcPath('core/**/*.ts'))
-        //     .pipe(project())
-        //     .dts.pipe(gulp.dest(chain.outPath('types')));
-        //
-        // process.chdir(__dirname);
-
-        // const dtsDir = copydts(resolve(__dirname, 'out'));
-
         function bundledts(name: string) {
             bundle({
                 name      : `@codex/${name}`,
@@ -176,7 +159,7 @@ I'm like hello
         let config                        = chain.toConfig();
         config.devServer.proxy            = {
             '/api': {
-                target             : 'http://codex.local',
+                target             : cmd.devProxyTarget,
                 secure             : false,
                 changeOrigin       : true,
                 cookieDomainRewrite: 'localhost',
@@ -185,7 +168,7 @@ I'm like hello
                     // requests. To prevent CORS issues, we have to change
                     // the Origin to match the target URL.
                     if ( proxyReq.getHeader('origin') ) {
-                        proxyReq.setHeader('origin', 'http://codex.local');
+                        proxyReq.setHeader('origin', cmd.devProxyTarget);
                     }
                 }
             }
@@ -334,3 +317,22 @@ function copydts(fromDir) {
 
     return tmpDir;
 }
+
+// process.chdir(chain.srcPath('core'));
+
+// const project = gulpTs.createProject(chain.srcPath('core/tsconfig.json'), {
+//     typescript           : ts,
+//     emitDeclarationOnly  : true,
+//     jsx                  : 'react' as any,
+//     noStrictGenericChecks: true,
+//     declarationDir       : chain.outPath('types'),
+//     // outDir               : 'out',
+// } as ts.CompilerOptions & gulpTs.Settings);
+// gulp
+//     .src(chain.srcPath('core/**/*.ts'))
+//     .pipe(project())
+//     .dts.pipe(gulp.dest(chain.outPath('types')));
+//
+// process.chdir(__dirname);
+
+// const dtsDir = copydts(resolve(__dirname, 'out'));

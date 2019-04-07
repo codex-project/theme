@@ -21,7 +21,7 @@ import { IgnoreNotFoundExportPlugin, IgnoreNotFoundExportPluginOptions } from '.
 import ForkTsCheckerPlugin from 'fork-ts-checker-webpack-plugin';
 import { NormalizedMessage } from 'fork-ts-checker-webpack-plugin/lib/NormalizedMessage';
 import Dashboard from 'webpack-dashboard/plugin';
-import {DuplicatesPlugin} from 'inspectpack/plugin';
+import { DuplicatesPlugin } from 'inspectpack/plugin';
 
 
 const chain             = new Chain({
@@ -39,6 +39,15 @@ const rootPath          = (...parts: string[]) => resolve(__dirname, '..', ...pa
 const tsconfig          = resolve(__dirname, 'tsconfig.webpack.json_');
 const tschecker         = false;
 const dashboardPort     = 23345;
+const backendURL        = process.env.BACKEND_URL || 'http://codex.local';
+// defineVars are added to DefinePlugin and HtmlPlugin
+const defineVars = {
+    DEV        : isDev,
+    PROD       : isProd,
+    TEST       : chain.get('mode') === 'testing',
+    ENV        : dotenv.load({ path: resolve('.env') }).parsed,
+    BACKEND_URL: backendURL,
+};
 
 //region: Helper Functions
 const babelImportPlugins = [
@@ -83,7 +92,7 @@ export function addBabelToRule(chain: Chain, ruleName: string, options: BabelLoa
 
 export function addTsToRule(chain: Chain, ruleName: string, options: Partial<TypescriptLoaderOptions> = {}, babelOptions: BabelLoaderOptions = {}) {
     let rule = chain.module.rule(ruleName);
-    if ( ! rule.has('babel-loader') ) {
+    if ( !rule.has('babel-loader') ) {
         addBabelToRule(chain, ruleName, babelOptions);
     }
     rule
@@ -186,15 +195,17 @@ export function addPackage(chain: Chain, name: string, umdName?: string) {
         chain.resolve.alias.set(umdName, rootPath('packages', name, 'es'));
     });
 }
-export function addDashboardPlugin(chain: Chain, port:number=dashboardPort) {
+
+export function addDashboardPlugin(chain: Chain, port: number = dashboardPort) {
     chain.plugin('dashboard').use(Dashboard, [ {
         port: dashboardPort,
     } ]);
 }
-export function addDuplicatesPlugin(chain:Chain){
+
+export function addDuplicatesPlugin(chain: Chain) {
     chain.plugin('duplicates').use(DuplicatesPlugin, [ {
-        verbose: true,
-        emitErrors: false
+        verbose   : true,
+        emitErrors: false,
     } ]);
 }
 
@@ -210,10 +221,7 @@ chain.plugin('define').use(webpack.DefinePlugin, [ {
     'process.env': {
         NODE_ENV: `"${chain.get('mode')}"`,
     },
-    DEV          : isDev,
-    PROD         : isProd,
-    TEST         : chain.get('mode') === 'testing',
-    ENV          : dotenv.load({ path: resolve('.env') }).parsed,
+    ...defineVars
 } ]);
 chain.plugin('bar').use(BarPlugin, [ <BarOptions>{
     profile   : true,
@@ -243,10 +251,7 @@ chain.plugin('html').use(HtmlPlugin, [ <HtmlPlugin.Options>{
             core  : _assetPath.replace('[entrypoint]', 'core'),
             phpdoc: _assetPath.replace('[entrypoint]', 'phpdoc'),
         },
-        DEV      : isDev,
-        PROD     : isProd,
-        TEST     : process.env.NODE_ENV === 'test',
-        ENV      : dotenv.load({ path: resolve('.env') }).parsed,
+        ...defineVars
     },
 } ]);
 chain.plugin('favicon').use(WebappPlugin, [ {
