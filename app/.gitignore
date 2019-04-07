@@ -65,3 +65,5 @@ nb-configuration.xml
 npm-debug.log
 yarn-error.log
 *.js
+!/build/*.js
+!/build/**/*.js
