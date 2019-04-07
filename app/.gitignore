@@ -67,3 +67,6 @@ yarn-error.log
 *.js
 !/build/*.js
 !/build/**/*.js
+!/src/mobx.js
+!/src/pre-path.js
+!/src/core/utils/zepto.js
