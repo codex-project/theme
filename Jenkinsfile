@@ -30,6 +30,25 @@ node {
 
         stage('install') {
             sh 'yarn install'
+            dir('app/build'){
+                sh '../../node_modules/.bin/tsc -p tsconfig.json'
+            }
+            sh 'yarn api build'
+            sh 'yarn app prod:build'
+        }
+
+        stage('report'){
+                sh 'mkdir -f -p html_reports'
+                sh 'cp -f app/dist/bundle-analyzer.html html_reports/index.html'
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: 'frontend',
+                    reportFiles: 'index.html',
+                    reportName: 'Bundle Analyzer',
+                    reportTitles: ''
+                ])
         }
     }
 }
