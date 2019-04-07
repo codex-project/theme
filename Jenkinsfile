@@ -38,7 +38,7 @@ node {
         }
 
         stage('report'){
-                sh 'mkdir -f -p html_reports'
+                sh 'mkdir -p html_reports'
                 sh 'cp -f app/dist/bundle-analyzer.html html_reports/index.html'
                 publishHTML([
                     allowMissing: false,
