@@ -18,81 +18,75 @@ import { addAnalyzerPlugins, addHMR } from './webpack.config';
 
 const path  = (...parts: string[]) => resolve(__dirname, 'src', ...parts);
 const chalk = require('chalk').default;
+const log   = (...args) => require('fancy-log')(...args);
 require('ts-node').register({ transpileOnly: true, typeCheck: false });
 const smp = new SMP();
 
 cmd
     .option('-D|--debug', 'Enable Debug')
     .option('--production', 'Enable production mode')
-    .option('--analyzer', 'Use Analyzer plugin')
+    .option('--analyze', 'Use Analyzer plugin')
     .option('--hmr', 'Enable HMR')
     .option('--hmr-react', 'Enable HMR + React Hot Loader')
     .option('--dashboard', 'Use Dasboard plugin')
+    .option('--dashboard-port [port]', 'Use Dasboard plugin', 23345)
     .option('--report', 'Report file sizes on build')
-    .option('--reportGlobs [globs]', 'Globs to use for reporting file sizes [globs: "**/*.js,**/*.css"]', '**/*.js,**/*.css')
+    .option('--report-globs [globs]', 'Globs to use for reporting file sizes [globs: "**/*.js,**/*.css"]', '**/*.js,**/*.css')
     .parse(process.argv);
-
 cmd.tryReport = (chain: Chain) => cmd.report && reportFileSizes(...(cmd.reportGlobs.toString().split(',').map(chain.outPath)));
+if ( cmd.debug ) console.dir({ args: cmd.args, opts: cmd.opts() });
+
 
 interface Gulpfile extends GulpEnvMixin {}
 
 @Gulpclass(gulp)
 @mixin(GulpEnvMixin)
 class Gulpfile {
-
     protected addPlugins(chain: Chain) {
         const { addAnalyzerPlugins, addHMR, addDashboardPlugin } = require('./webpack.config');
-        if ( cmd.analyzer ) addAnalyzerPlugins(chain);
-        if ( cmd.hmr || cmd.hmrReact ) addHMR(chain, cmd.hmrReact);
-        if ( cmd.dashboard ) addDashboardPlugin(chain);
+        const _plugin                                            = (when: boolean, str: string, fn: Function, ...fnArgs: any[]) => {
+            if ( ! when ) return;
+            log(`Using ${chalk.bold(str)}`);
+            fn(chain, ...fnArgs);
+        };
+        _plugin(cmd.analyze, 'Analyzer', addAnalyzerPlugins);
+        _plugin(cmd.hmr || cmd.hmrReact, cmd.hmrReact ? 'HMR + React Hot Loader' : 'HMR', addHMR, cmd.hmrReact);
+        _plugin(cmd.dashboard, 'Dashboard', addDashboardPlugin, cmd.dashboardPort);
         return this;
     }
 
-    protected pre(errorOnRunned?: boolean){
-        if(!this.runnedEnv) {
+    protected pre(errorOnRunned?: boolean) {
+        if ( ! this.runnedEnv ) {
             if ( cmd.production ) {
-                this.prod(errorOnRunned)
+                this.prod(errorOnRunned);
             } else {
                 this.dev(errorOnRunned);
             }
         }
-        return require('./webpack.config')
+        let webpackConfig = require('./webpack.config');
+        this.addPlugins(webpackConfig.chain);
+        return webpackConfig;
     }
 
     @Task('default')
     default() {
         cmd.help(str => {
-            if ( cmd.debug ) {
-                console.dir({ args: cmd.args, opts: cmd.opts() });
-            }
+
             return `${str}\nTasks:\n` + Object.keys(gulp.tasks).map(name => gulp.tasks[ name ]).map(task => `  - ${task.name}`).join('\n');
         });
     }
 
     @Task('build')
-    async build() {
-        const { chain } = this.pre();
-        await this._build(chain);
-    }
+    async build() { return this._build(this.pre().chain); }
 
     @Task('watch')
-    async watch() {
-        const { chain } = this.pre();
-        this._watch(chain);
-    }
+    async watch() { return this._watch(this.pre().chain); }
 
     @Task('serve')
-    async serve() {
-        const { chain } = this.pre();
-        return this._serve(chain);
-    }
+    async serve() { return this._serve(this.pre().chain); }
 
     @Task('report')
-    report() {
-        const { chain } = this.pre();
-        this.addPlugins(chain);
-        cmd.tryReport(chain);
-    }
+    report() { cmd.tryReport(this.pre().chain); }
 
     // @Task('prod:watch') prodWatch() {return this._watch(chain, stats => this.nps());    }
 

@@ -17,4 +17,12 @@
     --font-family-sans-serif: #{inspect($font-family-sans-serif)};
     --font-family-monospace: #{inspect($font-family-monospace)};
     --font-family-header: #{inspect($font-family-header)};
+
+
+    --heading-color: #{$heading-color};
+    --text-color: #{$text-color};
+    --text-color-secondary: #{$text-color-secondary};
+    --heading-color-dark: #{$heading-color-dark};
+    --text-color-dark: #{$text-color-dark};
+    --text-color-secondary-dark: #{$text-color-secondary-dark};
 }

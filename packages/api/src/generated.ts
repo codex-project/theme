@@ -154,6 +154,8 @@ export interface Project {
 
     git?: Maybe<GitConfig>;
 
+    git_links?: Maybe<GitLinksConfig>;
+
     phpdoc?: Maybe<PhpdocConfig>;
 
     layout?: Maybe<Layout>;
@@ -185,6 +187,8 @@ export interface Revision {
     default_document?: Maybe<string>;
 
     document_extensions?: Maybe<Assoc>;
+
+    git_links?: Maybe<GitLinksConfig>;
 
     phpdoc?: Maybe<PhpdocConfig>;
 }
@@ -227,6 +231,8 @@ export interface Document {
     view?: Maybe<string>;
 
     cache?: Maybe<CacheConfig>;
+
+    git_links?: Maybe<GitLinksConfig>;
 }
 
 export interface DocumentCommentsConfig {
@@ -375,6 +381,8 @@ export interface LayoutFooter {
     height?: Maybe<number>;
 
     menu?: Maybe<(Maybe<MenuItem>)[]>;
+
+    text?: Maybe<string>;
 }
 
 export interface LayoutLeft {
@@ -475,6 +483,14 @@ export interface CacheConfig {
     key?: Maybe<string>;
 
     minutes?: Maybe<number>;
+}
+
+export interface GitLinksConfig {
+    enabled?: Maybe<boolean>;
+
+    map?: Maybe<Assoc>;
+
+    links?: Maybe<(Maybe<Assoc>)[]>;
 }
 
 export interface PhpdocConfig {

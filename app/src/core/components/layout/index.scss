@@ -4,6 +4,8 @@ $layout-prefix-cls: "c-layout";
 
 $menu-prefix-cls: "#{$ant-prefix}-menu";
 
+$layout-footer-height: $layout-header-height;
+
 @mixin menu-variant() {
     &.#{$menu-prefix-cls} {
         @content
@@ -48,6 +50,7 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
 
 :root {
     --layout-header-height: #{$layout-header-height};
+    --layout-footer-height: #{$layout-header-height};
 }
 
 .#{$layout-prefix-cls} {
@@ -55,92 +58,114 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
     &-header {
         display: flex;
         justify-content: space-around;
-    }
-    &-footer {
-        display: flex;
-        justify-content: space-around;
-        padding: 0;
-    }
 
-    &-header-logo {
-        height: 32px;
-        background: rgba(255, 255, 255, .2);
-        margin: 16px;
-        display: inline-block;
-        float: left;
-        font-size: 25px;
-        line-height: 1rem;
-        padding: 8px;
-    }
-
-    &-header-toggle {
-        @include fa-icon;
-        font-size: 30px;
-        color: white;
-        padding: 17px;
-        height: 100%;
-
-        &:hover {
-            cursor: pointer;
+        &-logo {
+            height: 32px;
+            background: rgba(255, 255, 255, .2);
+            margin: 16px;
+            display: inline-block;
+            float: left;
+            font-size: 25px;
+            line-height: 1rem;
+            padding: 8px;
         }
-    }
 
-    &-header-title {
-        font-size: 25px;
-        line-height: 1rem;
-        padding: 8px;
-        height: 32px;
-        margin: 16px 25px 16px 0;
-        float: left;
-        display: inline-block;
-        color: #ff5722;
-    }
-
-    &-header-menu {
-        line-height: var(--layout-header-height);
-
-        &-overflowed-title {
+        &-toggle {
+            @include fa-icon;
             font-size: 30px;
-            margin: 18px auto 0;
+            color: white;
+            padding: 17px;
+            height: 100%;
 
-            > .fa {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        &-title {
+            font-size: 25px;
+            line-height: 1rem;
+            padding: 8px;
+            height: 32px;
+            margin: 16px 25px 16px 0;
+            float: left;
+            display: inline-block;
+            color: #ff5722;
+        }
+
+        &-menu {
+            line-height: var(--layout-header-height);
+
+            &-overflowed-title {
                 font-size: 30px;
+                margin: 18px auto 0;
+
+                > .fa {
+                    font-size: 30px;
+                }
+            }
+
+            &-item {
+                height: var(--layout-header-height) !important;
+                line-height: 50px;
+
+                &:hover {
+                    background-color: cadetblue;
+                }
+
+                .icon-col {
+                    width: 50px
+                }
+
+                .icon {
+                    font-size: 30px;
+                    margin: 18px auto 0
+                }
+
+                .label-col {
+                    white-space: normal;
+                    width: calc(100% - 50px)
+                }
+
+                .label {
+                    font-weight: bold;
+                    padding: 0;
+                    height: 50%
+                }
+
+                .sublabel {
+                    font-size: 10px;
+                    height: 15px;
+                    line-height: 15px;
+                }
             }
         }
     }
 
-    &-header-menu-item {
-        height: var(--layout-header-height) !important;
-        line-height: 50px;
+    &-footer {
+        padding: 0;
+        color:$text-color-secondary-dark;
 
-        &:hover {
-            background-color: cadetblue;
+        &-col {
+            &:last-child {
+                text-align: right;
+            }
         }
 
-        .icon-col {
-            width: 50px
+
+        &-copyright {
+            line-height: var(--layout-footer-height);
+            padding: 0 20px;
         }
 
-        .icon {
-            font-size: 30px;
-            margin: 18px auto 0
-        }
+        &-menu {
+            line-height: var(--layout-footer-height);
 
-        .label-col {
-            white-space: normal;
-            width: calc(100% - 50px)
-        }
+            &-item {
+                height: var(--layout-footer-height) !important;
+                line-height: 50px;
 
-        .label {
-            font-weight: bold;
-            padding: 0;
-            height: 50%
-        }
-
-        .sublabel {
-            font-size: 10px;
-            height: 15px;
-            line-height: 15px;
+            }
         }
     }
 
@@ -152,29 +177,31 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
             width: 100%;
             text-align: center;
             padding: 10px;
-            background-color: rgba(0,0,0,0.1);
+            background-color: rgba(0, 0, 0, 0.1);
 
-            cursor:pointer;
+            cursor: pointer;
         }
-    }
 
-    &-side-menu {
-        height: 100%;
-        border-right: none;
-        background: $layout-sider-background-light;
+        &-menu {
+            height: 100%;
+            border-right: none;
+            background: $layout-sider-background-light;
 
-        @include menu-font-size(12px, 16px);
-        @include menu-variant {
-            .#{$menu-prefix-cls}-sub.#{$menu-prefix-cls}-inline {
-                padding: 0 0 0 12px;
+            @include menu-font-size(12px, 16px);
+            @include menu-variant {
+                .#{$menu-prefix-cls}-sub.#{$menu-prefix-cls}-inline {
+                    padding: 0 0 0 12px;
+                }
             }
         }
-    }
-    &-side-menu-left {
 
-    }
-    &-side-menu-right {
+        &-menu-left {
 
+        }
+
+        &-menu-right {
+
+        }
     }
 
     &-breadcrumb {
@@ -183,15 +210,13 @@ $menu-prefix-cls: "#{$ant-prefix}-menu";
 
     &-content {
         display: flex;
+
         > div {
             &:first-child {
                 display: flex;
                 flex-direction: column;
-                flex:auto
+                flex: auto
             }
         }
-    }
-    &-footer {
-
     }
 }

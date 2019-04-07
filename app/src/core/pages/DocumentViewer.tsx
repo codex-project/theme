@@ -1,11 +1,13 @@
 import React from 'react';
 import { Api, api } from '@codex/api';
 import { observer } from 'mobx-react';
-import { observable, runInAction } from 'mobx';
+import { observable, runInAction, transaction } from 'mobx';
 import { lazyInject } from 'ioc';
 import { HtmlParser } from 'classes/HtmlParser';
 import { Store } from 'stores';
 import Helmet from 'react-helmet';
+import { Application } from 'classes/Application';
+import { hot } from 'react-hot-loader';
 
 const uuid = require('uuid').v4;
 
@@ -47,32 +49,59 @@ export class Scripts extends React.Component<RunScriptProps> {
     }
 }
 
-
+@hot(module)
 @observer
-export default class DocumentViewer extends React.Component<DocumentViewerProps> {
+export class DocumentViewer extends React.Component<DocumentViewerProps> {
     @lazyInject('api') api: Api;
+    @lazyInject('app') app: Application;
     @lazyInject('htmlparser') htmlParser: HtmlParser;
     @lazyInject('store') store: Store;
     static displayName = 'DocumentViewer';
 
     @observable document: api.Document = null;
-    @observable mounted=false;
+    @observable mounted                = false;
 
     async componentDidMount() {
         const { children, project, revision, document, ...props } = this.props;
-        this.store.fetchDocument(project, revision, document).then(document => {
-            runInAction(() => {
-                this.document = document;
-                this.mounted=true;
-                // this.document.scripts.map(script => new Function('require',script)).forEach(fn => fn())
-            });
+        this.fetch(project, revision, document).then(document => {
+            this.ensureToolbarRefreshButton();
         });
     }
 
-    public componentDidUpdate(prevProps: Readonly<DocumentViewerProps>, prevState: Readonly<{}>, snapshot?: any): void {
-
+    async fetch(project, revision, document) {
+        return this.store.fetchDocument(project, revision, document).then(async document => {
+            runInAction(() => {
+                this.document = document;
+                this.mounted  = true;
+            });
+            return document;
+        });
     }
 
+    protected ensureToolbarRefreshButton() {
+        let id = 'debug-refresh-document';
+        if ( ! this.store.layout.toolbar.right.find(item => item.id === id) ) {
+            transaction(() => {
+                log('add toolbar refresh button', this.store.document);
+                this.store.layout.toolbar.right.push({
+                    id,
+                    component : 'c-button',
+                    children  : 'Refresh',
+                    borderless: true,
+                    type      : 'toolbar',
+                    icon      : 'refresh',
+                    onClick   : e => {
+                        runInAction(() => {
+                            this.store.document = null;
+                            log('Refresh onClick', this.store.document);
+                            this.fetch(this.props.project, this.props.revision, this.props.document);
+                        });
+                    },
+                })
+                this.store.layout.toolbar.right=this.store.layout.toolbar.toJS('right');
+            });
+        }
+    }
 
     render() {
         const { children, ...props } = this.props;
@@ -90,9 +119,6 @@ export default class DocumentViewer extends React.Component<DocumentViewerProps>
                         <If condition={this.document.scripts}>
                             <Scripts scripts={this.document.scripts}/>
                         </If>
-                        {/*<If condition={this.document.html}>*/}
-                        {/*<div dangerouslySetInnerHTML={{__html: this.document.html.join('\n')}}/>*/}
-                        {/*</If>*/}
                     </div>
                 );
             } catch ( e ) {
@@ -101,28 +127,5 @@ export default class DocumentViewer extends React.Component<DocumentViewerProps>
         }
         return content;
     }
-
-    // async fetch() {
-    //     const { project, revision, document } = this.props.routeState.params;
-    //     this.store.setDocument(null);
-    //     try {
-    //         await this.store.fetchDocument(project, revision, document);
-    //     } catch ( e ) {
-    //         app.notification.error({
-    //             message  : e && e.message ? e.message : 'Document does not exist',
-    //             placement: 'bottomRight',
-    //         });
-    //     }
-    // }
-    //
-    // public componentDidMount(): void {
-    //     log('componentDidMount');
-    //     this.fetch();
-    // }
-    //
-    // public componentDidUpdate(prevProps: Readonly<DocumentViewerProps>, prevState: Readonly<{}>, snapshot?: any): void {
-    //     // this.fetch();
-    // }
-
 }
 

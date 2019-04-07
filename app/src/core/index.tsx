@@ -28,11 +28,12 @@ export * from './classes/Application';
 export * from './classes/HtmlParser';
 export * from './classes/Hyper';
 export * from './classes/ComponentRegistry';
-export * from './classes/Url';
 export * from './classes/CssVariables';
+export * from './classes/ObjectStringCompiler';
 
 // export * from './classes/ApiLocalStorageCache';
 export * from './classes/Plugin';
+export * from './classes/Url';
 // export * from './collections/Record';
 export * from './collections/Map';
 // export * from './collections/Collection';

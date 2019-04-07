@@ -17,6 +17,7 @@ export function createStoreProxy<DATA>(data: DATA): IStoreProxy<DATA> {
         public meta: any;
 
         constructor(data: DATA) {
+
             this._data = observable(data as any);
             this.meta  = observable({});
             let proto  = Object.getPrototypeOf(this);
@@ -33,6 +34,19 @@ export function createStoreProxy<DATA>(data: DATA): IStoreProxy<DATA> {
                 });
                 __decorate([ computed, __metadata('design:type', Object), __metadata('design:paramtypes', []) ], proto, key, null);
             });
+        }
+
+        setWhere(prop:string, condition:object, value:any):this{
+            let data =get(this._data, prop)
+            if(!Array.isArray(data)) return this;
+            let index = data.findIndex(item => Object.keys(condition).filter(key => item[key]!==undefined && item[key] === condition[key]).length>0)
+            if(index>0){
+                let path=prop + '.' + index
+                this.set(path, value);
+            } else {
+                data.push(value);
+                this.set(prop,data);
+            }
         }
 
         set<PROP extends keyof DATA>(prop: string, value: any) {
@@ -55,12 +69,12 @@ export function createStoreProxy<DATA>(data: DATA): IStoreProxy<DATA> {
 
 export interface IStoreProxyMethods<DATA> {
     meta: any
-
+    setWhere(prop:string, condition:object, value:any):this
     set<PROP extends keyof DATA>(prop: PROP, value: DATA[PROP]): this
 
     has<PROP extends keyof DATA>(prop: PROP): boolean
 
-    toJS(): DATA
+    toJS<PROP extends keyof DATA>(prop?:PROP): PROP extends keyof DATA ? DATA[PROP] : DATA
 }
 
 export type IStoreProxy<DATA> = IStoreProxyMethods<DATA> & Partial<DATA>

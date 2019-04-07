@@ -5,7 +5,7 @@ import { lazyInject } from 'ioc';
 import { HtmlParser } from 'classes/HtmlParser';
 import { Store } from 'stores';
 import { hot } from 'react-hot-loader';
-import DocumentViewer from 'pages/DocumentViewer';
+import {DocumentViewer} from 'pages/DocumentViewer';
 
 const log = require('debug')('pages:DocumentPage');
 

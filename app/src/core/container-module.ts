@@ -14,7 +14,7 @@ import { TOC, TOCHeader, TOCList, TOCListItem } from 'components/toc';
 import { CLink, CLinkProps } from 'components/link';
 import { AnimatedViews, AnimatedViewsProps, RouteLink, RouteLinkProps, Routes, RoutesProps, Switch, SwitchProps, View, ViewProps } from 'router';
 import { Trigger, TriggerProps } from 'components/trigger';
-import { BackTop, Col, Layout, Modal, Popover, Row, Tooltip } from 'antd';
+import { BackTop, Layout, Modal, Popover, Tooltip } from 'antd';
 import { Icon, IconProps } from 'components/icon';
 import { Button, ButtonProps } from 'components/button';
 import { CodeRenderer } from 'components/code-renderer';
@@ -53,6 +53,7 @@ import { ModalProps } from 'antd/es/modal';
 import { BackTopProps } from 'antd/es/back-top';
 import { ColProps, RowProps } from 'antd/es/grid';
 import { PopoverProps } from 'antd/es/popover';
+import { Col, Row } from 'components/grid';
 
 export const containerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     decorate(injectable(), Api);

@@ -9,14 +9,31 @@
  */
 import React from 'react';
 
-export function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ElementType<T>): React.ElementType<Partial<T>> {
+function isInstance<P extends any, T extends React.Component<any>>(val): val is React.ClassType<P,T, any>{
+    return val && val.render && val.props;
+}
+
+export function getElementType<T extends any>(Component: React.ComponentType<T>, props: T, getDefault?: () => React.ElementType<T>): React.ElementType<Partial<T>>
+export function getElementType<P extends any, T extends React.Component<any>>(instance: React.ClassType<P,T, any>, getDefault?: () => React.ElementType<T>): React.ElementType<Partial<T>>
+export function getElementType<T extends any>(...args: any[]): React.ElementType<Partial<T>> {
+    let Component, props;
+
+    if ( isInstance(args[ 0 ]) ) {
+        props     = args[ 0 ].props;
+        Component = args[ 0 ].constructor;
+    } else {
+        Component = args[ 0 ];
+        props     = args[ 1 ];
+    }
+
     const { defaultProps = {} as any } = Component;
 
     if ( props.as && props.as !== defaultProps.as ) {
         return props.as;
     }
 
-    if ( getDefault ) {
+    if ( typeof args[ args.length - 1 ] === 'function' ) {
+        const getDefault      = args[ args.length - 1 ];
         const computedDefault = getDefault();
         if ( computedDefault ) return computedDefault as any;
     }
@@ -31,3 +48,5 @@ export function getElementType<T extends any>(Component: React.ComponentType<T>,
 
     return 'div' as any;
 }
+
+

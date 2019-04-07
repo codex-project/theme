@@ -6,6 +6,7 @@ export * from './code-renderer';
 // export * from './documents';
 export {DynamicMenu} from './dynamic-menu';
 export * from './errors';
+export * from './grid';
 export * from './icon';
 export * from './layout';
 export * from './link';

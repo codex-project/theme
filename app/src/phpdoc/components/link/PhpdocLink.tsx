@@ -15,6 +15,7 @@ import { PhpdocMethodProps } from '../method/PhpdocMethod';
 import { PhpdocEntityProps } from '../entity/PhpdocEntity';
 import { PhpdocPopoverProps } from '../popover/PhpdocPopover';
 import { PhpdocTypeProps } from '../type/PhpdocType';
+import classNames from 'classnames';
 
 
 const log = require('debug')('phpdoc:link');
@@ -89,8 +90,12 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
             );
         }
 
-        let linkClassName = modifiers.includes('styling') ? `c-phpdoc-${type.type}-link` : null;
-        let linkChildren  = <Fragment>{modifiers.includes('icon') ? <i className={`c-phpdoc-${type.type}-icon`}/> : null} {children && children[ 'length' ] ? children : fqsen.fullName} </Fragment>;
+        let linkClassName = classNames({
+            [ `c-phpdoc-${type.type}-link` ]     : modifiers.includes('styling'),
+            [ `c-phpdoc-${type.type}-link-icon` ]: modifiers.includes('icon'),
+        });
+
+        let linkChildren  = <Fragment>{modifiers.includes('icon') ? <i className={`c-phpdoc-${type.type}-icon`}/> : null}{children && children[ 'length' ] ? children : fqsen.fullName}</Fragment>;
         if ( action === 'navigate' ) {
             return (
                 <RouteLink

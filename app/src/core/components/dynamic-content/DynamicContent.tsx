@@ -5,14 +5,14 @@ import { ComponentRegistry } from 'classes/ComponentRegistry';
 import { merge } from 'lodash';
 import { h } from 'classes/Hyper';
 import { keysToCamelCase, warn } from 'utils/general';
-import { Config } from 'classes/Config';
 import { Application } from 'classes/Application';
 import { Store } from 'stores';
 import { DynamicContentChildren, isDynamicChildren } from 'components/dynamic-content/types';
 import { htmlElements } from 'utils/styled';
 import { HtmlParser } from 'classes/HtmlParser';
-import { observer } from 'mobx-react/custom';
-import { Observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
+import { ObjectStringCompiler } from 'classes/ObjectStringCompiler';
+import { observe, toJS } from 'mobx';
 
 const log = require('debug')('components:dynamic-content');
 
@@ -34,42 +34,23 @@ export class DynamicContent extends Component<DynamicContentProps> {
     static defaultProps: Partial<DynamicContentProps> = {
         children: [],
     };
-    state: { children: any[] }                        = { children: this.transform(this.props.children) };
+    state: { children: any[], length?: any }          = { children: this.transform(toJS(this.props.children)) };
 
     updateChildren(cb?: () => void): this {
-        // let children = this.transform(toJS(this.props.children));
-        let children = this.transform(this.props.children);
-        log('updateChildren', 'propsChildren:', this.props.children, 'stateChildren:', this.state.children, 'result:', children);
-        this.setState({ children }, cb);
+        let children = this.transform(toJS(this.props.children));
+        // let children = this.transform(this.props.children);
+        log('updateChildren', 'propsChildren:', toJS(this.props.children), 'stateChildren:', this.state.children, 'result:', children);
+        this.setState({ children, length: this.props.children.length }, cb);
         return this;
     }
 
-    config:Config
+    osc: ObjectStringCompiler;
 
-    compileProps(childProps) {
-        if(!this.config){
-            this.config = new Config({});
+    compileProps(childProps = {}) {
+        if ( ! this.osc ) {
+            this.osc = new ObjectStringCompiler();
         }
-        this.config.set('app', this.app);
-        this.config.set('store', this.store);
-        Object.keys(childProps)
-            .filter(key => typeof childProps[ key ] === 'string' || typeof childProps[ key ] === 'object')
-            .forEach(key => {
-                if ( typeof childProps[ key ] === 'object' ) {
-                    childProps[ key ] = this.compileProps(childProps[ key ]);
-                    return;
-                }
-                try {
-                    this.config.set(`component.${key}`, childProps[ key ]);
-                    let value = this.config.get(`component.${key}`, childProps[ key ]);
-                    if ( childProps[ key ] !== value ) {
-                        childProps[ key ] = value;
-                    }
-                } catch ( error ) {
-                    warn(`DynamicContent compile error on [${key}] of component`, { error, childProps, component: this });
-                }
-            });
-        return childProps;
+        return this.osc.compile(childProps, true);
     };
 
     transform(children: DynamicContentChildren) {
@@ -122,18 +103,18 @@ export class DynamicContent extends Component<DynamicContentProps> {
     }
 
     public componentDidUpdate(prevProps: Readonly<DynamicContentProps>, prevState: Readonly<{}>, snapshot?: any): void {
-        if ( prevProps.children !== this.props.children ) {
+        log('componentDidUpdate', {prevProps,prevState,props:this.props,state:this.state});
+        if ( this.props.children.length !== this.state.length ) {
+            this.updateChildren();
+        } else if ( prevProps.children !== this.props.children ) {
             this.updateChildren();
         }
     }
 
     render() {
-        // let { ...props } = this.props;
-        let { children } = this.state;
-        return (
-            <Fragment>
-                {children}
-            </Fragment>
-        );
+        let { children: _children, ...props } = this.props;
+        let { children }                      = this.state;
+        // return <Observer {...props} render={() => children}/>;
+        return <Fragment>{children}</Fragment>;
     }
 }

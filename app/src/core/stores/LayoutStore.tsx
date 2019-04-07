@@ -35,7 +35,9 @@ export class LayoutStore {
             class   : {},
             style   : {},
             stretch : true,
-            children: null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -60,7 +62,9 @@ export class LayoutStore {
             outside       : false,
             color         : null,
             fixed         : false,
-            children      : null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -92,7 +96,9 @@ export class LayoutStore {
             outside       : false,
             color         : null,
             fixed         : false,
-            children      : null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             _menu         : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -124,7 +130,9 @@ export class LayoutStore {
             color            : null,
             show_left_toggle : false,
             show_right_toggle: false,
-            children         : null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             _menu            : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -141,8 +149,8 @@ export class LayoutStore {
                 if ( ! this.show ) style.display = 'none';
                 if ( this.fixed ) style.position = 'fixed';
                 if ( this.color ) style.backgroundColor = colorKeys.includes(this.color) ? colors[ this.color ] : this.color;
-                style.height = this.height;
-                style.lineHeight = px(style.lineHeight || style.height as any)
+                style.height     = this.height;
+                style.lineHeight = px(style.lineHeight || style.height as any);
                 return style;
             },
         });
@@ -153,7 +161,10 @@ export class LayoutStore {
             height  : 50,
             fixed   : false,
             color   : null,
-            children: null,
+            text    : null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             _menu   : [],
             set menu(items) {this._menu = app.menus.apply(items); },
             get menu() {return MenuItems.from(this._menu); },
@@ -170,8 +181,8 @@ export class LayoutStore {
                 if ( ! this.show ) style.display = 'none';
                 if ( this.fixed ) style.position = 'fixed';
                 if ( this.color ) style.backgroundColor = colorKeys.includes(this.color) ? colors[ this.color ] : this.color;
-                style.height = this.height;
-                style.lineHeight = px(style.lineHeight || style.height as any)
+                style.height     = this.height;
+                style.lineHeight = px(style.lineHeight || style.height as any);
                 return style;
             },
         });
@@ -182,7 +193,9 @@ export class LayoutStore {
             padding : 0,
             margin  : 0,
             color   : null,
-            children: null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -202,7 +215,9 @@ export class LayoutStore {
             padding : 0,
             margin  : 0,
             color   : null,
-            children: null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             setClass(value) { if ( ! Array.isArray(value) ) this.class = value; },
             setStyle(value) { if ( ! Array.isArray(value) ) this.style = value; },
             get computedClass(): string {
@@ -224,7 +239,9 @@ export class LayoutStore {
             show       : true,
             fixed      : true,
             breadcrumbs: null,
-            children   : null,
+            _children  : null,
+            get children() {return Array.isArray(this._children) && this._children.length === 0 ? null : this._children;},
+            set children(children: any) {this._children = children;},
             left       : [],
             right      : [],
             setShow(show: boolean) {this.show = show;},
@@ -297,6 +314,7 @@ export class LayoutStore {
 
 
 export type LayoutStorePart<T> = Partial<T> & {
+    [ key: string ]: any
     computedClass: string
     computedStyle: React.CSSProperties
 
@@ -351,6 +369,7 @@ export type LayoutStoreHeader = LayoutStorePart<api.LayoutHeader> & LayoutMenuDa
 }
 export type LayoutStoreFooter = LayoutStorePart<api.LayoutFooter> & LayoutMenuData & LayoutShowData & LayoutFixedData & LayoutColorData & {
     height: number
+    text: string
 }
 export type LayoutStoreMiddle = LayoutStorePart<api.LayoutMiddle> & LayoutColorData & {
     padding: number | string | number[] | string[]
@@ -360,10 +379,10 @@ export type LayoutStoreContent = LayoutStorePart<api.LayoutContent> & LayoutColo
     padding: number | string | number[] | string[]
     margin: number | string | number[] | string[]
 }
-export type LayoutStoreToolbar = LayoutStorePart<any> & LayoutColorData & LayoutShowData & LayoutFixedData & {
+export type LayoutStoreToolbar = LayoutStorePart<api.LayoutToolbar> & LayoutColorData & LayoutShowData & LayoutFixedData & {
     breadcrumbs: null
-    left: []
-    right: []
+    left: any[]
+    right: any[]
 }
 
 //

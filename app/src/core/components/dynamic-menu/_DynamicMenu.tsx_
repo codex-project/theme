@@ -10,7 +10,7 @@ import { MenuItems, MenuManager } from 'menus';
 
 import { hot } from 'decorators';
 import { MenuItem } from '@codex/api';
-import { lazyInject } from 'ioc';
+import { app, lazyInject } from 'ioc';
 
 import './index.scss';
 import { getClassNamer } from 'utils/getClassNamer';
@@ -21,7 +21,7 @@ export type MenuExpandBehaviourType = 'single-root' | 'multi-root'
 export type MenuSelectBehaviourType = 'single' | 'multi'
 
 export interface DynamicMenuBaseProps {
-    items: MenuItems
+    items: any[]
     color?: string,
     renderer?: string
     multiroot?: boolean
@@ -29,7 +29,7 @@ export interface DynamicMenuBaseProps {
 }
 
 interface State {
-    openKeys: string[]
+    items: MenuItems
 }
 
 
@@ -45,7 +45,7 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
         multiroot          : false,
         multiple           : false,
         selectFromRoutePath: true,
-
+        items              : [],
     };
     static renderers: Record<string, React.ComponentType<{ item: MenuItem }>> = {};
     static contextTypes                                                       = {
@@ -53,23 +53,26 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
         collapsedWidth: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]),
     };
     context: { siderCollapsed: boolean, collapsedWidth: number | string };
+    state                                                                     = { items: new MenuItems };
     @lazyInject('menumanager') manager: MenuManager;
 
     componentDidMount() {
-        this.selectFromRoutePath();
+        DynamicMenu.selectFromRoutePath(this.state.items, this.props.multiroot);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if ( this.props.items !== nextProps.items ) {
-            this.selectFromRoutePath(nextProps.items);
+    static getDerivedStateFromProps(nextProps: Readonly<DynamicMenuProps>, state: State) {
+        let items = nextProps.items;
+        if ( items instanceof MenuItems === false ) {
+            items = MenuItems.from(app.menus.apply(nextProps.items));
+            DynamicMenu.selectFromRoutePath(items, nextProps.multiroot);
         }
+        state.items = items as any;
+        return state;
     }
 
-    selectFromRoutePath(items: MenuItems = this.props.items) {
-        if ( this.props.selectFromRoutePath ) {
-            items.deselectAll();
-            items.selectActiveFromRoute(true, ! this.props.multiroot);
-        }
+    static selectFromRoutePath(items, multiRoot = false) {
+        items.deselectAll();
+        items.selectActiveFromRoute(true, ! multiRoot);
     }
 
     openKeys     = [];
@@ -78,26 +81,26 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
 
         if ( ! this.props.multiroot && openKeys.length > this.openKeys.length ) {
             let openedId = openKeys[ openKeys.length - 1 ];
-            let rootIds  = this.props.items.ids();
+            let rootIds  = this.state.items.ids();
             if ( rootIds.includes(openedId) ) {
                 let toCloseIds = openKeys.filter(key => key !== openedId).filter(key => rootIds.includes(key));
-                this.props.items.collapseAll();
-                this.props.items.items([ openedId ]).expand();
+                this.state.items.collapseAll();
+                this.state.items.items([ openedId ]).expand();
             }
         } else {
-            this.props.items.collapseAll().items(openKeys).expand();
+            this.state.items.collapseAll().items(openKeys).expand();
         }
     });
 
     onClick = (param: ClickParam) => {
         log('onClick', param);
-        let { items } = this.props;
-        let item      = items.item(param.key);
+        // let { items } = this.props;
+        let item = this.state.items.item(param.key);
 
-        items.handleClick(item, param.domEvent);
+        this.state.items.handleClick(item, param.domEvent);
         if ( item.selected ) {
             if ( this.props.multiple === false ) {
-                items.deselectAll().select(item);
+                this.state.items.deselectAll().select(item);
             }
         } else {
             // this.selectFromRoutePath();
@@ -107,8 +110,8 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
 
     onTitleClick = (param: ClickParam) => transaction(() => {
         log('onTitleClick', param);
-        let item = this.props.items.item(param.key);
-        this.props.items.handleClick(item, param.domEvent);
+        let item = this.state.items.item(param.key);
+        this.state.items.handleClick(item, param.domEvent);
     });
 
     renderMenuItem(item: MenuItem, level?: number) {
@@ -125,8 +128,8 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
     }
 
     render() {
-        const { children, className, multiple, multiroot, selectFromRoutePath, prefixCls, mode, items, color, renderer, ...props } = this.props;
-        if ( typeof items.selected !== 'function' ) {
+        const { children, className, multiple, multiroot, selectFromRoutePath, prefixCls, mode, color, renderer, ...props } = this.props;
+        if ( typeof this.state.items.selected !== 'function' ) {
             return null;
         }
         const cls = getClassNamer(this);
@@ -135,17 +138,15 @@ export class DynamicMenu extends React.Component<DynamicMenuProps, State> {
                 mode={mode}
                 className={cls.root(mode, 'theme-' + mode)()}
                 subMenuCloseDelay={0.6}
-
-
                 style={{ backgroundColor: getColor(color) }}
-                selectedKeys={items.selected().ids()}
-                openKeys={items.expanded().ids()}
+                selectedKeys={this.state.items.selected().ids()}
+                openKeys={this.state.items.expanded().ids()}
                 onClick={this.onClick}
                 onOpenChange={this.onOpenChange}
                 multiple={multiple}
                 {...props}
             >
-                {items.map(item => this.renderMenuItem(item, 0))}
+                {this.state.items.map(item => this.renderMenuItem(item, 0))}
             </AntdMenu>
         );
     }

@@ -1,16 +1,47 @@
 import React from 'react';
 import classNames from 'classnames';
 import { strEnsureLeft } from 'utils/general';
+import { uniq } from 'lodash';
 
-type ClassValue = string | number | ClassDictionary | ClassArray | undefined | null | boolean;
 
-interface ClassDictionary {
+export const classNamer = (prefix: string = '', seperator: string = '-') => {
+    function _cn()
+    function _cn(name: string)
+    function _cn(names: ClassValue[])
+    function _cn(name: string, names: ClassValue[])
+    function _cn(...args) {
+        let name, names = [];
+        if ( args.length === 0 ) {
+            return classNames(prefix);
+        }
+        if ( typeof args[ 0 ] === 'string' ) {
+            name = args[ 0 ];
+        }
+        if ( Array.isArray(args[ 0 ]) ) {
+            names = args[ 0 ];
+        }
+        if ( Array.isArray(args[ 1 ]) ) {
+            names = args[ 1 ];
+        }
+        if ( name && prefix.length > 0 && name.length > 0 ) {
+            name = prefix + seperator + name;
+            names.push(name);
+        }
+        return uniq(classNames(...names).split(' ').map(name => name.trim())).join(' ');
+    }
+    return _cn;
+};
+
+
+export type ClassValue = string | number | ClassDictionary | ClassArray | undefined | null | boolean;
+
+export interface ClassDictionary {
     [ id: string ]: any;
 }
 
-interface ClassArray extends Array<ClassValue> {} // tslint:disable-line no-empty-interface
+export interface ClassArray extends Array<ClassValue> {} // tslint:disable-line no-empty-interface
 
-interface ClassNamer {
+export interface ClassNamer {
     (prefixed: ClassValue[], names?: ClassValue[]): string
 
     regular(...names: ClassValue[]): string

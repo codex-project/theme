@@ -6,12 +6,12 @@ import { lazyInject } from 'ioc';
 import { observer } from 'mobx-react';
 import { Layout, Menu as AntdMenu, Tooltip } from 'antd';
 import { DynamicMenu } from '../dynamic-menu';
-import { classes } from 'typestyle';
 import { MenuItemIcon } from '../dynamic-menu/MenuItemIcon';
 import { FontAwesomeIcon } from 'interfaces';
 import { getColor } from 'utils/colors';
 import { RouteLink } from 'router';
 import { DynamicContent, isDynamicChildren } from 'components/dynamic-content';
+import { classNamer } from 'utils/getClassNamer';
 
 const { Header } = Layout;
 
@@ -28,8 +28,6 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
     static defaultProps: Partial<LayoutHeaderProps> = {};
 
     getChildren(part: LayoutStorePart<any> | IStoreProxy<LayoutStorePart<any>>) {
-        const className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
-
         if ( ! this.props.children && isDynamicChildren(part.children) ) {
             return <DynamicContent children={part.children}/>;
         }
@@ -42,10 +40,10 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
                     <DynamicMenu
                         theme="dark"
                         mode="horizontal"
-                        className={className('header-menu')}
+                        className={this.className('header-menu')}
                         color={part.color}
                         items={part.menu}
-                        overflowedIndicator={<span className={className('header-menu-overflowed-title')}><MenuItemIcon item={{ icon: 'bars' }}/></span>}
+                        overflowedIndicator={<span className={this.className('header-menu-overflowed-title')}><MenuItemIcon item={{ icon: 'bars' }}/></span>}
                     />
                 </Fragment>
             );
@@ -53,7 +51,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
         return this.props.children;
     }
 
-    className = (name: string, ...names) => classes(`c-layout-${name}`, ...names);
+    className = classNamer(`c-layout`);
 
     render() {
         let { children }                                     = this.props;
@@ -82,10 +80,10 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
         };
         let className                                        = this.className;
         return (
-            <Header style={computedStyle} className={className('header', computedClass)}>
+            <Header style={computedStyle} className={className('header', [ computedClass ])}>
                 <If condition={header.show_left_toggle}>
                     <Tooltip placement="right" title={toggleTooltip.left}>
-                        <i className={className('header-toggle', 'fa', 'fa-' + toggleClassName.left)} onClick={() => left.setCollapsed(! left.collapsed)}/>
+                        <i className={className('header-toggle', [ 'fa', 'fa-' + toggleClassName.left ])} onClick={() => left.setCollapsed(! left.collapsed)}/>
                     </Tooltip>
                 </If>
                 <If condition={header.logo}>
@@ -113,7 +111,7 @@ export class LayoutHeader extends React.Component<LayoutHeaderProps> {
                 </If>
                 <If condition={header.show_right_toggle}>
                     <Tooltip placement="left" title={toggleTooltip.right}>
-                        <i className={className('header-toggle', 'fa', 'fa-' + toggleClassName.right)} onClick={() => right.setCollapsed(! right.collapsed)}/>
+                        <i className={className('header-toggle', [ 'fa', 'fa-' + toggleClassName.right ])} onClick={() => right.setCollapsed(! right.collapsed)}/>
                     </Tooltip>
                 </If>
             </Header>
