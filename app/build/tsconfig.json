@@ -1,0 +1,18 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "target": "es6",
+        "outDir": "out",
+        "allowSyntheticDefaultImports": false,
+        "esModuleInterop": false,
+        "declaration": true
+    },
+    "include": [
+        "./AssetPathSubstitutionPlugin.ts",
+        "./chain.ts",
+        "./ChainData.ts",
+        "./antdScssColorPalette.ts",
+        "./semantic-data.ts",
+        "./plugins"
+    ]
+}

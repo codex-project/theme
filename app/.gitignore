@@ -7,7 +7,6 @@ node_modules
 /composer
 /vendor
 /preview
-/build
 _site/
 .DS_Store
 .git
