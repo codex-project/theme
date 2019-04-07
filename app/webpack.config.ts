@@ -191,6 +191,13 @@ export function addDashboardPlugin(chain: Chain, port:number=dashboardPort) {
         port: dashboardPort,
     } ]);
 }
+export function addDuplicatesPlugin(chain:Chain){
+    chain.plugin('duplicates').use(DuplicatesPlugin, [ {
+        verbose: true,
+        emitErrors: false
+    } ]);
+}
+
 
 //endregion
 
@@ -276,10 +283,6 @@ chain.when(isProd, chain => {
         cssProcessor       : require('cssnano'),
         cssProcessorOptions: { discardComments: { removeAll: true } },
         canPrint           : true,
-    } ]);
-    chain.plugin('duplicates').use(DuplicatesPlugin, [ {
-        verbose: true,
-        emitErrors: false
     } ]);
 });
 chain.when(assetsByEntry, chain => chain.plugin('path').use(EntrypointPathPlugin));

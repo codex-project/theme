@@ -26,6 +26,7 @@ cmd
     .option('-D|--debug', 'Enable Debug')
     .option('--production', 'Enable production mode')
     .option('--analyze', 'Use Analyzer plugin')
+    .option('--duplicates', 'Use Duplicates plugin')
     .option('--hmr', 'Enable HMR')
     .option('--hmr-react', 'Enable HMR + React Hot Loader')
     .option('--dashboard', 'Use Dasboard plugin')
@@ -43,20 +44,21 @@ interface Gulpfile extends GulpEnvMixin {}
 @mixin(GulpEnvMixin)
 class Gulpfile {
     protected addPlugins(chain: Chain) {
-        const { addAnalyzerPlugins, addHMR, addDashboardPlugin } = require('./webpack.config');
-        const _plugin                                            = (when: boolean, str: string, fn: Function, ...fnArgs: any[]) => {
-            if ( ! when ) return;
+        const { addAnalyzerPlugins, addHMR, addDashboardPlugin, addDuplicatesPlugin } = require('./webpack.config');
+        const _plugin                                                                 = (when: boolean, str: string, fn: Function, ...fnArgs: any[]) => {
+            if ( !when ) return;
             log(`Using ${chalk.bold(str)}`);
             fn(chain, ...fnArgs);
         };
         _plugin(cmd.analyze, 'Analyzer', addAnalyzerPlugins);
         _plugin(cmd.hmr || cmd.hmrReact, cmd.hmrReact ? 'HMR + React Hot Loader' : 'HMR', addHMR, cmd.hmrReact);
         _plugin(cmd.dashboard, 'Dashboard', addDashboardPlugin, cmd.dashboardPort);
+        _plugin(cmd.duplicates, 'Duplicates', addDuplicatesPlugin);
         return this;
     }
 
     protected pre(errorOnRunned?: boolean) {
-        if ( ! this.runnedEnv ) {
+        if ( !this.runnedEnv ) {
             if ( cmd.production ) {
                 this.prod(errorOnRunned);
             } else {
@@ -95,7 +97,7 @@ class Gulpfile {
         execSync('yarn nps copy:theme:assets:dist', {
             cwd     : resolve(__dirname, '../../codex'),
             stdio   : 'inherit',
-            encoding: 'utf8',
+            encoding: 'utf8'
         });
     }
 
@@ -133,7 +135,7 @@ A white fellow
 My pee is bright yellow
 I like jello
 I'm like hello
-﻿`,
+﻿`
             });
         }
 
@@ -150,7 +152,7 @@ I'm like hello
         chain.devServer
             .contentBase([ chain.outPath() ])
             .historyApiFallback({
-                disableDotRule: true,
+                disableDotRule: true
             })
             .hot(chain.plugins.has('hmr'))
             .inline(true)
@@ -161,7 +163,7 @@ I'm like hello
                 // errors-only preset
                 all        : false,
                 errors     : true,
-                moduleTrace: true,
+                moduleTrace: true
             })
             .host(host)
             .port(port)
@@ -185,8 +187,8 @@ I'm like hello
                     if ( proxyReq.getHeader('origin') ) {
                         proxyReq.setHeader('origin', 'http://codex.local');
                     }
-                },
-            },
+                }
+            }
         };
         config.devServer[ 'writeToDisk' ] = true;
         WebpackDevServer.addDevServerEntrypoints(config, config.devServer);
@@ -286,8 +288,8 @@ function cleanjs() {
     let corePaths      = path('*/**/*.js');
     let filePaths: any = globule.find(corePaths, {
         ignore: [
-            path('core/utils/zepto.js'),
-        ],
+            path('core/utils/zepto.js')
+        ]
     });
     if ( existsSync(backupDir) ) {
         rmdirSync(backupDir);
@@ -296,7 +298,7 @@ function cleanjs() {
     filePaths.forEach(filePath => {
         const backupFilePath = resolve(backupDir, relative(resolve(__dirname, 'src'), filePath));
         const backupDirPath  = dirname(backupFilePath);
-        if ( ! existsSync(backupDirPath) ) {
+        if ( !existsSync(backupDirPath) ) {
             mkdirpSync(backupDirPath);
         }
         copySync(filePath, backupFilePath);
@@ -311,8 +313,8 @@ function copydts(fromDir) {
     let corePaths      = resolve(fromDir, '{auth,comments,core,phpdoc}/**/*.d.ts');
     let filePaths: any = globule.find(corePaths, {
         ignore: [
-            path('core/utils/zepto.js'),
-        ],
+            path('core/utils/zepto.js')
+        ]
     });
     if ( existsSync(tmpDir) ) {
         emptyDirSync(tmpDir);
@@ -322,7 +324,7 @@ function copydts(fromDir) {
     filePaths.forEach(filePath => {
         const backupFilePath = resolve(tmpDir, relative(resolve(__dirname, 'src'), filePath));
         const backupDirPath  = dirname(backupFilePath);
-        if ( ! existsSync(backupDirPath) ) {
+        if ( !existsSync(backupDirPath) ) {
             mkdirpSync(backupDirPath);
         }
         copySync(filePath, backupFilePath);
