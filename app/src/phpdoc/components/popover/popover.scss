@@ -28,8 +28,14 @@
         text-align     : right;
         bottom         : 2px;
         text-transform : uppercase;
-        position       : absolute;
-        right          : 7px;
+        line-height: 8px;
+        float: right;
+        white-space: nowrap;
         color          : $blue-grey-6;
+
+        //position       : absolute;
+        //right          : 7px;
+        position: relative;
+        right: -4px;
     }
 }

@@ -3,7 +3,7 @@ import { loadStyling } from '../../loadStyling';
 import { PhpdocMemberListProps } from './PhpdocMemberList';
 import { loader } from '@codex/core';
 
-export const PhpdocMemberList = loader<PhpdocMemberListProps>([
+export const PhpdocMemberList :loader.Class<PhpdocMemberListProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components.member-list" */
         /* webpackPrefetch: true */

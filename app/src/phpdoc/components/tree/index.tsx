@@ -7,7 +7,7 @@ import { loader } from '@codex/core';
 export { TreeBuilder };
 
 
-export const PhpdocTree = loader<PhpdocTreeProps>([
+export const PhpdocTree :loader.Class<PhpdocTreeProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components." */
         /* webpackPrefetch: true */

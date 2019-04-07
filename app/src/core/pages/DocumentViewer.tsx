@@ -1,7 +1,7 @@
 import React from 'react';
 import { Api, api } from '@codex/api';
 import { observer } from 'mobx-react';
-import { observable, runInAction, transaction } from 'mobx';
+import { observable, runInAction, toJS, transaction } from 'mobx';
 import { lazyInject } from 'ioc';
 import { HtmlParser } from 'classes/HtmlParser';
 import { Store } from 'stores';
@@ -68,10 +68,22 @@ export class DocumentViewer extends React.Component<DocumentViewerProps> {
         });
     }
 
+    async refetch(){
+        log('refetching', this.store,this);
+        this.store
+            .setDocument(null)
+            .cancelPrevFetch();
+        this.store.fetched.unsetDocument(this.props.project, this.props.revision, this.props.document);
+        let document=await this.fetch(this.props.project, this.props.revision, this.props.document);
+        this.ensureToolbarRefreshButton()
+        log('refetched', {document,store:this.store,self:this});
+        return document
+    }
+
     async fetch(project, revision, document) {
         return this.store.fetchDocument(project, revision, document).then(async document => {
             runInAction(() => {
-                this.document = document;
+                this.document = toJS(document);
                 this.mounted  = true;
             });
             return document;
@@ -90,15 +102,12 @@ export class DocumentViewer extends React.Component<DocumentViewerProps> {
                     borderless: true,
                     type      : 'toolbar',
                     icon      : 'refresh',
-                    onClick   : e => {
-                        runInAction(() => {
-                            this.store.document = null;
-                            log('Refresh onClick', this.store.document);
-                            this.fetch(this.props.project, this.props.revision, this.props.document);
-                        });
+                    onClick   : async e => {
+                        log('Refresh onClick', this);
+                        this.refetch();
                     },
-                })
-                this.store.layout.toolbar.right=this.store.layout.toolbar.toJS('right');
+                });
+                this.store.layout.toolbar.right = this.store.layout.toolbar.toJS('right');
             });
         }
     }

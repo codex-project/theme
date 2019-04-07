@@ -4,7 +4,7 @@ import { loadStyling } from '../../loadStyling';
 import { loader } from '@codex/core';
 
 
-export const PhpdocTags = loader<PhpdocTagsProps>([
+export const PhpdocTags:loader.Class<PhpdocTagsProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components.tags" */
         // /* webpackPrefetch: true */

@@ -5,7 +5,7 @@ import {PhpdocPopover} from '../popover';
 import { loader } from '@codex/core';
 
 
-export const PhpdocType = loader<PhpdocTypeProps>([
+export const PhpdocType :loader.Class<PhpdocTypeProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components.type" */
         /* webpackPrefetch: true */

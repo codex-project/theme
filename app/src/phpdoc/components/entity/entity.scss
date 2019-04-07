@@ -4,33 +4,41 @@ $prefix-cls: 'phpdoc-entity';
 
 .#{$prefix-cls} {
     @extend %phpdoc-component;
-    font-family   : $headings-font-family;
+    font-family: $headings-font-family;
     //border-bottom : 1px solid #f0f2f1;
-    margin-bottom : 0;
+    margin-bottom: 0;
     //margin-top   : 15px;
-    padding       : 15px 20px 10px 13px;
+    padding: 15px 20px 10px 13px;
+
 
     > i {
-        line-height   : 22px;
-        font-size     : 22px;
-        padding-right : 20px;
-        float         : left;
+        line-height: 20px;
+        font-size: 13px;
+        padding-right: 20px;
+        float: left;
     }
+
     > .header-title {
-        font-weight  : 200;
-        font-size    : 18px;
-        line-height  : 24px;
-        display      : block;
-        margin-right : 20px;
+        font-size: 13px;
+        line-height: 15px;
+        font-weight: 200;
+        display: block;
+        margin-right: 20px;
     }
 
     small {
-        font-size : 0.9rem;
+        font-size: 0.9rem;
     }
 
-    &.compact {
-        > i { line-height : 20px; font-size : 13px; }
-        > .header-title { font-size : 13px; line-height : 15px; }
+    &.large {
+        > i {
+            line-height: 22px;
+            font-size: 22px;
+        }
+        > .header-title {
+            font-size: 18px;
+            line-height: 24px;
+        }
     }
 
     .phpdoc-popover & {
@@ -38,3 +46,20 @@ $prefix-cls: 'phpdoc-entity';
     }
 }
 
+$phpdoc-entity-link-popover-font-size: 12px;
+.phpdoc-popover.phpdoc-link-popover .ant-popover-inner-content > .phpdoc-entity {
+
+    > .header-title,
+    > .header-title > i,
+    > .header-title > a,
+    > .header-title > span {
+        font-size: $phpdoc-entity-link-popover-font-size;
+        line-height: $phpdoc-entity-link-popover-font-size;
+    }
+
+    > .header-title > small {
+
+        font-size: $phpdoc-entity-link-popover-font-size - 1px;
+        line-height: $phpdoc-entity-link-popover-font-size - 1px;
+    }
+}

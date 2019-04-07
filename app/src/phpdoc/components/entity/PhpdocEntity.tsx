@@ -11,6 +11,8 @@ const log = require('debug')('components:PhpdocHeader');
 
 export type PhpdocEntityHideType = 'icon' | 'extends' | 'implements'
 
+export type PhpdocEntitySizeObj ={ class?: string | number, text?: string | number } ;
+export type PhpdocEntitySize =PhpdocEntitySizeObj | string | number;
 export interface PhpdocEntityProps {
     fqsen: IFQSEN
     /** Optional CSSProperties with nesting support (using typestyle) */
@@ -21,7 +23,7 @@ export interface PhpdocEntityProps {
     className?: string;
     prefixCls?: string
 
-    size?: { class?: string | number, text?: string | number } & string & number
+    size?: PhpdocEntitySize
     innerRef?: (ref: HTMLElement) => any
 
 
@@ -35,6 +37,8 @@ export interface PhpdocEntityProps {
 
     hide?: Array<'icon' | 'extends' | 'implements'>
 }
+
+const isSizeObj = (val:any):val is PhpdocEntitySizeObj => val && val.class !==undefined
 
 
 @hot(module)
@@ -55,8 +59,8 @@ export class PhpdocEntity extends React.Component<PhpdocEntityProps> {
     render() {
         let { fqsen, size, style, className, titleStyle, prefixCls, innerRef, showNamespace } = this.props;
         let { file }                                                                          = this.context;
-        let classSize                                                                         = size ? size.class ? size.class : size : 14;
-        let textSize                                                                          = size ? size.class ? size.class : size : 14;
+        let classSize                                                                         = size ? isSizeObj(size) ? size.class : size : null;
+        let textSize                                                                          = size ? isSizeObj(size) ? size.class : size : null;
         let typeProps                                                                         = {
             noClick         : this.props.noClick,
             noLink          : this.props.noLink,
@@ -72,7 +76,7 @@ export class PhpdocEntity extends React.Component<PhpdocEntityProps> {
         return (
             <header ref={this.setInnerRef} style={style} className={classes(prefixCls, className)}>
                 <h3 style={titleStyle} className="header-title">
-                    {! hide.icon ? <i className={'mr-xs phpdoc-type-' + file.type}/> : null}
+                    {! hide.icon ? <i className={'mr-xs phpdoc-type-' + file.type} style={{ fontSize: classSize }}/> : null}
                     <span className={'phpdoc-type-' + file.type} style={{ fontSize: classSize }}>
                         {showNamespace ? file.fqsen.fullName : file.fqsen.name}
                     </span>

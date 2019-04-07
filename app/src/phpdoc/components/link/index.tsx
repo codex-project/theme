@@ -3,7 +3,7 @@ import { PhpdocLinkProps } from './PhpdocLink';
 import { loadStyling } from '../../loadStyling';
 import { loader } from '@codex/core';
 
-export const PhpdocLink = loader<PhpdocLinkProps>([
+export const PhpdocLink :loader.Class<PhpdocLinkProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components.link" */
         // /* webpackPrefetch: true */

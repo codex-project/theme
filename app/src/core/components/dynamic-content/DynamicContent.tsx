@@ -34,13 +34,13 @@ export class DynamicContent extends Component<DynamicContentProps> {
     static defaultProps: Partial<DynamicContentProps> = {
         children: [],
     };
-    state: { children: any[], length?: any }          = { children: this.transform(toJS(this.props.children)) };
+    state: { children: any[]}          = { children: this.transform(toJS(this.props.children)) };
 
     updateChildren(cb?: () => void): this {
         let children = this.transform(toJS(this.props.children));
         // let children = this.transform(this.props.children);
         log('updateChildren', 'propsChildren:', toJS(this.props.children), 'stateChildren:', this.state.children, 'result:', children);
-        this.setState({ children, length: this.props.children.length }, cb);
+        this.setState({ children }, cb);
         return this;
     }
 
@@ -94,19 +94,14 @@ export class DynamicContent extends Component<DynamicContentProps> {
                 if ( childProps.style ) {
                     childProps.style = keysToCamelCase(childProps.style);
                 }
-                // return <Observer key={childProps.key} render={() => h(component as any, childProps as any, childProps.children as any)}/>;
-
-                return h(component as any, childProps as any, childProps.children as any);
+                return h(component as any, childProps as any, childProps.children as any); // return <Observer key={childProps.key} render={() => h(component as any, childProps as any, childProps.children as any)}/>;
             }) as any;
 
         return children;
     }
 
     public componentDidUpdate(prevProps: Readonly<DynamicContentProps>, prevState: Readonly<{}>, snapshot?: any): void {
-        log('componentDidUpdate', {prevProps,prevState,props:this.props,state:this.state});
-        if ( this.props.children.length !== this.state.length ) {
-            this.updateChildren();
-        } else if ( prevProps.children !== this.props.children ) {
+         if ( prevProps.children !== this.props.children ) {
             this.updateChildren();
         }
     }

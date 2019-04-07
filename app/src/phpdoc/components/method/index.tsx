@@ -19,7 +19,7 @@ import { loader } from '@codex/core';
 // export let PhpdocMethodSignature = loader<PhpdocMethodSignatureProps>(_loader('PhpdocMethodSignature'));
 // export let PhpdocMethodArguments = loader<PhpdocMethodArgumentsProps>(_loader('PhpdocMethodArguments'));
 
-export const PhpdocMethod = loader<PhpdocMethodProps>([
+export const PhpdocMethod:loader.Class<PhpdocMethodProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components.method" */
         /* webpackPrefetch: true */
@@ -28,7 +28,7 @@ export const PhpdocMethod = loader<PhpdocMethodProps>([
     loadStyling,
 ]);
 
-export const PhpdocMethodSignature = loader<PhpdocMethodSignatureProps>([
+export const PhpdocMethodSignature :loader.Class<PhpdocMethodSignatureProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components.method" */
         /* webpackPrefetch: true */
@@ -37,7 +37,7 @@ export const PhpdocMethodSignature = loader<PhpdocMethodSignatureProps>([
     loadStyling,
 ]);
 
-export const PhpdocMethodArguments = loader<PhpdocMethodArgumentsProps>([
+export const PhpdocMethodArguments :loader.Class<PhpdocMethodArgumentsProps> = loader([
     () => import(
         /* webpackChunkName: "phpdoc.components.method" */
         /* webpackPrefetch: true */

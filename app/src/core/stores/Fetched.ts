@@ -1,5 +1,5 @@
 // noinspection ES6UnusedImports
-import { get, has, merge, set, snakeCase } from 'lodash';
+import { get, has, merge, set, snakeCase,unset } from 'lodash';
 import { api } from '@codex/api';
 import { LocalStorage } from '../utils/storage'
 import { SyncHook } from 'tapable';
@@ -21,6 +21,8 @@ export class Fetched {
     public readonly hooks = {
         set               : new SyncHook<any, string, Fetched>([ 'value', 'path', 'fetched' ]),
         setted            : new SyncHook<any, string, Fetched>([ 'value', 'path', 'fetched' ]),
+        unset               : new SyncHook<string, Fetched>([ 'path', 'fetched' ]),
+        unsetted            : new SyncHook<string, Fetched>([  'path', 'fetched' ]),
         get               : new SyncHook<any, string, Fetched>([ 'value', 'path', 'fetched' ]),
         loadFromStorage   : new SyncHook<any, Fetched>([ 'value', 'fetched' ]),
         loadedFromStorage : new SyncHook<Fetched>([ 'fetched' ]),
@@ -48,6 +50,13 @@ export class Fetched {
         this.hooks.set.call(value, path, this);
         set(this.fetched, path, value);
         this.hooks.setted.call(value, path, this);
+        return this;
+    }
+
+    public unset(path: string) {
+        this.hooks.unset.call( path, this);
+        unset(this.fetched, path);
+        this.hooks.unsetted.call( path, this);
         return this;
     }
 
@@ -134,6 +143,12 @@ export class Fetched {
         }
         return this;
     }
+
+    public unsetProject(projectKey: string) { return this.unset(this.getProjectPath(projectKey));}
+
+    public unsetRevision(projectKey: string, revisionKey: string) { return this.unset(this.getRevisionPath(projectKey, revisionKey));}
+
+    public unsetDocument(projectKey: string, revisionKey: string, documentKey: string) { return this.unset(this.getDocumentPath(projectKey, revisionKey, documentKey));}
 
     public setProject(projectKey: string, value: any) { return this.set(this.getProjectPath(projectKey), value);}
 

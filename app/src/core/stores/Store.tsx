@@ -12,7 +12,7 @@ import { HelmetProps } from 'react-helmet';
 import { BuildQueryReturn, QueryBuilder } from './QueryBuilder';
 import { Fetched } from './Fetched';
 import { SyncHook } from 'tapable';
-import { DocumentStore } from 'stores/DocumentStore';
+import { DocumentStore } from './DocumentStore';
 
 const log = require('debug')('store');
 
@@ -260,15 +260,26 @@ export class Store {
                 return prev.promise;
             } else {
                 log('fetch cancel and abort');
-                prev.promise.cancel();
-                prev.controller.abort();
-                this.prevFetch = undefined;
+                this.cancelPrevFetch()
             }
         }
         const controller = new AbortController();
         this.prevFetch   = { projectKey, revisionKey, documentKey, promise: makeFetch(controller.signal), controller };
         log('fetch new promise');
         return this.prevFetch.promise;
+    }
+
+    cancelPrevFetch(){
+        if(this.prevFetch){
+            if(this.prevFetch.promise){
+                this.prevFetch.promise.cancel()
+            }
+            if(this.prevFetch.controller){
+                this.prevFetch.controller.abort()
+            }
+            this.prevFetch=undefined
+        }
+        return this;
     }
 
 }

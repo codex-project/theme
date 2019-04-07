@@ -123,17 +123,17 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
 
         let footerText;
         if ( props.action === 'drawer' ) {
-            footerText = 'Click opens quick-preview';
+            footerText = 'Click opens side-view';
         } else if ( props.action === 'navigate' ) {
             footerText = 'Click goes to documentation';
         }
 
         return (
-            <PhpdocPopover maxHeight={maxHeight} placement="bottom" footerText={footerText}>
+            <PhpdocPopover maxHeight={maxHeight} placement="bottom" footerText={footerText} openClassName="phpdoc-link-popover">
                 <Trigger listenTo={[ 'onMouseEnter', 'onMouseLeave', 'onClick' ]}>
                     {this.renderLink()}
                 </Trigger>
-                {this.fqsen.isEntity ? <PhpdocEntity fqsen={this.fqsen} style={{ marginBottom: 0 }} titleStyle={{ margin: 0 }}/> :
+                {this.fqsen.isEntity ? <PhpdocEntity fqsen={this.fqsen} style={{ marginBottom: 0 }}  titleStyle={{ margin: 0 }}/> :
                  this.fqsen.isMethod ? <PhpdocMethod fqsen={this.fqsen} hide={{ namespace: true }}/> :
                  null}
             </PhpdocPopover>
@@ -147,7 +147,8 @@ export class PhpdocLink extends React.Component<PhpdocLinkProps> {
         this.fqsen = FQSEN.from(props.fqsen);
         this.type  = new Type(this.context.manifest, this.fqsen.fullName);
         if ( this.type.isEntity && this.type.isExternal ) {
-            return <span>{this.fqsen.fullName}</span>;
+            let child = (React.Children.toArray(this.props.children)[0] || '').toString()
+            return <span>{child && child.length ? child : this.fqsen.fullName}</span>;
         }
         let hasPopover = props.modifiers.includes('popover');
 
