@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def BACKEND_PORT=39967
+def BACKEND_PORT = 39967
 
 node {
     withEnv([
@@ -9,14 +9,10 @@ node {
         "BACKEND_URL=http://jenkins.radic.ninja:${BACKEND_PORT}"
     ]) {
 
-//        stage('SCM') {
-//            checkout scm
-//        }
-
         stage('install') {
-            sh 'yarn install'
+            sh 'yarn'
             dir('app/build') {
-                sh '../../node_modules/.bin/tsc -p tsconfig.json'
+                sh 'yarn tsc -p tsconfig.json'
             }
             sh 'yarn api build'
             sh 'yarn app prod:build'
@@ -36,7 +32,6 @@ node {
             ])
         }
 
-
         stage('archive') {
             def ref = "${GIT_BRANCH}-${GIT_COMMIT}"
             sh "echo '${ref}' >> theme-ref"
@@ -47,11 +42,7 @@ node {
             archiveArtifacts([artifacts: filename, onlyIfSuccessful: true])
         }
     }
-
 }
-
-
-
 
 
 // https://wiki.jenkins.io/display/JENKINS/Building+a+software+project
