@@ -11,9 +11,8 @@ node {
 
         stage('install') {
             sh 'yarn'
-            dir('app/build') {
-                sh 'yarn tsc -p tsconfig.json'
-            }
+            echo pwd()
+            sh 'yarn tsc -p app/build/tsconfig.json'
             sh 'yarn api build'
             sh 'yarn app prod:build'
         }
