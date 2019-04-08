@@ -9,9 +9,9 @@ node {
         "BACKEND_URL=http://jenkins.radic.ninja:${BACKEND_PORT}"
     ]) {
 
-        stage('SCM') {
-            checkout scm
-        }
+//        stage('SCM') {
+//            checkout scm
+//        }
 
         stage('install') {
             sh 'yarn install'
