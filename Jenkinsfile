@@ -1,5 +1,57 @@
 #!/usr/bin/env groovy
 
+def BACKEND_PORT=39967
+
+node {
+    withEnv([
+        "IS_JENKINS=1",
+        "BACKEND_PORT=${BACKEND_PORT}",
+        "BACKEND_URL=http://jenkins.radic.ninja:${BACKEND_PORT}"
+    ]) {
+
+        stage('SCM') {
+            checkout scm
+        }
+
+        stage('install') {
+            sh 'yarn install'
+            dir('app/build') {
+                sh '../../node_modules/.bin/tsc -p tsconfig.json'
+            }
+            sh 'yarn api build'
+            sh 'yarn app prod:build'
+        }
+
+        stage('report') {
+            sh 'mkdir -p html_reports'
+            sh 'cp -f app/dist/bundle-analyzer.html html_reports/index.html'
+            publishHTML([
+                allowMissing         : false,
+                alwaysLinkToLastBuild: false,
+                keepAll              : true,
+                reportDir            : 'html_reports',
+                reportFiles          : 'index.html',
+                reportName           : 'Bundle Analyzer',
+                reportTitles         : ''
+            ])
+        }
+
+
+        stage('archive') {
+            def ref = "${GIT_BRANCH}-${GIT_COMMIT}"
+            sh "echo '${ref}' >> theme-ref"
+            archiveArtifacts([artifacts: 'theme-ref', onlyIfSuccessful: true])
+
+            def filename = "theme.${ref}.tar.gz"
+            sh "tar -czvf ${filename} -C app/dist vendor index.html bundle-analyzer.html"
+            archiveArtifacts([artifacts: filename, onlyIfSuccessful: true])
+        }
+    }
+}
+
+
+
+
 // https://wiki.jenkins.io/display/JENKINS/Building+a+software+project
 //// BUILD_NUMBER                The current build number, such as "153"
 //// BUILD_ID                    The current build id, such as "2005-08-22_23-59-59" (YYYY-MM-DD_hh-mm-ss, defunct since version 1.597)
@@ -16,49 +68,3 @@
 //// GIT_COMMIT                  For Git-based projects, this variable contains the Git hash of the commit checked out for the build (like ce9a3c1404e8c91be604088670e93434c4253f03) (all the GIT_* variables require git plugin)
 //// GIT_URL                     For Git-based projects, this variable contains the Git url (like git@github.com:user/repo.git or [https://github.com/user/repo.git])
 //// GIT_BRANCH                  For Git-based projects, this variable contains the Git branch that was checked out for the build (normally origin/master)
-
-
-
-node {
-    withEnv([
-        'BACKEND_URL=http://jenkins.radic.ninja:39967',
-        'HOST=jenkins.radic.ninja',
-        'PORT=39967',
-        'IS_JENKINS=1'
-    ]) {
-
-        stage('SCM') {
-            checkout scm
-        }
-
-        stage('install') {
-            sh 'yarn install'
-            dir('app/build'){
-                sh '../../node_modules/.bin/tsc -p tsconfig.json'
-            }
-            sh 'yarn api build'
-            sh 'yarn app prod:build'
-        }
-
-        stage('report'){
-                sh 'mkdir -p html_reports'
-                sh 'cp -f app/dist/bundle-analyzer.html html_reports/index.html'
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'html_reports',
-                    reportFiles: 'index.html',
-                    reportName: 'Bundle Analyzer',
-                    reportTitles: ''
-                ])
-        }
-
-
-
-        stage('archive'){
-            sh 'tar -czvf theme.tar.gz -C app/dist vendor index.html bundle-analyzer.html'
-            archiveArtifacts([artifacts: 'theme.tar.gz', onlyIfSuccessful: true])
-        }
-    }
-}
