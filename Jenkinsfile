@@ -21,7 +21,9 @@
 
 node {
     withEnv([
-        'BACKEND_URL=http://localhost:39967',
+        'BACKEND_URL=http://jenkins.radic.ninja:39967',
+        'HOST=jenkins.radic.ninja',
+        'PORT=39967',
         'IS_JENKINS=1'
     ]) {
         stage('SCM') {
@@ -49,6 +51,10 @@ node {
                     reportName: 'Bundle Analyzer',
                     reportTitles: ''
                 ])
+        }
+
+        stage('archive'){
+            archiveArtifacts([artifacts: 'app/dist/*', onlyIfSuccessful: true])
         }
     }
 }

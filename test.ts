@@ -1,61 +1,17 @@
-import { deg, em, percent, px, rad, rem, turn, viewHeight, viewWidth } from 'csx';
-import { camelCase } from 'lodash';
+import * as os from 'os';
+import * as internalIp from 'internal-ip';
 
-const unitTransforms = { deg, em, percent, px, rad, rem, turn, viewHeight, viewWidth };
-const units          = Object.keys(unitTransforms);
-units.forEach(unit => {
-    let fnName = camelCase('to_' + unit);
-    Number.prototype[ fnName] = function () {
-        return unitTransforms[ unit ](this.valueOf());
-    };
+const nifs     = os.networkInterfaces();
+const external = Object
+    .keys(nifs)
+    .map(key => nifs[ key ])
+    .map(ifs => ifs.filter(details => details.family === 'IPv4' && details.internal === false));
+
+
+console.dir({
+    hostname: os.hostname(),
+    ...nifs,
+    external,
+    ip      : internalIp.v4.sync(),
 });
-declare global {
-    interface Number {
 
-
-        /**
-         * Returns the number with a suffix of %
-         */
-        toPercent: () => string
-        /**
-         * Returns the number with a suffix of deg
-         */
-        toDeg: () => string
-        /**
-         * Returns the number with a suffix of em
-         */
-        toEm: () => string
-        /**
-         * Returns the number with a suffix of px
-         */
-        toPx: () => string
-        /**
-         * Returns the number with a suffix of rad
-         */
-        toRad: () => string
-        /**
-         * Returns the number with a suffix of rem
-         */
-        toRem: () => string
-        /**
-         * Returns the number with a suffix of vh
-         */
-        toViewHeight: () => string
-        /**
-         * Returns the number with a suffix of vw
-         */
-        toViewWidth: () => string
-        /**
-         * Returns the number with a suffix of turn
-         */
-        toTurn: () => string
-    }
-}
-
-
-const nr = 1;
-
-
-console.log(
-    nr.toPx()
-)
