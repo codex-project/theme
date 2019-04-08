@@ -26,6 +26,7 @@ node {
         'PORT=39967',
         'IS_JENKINS=1'
     ]) {
+
         stage('SCM') {
             checkout scm
         }
