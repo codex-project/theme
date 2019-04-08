@@ -54,6 +54,8 @@ node {
                 ])
         }
 
+
+
         stage('archive'){
             sh 'tar -czvf theme.tar.gz -C app/dist vendor index.html bundle-analyzer.html'
             archiveArtifacts([artifacts: 'theme.tar.gz', onlyIfSuccessful: true])
