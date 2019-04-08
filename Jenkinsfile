@@ -2,14 +2,16 @@
 
 def BACKEND_PORT = 39967
 
+//noinspection GroovyAssignabilityCheck
 node {
+    //noinspection GroovyAssignabilityCheck
     withEnv([
         "IS_JENKINS=1",
         "BACKEND_PORT=${BACKEND_PORT}",
         "BACKEND_URL=http://jenkins.radic.ninja:${BACKEND_PORT}"
     ]) {
 
-        stage('checkout'){
+        stage('checkout') {
             checkout scm
         }
 
@@ -36,13 +38,14 @@ node {
         }
 
         stage('archive') {
-            def ref = "${GIT_BRANCH}-${GIT_COMMIT}"
-            sh "echo '${ref}' >> theme-ref"
-            archiveArtifacts([artifacts: 'theme-ref', onlyIfSuccessful: true])
+            sh "echo '${env.GIT_BRANCH}' >> branch"
+            archiveArtifacts([artifacts: 'branch', onlyIfSuccessful: false])
 
-            def filename = "theme.${ref}.tar.gz"
-            sh "tar -czvf ${filename} -C app/dist vendor index.html bundle-analyzer.html"
-            archiveArtifacts([artifacts: filename, onlyIfSuccessful: true])
+            sh "echo '${env.GIT_COMMIT}' >> ref"
+            archiveArtifacts([artifacts: 'ref', onlyIfSuccessful: false])
+
+            sh "tar -czvf theme.tar.gz -C app/dist vendor index.html bundle-analyzer.html"
+            archiveArtifacts([artifacts: 'theme.tar.gz', onlyIfSuccessful: true])
         }
     }
 }
