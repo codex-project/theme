@@ -12,7 +12,13 @@ node {
     ]) {
 
         stage('checkout') {
-            checkout([$class: 'GitSCM', branches: scm.branches, extensions: scm.extensions + [[$class: 'WipeWorkspace']], userRemoteConfigs: scm.userRemoteConfigs,]) //                    checkout scm
+            def scmVars = checkout([
+                $class: 'GitSCM',
+                branches: scm.branches,
+                extensions: scm.extensions + [[$class: 'WipeWorkspace']],
+                userRemoteConfigs: scm.userRemoteConfigs,
+            ])
+            currentBuild.displayName = "build(${env.BUILD_NUMBER}) branch(${scmVars.GIT_BRANCH}) ref(${scmVars.GIT_COMMIT})"
         }
 
         stage('install') {
