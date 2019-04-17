@@ -4,7 +4,7 @@
         "reinstall": "nps uninstall && yarn",
         "app": "cd app && yarn",
         "api": "cd packages/api && yarn",
-        "doc": "node --max_old_space_size=4096 --trace-gc ./node_modules/.bin/typedoc --ignoreCompilerErrors --excludeNotExported --hideGenerator --entryPoint codex --mode file --name Codex --tsconfig app/tsconfig.typedoc.json --options memwatch.js --out .tmp/docs app/src/core",
+        "doc": "node --max_old_space_size=4096 --trace-gc ./node_modules/.bin/typedoc --ignoreCompilerErrors --excludeNotExported --hideGenerator --entryPoint codex --mode file --name Codex --tsconfig app/tsconfig.typedoc.json --out .tmp/docs app/src/core",
         "getip": "internal-ip --ipv4"
     },
     "workspaces": {

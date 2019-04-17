@@ -11,7 +11,7 @@
         "dev:build": "gulp build --hmr-react --analyze",
         "dev:watch": "gulp watch --hmr-react",
         "dev:serve": "gulp serve --hmr-react",
-        "prod:build": "gulp build --production --analyze",
+        "prod:build": "gulp build --production --analyze --debug",
         "prod:watch": "gulp watch --production --analyze",
         "prod:serve": "gulp serve --production --analyze",
         "dashboard": "webpack-dashboard -p 23345",
