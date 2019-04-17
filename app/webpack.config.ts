@@ -85,7 +85,7 @@ export function addBabelToRule(chain: Chain, ruleName: string, options: BabelLoa
                 ...babelImportPlugins,
             ].filter(Boolean),
             cacheDirectory: cache,
-            compact       : false,
+            compact       : minimize,
             ...options,
         } as any);
 }
